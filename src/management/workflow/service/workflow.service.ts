@@ -33,6 +33,18 @@ export class WorkflowService {
 
   async findAll(): Promise<IWorkflow[]> {
     if (!this.workflows.length) {
+      const path = join(ROOT_DIR, 'storage/seed/workflow');
+
+      for (const workflow of await walkdir.async(path)) {
+        this.logger.info('Seeding [%s] workflow', basename(workflow));
+
+        await this.createWorkflow(
+          JSON.parse((await readFile(workflow)).toString()),
+        ).catch(() => {
+          this.logger.warn('Workflow [%s] already seeded', basename(workflow));
+        });
+      }
+
       const dbWorkflows = await this.repository.find();
 
       this.workflows = [
@@ -43,21 +55,6 @@ export class WorkflowService {
           edges: wf.edges,
         })),
       ];
-
-      // Seed the test workflow
-      if (!this.workflows.length) {
-        const path = join(ROOT_DIR, 'storage/seed/workflow');
-
-        for (const workflow of await walkdir.async(path)) {
-          this.logger.info('Seeding [%s] workflow', basename(workflow));
-
-          await this.createWorkflow(
-            JSON.parse((await readFile(workflow)).toString()),
-          );
-        }
-
-        return this.findAll();
-      }
     }
 
     return this.workflows;
@@ -80,6 +77,7 @@ export class WorkflowService {
     // Save to the database.
     await this.repository.save(entity);
     this.workflows.push(entity);
+    this.logger.info('New workflow [%s] has been created', entity.id);
 
     return entity;
   }

@@ -9,8 +9,10 @@ import {
 } from '.';
 import { IApplication } from '../app/application.interface';
 import { IContext, ILogger, IModule, Logger, Module } from '../container';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
+  dependsOn: [DatabaseModule],
   providers: [HttpServerProvider, RpcServerProvider],
 })
 export class ServerModule implements IModule {
@@ -55,12 +57,16 @@ export class ServerModule implements IModule {
         ),
     );
 
-    await server.listen(config.get('http.port'), '0.0.0.0');
+    let port = parseInt(config.get('http.port'), 10);
 
-    this.logger.info(
-      'HTTP server listening at [0.0.0.0:%s]',
-      config.get('http.port'),
-    );
+    // Heroku patch
+    if (process.env.PORT) {
+      port = parseInt(process.env.PORT, 10);
+    }
+
+    await server.listen(port, '0.0.0.0');
+
+    this.logger.info('HTTP server listening at [0.0.0.0:%d]', port);
   }
 
   async onStop(app: IApplication) {

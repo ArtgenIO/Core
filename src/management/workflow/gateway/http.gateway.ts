@@ -25,7 +25,7 @@ export class WorkflowHttpGateway implements IHttpGateway {
       '/api/workflow/:id',
       async (req: FastifyRequest<{ Params: { id: string } }>) => {
         return (await this.workflow.findAll()).find(
-          wf => wf.id === req.params.id,
+          wf => wf.id == req.params.id,
         );
       },
     );

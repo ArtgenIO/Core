@@ -27,6 +27,10 @@ export default function WorkflowPageComponent() {
         component={WorkflowListComponent}
       ></Route>
       <Route
+        path="/backoffice/management/workflow/create"
+        component={lazy(() => import('./create.component'))}
+      ></Route>
+      <Route
         path="/backoffice/management/workflow/drawboard/:id"
         component={lazy(() => import('./drawboard.component'))}
       ></Route>

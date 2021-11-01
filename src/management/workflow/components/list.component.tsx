@@ -89,8 +89,8 @@ export default function WorkflowListComponent() {
             bordered
             dataSource={workflows}
             size="small"
-            renderItem={workflow => (
-              <List.Item key={workflow.id}>
+            renderItem={row => (
+              <List.Item key={row.id}>
                 <List.Item.Meta
                   avatar={
                     <Avatar
@@ -105,15 +105,14 @@ export default function WorkflowListComponent() {
                       <b>Tags: ---</b>
                     </>
                   }
-                  title={workflow.name}
+                  title={row.name}
                 />
-
                 <Button
                   icon={<BarChartOutlined />}
                   className="rounded-md mr-1 "
                 ></Button>
                 <Link
-                  to={`/backoffice/management/workflow/drawboard/${workflow.id}`}
+                  to={`/backoffice/management/workflow/drawboard/${row.id}`}
                 >
                   <Button
                     icon={<EditOutlined />}
@@ -126,7 +125,7 @@ export default function WorkflowListComponent() {
                   cancelText="No"
                   placement="left"
                   icon={<QuestionCircleOutlined />}
-                  onConfirm={() => doDeleteWorkflow(workflow.id)}
+                  onConfirm={() => doDeleteWorkflow(row.id)}
                 >
                   <Button
                     icon={<DeleteOutlined />}

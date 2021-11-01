@@ -1,10 +1,10 @@
 {
-  "http": {
-    "port": "PORT"
-  },
+  "id": "ARTGEN_ID",
   "database": {
-    "driver": "DB_DRIVER",
-    "url": "DB_URL"
+    "url": "ARTGEN_DATABASE_URL"
   },
-  "id": "APP_ID"
+  "ephemeral": "ARTGEN_EPHEMERAL",
+  "http": {
+    "port": "ARTGEN_HTTP_PORT"
+  }
 }

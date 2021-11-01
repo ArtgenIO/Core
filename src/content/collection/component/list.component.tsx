@@ -46,8 +46,8 @@ export default function CollectionListComponent() {
           }
           footer={
             <Tabs defaultActiveKey="1">
-              <Tabs.TabPane tab="Custom Workflows" key="1" />
-              <Tabs.TabPane tab="System Workflows" key="2" />
+              <Tabs.TabPane tab="Custom Collections" key="1" />
+              <Tabs.TabPane tab="System Collections" key="2" />
               <Tabs.TabPane tab="Telemetry" key="3" />
             </Tabs>
           }

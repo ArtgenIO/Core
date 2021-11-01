@@ -5,7 +5,8 @@
     "**/.hg": true,
     "**/CVS": true,
     "**/.DS_Store": true,
+    "**/Thumbs.db": true,
     "**/node_modules": true,
-    "**/coverage": true,
+    "**/coverage": true
   }
 }

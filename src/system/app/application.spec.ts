@@ -7,9 +7,9 @@ import { IApplication } from './application.interface';
 jest.setTimeout(50);
 
 describe('Application', () => {
-  const createLoggerMock = jest.fn(() => createLogger());
+  const createTestLogger = jest.fn(() => createLogger());
 
-  Application.prototype['createLogger'] = createLoggerMock;
+  Application.prototype['createLogger'] = createTestLogger;
 
   describe('Initialization', () => {
     test('should construct without error', () => {
@@ -21,6 +21,13 @@ describe('Application', () => {
 
       expect(app).toHaveProperty('id');
       expect(app.id).toBe('standalone');
+    });
+
+    test('should be in ephemeral mode by default', () => {
+      const app = new Application();
+
+      expect(app).toHaveProperty('isEphemeral');
+      expect(app.isEphemeral).toBe(true);
     });
 
     test('should create a valid logger', () => {
@@ -113,13 +120,13 @@ describe('Application', () => {
       class SubSubModule {}
 
       @Module({
-        imports: [SubSubModule],
+        exports: [SubSubModule],
         providers: [SubServiceA],
       })
       class SubModule {}
 
       @Module({
-        imports: [SubModule],
+        exports: [SubModule],
         providers: [ServiceA],
       })
       class TopModule {}
@@ -200,6 +207,53 @@ describe('Application', () => {
       expect(stopMock).toHaveBeenCalledTimes(1);
       expect(stopMock).toHaveBeenCalledWith(app);
     });
+
+    test('should start modules in dependency order', async () => {
+      const app = new Application();
+      const order: string[] = [];
+
+      @Module()
+      class FirstModule implements IModule {
+        async onStart() {
+          order.push('first');
+        }
+      }
+
+      @Module({
+        dependsOn: [FirstModule],
+      })
+      class SecondModule implements IModule {
+        async onStart() {
+          order.push('second');
+        }
+      }
+
+      @Module({
+        dependsOn: [SecondModule],
+      })
+      class ThirdModule implements IModule {
+        async onStart() {
+          order.push('third');
+        }
+      }
+
+      @Module({})
+      class ForthModule implements IModule {
+        async onStart() {
+          order.push('forth');
+        }
+      }
+
+      app.bootstrap([ForthModule, ThirdModule, SecondModule, FirstModule]);
+
+      expect(await app.start()).toBe(true);
+      expect(order).toStrictEqual(['forth', 'first', 'second', 'third']);
+    });
+
+    // Not yet implemented, because I don't have a proper usecase for it.
+    // Submodule first, or main module first? I get it, propagating down, but I had a lot of trouble with this in the past
+    // when you wana load functionality with a submodule, but the dependencies are too tight and causes circular locks.
+    test.skip('should load leaf nodes first if they have no dependency', () => {});
   });
 
   describe('Stopping', () => {
@@ -255,5 +309,50 @@ describe('Application', () => {
 
     // See above
     test.skip('should kill the modules with a global timeout', () => {});
+
+    test('should stop modules in reverse dependency order', async () => {
+      const app = new Application();
+      const order: string[] = [];
+
+      @Module()
+      class FirstModule implements IModule {
+        async onStop() {
+          order.push('first');
+        }
+      }
+
+      @Module({
+        dependsOn: [FirstModule],
+      })
+      class SecondModule implements IModule {
+        async onStop() {
+          order.push('second');
+        }
+      }
+
+      @Module({
+        dependsOn: [SecondModule],
+      })
+      class ThirdModule implements IModule {
+        async onStop() {
+          order.push('third');
+        }
+      }
+
+      @Module({})
+      class ForthModule implements IModule {
+        async onStop() {
+          order.push('forth');
+        }
+      }
+
+      app.bootstrap([ForthModule, ThirdModule, SecondModule, FirstModule]);
+
+      expect(await app.start()).toBe(true);
+      expect(await app.stop()).toBe(true);
+      expect(order).toStrictEqual(
+        ['forth', 'first', 'second', 'third'].reverse(),
+      );
+    });
   });
 });

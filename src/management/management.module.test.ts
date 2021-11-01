@@ -23,7 +23,7 @@ describe('ManagementModule', () => {
       ManagementModule,
     );
 
-    expect(meta.imports.includes(BackOfficeModule)).toBeTruthy();
+    expect(meta.exports.includes(BackOfficeModule)).toBeTruthy();
   });
 
   test('should import the workflow module', () => {
@@ -32,7 +32,7 @@ describe('ManagementModule', () => {
       ManagementModule,
     );
 
-    expect(meta.imports.includes(WorkflowModule)).toBeTruthy();
+    expect(meta.exports.includes(WorkflowModule)).toBeTruthy();
   });
 
   test('should import the transformer module', () => {
@@ -41,7 +41,7 @@ describe('ManagementModule', () => {
       ManagementModule,
     );
 
-    expect(meta.imports.includes(TransformerModule)).toBeTruthy();
+    expect(meta.exports.includes(TransformerModule)).toBeTruthy();
   });
 
   test('should import the validator module', () => {
@@ -50,7 +50,7 @@ describe('ManagementModule', () => {
       ManagementModule,
     );
 
-    expect(meta.imports.includes(ValidatorModule)).toBeTruthy();
+    expect(meta.exports.includes(ValidatorModule)).toBeTruthy();
   });
 
   test('should import the node module', () => {
@@ -59,6 +59,6 @@ describe('ManagementModule', () => {
       ManagementModule,
     );
 
-    expect(meta.imports.includes(LambdaModule)).toBeTruthy();
+    expect(meta.exports.includes(LambdaModule)).toBeTruthy();
   });
 });

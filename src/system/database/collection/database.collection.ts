@@ -2,21 +2,25 @@ import {
   Column,
   ConnectionOptions,
   Entity,
+  ObjectID,
+  ObjectIdColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { IConnection } from '../interface/connection.interface';
 
 @Entity({
   name: 'ArtgenDatabases',
 })
-export class DatabaseEntity {
+export class DatabaseEntity implements IConnection {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @ObjectIdColumn()
+  id: ObjectID;
 
   @Column({
     type: 'text',
     unique: true,
   })
-  reference: string;
+  name: string;
 
   @Column({
     type: 'text',

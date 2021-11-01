@@ -6,7 +6,7 @@ import { SecurityModule } from './security/security.module';
 import { ServerModule } from './server/server.module';
 
 @Module({
-  imports: [DatabaseModule, DevelopModule, SecurityModule, ServerModule],
+  exports: [DatabaseModule, DevelopModule, SecurityModule, ServerModule],
   providers: [HttpRequestLambda, LogLambda],
 })
 export class SystemModule {}

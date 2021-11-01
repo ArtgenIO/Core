@@ -132,19 +132,18 @@ jobs:
       url: ${{ steps.release.outputs.url }}
 
 
-# Possibily returning with this when we have a demo seed for content and auth to limit abuse
-#  deploy-demo:
-#    name: Deploy the demo installation
-#    runs-on: ubuntu-latest
-#    needs: [testing]
-#    if: ${{ success() }}
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - uses: akhileshns/heroku-deploy@v3.12.12
-#        with:
-#          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-#          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-#          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+  deploy-demo:
+    name: Deploy the demo installation
+    runs-on: ubuntu-latest
+    needs: [testing]
+    if: ${{ success() }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}

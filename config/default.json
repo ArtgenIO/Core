@@ -1,10 +1,10 @@
 {
+  "id": "standalone",
+  "database": {
+    "url": "postgres://localhost:5432/artgen"
+  },
+  "ephemeral": true,
   "http": {
     "port": 7200
-  },
-  "database": {
-    "driver": "postgres",
-    "url": "postgres://artgen:artgen@localhost:15432/artgen"
-  },
-  "id": "standalone"
+  }
 }
