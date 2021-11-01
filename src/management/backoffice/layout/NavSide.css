@@ -1,0 +1,48 @@
+.brand-logo {
+  @apply block bg-no-repeat bg-contain transition-all duration-150;
+
+  background-image: url('../assets/img/logo.png');
+}
+
+.left-nav .brand-logo {
+  width: 34px;
+  height: 34px;
+  margin-left: 8px;
+}
+
+.left-nav.ant-layout-sider-collapsed .brand-logo {
+  width: 48px;
+  height: 48px;
+  margin-left: 3px;
+}
+
+.brand-name {
+  @apply text-center text-2xl flex-grow mr-8;
+
+  line-height: 34px;
+  text-overflow: ellipsis;
+  font-weight: 200;
+}
+
+.menu,
+.ant-layout-sider-trigger {
+  border-top: 1px solid #37393f;
+}
+
+.ant-layout-sider {
+  border-right: 1px solid #37393f;
+}
+
+.brand-block {
+  @apply py-1 pr-3;
+  background-color: #101010;
+
+  background-image: url('../assets/img/hexa.svg');
+  background-repeat: no-repeat;
+  background-position: top;
+  background-size: 100%;
+}
+
+.left-nav.ant-layout-sider-collapsed .brand-block {
+  background-image: none;
+}

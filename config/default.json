@@ -1,0 +1,10 @@
+{
+  "http": {
+    "port": 7200
+  },
+  "database": {
+    "driver": "postgres",
+    "url": "postgres://artgen:artgen@localhost:15432/artgen"
+  },
+  "id": "standalone"
+}

@@ -1,0 +1,8 @@
+__tests__/
+.vscode/
+build/
+logs/
+public/
+utils/
+views/
+coverage/

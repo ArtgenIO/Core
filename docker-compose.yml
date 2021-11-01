@@ -1,0 +1,40 @@
+version: '3.6'
+
+services:
+  ag-postgres:
+    image: postgres:14-alpine
+    hostname: ag-postgres
+    restart: unless-stopped
+    ports:
+      - 15432:5432
+    environment:
+      POSTGRES_DB: artgen
+      POSTGRES_USER: artgen
+      POSTGRES_PASSWORD: artgen
+      PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: UTC
+    volumes:
+      - ag_postgres:/var/lib/postgresql/data/pgdata
+
+  ag-core:
+    image: node:16-alpine
+    hostname: ag-core
+    ports:
+      - 8080:7200
+    environment:
+      NODE_ENV: production
+      TZ: UTC
+    working_dir: /srv
+    volumes:
+      - ./build:/srv/build
+      - ./config:/srv/config
+      - ./node_modules:/srv/node_modules
+      - ./storage:/srv/storage
+      - ./template:/srv/template
+      - ./package.json:/srv/package.json
+    environment:
+      DB_URL: postgres://artgen:artgen@ag-postgres:5432/artgen
+    command: yarn start
+
+volumes:
+  ag_postgres:

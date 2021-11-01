@@ -1,0 +1,72 @@
+{
+  "id": "c0e3c1ad-d2bb-417d-8aef-059a56a4e22c",
+  "name": "Collections",
+  "nodes": [
+    {
+      "id": "collection.read.1",
+      "type": "collection.read",
+      "position": [
+        662.75,
+        107.79166666666666
+      ],
+      "config": {}
+    },
+    {
+      "id": "trigger.http.1",
+      "type": "trigger.http",
+      "position": [
+        359.75,
+        157.29166666666666
+      ],
+      "config": {
+        "path": "/api/$system/content/collection",
+        "method": "GET",
+        "responseFormat": "application/json",
+        "response": "{{ $nodes['collection.read.1'].output.result | toJson }}",
+        "waitForLastNode": "true"
+      }
+    },
+    {
+      "id": "collection.update.71",
+      "type": "collection.update",
+      "position": [
+        586.5,
+        -80.95833333333334
+      ],
+      "config": {}
+    },
+    {
+      "id": "trigger.http.66",
+      "type": "trigger.http",
+      "position": [
+        350.25,
+        -105.70833333333334
+      ],
+      "config": {
+        "path": "/api/$system/content/collection/:reference",
+        "method": "PATCH",
+        "responseFormat": "application/json",
+        "response": "{\"success\": {{ $nodes['collection.update.71'].output.success }}}",
+        "waitForLastNode": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "f9f9c421-8f4a-41ce-b79b-fec44f7621d8",
+      "sourceNodeId": "trigger.http.1",
+      "targetNodeId": "collection.read.1",
+      "sourceHandle": "request",
+      "targetHandle": "result",
+      "transform": ""
+    },
+    {
+      "id": "168898b2-2f07-4991-a0e1-585b709ea111",
+      "sourceNodeId": "trigger.http.66",
+      "targetNodeId": "collection.update.71",
+      "sourceHandle": "request",
+      "targetHandle": "collection",
+      "transform": "{{ $data.body.collection | toJson }}"
+    }
+  ]
+}

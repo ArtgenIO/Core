@@ -1,0 +1,10 @@
+{
+  "http": {
+    "port": "PORT"
+  },
+  "database": {
+    "driver": "DB_DRIVER",
+    "url": "DB_URL"
+  },
+  "id": "APP_ID"
+}

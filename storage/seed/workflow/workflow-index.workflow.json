@@ -1,0 +1,40 @@
+{
+  "id": "7f741bdf-de66-4a0c-876f-c90817c591d0",
+  "name": "Workflow Index",
+  "nodes": [
+    {
+      "id": "workflow.read.36",
+      "type": "workflow.read",
+      "position": [
+        663.3333333333334,
+        220
+      ],
+      "config": {}
+    },
+    {
+      "id": "trigger.http.75",
+      "type": "trigger.http",
+      "position": [
+        426,
+        184
+      ],
+      "config": {
+        "path": "/api/$system/management/workflow",
+        "method": "GET",
+        "responseFormat": "application/json",
+        "response": "{{ $nodes['workflow.read.36'].output.result | toJson }}",
+        "waitForLastNode": "true"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "0349d87a-5b55-4011-9c42-0ae67e199bde",
+      "sourceNodeId": "trigger.http.75",
+      "targetNodeId": "workflow.read.36",
+      "sourceHandle": "request",
+      "targetHandle": "query",
+      "transform": ""
+    }
+  ]
+}

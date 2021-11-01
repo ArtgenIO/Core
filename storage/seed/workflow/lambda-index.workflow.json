@@ -1,0 +1,40 @@
+{
+  "id": "c11dd14c-87fa-4ce3-981a-3d807e00d805",
+  "name": "Lambda Index",
+  "nodes": [
+    {
+      "id": "lambda.read.184",
+      "type": "lambda.read",
+      "position": [
+        853.3333333333334,
+        190.66666666666669
+      ],
+      "config": {}
+    },
+    {
+      "id": "trigger.http.146",
+      "type": "trigger.http",
+      "position": [
+        657.8333333333334,
+        157.91666666666669
+      ],
+      "config": {
+        "path": "/api/$system/management/lambda",
+        "method": "GET",
+        "responseFormat": "application/json",
+        "response": "{{ $nodes['lambda.read.184'].output.result | toJson }}",
+        "waitForLastNode": "true"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "de3aa052-5708-4320-aea0-3c72277be1ed",
+      "sourceNodeId": "trigger.http.146",
+      "targetNodeId": "lambda.read.184",
+      "sourceHandle": "request",
+      "targetHandle": "query",
+      "transform": ""
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "verbose": true,
+  "ignore": [
+    ".git",
+    "__tests__",
+    "log",
+    "build",
+    "node_modules/"
+  ],
+  "watch": [
+    "public",
+    "src",
+    "view"
+  ],
+  "ext": "js,json,ts"
+}

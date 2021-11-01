@@ -1,0 +1,16 @@
+### How to start the application
+
+---
+
+In development mode use the following command:
+
+```sh
+yarn start:dev
+```
+
+In production mode use the following command:
+(_Heroku compatible without procfile_)
+
+```sh
+yarn start
+```

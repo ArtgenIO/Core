@@ -1,0 +1,150 @@
+name: 'Continuous Delivery'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    name: Check commit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Expose git commit information
+        uses: rlespinasse/git-commit-data-action@v1.x
+
+      - name: Parse data
+        id: parse
+        run: |
+          echo "::set-output name=is_release::${{ startsWith(env.GIT_COMMIT_MESSAGE_SUBJECT, 'Release ') }}"
+          echo "::set-output name=version::$(echo ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }} | sed -r 's/Release //')"
+          echo "::set-output name=tag::$(echo ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }} | sed -r 's/Release /v/')"
+
+    outputs:
+      is_release: ${{ steps.parse.outputs.is_release }}
+      version: ${{ steps.parse.outputs.version }}
+      tag: ${{ steps.parse.outputs.tag }}
+      commit_message: ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}
+      commit_body: ${{ env.GIT_COMMIT_MESSAGE_BODY }}
+
+  testing:
+    name: Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install the interpreter
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14.x
+          cache: yarn
+
+      - name: Load the cached dependencies
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install development dependencies
+        run: yarn install
+      - name: Execute the Development Build
+        run: yarn build
+
+      # Temporary removed until the eslint is configured to be realistic
+      #- name: Run lint tests
+      #  run: yarn lint
+
+      - name: Run unit tests
+        run: yarn test
+
+    outputs:
+      commit_message: ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}
+
+
+  release-docker:
+    name: Docker release
+    runs-on: ubuntu-latest
+    needs: [check, testing]
+    if: ${{ success() && needs.check.outputs.is_release == 'true' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Log in to the docker registry
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: artgenio/core:latest,artgenio/core:${{ needs.check.outputs.tag }}
+
+
+  release-gh:
+    name: GitHub release
+    runs-on: ubuntu-latest
+    needs: [check, testing]
+    if: ${{ success() && needs.check.outputs.is_release == 'true' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create git tag
+        uses: negz/create-tag@v1
+        with:
+          version: ${{ needs.check.outputs.tag }}
+          message: ${{ needs.check.outputs.commit_message }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GH release
+        id: release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ needs.check.outputs.version }}
+          body:
+            "**Automated release ${{ needs.check.outputs.commit_message }}** by GitHub Actions <3\n\n
+            ${{ needs.check.outputs.commit_body }}\n
+            Docker install ```docker run -p 80:7200 artgenio/core:${{ needs.check.outputs.tag }}```
+            "
+          tag_name: ${{ needs.check.outputs.tag }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    outputs:
+      upload_url: ${{ steps.release.outputs.upload_url }}
+      url: ${{ steps.release.outputs.url }}
+
+
+# Possibily returning with this when we have a demo seed for content and auth to limit abuse
+#  deploy-demo:
+#    name: Deploy the demo installation
+#    runs-on: ubuntu-latest
+#    needs: [testing]
+#    if: ${{ success() }}
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#
+#      - uses: akhileshns/heroku-deploy@v3.12.12
+#        with:
+#          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+#          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+#          heroku_email: ${{ secrets.HEROKU_EMAIL }}

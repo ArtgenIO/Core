@@ -1,0 +1,15 @@
+.github
+.vscode
+logs
+build
+.env
+.env.sample
+.eslintignore
+.eslintrc.js
+.gitignore
+.prettierrc.js
+.docker-compose.yml
+jest.config.js
+LICENSE
+nodemon.json
+readme.md

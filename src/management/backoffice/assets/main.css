@@ -1,0 +1,31 @@
+/* Tailwind and other custom styles */
+@import url('tailwindcss/components');
+@import url('tailwindcss/utilities');
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden; /* Always show the scroll, we can avoid the flickering with this */
+  color: #cfd2d9;
+
+  font-weight: 100;
+}
+
+.wave-bg {
+  background-color: #151719;
+  background-image: url('../assets/img/waves.svg');
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 100%;
+}
+
+.ant-page-header-heading-title {
+  font-weight: 400;
+}
+
+.right-sider {
+  border-left: 1px solid #37393f;
+}
