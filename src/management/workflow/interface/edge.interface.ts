@@ -1,4 +1,4 @@
-export interface ISerializedEdge {
+export interface IEdge {
   /**
    * Auto generated UUID
    */

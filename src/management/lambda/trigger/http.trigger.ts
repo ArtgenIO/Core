@@ -17,6 +17,8 @@ type IncomingRequest = {
 export type HttpTriggerConfig = {
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   path: string;
+  statusCode: number;
+  authentication: string;
 } & ITriggerConfig;
 
 @Service({
@@ -54,6 +56,16 @@ export type HttpTriggerConfig = {
         title: 'Request Method',
         enum: ['GET', 'POST', 'PATCH', 'DELETE'],
         default: 'GET',
+      },
+      statusCode: {
+        title: 'Default Status Code',
+        enum: ['200', '201', '400', '401', '404', '500'],
+        default: '200',
+      },
+      authentication: {
+        title: 'Authentication',
+        enum: ['public', 'protected'],
+        default: 'public',
       },
       ...JSCHEMA_TRIGGER,
     },

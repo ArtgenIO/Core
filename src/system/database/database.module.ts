@@ -7,8 +7,10 @@ import { CollectionService } from '../../content/collection/service/collection.s
 import { WorkflowEntity } from '../../management/workflow/collection/workflow.collection';
 import { IApplication } from '../app/application.interface';
 import { ILogger, IModule, Logger, Module } from '../container';
+import { AccountEntity } from '../security/authentication/collection/account.collection';
 import { DatabaseEntity } from './collection/database.collection';
 import { IConnection } from './interface/connection.interface';
+import { DatabaseInsertLambda } from './lambda/insert.lambda';
 import { ConnectionManagerProvider } from './providers/connection-manager.provider';
 import { EphemeralDatabaseProvider } from './providers/ephemeral-database.provider';
 import { ConnectionService } from './service/connection.service';
@@ -18,6 +20,7 @@ import { ConnectionService } from './service/connection.service';
     ConnectionManagerProvider,
     ConnectionService,
     EphemeralDatabaseProvider,
+    DatabaseInsertLambda,
   ],
 })
 export class DatabaseModule implements IModule {
@@ -93,6 +96,7 @@ export class DatabaseModule implements IModule {
     const connection: Omit<IConnection, 'id'> = { name: 'system', type, url };
     // Register system collections
     const collections: Constructor<unknown>[] = [
+      AccountEntity,
       CollectionEntity,
       DatabaseEntity,
       WorkflowEntity,

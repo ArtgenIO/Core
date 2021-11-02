@@ -1,9 +1,16 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
+import {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+  RouteShorthandOptions,
+} from 'fastify';
+import jsonwebtoken from 'jsonwebtoken';
+import { getErrorMessage } from '../../../system/app/util/extract-error';
 import { ILogger, Inject, Logger, Service } from '../../../system/container';
 import { IHttpGateway } from '../../../system/server/interface/http-gateway.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { HttpTriggerConfig } from '../../lambda/trigger/http.trigger';
-import { IWorkflow } from '../interface/serialized-workflow.interface';
+import { IWorkflow } from '../interface/workflow.interface';
 import { WorkflowService } from '../service/workflow.service';
 
 @Service({
@@ -50,20 +57,25 @@ export class WorkflowHttpGateway implements IHttpGateway {
       const triggers = workflow.nodes.filter(t => t.type === 'trigger.http');
 
       for (const trigger of triggers) {
-        const config: Partial<HttpTriggerConfig> = {
+        const routeConfig: Partial<HttpTriggerConfig> = {
           path: '/api/webhook/' + trigger.id,
           method: 'GET',
+          authentication: 'public',
         };
 
         if (trigger.config) {
           const triggerConfig = trigger.config as HttpTriggerConfig;
 
           if (triggerConfig.path) {
-            config.path = triggerConfig.path;
+            routeConfig.path = triggerConfig.path;
           }
 
           if (triggerConfig.method) {
-            config.method = triggerConfig.method;
+            routeConfig.method = triggerConfig.method;
+          }
+
+          if (triggerConfig.authentication) {
+            routeConfig.authentication = triggerConfig.authentication;
           }
         }
 
@@ -71,8 +83,8 @@ export class WorkflowHttpGateway implements IHttpGateway {
           'WebHook [%s][%s] registered to [%s][%s]',
           workflow.id,
           trigger.id,
-          config.method,
-          config.path,
+          routeConfig.method,
+          routeConfig.path,
         );
 
         const paramSchema = {
@@ -80,37 +92,99 @@ export class WorkflowHttpGateway implements IHttpGateway {
           properties: {},
         };
 
-        if (config.path.match(':')) {
-          for (const routeParam of config.path.matchAll(/\:([^\/]+)(\/|$)/g)) {
+        if (routeConfig.path.match(':')) {
+          for (const routeParam of routeConfig.path.matchAll(
+            /\:([^\/]+)(\/|$)/g,
+          )) {
             paramSchema.properties[routeParam[1]] = {
               type: 'string',
             };
           }
         }
 
-        httpServer[config.method.toLowerCase()](
-          config.path,
-          {
-            schema: {
-              tags: ['$webhook'],
-              description: `Invokes the [${workflow.id}/${trigger.id}] node`,
-              params: paramSchema,
-            },
+        let preHandlers = [];
+        const swaggerSecurity = [];
+        const isProtected = routeConfig.authentication == 'protected';
+
+        if (isProtected) {
+          // const strategies = [];
+          // strategies.push();
+
+          swaggerSecurity.push({
+            jwt: [],
+          });
+
+          preHandlers.push(
+            httpServer.auth(
+              [
+                (request, reply, done) => {
+                  this.logger.debug('Authenticating the request');
+
+                  if (request.headers['authorization']) {
+                    const tokenString = request.headers[
+                      'authorization'
+                    ].replace(/Bearer:\s+/, '');
+
+                    try {
+                      jsonwebtoken.verify(tokenString, 'TEST_JWT', {});
+
+                      done();
+                    } catch (error) {
+                      this.logger.warn(
+                        'Token problem! [%s]',
+                        getErrorMessage(error),
+                      );
+                      done(new Error('Invalid JWT'));
+                    }
+                  } else {
+                    done(new Error('Missing bearer token'));
+                  }
+                },
+              ],
+              {
+                relation: 'or',
+              },
+            ),
+          );
+        }
+
+        const method = routeConfig.method.toLowerCase();
+        const options: RouteShorthandOptions = {
+          schema: {
+            tags: ['$webhook'],
+            description: `Invokes the [${workflow.id}/${trigger.id}] node`,
+            params: paramSchema,
+            security: swaggerSecurity,
           },
-          async (req, rep) => {
+          preHandler: preHandlers,
+        };
+
+        httpServer[method](
+          routeConfig.path,
+          options,
+          async (request: FastifyRequest, reply: FastifyReply) => {
             const startAt = Date.now();
             const session = await this.workflow.createWorkflowSession(
               workflow.id,
-              req.id,
+              request.id,
             );
 
             const response = await session.trigger(trigger.id, {
-              headers: req.headers,
-              params: req.params ?? {},
-              query: req.query ?? {},
-              body: req.body ?? null,
-              url: req.url,
+              headers: request.headers,
+              params: request.params ?? {},
+              query: request.query ?? {},
+              body: request.body ?? null,
+              url: request.url,
             });
+
+            if (typeof response === 'object') {
+              if ((response.meta?.config as any)?.statusCode) {
+                reply.statusCode = parseInt(
+                  (response.meta.config as any).statusCode.toString(),
+                  10,
+                );
+              }
+            }
 
             const elapsed = Date.now() - startAt;
             this.logger.info(
@@ -119,7 +193,7 @@ export class WorkflowHttpGateway implements IHttpGateway {
               elapsed,
             );
 
-            return response;
+            return response.data;
           },
         );
       }

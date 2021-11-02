@@ -5,15 +5,16 @@ import { ConnectionManager, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 import walkdir from 'walkdir';
 import { ROOT_DIR } from '../../../paths';
+import { getErrorMessage } from '../../../system/app/util/extract-error';
 import { ILogger, Inject, Logger } from '../../../system/container';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { WorkflowEntity } from '../collection/workflow.collection';
-import { IWorkflow } from '../interface/serialized-workflow.interface';
+import { IWorkflow } from '../interface/workflow.interface';
 import { WorkflowSession } from '../library/workflow.session';
 
 // Hook everything here, we can emit new and removed events so the http, and other triggers can be updated
 export class WorkflowService {
-  protected workflows: IWorkflow[] = [];
+  protected isSeedFinished: Promise<boolean> | true;
   protected repository: Repository<IWorkflow>;
 
   constructor(
@@ -29,10 +30,12 @@ export class WorkflowService {
     this.repository = this.connectionManager
       .get('system')
       .getRepository<IWorkflow>(WorkflowEntity);
+
+    this.seed();
   }
 
-  async findAll(): Promise<IWorkflow[]> {
-    if (!this.workflows.length) {
+  async seed(): Promise<void> {
+    this.isSeedFinished = new Promise<boolean>(async ok => {
       const path = join(ROOT_DIR, 'storage/seed/workflow');
 
       for (const workflow of await walkdir.async(path)) {
@@ -40,29 +43,28 @@ export class WorkflowService {
 
         await this.createWorkflow(
           JSON.parse((await readFile(workflow)).toString()),
-        ).catch(() => {
+        ).catch(e => {
+          this.logger.error(getErrorMessage(e));
           this.logger.warn('Workflow [%s] already seeded', basename(workflow));
         });
       }
 
-      const dbWorkflows = await this.repository.find();
+      ok(true);
+    });
+  }
 
-      this.workflows = [
-        ...dbWorkflows.map(wf => ({
-          id: wf.id,
-          name: wf.name,
-          nodes: wf.nodes,
-          edges: wf.edges,
-        })),
-      ];
-    }
+  async findAll(): Promise<IWorkflow[]> {
+    await this.isSeedFinished;
 
-    return this.workflows;
+    return await this.repository.find();
   }
 
   async createWorkflowSession(workflowId: string, actionId?: string) {
-    const workflows = await this.findAll();
-    const workflow = workflows.find(wf => wf.id === workflowId);
+    const workflow = await this.repository.findOne(workflowId);
+
+    if (!workflow) {
+      throw new Error(`Workflow does not exists [${workflowId}]`);
+    }
 
     if (!actionId) {
       actionId = v4();
@@ -76,7 +78,6 @@ export class WorkflowService {
 
     // Save to the database.
     await this.repository.save(entity);
-    this.workflows.push(entity);
     this.logger.info('New workflow [%s] has been created', entity.id);
 
     return entity;
@@ -91,14 +92,6 @@ export class WorkflowService {
 
     // Update to the database.
     await this.repository.save(record);
-
-    this.workflows = this.workflows.filter(wf => wf.id !== workflow.id);
-    this.workflows.push({
-      id: workflow.id,
-      name: workflow.name,
-      nodes: workflow.nodes,
-      edges: workflow.edges,
-    });
 
     this.logger.info('Workflow [%s] updated', workflow.id);
 

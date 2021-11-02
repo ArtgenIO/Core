@@ -1,8 +1,8 @@
-import axios from 'axios';
 import { useEffect } from 'react';
 import { Route, Switch, useLocation } from 'react-router';
 import { useSetRecoilState } from 'recoil';
 import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms';
+import { useHttpClient } from '../../../management/backoffice/library/http-client';
 import { collectionsAtom } from '../collection.atoms';
 import { ICollection } from '../interface/collection.interface';
 import CollectionEditorComponent from './edit.component';
@@ -12,9 +12,10 @@ export default function CollectionIndexComponent() {
   const location = useLocation();
   const setCollections = useSetRecoilState(collectionsAtom);
   const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
+  const httpClient = useHttpClient();
 
   useEffect(() => {
-    axios
+    httpClient
       .get<ICollection[]>('/api/$system/content/collection')
       .then(response => {
         setCollections(() => response.data);

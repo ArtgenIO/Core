@@ -20,6 +20,7 @@
       "config": {
         "path": "/api/$system/management/workflow",
         "method": "GET",
+        "authentication": "protected",
         "responseFormat": "application/json",
         "response": "{{ $nodes['workflow.read.36'].output.result | toJson }}",
         "waitForLastNode": "true"

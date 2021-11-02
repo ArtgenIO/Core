@@ -1,4 +1,4 @@
-export interface ISerializedNode {
+export interface INode {
   /**
    * Unique ID for each workflow
    */
@@ -18,4 +18,9 @@ export interface ISerializedNode {
    * Optional node configuration
    */
   config?: object | unknown;
+
+  /**
+   * Human friendly name
+   */
+  label: string;
 }

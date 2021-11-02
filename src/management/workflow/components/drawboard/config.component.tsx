@@ -11,48 +11,57 @@ import {
   Descriptions,
   Divider,
   Empty,
+  Input,
   List,
   message,
   Modal,
   Tabs,
 } from 'antd';
-import { kebabCase } from 'lodash';
+import cloneDeep from 'lodash.clonedeep';
 import React, { useEffect, useState } from 'react';
-import { Edge, Node } from 'react-flow-renderer';
+import { Edge } from 'react-flow-renderer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
 import {
   elementsAtom,
-  nodesAtom,
+  lambdaMetasAtom,
   selectedNodeIdAtom,
   workflowChangedAtom,
 } from '../../atom/drawboard.atoms';
+import { CustomNode, CustomNodeData } from '../../interface/custom-node';
 
 export default function DrawboardNodeConfigComponent() {
   // Drawboard states
+  const lambdas = useRecoilValue(lambdaMetasAtom);
   const [selectedNodeId, setSelectedNodeId] =
     useRecoilState(selectedNodeIdAtom);
   const [elements, setElements] = useRecoilState(elementsAtom);
-  const nodes = useRecoilValue(nodesAtom);
   const setIsWorkflowChanged = useSetRecoilState(workflowChangedAtom);
 
   // Local state
-  const [configData, setConfigData] = useState(null);
+  const [configValue, setConfigValue] = useState(null);
   const [configSchema, setConfigSchema] = useState(null);
-  const [nodeMeta, setNodeMeta] = useState<ILambdaMeta>(null);
+  const [nodeData, setNodeData] = useState<CustomNodeData>(null);
+  const [lambdaMeta, setLambdaMeta] = useState<ILambdaMeta>(null);
 
   useEffect(() => {
     if (selectedNodeId) {
       // Local state
-      const element = elements.find(el => el.id == selectedNodeId);
-      const node = nodes.find(node => kebabCase(node.type) === element.type);
+      const node = elements.find(el => el.id == selectedNodeId) as CustomNode;
+      const meta = lambdas.find(lambda => lambda.type === node.data.type);
 
-      setNodeMeta(node);
-      setConfigSchema(node.config);
-      setConfigData(element.data.config ?? {});
+      setLambdaMeta(meta);
+      setConfigSchema(meta.config);
+      setConfigValue(node.data.config ?? null);
+      setNodeData(node.data);
     }
 
-    return () => {};
+    return () => {
+      setNodeData(null);
+      setConfigValue(null);
+      setConfigSchema(null);
+      setLambdaMeta(null);
+    };
   }, [selectedNodeId]);
 
   if (!selectedNodeId) {
@@ -100,7 +109,7 @@ export default function DrawboardNodeConfigComponent() {
     >
       <Tabs tabPosition="left" style={{ minHeight: 400 }} size="large">
         <Tabs.TabPane tab="Information" key="info">
-          {nodeMeta ? (
+          {lambdaMeta ? (
             <>
               <Descriptions
                 title={<span className="font-thin">General Information</span>}
@@ -108,14 +117,40 @@ export default function DrawboardNodeConfigComponent() {
                 column={1}
                 bordered
               >
+                <Descriptions.Item label="Label">
+                  <Input
+                    placeholder="Label"
+                    defaultValue={nodeData.label}
+                    onChange={event => {
+                      setElements(els => {
+                        const node = cloneDeep(
+                          els.find(el => el.id === selectedNodeId),
+                        ) as CustomNode;
+
+                        node.data.label = event.target.value;
+
+                        const newElements = els.filter(
+                          el => el.id !== selectedNodeId,
+                        );
+                        newElements.push(node);
+
+                        setNodeData(node.data);
+
+                        return newElements;
+                      });
+
+                      setIsWorkflowChanged(true);
+                    }}
+                  />
+                </Descriptions.Item>
                 <Descriptions.Item label="Identifier">
                   {selectedNodeId}
                 </Descriptions.Item>
                 <Descriptions.Item label="Type">
-                  {nodeMeta.type}
+                  {lambdaMeta.type}
                 </Descriptions.Item>
                 <Descriptions.Item label="Description">
-                  {nodeMeta.description}
+                  {lambdaMeta.description}
                 </Descriptions.Item>
               </Descriptions>
               <Divider />
@@ -139,30 +174,22 @@ export default function DrawboardNodeConfigComponent() {
           {configSchema ? (
             <Form
               schema={configSchema}
-              formData={configData}
+              formData={configValue}
               onBlur={() => message.info('Node configuration applied')}
               onChange={state => {
                 setElements(els => {
-                  const oldNode = els.find(
-                    el => el.id === selectedNodeId,
-                  ) as Node;
-                  const newNode: Node = {
-                    id: oldNode.id,
-                    type: oldNode.type,
-                    data: {
-                      label: oldNode.data.label,
-                      type: oldNode.data.type,
-                      config: state.formData,
-                    },
-                    position: oldNode.position,
-                  };
+                  const node = cloneDeep(
+                    els.find(el => el.id === selectedNodeId),
+                  ) as CustomNode;
+
+                  node.data.config = state.formData;
 
                   const newElements = els.filter(
                     el => el.id !== selectedNodeId,
                   );
-                  newElements.push(newNode);
+                  newElements.push(node);
 
-                  setConfigData(state.formData);
+                  setConfigValue(state.formData);
 
                   return newElements;
                 });
@@ -183,9 +210,9 @@ export default function DrawboardNodeConfigComponent() {
           )}
         </Tabs.TabPane>
         <Tabs.TabPane tab="Handles" key="handles">
-          {nodeMeta ? (
+          {lambdaMeta ? (
             <List
-              dataSource={nodeMeta.handles}
+              dataSource={lambdaMeta.handles}
               size="large"
               bordered
               renderItem={handle => (

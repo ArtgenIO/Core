@@ -1,5 +1,6 @@
 import { Provider } from '@loopback/context';
 import fastify, { FastifyInstance } from 'fastify';
+import auth from 'fastify-auth';
 import cors from 'fastify-cors';
 import formBody from 'fastify-formbody';
 import swagger from 'fastify-swagger';
@@ -33,6 +34,9 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
 
     await server.register(formBody);
     this.logger.debug('Plugin [FormBody] registered');
+
+    await server.register(auth);
+    this.logger.debug('Plugin [Authentication] registered');
 
     await server.register(swagger, {
       routePrefix: `/swagger`,

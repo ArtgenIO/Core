@@ -47,15 +47,6 @@ export default function PageContent() {
                       ),
                   )}
                 />
-                <Route
-                  path="/backoffice/auth"
-                  component={lazy(
-                    () =>
-                      import(
-                        '../../../system/security/component/index.component'
-                      ),
-                  )}
-                />
 
                 {/* Hygen insert routes above */}
                 <Route path="*" component={Route404} />

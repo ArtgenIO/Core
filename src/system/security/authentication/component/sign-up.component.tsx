@@ -7,15 +7,14 @@ import {
 import { Button, Form, Input } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import AuthLayoutComponent from './auth-layout.component';
-import './auth-pages.less';
+import { useRecoilState } from 'recoil';
+import { jwtAtom } from '../../../../management/backoffice/backoffice.atoms';
 
-export default function SignUpComponent() {
+export default function SignInComponent() {
+  const [jwt, setJwt] = useRecoilState(jwtAtom);
+
   return (
-    <AuthLayoutComponent
-      callout="Join us!"
-      moto="Opportunities don't happen. You create them."
-    >
+    <>
       <h1 className="my-4 w-100 content-center" id="js-hexa">
         <div className="hexa"></div>
       </h1>
@@ -67,6 +66,6 @@ export default function SignUpComponent() {
           <Link to={'/backoffice/auth/signup'}>Sign Up</Link> now!
         </div>
       </Form>
-    </AuthLayoutComponent>
+    </>
   );
 }

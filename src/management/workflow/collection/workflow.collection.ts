@@ -4,9 +4,8 @@ import {
   ObjectIdColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ISerializedEdge } from '../interface/serialized-edge.interface';
-import { ISerializedNode } from '../interface/serialized-node.interface';
-import { IWorkflow } from '../interface/serialized-workflow.interface';
+import { INode, IWorkflow } from '../interface';
+import { IEdge } from '../interface/edge.interface';
 
 @Entity({
   name: 'ArtgenWorkflows',
@@ -28,12 +27,12 @@ export class WorkflowEntity implements IWorkflow {
     default: [],
     nullable: false,
   })
-  nodes: ISerializedNode[];
+  nodes: INode[];
 
   @Column({
     type: 'json',
     default: [],
     nullable: false,
   })
-  edges: ISerializedEdge[];
+  edges: IEdge[];
 }

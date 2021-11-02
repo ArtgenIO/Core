@@ -1,4 +1,4 @@
-export interface ISerializedNodeHandle {
+export interface INodeHandle {
   /**
    * Reference used for edges
    */

@@ -1,21 +1,22 @@
 import { FileAddOutlined, PartitionOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message } from 'antd';
-import axios from 'axios';
 import React from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import PageHeader from '../../backoffice/layout/PageHeader';
 import PageWithHeader from '../../backoffice/layout/PageWithHeader';
-import { IWorkflow } from '../interface/serialized-workflow.interface';
-
-const sendRequest = async (data: Omit<IWorkflow, 'id'>) => {
-  const response = await axios.post<IWorkflow>('/api/workflow', data);
-
-  return response.data.id;
-};
+import { useHttpClient } from '../../backoffice/library/http-client';
+import { IWorkflow } from '../interface/workflow.interface';
 
 export default function CreateWorkflowComponent() {
   const history = useHistory();
+  const httpClient = useHttpClient();
+
+  const sendRequest = async (data: Omit<IWorkflow, 'id'>) => {
+    const response = await httpClient.post<IWorkflow>('/api/workflow', data);
+
+    return response.data.id;
+  };
 
   return (
     <PageWithHeader

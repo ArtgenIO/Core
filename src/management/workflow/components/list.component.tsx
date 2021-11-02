@@ -17,23 +17,24 @@ import {
   Skeleton,
   Tabs,
 } from 'antd';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../../backoffice/layout/PageHeader';
 import PageWithHeader from '../../backoffice/layout/PageWithHeader';
-import { IWorkflow } from '../interface/serialized-workflow.interface';
+import { useHttpClient } from '../../backoffice/library/http-client';
+import { IWorkflow } from '../interface/workflow.interface';
 
 export default function WorkflowListComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
+  const httpClient = useHttpClient();
 
   const doDeleteWorkflow = async (id: string) => {
     const workflow = workflows.find(wf => wf.id === id);
 
     if (workflow) {
       try {
-        await axios.delete(`/api/workflow/${id}`);
+        await httpClient.delete(`/api/workflow/${id}`);
 
         setWorkflows(wfs => wfs.filter(wf => wf.id !== id));
 
@@ -50,7 +51,7 @@ export default function WorkflowListComponent() {
   };
 
   useEffect(() => {
-    axios
+    httpClient
       .get<IWorkflow[]>('/api/$system/management/workflow')
       .then(response => {
         setWorkflows(response.data);

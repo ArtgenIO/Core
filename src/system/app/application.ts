@@ -32,10 +32,9 @@ export class Application implements IApplication {
   readonly dependencyGraph: DepGraph<void>;
 
   constructor() {
-    this.isEphemeral = !!config.get('ephemeral');
+    this.isEphemeral = config.get('ephemeral') === '1';
     this.id = config.get('id');
     this.logger = this.createLogger();
-
     this.logger.debug('Creating the context...');
 
     this.context = new Context('app');

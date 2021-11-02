@@ -4,21 +4,19 @@ import merge from 'lodash.merge';
 import nunjucks, { Environment } from 'nunjucks';
 import { ILambdaRecord } from '../../lambda/interface/record.interface';
 import { ITriggerConfig } from '../../lambda/interface/trigger-config.interface';
+import { ITriggerOutput } from '../../lambda/interface/trigger-output.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
-import { IWorkflow } from '../interface/serialized-workflow.interface';
 import { IWorkflowSessionContext } from '../interface/workflow-session-context.interface';
+import { IWorkflow } from '../interface/workflow.interface';
 import isJSON = require('is-json');
 
 export class WorkflowSession {
   /**
    * Execution context for data travel
    */
-  protected ctx: IWorkflowSessionContext = {
-    $nodes: {},
-    $trigger: {},
-    $output: null,
-    $input: null,
-  };
+  protected ctx: IWorkflowSessionContext;
+
+  initialTriggerId: string;
 
   /**
    * Handles the schema validations
@@ -72,6 +70,7 @@ export class WorkflowSession {
       $trigger: {},
       $output: {},
       $input: {},
+      $final: null,
     };
 
     for (const node of this.workflow.nodes) {
@@ -239,17 +238,18 @@ export class WorkflowSession {
   /**
    * Invoke a trigger with request data and format the response based in the config
    */
-  async trigger(triggerId: string, request: any): Promise<unknown> {
+  async trigger(triggerId: string, request: any): Promise<ITriggerOutput> {
     // Store the trigger data
     this.ctx.$trigger = request;
+    this.initialTriggerId = triggerId;
 
     // Default response
     const config = this.ctx.$nodes[triggerId].config as ITriggerConfig;
-    let response = config.response;
 
     if (config.waitForLastNode) {
       await this.invokeNode(triggerId);
     }
+    let response = config.response;
 
     // Render the response is not a direct response
     if (this.isTemplateSyntax(response)) {
@@ -258,17 +258,34 @@ export class WorkflowSession {
 
     // Response is an object
     if (config.responseFormat === 'application/json' && isJSON(response)) {
-      response = JSON.parse(response);
+      try {
+        response = JSON.parse(response);
+      } catch (error) {
+        console.error('Response is not a valid json', {
+          error,
+          response,
+        });
+      }
     }
 
-    return response;
+    return {
+      meta: {
+        // Re query the config, maybe changed by a terminator
+        config: this.ctx.$nodes[triggerId].config as ITriggerConfig,
+      },
+      data: response,
+    };
   }
 
   /**
    * Check if the config is a template syntax
    */
   protected isTemplateSyntax(syntax: string): boolean {
-    return !!syntax.match('{{') && !!syntax.match('}}');
+    if (typeof syntax === 'string') {
+      return !!syntax.match('{{') && !!syntax.match('}}');
+    }
+
+    return false;
   }
 
   /**
@@ -348,7 +365,17 @@ export class WorkflowSession {
             }) as string;
 
             if (isJSON(targetInput.trim())) {
-              targetInput = JSON.parse(targetInput);
+              try {
+                targetInput = JSON.parse(targetInput);
+              } catch (error) {
+                console.error('Invalid JSON format', {
+                  node: targetNodeId,
+                  handle: edge.targetHandle,
+                  value: targetInput,
+                  context: this.ctx,
+                });
+                throw new Error(`Input is not a JSON`);
+              }
             }
           }
 

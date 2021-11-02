@@ -56,8 +56,6 @@ jobs:
 
       - name: Install development dependencies
         run: yarn install
-      - name: Execute the Development Build
-        run: yarn build
 
       # Temporary removed until the eslint is configured to be realistic
       #- name: Run lint tests
@@ -65,6 +63,9 @@ jobs:
 
       - name: Run unit tests
         run: yarn test
+
+      - name: Execute the Development Build
+        run: yarn build
 
     outputs:
       commit_message: ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}

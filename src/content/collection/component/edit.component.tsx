@@ -18,7 +18,6 @@ import {
   Tabs,
 } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -27,6 +26,7 @@ import { ICollection } from '..';
 import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms';
 import PageHeader from '../../../management/backoffice/layout/PageHeader';
 import PageWithHeader from '../../../management/backoffice/layout/PageWithHeader';
+import { useHttpClient } from '../../../management/backoffice/library/http-client';
 import { collectionsAtom } from '../collection.atoms';
 
 export default function CollectionEditorComponent() {
@@ -35,6 +35,7 @@ export default function CollectionEditorComponent() {
   const [collection, setCollection] = useState<ICollection>(null);
   const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
   const [generalForm] = useForm();
+  const httpClient = useHttpClient();
 
   useEffect(() => {
     if (collections.length) {
@@ -73,7 +74,7 @@ export default function CollectionEditorComponent() {
 
           newCollections.push(newCollection);
 
-          axios
+          httpClient
             .patch(`/api/$system/content/collection/${collection.reference}`, {
               collection: newCollection,
             })

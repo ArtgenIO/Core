@@ -1,7 +1,7 @@
 import { createLogger } from 'winston';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
-import { IWorkflow } from '../interface/serialized-workflow.interface';
+import { IWorkflow } from '../interface/workflow.interface';
 import { WorkflowSession } from './workflow.session';
 
 const createLambdaService = (lambdas: ILambda[]) => {

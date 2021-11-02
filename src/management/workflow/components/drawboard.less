@@ -23,7 +23,7 @@
   stroke: #cfd2d9;
 }
 
-.react-flow__edge-cedge:hover .react-flow__edge-path {
+.react-flow__edge-artgen-edge:hover .react-flow__edge-path {
   stroke: #46bdc6;
   filter: drop-shadow(0px 0px 2px rgb(200 255 0 / 0.4));
 }
@@ -130,4 +130,15 @@
 
 .drawboard-tools > div:last-child {
   border-bottom: none;
+}
+
+.node-label {
+  @apply absolute left-0 right-0 -bottom-5 rounded-sm text-center;
+
+  background-color: #101010;
+  color: #fff;
+  font-size: 8px;
+  line-height: 16px;
+  height: 16px;
+  text-overflow: ellipsis;
 }

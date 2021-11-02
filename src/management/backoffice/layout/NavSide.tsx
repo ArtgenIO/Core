@@ -6,6 +6,7 @@ import {
   FunnelPlotOutlined,
   HomeOutlined,
   LockOutlined,
+  LogoutOutlined,
   PartitionOutlined,
   ProfileOutlined,
   SettingOutlined,
@@ -15,11 +16,11 @@ import {
   UnorderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, message } from 'antd';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import { pageNavCollapseAtom } from '../backoffice.atoms';
+import { useRecoilState, useResetRecoilState } from 'recoil';
+import { jwtAtom, pageNavCollapseAtom } from '../backoffice.atoms';
 import './NavSide.css';
 
 const { Sider } = Layout;
@@ -121,6 +122,7 @@ const menuItems: IMenuItem[] = [
 const NavSide = () => {
   const [menuCollapse, setMenuCollapse] = useRecoilState(pageNavCollapseAtom);
   const location = useLocation();
+  const resetJwt = useResetRecoilState(jwtAtom);
   let selected = 'm0';
   let opened = '';
   let longestMatch = 0;
@@ -158,7 +160,7 @@ const NavSide = () => {
       collapsed={menuCollapse}
       onCollapse={() => setMenuCollapse(!menuCollapse)}
       width={240}
-      className="left-nav"
+      className="left-nav relative"
       collapsedWidth={54}
     >
       <div className="flex flex-row brand-block">
@@ -178,6 +180,7 @@ const NavSide = () => {
         defaultSelectedKeys={[selected]}
         defaultOpenKeys={[opened]}
         mode="inline"
+        triggerSubMenuAction="hover"
       >
         {menuItems.map((menu1, key1) => {
           return menu1?.to ? (
@@ -199,6 +202,25 @@ const NavSide = () => {
           ) : undefined;
         })}
       </Menu>
+
+      <div
+        key="bottom-menus"
+        className="w-full absolute bottom-0"
+        style={{ bottom: 48 }}
+      >
+        <Menu key="user-menu" theme="dark" mode="inline">
+          <Menu.Item
+            key={`profile`}
+            icon={<LogoutOutlined />}
+            onClick={() => {
+              resetJwt();
+              message.info('Bye bye! Come back soon <3');
+            }}
+          >
+            Sign Out
+          </Menu.Item>
+        </Menu>
+      </div>
     </Sider>
   );
 };

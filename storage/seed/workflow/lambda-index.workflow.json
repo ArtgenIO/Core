@@ -20,6 +20,7 @@
       "config": {
         "path": "/api/$system/management/lambda",
         "method": "GET",
+        "authentication": "protected",
         "responseFormat": "application/json",
         "response": "{{ $nodes['lambda.read.184'].output.result | toJson }}",
         "waitForLastNode": "true"

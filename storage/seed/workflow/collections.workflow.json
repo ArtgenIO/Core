@@ -20,6 +20,7 @@
       "config": {
         "path": "/api/$system/content/collection",
         "method": "GET",
+        "authentication": "protected",
         "responseFormat": "application/json",
         "response": "{{ $nodes['collection.read.1'].output.result | toJson }}",
         "waitForLastNode": "true"
@@ -44,6 +45,7 @@
       "config": {
         "path": "/api/$system/content/collection/:reference",
         "method": "PATCH",
+        "authentication": "protected",
         "responseFormat": "application/json",
         "response": "{\"success\": {{ $nodes['collection.update.71'].output.success }}}",
         "waitForLastNode": true

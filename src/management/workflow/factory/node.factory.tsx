@@ -59,7 +59,7 @@ export class NodeFactory {
           onDoubleClick={() => doOpenNodeConfig(props.id)}
         >
           {handles}
-
+          <div className="node-label">{props.data.label}</div>
           <div className="text-center node-content relative">
             {node.icon ? (
               <img

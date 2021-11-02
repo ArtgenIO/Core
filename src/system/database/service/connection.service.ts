@@ -1,12 +1,14 @@
 import { Constructor } from '@loopback/context';
 import { Connection, ConnectionManager, DatabaseType } from 'typeorm';
 import { getErrorMessage } from '../../app/util/extract-error';
-import { ILogger, Inject, Logger } from '../../container';
+import { IContext, ILogger, Inject, Logger } from '../../container';
 import { DatabaseEntity } from '../collection/database.collection';
 import { IConnection } from '../interface/connection.interface';
 
 export class ConnectionService {
   constructor(
+    @Inject.context()
+    readonly ctx: IContext,
     @Inject('providers.ConnectionManagerProvider')
     readonly connectionManager: ConnectionManager,
     @Logger()
@@ -86,6 +88,16 @@ export class ConnectionService {
       this.logger.error(getErrorMessage(error));
 
       return false;
+    }
+
+    for (const collection of collections) {
+      const key = `collection.${connection.name}.${collection.name}`;
+
+      if (!this.ctx.contains(key)) {
+        this.logger.info('Storing reference [%s] for collection', key);
+
+        this.ctx.bind(key).to(collection);
+      }
     }
 
     this.logger.info('Database [%s] connected', connection.name);

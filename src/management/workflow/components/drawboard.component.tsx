@@ -1,5 +1,4 @@
 import { Skeleton } from 'antd';
-import axios from 'axios';
 import { kebabCase } from 'lodash';
 import React, { DragEvent, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
@@ -15,27 +14,29 @@ import { useParams } from 'react-router';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { pageDrawerAtom } from '../../backoffice/backoffice.atoms';
+import { useHttpClient } from '../../backoffice/library/http-client';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import {
   catalogCollapsedAtom,
   elementsAtom,
   flowInstanceAtom,
-  nodesAtom,
+  lambdaMetasAtom,
   selectedElementIdAtom,
   selectedNodeIdAtom,
   workflowAtom,
   workflowChangedAtom,
 } from '../atom/drawboard.atoms';
-import { ElementFactory } from '../factory/element.factory';
 import { NodeFactory } from '../factory/node.factory';
-import { IWorkflow } from '../interface/serialized-workflow.interface';
+import { IWorkflow } from '../interface/workflow.interface';
+import { createNode } from '../util/create-node';
+import { unserializeWorkflow } from '../util/unserialize-workflow';
 import './drawboard.less';
 import DrawboardCatalogComponent from './drawboard/catalog.component';
 import DrawboardNodeConfigComponent from './drawboard/config.component';
+import DrawboardEdgeConfigComponent from './drawboard/edge-config.component';
 import CustomEdge from './drawboard/edge.component';
 import WorkflowNameComponent from './drawboard/name.component';
 import DrawboardToolsComponent from './drawboard/tools.component';
-import DrawboardEdgeTransformComponent from './drawboard/transform.component';
 
 export default function DrawboardComponent() {
   // Page state
@@ -43,6 +44,7 @@ export default function DrawboardComponent() {
   const resetPageDrawerState = useResetRecoilState(pageDrawerAtom);
   // Router
   const workflowId = useParams<{ id: string }>().id;
+  const httpClient = useHttpClient();
 
   // Local state
   const flowWrapper = useRef(null);
@@ -50,9 +52,9 @@ export default function DrawboardComponent() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Drawboard state
-  const [nodes, setNodes] = useRecoilState(nodesAtom);
   const setWorkflow = useSetRecoilState(workflowAtom);
   const [elements, setElements] = useRecoilState(elementsAtom);
+  const [lambdaMetas, setLambdaMetas] = useRecoilState(lambdaMetasAtom);
   const [flowInstance, setFlowInstance] = useRecoilState(flowInstanceAtom);
   const setSelectedNodeId = useSetRecoilState(selectedNodeIdAtom);
   const setCatalogCollapsed = useSetRecoilState(catalogCollapsedAtom);
@@ -61,8 +63,8 @@ export default function DrawboardComponent() {
 
   const onConnect = params =>
     setElements(els => {
-      params.type = 'smoothstep';
       params.id = v4();
+      params.type = 'smoothstep';
 
       if (!params.data) {
         params.data = {
@@ -77,7 +79,7 @@ export default function DrawboardComponent() {
       return addEdge(
         {
           ...params,
-          type: 'cedge',
+          type: 'artgen-edge',
           arrowHeadType: ArrowHeadType.ArrowClosed,
         },
         els,
@@ -100,8 +102,8 @@ export default function DrawboardComponent() {
       event.preventDefault();
 
       const type = event.dataTransfer.getData('application/reactflow');
-      const node: ILambdaMeta = nodes.find(node => node.type === type);
-      const element = ElementFactory.fromNode(node);
+      const node: ILambdaMeta = lambdaMetas.find(node => node.type === type);
+      const element = createNode(node, flowInstance.getElements());
       element.position = flowInstance.project({
         x: event.clientX - bounds.left,
         y: event.clientY - bounds.top,
@@ -114,10 +116,10 @@ export default function DrawboardComponent() {
 
   useEffect(() => {
     (async () => {
-      const nodes = await axios.get<ILambdaMeta[]>(
+      const nodes = await httpClient.get<ILambdaMeta[]>(
         '/api/$system/management/lambda',
       );
-      const workflow = await axios.get<IWorkflow>(
+      const workflow = await httpClient.get<IWorkflow>(
         `/api/workflow/${workflowId}`,
       );
 
@@ -129,9 +131,9 @@ export default function DrawboardComponent() {
         );
       }
       setCustomNodes(customNodes);
-      setNodes(nodes.data);
+      setLambdaMetas(nodes.data);
       setWorkflow(workflow.data);
-      setElements(ElementFactory.fromWorkflow(workflow.data));
+      setElements(unserializeWorkflow(workflow.data));
       setIsLoading(false);
 
       setPageDrawer(<DrawboardCatalogComponent />);
@@ -175,7 +177,7 @@ export default function DrawboardComponent() {
                 nodeTypes={customNodes}
                 defaultZoom={1.5}
                 edgeTypes={{
-                  cedge: CustomEdge,
+                  'artgen-edge': CustomEdge,
                 }}
                 onClick={() => setCatalogCollapsed(true)}
               >
@@ -187,7 +189,7 @@ export default function DrawboardComponent() {
                 />
 
                 <DrawboardNodeConfigComponent />
-                <DrawboardEdgeTransformComponent />
+                <DrawboardEdgeConfigComponent />
                 <DrawboardToolsComponent />
                 <WorkflowNameComponent />
               </ReactFlow>

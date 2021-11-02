@@ -1,5 +1,5 @@
-import { ISerializedEdge } from './serialized-edge.interface';
-import { ISerializedNode } from './serialized-node.interface';
+import { IEdge } from './edge.interface';
+import { INode } from './node.interface';
 
 export interface IWorkflow {
   /**
@@ -15,10 +15,10 @@ export interface IWorkflow {
   /**
    * Contained nodes
    */
-  nodes: ISerializedNode[];
+  nodes: INode[];
 
   /**
    * Edges between nodes
    */
-  edges: ISerializedEdge[];
+  edges: IEdge[];
 }

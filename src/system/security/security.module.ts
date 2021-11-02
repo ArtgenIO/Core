@@ -1,8 +1,9 @@
 import { Module } from '../container';
-import { AuthGateway } from './gateway/auth.gateway';
+import { AuthenticationModule } from './authentication/authentication.module';
 import { TrapGateway } from './gateway/trap.gateway';
 
 @Module({
-  providers: [AuthGateway, TrapGateway],
+  exports: [AuthenticationModule],
+  providers: [TrapGateway],
 })
 export class SecurityModule {}

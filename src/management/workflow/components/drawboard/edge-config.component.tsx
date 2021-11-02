@@ -19,7 +19,7 @@ import {
   workflowChangedAtom,
 } from '../../atom/drawboard.atoms';
 
-export default function DrawboardEdgeTransformComponent() {
+export default function DrawboardEdgeConfigComponent() {
   // Drawboard states
   const [selectedEdgeId, setSelectedEdgeId] =
     useRecoilState(selectedEdgeIdAtom);
@@ -128,7 +128,6 @@ export default function DrawboardEdgeTransformComponent() {
               });
 
               // Close
-              console.log('Yay!', form.getFieldValue('transform'));
               setIsWorkflowChanged(true);
             }}
           >

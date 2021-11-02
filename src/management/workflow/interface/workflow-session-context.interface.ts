@@ -32,4 +32,9 @@ export interface IWorkflowSessionContext {
   $input: {
     [handleId: string]: unknown;
   };
+
+  /**
+   * Final output only configured with termination
+   */
+  $final: unknown;
 }

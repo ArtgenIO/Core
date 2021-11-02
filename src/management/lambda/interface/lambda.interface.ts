@@ -1,4 +1,4 @@
-import { IWorkflow } from '../../workflow/interface/serialized-workflow.interface';
+import { IWorkflow } from '../../workflow/interface/workflow.interface';
 import { WorkflowSession } from '../../workflow/library/workflow.session';
 
 /**

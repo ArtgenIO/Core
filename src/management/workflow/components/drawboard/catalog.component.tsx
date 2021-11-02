@@ -1,8 +1,4 @@
-import {
-  MenuUnfoldOutlined,
-  NodeExpandOutlined,
-  PlusSquareOutlined,
-} from '@ant-design/icons';
+import { MenuUnfoldOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { Avatar, Divider, List, PageHeader } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import Search from 'antd/lib/input/Search';
@@ -16,25 +12,28 @@ import {
   catalogCollapsedAtom,
   elementsAtom,
   flowInstanceAtom,
-  nodesAtom,
+  lambdaMetasAtom,
 } from '../../atom/drawboard.atoms';
-import { ElementFactory } from '../../factory/element.factory';
+import { createNode } from '../../util/create-node';
 
 /**
  * Searches in the type and description of the node's meta
  */
-const filterNodes = (search: string, nodes: ILambdaMeta[]): ILambdaMeta[] => {
+const filterLambdas = (
+  search: string,
+  lambdas: ILambdaMeta[],
+): ILambdaMeta[] => {
   search = search.toString().trim().toLowerCase();
 
   // Empty search field
   if (!search) {
-    return nodes;
+    return lambdas;
   }
 
-  return nodes.filter(
-    node =>
-      node.type.toLowerCase().match(search) ||
-      node.description.toLowerCase().match(search),
+  return lambdas.filter(
+    lambda =>
+      lambda.type.toLowerCase().match(search) ||
+      lambda.description.toLowerCase().match(search),
   );
 };
 
@@ -48,14 +47,15 @@ const onDragStart = (event, nodeType: string) => {
 
 export default function DrawboardCatalogComponent() {
   const setMenuCollapse = useSetRecoilState(pageNavCollapseAtom);
-  const [search, setSearch] = useState('');
-  const nodes = useRecoilValue(nodesAtom);
+  const lambdaMetas = useRecoilValue(lambdaMetasAtom);
+  const setElements = useSetRecoilState(elementsAtom);
+  const flowInstance = useRecoilValue(flowInstanceAtom);
   const [isCollapsed, setCollapsed] = useRecoilState(catalogCollapsedAtom);
-  const [elements, setElements] = useRecoilState(elementsAtom);
-  const [flowInstance, setFlowInstance] = useRecoilState(flowInstanceAtom);
+  const [search, setSearch] = useState('');
 
+  // Called when the user adds a new node with the + button
   const addNode = (node: ILambdaMeta) => {
-    const element = ElementFactory.fromNode(node);
+    const element = createNode(node, flowInstance.getElements());
     // TODO: find better position, like the further right center without collision, rightest + 70px top: (max.top max.bottom / 2)
     element.position = { x: 0, y: 0 };
 
@@ -101,17 +101,17 @@ export default function DrawboardCatalogComponent() {
             <List
               itemLayout="horizontal"
               size="small"
-              dataSource={filterNodes(search, nodes)}
-              renderItem={node => (
+              dataSource={filterLambdas(search, lambdaMetas)}
+              renderItem={lambda => (
                 <List.Item
-                  key={node.type}
-                  onDragStart={event => onDragStart(event, node.type)}
+                  key={lambda.type}
+                  onDragStart={event => onDragStart(event, lambda.type)}
                   draggable
-                  onTouchStart={event => onDragStart(event, node.type)}
+                  onTouchStart={event => onDragStart(event, lambda.type)}
                   actions={[
                     <a
                       className="text-green-400 text-xl"
-                      onClick={() => addNode(node)}
+                      onClick={() => addNode(lambda)}
                     >
                       <PlusSquareOutlined />
                     </a>,
@@ -119,23 +119,20 @@ export default function DrawboardCatalogComponent() {
                 >
                   <List.Item.Meta
                     avatar={
-                      node.icon ? (
-                        <Avatar
-                          src={`/assets/icons/${node.icon}`}
-                          style={{ backgroundColor: '#cfd2d9' }}
-                          className="rounded-lg w-12 h-12 p-1"
-                        />
-                      ) : (
-                        <NodeExpandOutlined
-                          className="text-gray-800 text-5xl rounded-lg w-12 h-12"
-                          style={{ backgroundColor: '#cfd2d9' }}
-                        />
-                      )
+                      <Avatar
+                        src={`/assets/icons/${lambda.icon ?? 'lambda.png'}`}
+                        style={{ backgroundColor: '#cfd2d9' }}
+                        className="rounded-lg w-12 h-12 p-1"
+                      />
                     }
                     title={
-                      <span className="text-white">{startCase(node.type)}</span>
+                      <span className="text-white">
+                        {startCase(lambda.type)}
+                      </span>
                     }
-                    description={node.description ?? 'MISSING DESCRIPTION!'}
+                    description={
+                      lambda.description ?? 'Does not have a description?!'
+                    }
                   />
                 </List.Item>
               )}

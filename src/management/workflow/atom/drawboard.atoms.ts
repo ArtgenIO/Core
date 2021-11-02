@@ -1,10 +1,10 @@
 import { Elements, OnLoadParams } from 'react-flow-renderer';
 import { atom } from 'recoil';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
-import { IWorkflow } from '../interface/serialized-workflow.interface';
+import { IWorkflow } from '../interface/workflow.interface';
 
-export const nodesAtom = atom<ILambdaMeta[]>({
-  key: 'nodes',
+export const lambdaMetasAtom = atom<ILambdaMeta[]>({
+  key: 'lambdaMetas',
   default: [],
 });
 
