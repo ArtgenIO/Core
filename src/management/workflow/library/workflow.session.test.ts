@@ -1,6 +1,7 @@
 import { createLogger } from 'winston';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
+import { IWorkflowSessionContext } from '../interface';
 import { IWorkflow } from '../interface/workflow.interface';
 import { WorkflowSession } from './workflow.session';
 
@@ -27,6 +28,7 @@ describe('WorkflowSession', () => {
       $trigger: {},
       $output: {},
       $input: {},
-    });
+      $final: null,
+    } as IWorkflowSessionContext);
   });
 });

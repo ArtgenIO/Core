@@ -71,6 +71,6 @@ describe('Workflow Node Creator', () => {
 
     expect(node).toHaveProperty('data.config');
     expect(node).toHaveProperty('data.config.alpha');
-    expect(node.data.config.alpha).toBe('b');
+    expect((node.data.config as { alpha: string }).alpha).toBe('b');
   });
 });
