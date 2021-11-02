@@ -1,13 +1,12 @@
 import { compareSync } from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
-import { ConnectionManager } from 'typeorm';
+import { SchemaService } from '../../../../content/schema/service/schema.service';
 import { Lambda } from '../../../../management/lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../../../management/lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../../../management/lambda/dto/output-handle.dto';
 import { ILambda } from '../../../../management/lambda/interface/lambda.interface';
 import { WorkflowSession } from '../../../../management/workflow/library/workflow.session';
 import { Inject, Service } from '../../../container';
-import { AccountEntity } from '../collection/account.collection';
 
 type Input = {
   email: string;
@@ -55,15 +54,12 @@ type Input = {
 })
 export class SignInLambda implements ILambda {
   constructor(
-    @Inject('providers.ConnectionManagerProvider')
-    readonly connectionManager: ConnectionManager,
+    @Inject('classes.SchemaService')
+    readonly schemas: SchemaService,
   ) {}
 
   async invoke(ctx: WorkflowSession) {
-    const repository = this.connectionManager
-      .get('system')
-      .getRepository(AccountEntity);
-
+    const repository = this.schemas.getRepository('system', 'Account');
     const credentials = ctx.getInput('credentials') as Input;
 
     const account = await repository.findOne({

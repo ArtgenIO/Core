@@ -1,14 +1,13 @@
 import { readFile } from 'fs/promises';
 import { ServiceBroker } from 'moleculer';
 import { basename, join } from 'path';
-import { ConnectionManager, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 import walkdir from 'walkdir';
+import { SchemaService } from '../../../content/schema/service/schema.service';
 import { ROOT_DIR } from '../../../paths';
-import { getErrorMessage } from '../../../system/app/util/extract-error';
 import { ILogger, Inject, Logger } from '../../../system/container';
 import { LambdaService } from '../../lambda/service/lambda.service';
-import { WorkflowEntity } from '../collection/workflow.collection';
 import { IWorkflow } from '../interface/workflow.interface';
 import { WorkflowSession } from '../library/workflow.session';
 
@@ -24,29 +23,22 @@ export class WorkflowService {
     readonly rpcServer: ServiceBroker,
     @Inject('classes.LambdaService')
     readonly lambda: LambdaService,
-    @Inject('providers.ConnectionManagerProvider')
-    readonly connectionManager: ConnectionManager,
+    @Inject('classes.SchemaService')
+    readonly schemas: SchemaService,
   ) {
-    this.repository = this.connectionManager
-      .get('system')
-      .getRepository<IWorkflow>(WorkflowEntity);
-
-    this.seed();
+    this.repository = this.schemas.getRepository('system', 'Workflow');
+    this.loadSystemWorkflows();
   }
 
-  async seed(): Promise<void> {
+  async loadSystemWorkflows(): Promise<void> {
     this.isSeedFinished = new Promise<boolean>(async ok => {
       const path = join(ROOT_DIR, 'storage/seed/workflow');
 
       for (const workflow of await walkdir.async(path)) {
         this.logger.info('Seeding [%s] workflow', basename(workflow));
+        const seed = JSON.parse((await readFile(workflow)).toString());
 
-        await this.createWorkflow(
-          JSON.parse((await readFile(workflow)).toString()),
-        ).catch(e => {
-          this.logger.error(getErrorMessage(e));
-          this.logger.warn('Workflow [%s] already seeded', basename(workflow));
-        });
+        await this.createWorkflow(seed).catch(() => {});
       }
 
       ok(true);

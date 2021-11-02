@@ -1,9 +1,8 @@
 import { hashSync } from 'bcrypt';
-import { ConnectionManager } from 'typeorm';
+import { SchemaService } from '../../../content/schema/service/schema.service';
 import { IApplication } from '../../app/application.interface';
 import { ILogger, IModule, Logger, Module } from '../../container';
 import { DatabaseModule } from '../../database/database.module';
-import { AccountEntity } from './collection/account.collection';
 import { AuthenticationGateway } from './gateway/authentication.gateway';
 import { SignInLambda } from './lambda/sign-in.lambda';
 
@@ -19,16 +18,11 @@ export class AuthenticationModule implements IModule {
 
   async onStart(app: IApplication) {
     // Seed the demo account
-    if (app.isEphemeral) {
-      this.logger.debug('Seeding demo account');
+    if (app.isEphemeral || process.env.NODE_ENV !== 'production') {
+      this.logger.debug('Seeding [demo] account');
 
-      const connectionManager: ConnectionManager = await app.context.get(
-        'providers.ConnectionManagerProvider',
-      );
-      const repository = connectionManager
-        .get('system')
-        .getRepository(AccountEntity);
-
+      const col = await app.context.get<SchemaService>('classes.SchemaService');
+      const repository = col.getRepository('system', 'Account');
       const account = repository.create({
         email: 'demo@artgen.io',
         password: hashSync('demo', 3),

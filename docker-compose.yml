@@ -6,7 +6,7 @@ services:
     hostname: ag-postgres
     restart: unless-stopped
     ports:
-      - 15432:5432
+      - 5432:5432
     environment:
       POSTGRES_DB: artgen
       POSTGRES_USER: artgen
@@ -14,7 +14,7 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
       TZ: UTC
     volumes:
-      - ag_postgres:/var/lib/postgresql/data/pgdata
+      - ag_postgresql:/var/lib/postgresql/data/pgdata
 
   ag-core:
     image: node:16-alpine
@@ -37,4 +37,4 @@ services:
     command: yarn start
 
 volumes:
-  ag_postgres:
+  ag_postgresql:

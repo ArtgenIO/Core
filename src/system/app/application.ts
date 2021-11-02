@@ -233,6 +233,7 @@ export class Application implements IApplication {
     } catch (error) {
       this.logger.error('Startup sequence failed!');
       this.logger.error(getErrorMessage(error));
+      console.log('Trace', error);
 
       // Initiate a graceful shutdown so the modules
       // can still close their handles.

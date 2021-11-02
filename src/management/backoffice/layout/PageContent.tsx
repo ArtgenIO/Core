@@ -39,11 +39,11 @@ export default function PageContent() {
                   )}
                 />
                 <Route
-                  path="/backoffice/content/collection"
+                  path="/backoffice/content/schema"
                   component={lazy(
                     () =>
                       import(
-                        '../../../content/collection/component/index.component'
+                        '../../../content/schema/component/index.component'
                       ),
                   )}
                 />

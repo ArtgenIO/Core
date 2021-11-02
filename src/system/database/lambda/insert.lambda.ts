@@ -1,16 +1,17 @@
 import { genSaltSync, hashSync } from 'bcrypt';
-import { ConnectionManager, Repository } from 'typeorm';
+import { ConnectionManager } from 'typeorm';
+import { SchemaService } from '../../../content/schema/service/schema.service';
 import { Lambda } from '../../../management/lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../../management/lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../../management/lambda/dto/output-handle.dto';
 import { ILambda } from '../../../management/lambda/interface/lambda.interface';
 import { WorkflowSession } from '../../../management/workflow/library/workflow.session';
 import { getErrorMessage } from '../../app/util/extract-error';
-import { IContext, Inject, Service } from '../../container';
+import { Inject, Service } from '../../container';
 
 type Config = {
   database: string;
-  collection: string;
+  schema: string;
 };
 
 @Service({
@@ -48,39 +49,32 @@ type Config = {
         type: 'string',
         default: 'system',
       },
-      collection: {
-        title: 'Collection',
+      schema: {
+        title: 'Schema',
         type: 'string',
       },
     },
-    required: ['database', 'collection'],
+    required: ['database', 'schema'],
   },
 })
 export class DatabaseInsertLambda implements ILambda {
   constructor(
     @Inject('providers.ConnectionManagerProvider')
     readonly connectionManager: ConnectionManager,
-    @Inject.context()
-    readonly ctx: IContext,
+    @Inject('classes.SchemaService')
+    readonly schema: SchemaService,
   ) {}
 
   async invoke(session: WorkflowSession) {
     const input = session.getInput('record');
     const config = session.getConfig() as Config;
-    const entity = this.ctx.getSync(
-      `collection.${config.database}.${config.collection}`,
+    const repository = this.schema.getRepository(
+      config.database,
+      config.schema,
     );
 
-    const connection = this.connectionManager.get(config.database);
-    let repository: Repository<any>;
-
-    if (connection.options.type === 'mongodb') {
-      repository = connection.getMongoRepository(entity as any);
-    } else {
-      repository = connection.getRepository(entity as any);
-    }
-
     try {
+      // TODO: remove this!
       if ((input as any)?.password) {
         (input as any).password = hashSync(
           (input as any).password,

@@ -1,0 +1,35 @@
+.edit-icon {
+  @apply transition-colors duration-500;
+
+  width: 32px;
+  height: 32px;
+
+  background-color: #37393f;
+  mask-size: 26px 26px;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.edit-icon.primary {
+  mask-image: url('../../../management/backoffice/assets/icon/primary.svg');
+}
+
+.edit-icon.primary.active {
+  background-color: #46bdc6;
+}
+
+.edit-icon.index {
+  mask-image: url('../../../management/backoffice/assets/icon/index.svg');
+}
+
+.edit-icon.index.active {
+  background-color: #fff000;
+}
+
+.edit-icon.unique {
+  mask-image: url('../../../management/backoffice/assets/icon/unique.svg');
+}
+
+.edit-icon.unique.active {
+  background-color: #ff6d01;
+}

@@ -1,0 +1,196 @@
+{
+  "id": "f5451baa-a8e7-4fed-927d-120d492f6b57",
+  "name": "Backoffice Schema Management",
+  "nodes": [
+    {
+      "id": "schema.read.1",
+      "type": "schema.read",
+      "config": {},
+      "label": "Read Schemas",
+      "position": [
+        589.75,
+        82.79166666666666
+      ]
+    },
+    {
+      "id": "terminate.http.1",
+      "type": "terminate.http",
+      "config": {
+        "statusCode": "200"
+      },
+      "label": "Respond Schemas",
+      "position": [
+        829,
+        78.54166666666666
+      ]
+    },
+    {
+      "id": "schema.update.71",
+      "type": "schema.update",
+      "config": {},
+      "label": "Update DB",
+      "position": [
+        582.5,
+        -136.95833333333334
+      ]
+    },
+    {
+      "id": "terminate.http.2",
+      "type": "terminate.http",
+      "config": {
+        "statusCode": "200"
+      },
+      "label": "Updated Schema",
+      "position": [
+        769.5,
+        -163.45833333333334
+      ]
+    },
+    {
+      "id": "trigger.http.1",
+      "type": "trigger.http",
+      "config": {
+        "path": "/api/$system/content/schema",
+        "method": "GET",
+        "statusCode": "200",
+        "authentication": "public",
+        "responseFormat": "application/json",
+        "response": "{\"ack\":true}",
+        "waitForLastNode": "true"
+      },
+      "label": "Index EP",
+      "position": [
+        344.75,
+        101.29166666666666
+      ]
+    },
+    {
+      "id": "trigger.http.66",
+      "type": "trigger.http",
+      "config": {
+        "path": "/api/$system/content/schema/:id",
+        "method": "PATCH",
+        "statusCode": "200",
+        "authentication": "protected",
+        "responseFormat": "application/json",
+        "response": "{\"ack\":true}",
+        "waitForLastNode": true
+      },
+      "label": "Update EP",
+      "position": [
+        350.25,
+        -105.70833333333334
+      ]
+    },
+    {
+      "id": "trigger.http.2",
+      "type": "trigger.http",
+      "config": {
+        "path": "/api/$system/content/schema",
+        "method": "POST",
+        "statusCode": "200",
+        "authentication": "protected",
+        "responseFormat": "application/json",
+        "response": "{\"ack\":true}",
+        "waitForLastNode": "true"
+      },
+      "label": "Create EP",
+      "position": [
+        347.11610112659224,
+        -303.3625972618634
+      ]
+    },
+    {
+      "id": "schema.create.1",
+      "type": "schema.create",
+      "config": null,
+      "label": "Schema Create",
+      "position": [
+        579.8228136571367,
+        -299.651355715716
+      ]
+    },
+    {
+      "id": "terminate.http.3",
+      "type": "terminate.http",
+      "config": {
+        "statusCode": "200"
+      },
+      "label": "Respond New Schema",
+      "position": [
+        819.1302188058327,
+        -465.53494653105446
+      ]
+    },
+    {
+      "id": "terminate.http.4",
+      "type": "terminate.http",
+      "config": {
+        "statusCode": "400"
+      },
+      "label": "Terminate Http 4",
+      "position": [
+        841.5806150113308,
+        -279.15571632544885
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "f9f9c421-8f4a-41ce-b79b-fec44f7621d8",
+      "sourceNodeId": "trigger.http.1",
+      "targetNodeId": "schema.read.1",
+      "sourceHandle": "request",
+      "targetHandle": "result",
+      "transform": ""
+    },
+    {
+      "id": "fb9055cc-67c6-4073-a7af-7b74663e63fa",
+      "sourceNodeId": "schema.read.1",
+      "targetNodeId": "terminate.http.1",
+      "sourceHandle": "result",
+      "targetHandle": "response",
+      "transform": ""
+    },
+    {
+      "id": "9e6ace6e-1497-4539-b044-f1c702d67cdb",
+      "sourceNodeId": "schema.update.71",
+      "targetNodeId": "terminate.http.2",
+      "sourceHandle": "success",
+      "targetHandle": "response",
+      "transform": ""
+    },
+    {
+      "id": "168898b2-2f07-4991-a0e1-585b709ea111",
+      "sourceNodeId": "trigger.http.66",
+      "targetNodeId": "schema.update.71",
+      "sourceHandle": "request",
+      "targetHandle": "schema",
+      "transform": "{{ $data.body | toJson }}"
+    },
+    {
+      "id": "044fc4a9-d555-4f04-9c0d-4d9f344d6a6f",
+      "sourceNodeId": "schema.create.1",
+      "targetNodeId": "terminate.http.3",
+      "sourceHandle": "result",
+      "targetHandle": "response",
+      "transform": ""
+    },
+    {
+      "id": "d4956877-9f55-4491-a89a-82a50b15b962",
+      "sourceNodeId": "trigger.http.2",
+      "targetNodeId": "schema.create.1",
+      "sourceHandle": "request",
+      "targetHandle": "schema",
+      "transform": "{{ $data.body | toJson }}"
+    },
+    {
+      "id": "368f5c8d-3259-4855-9657-2d153849d8a6",
+      "sourceNodeId": "schema.create.1",
+      "targetNodeId": "terminate.http.4",
+      "sourceHandle": "error",
+      "targetHandle": "response",
+      "transform": ""
+    }
+  ]
+}

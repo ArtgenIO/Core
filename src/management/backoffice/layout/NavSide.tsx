@@ -49,7 +49,7 @@ const menuItems: IMenuItem[] = [
     label: 'Content',
     children: [
       {
-        icon: <TableOutlined />,
+        icon: <UnorderedListOutlined />,
         to: '/backoffice/content/collection',
         label: 'Collections',
       },
@@ -60,8 +60,13 @@ const menuItems: IMenuItem[] = [
       },
       {
         icon: <BarChartOutlined />,
-        to: '/backoffice/content/set',
+        to: '/backoffice/content/analytics',
         label: 'Analytics',
+      },
+      {
+        icon: <TableOutlined />,
+        to: '/backoffice/content/schema',
+        label: 'Schema Manager',
       },
     ],
   },

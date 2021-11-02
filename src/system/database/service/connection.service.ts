@@ -1,8 +1,7 @@
-import { Constructor } from '@loopback/context';
-import { Connection, ConnectionManager, DatabaseType } from 'typeorm';
+import { Connection, ConnectionManager, EntitySchema } from 'typeorm';
+import { SchemaService } from '../../../content/schema/service/schema.service';
 import { getErrorMessage } from '../../app/util/extract-error';
 import { IContext, ILogger, Inject, Logger } from '../../container';
-import { DatabaseEntity } from '../collection/database.collection';
 import { IConnection } from '../interface/connection.interface';
 
 export class ConnectionService {
@@ -11,40 +10,11 @@ export class ConnectionService {
     readonly ctx: IContext,
     @Inject('providers.ConnectionManagerProvider')
     readonly connectionManager: ConnectionManager,
+    @Inject('classes.SchemaService')
+    readonly schema: SchemaService,
     @Logger()
     protected logger: ILogger,
   ) {}
-
-  /**
-   * Get the database type for connection configuration
-   */
-  getDatabaseTypeFromUrl(url: string): DatabaseType | false {
-    let protocol: string;
-
-    try {
-      protocol = new URL(url).protocol.replace(':', '').toLowerCase();
-    } catch (error) {
-      return false;
-    }
-
-    if (protocol === 'postgresql') {
-      protocol = 'postgres';
-    }
-
-    if (protocol === 'mongodb+srv') {
-      protocol = 'mongodb';
-    }
-
-    if (protocol === 'mariadb') {
-      protocol = 'mysql';
-    }
-
-    if (['mongodb', 'postgres', 'mysql'].includes(protocol)) {
-      return protocol as DatabaseType;
-    } else {
-      return false;
-    }
-  }
 
   /**
    * Create a connection to the named database.
@@ -52,21 +22,56 @@ export class ConnectionService {
    */
   async connect(
     connection: Omit<IConnection, 'id'>,
-    collections: Constructor<unknown>[],
+    schemas: EntitySchema[],
   ): Promise<Connection | false> {
+    if (this.connectionManager.has(connection.name)) {
+      /*const con = this.connectionManager.get(connection.name);
+
+      // Inject the entities.
+      (con.options.entities as unknown) = schemas;
+
+      const changeQueries = await con.driver.createSchemaBuilder().log();
+      const isInSync = changeQueries.upQueries.length === 0;
+
+      if (!isInSync) {
+        this.logger.warn(
+          'Database [%s] is out of sync, updating now',
+          connection.name,
+        );
+        await con.synchronize(false);
+      } else {
+        this.logger.info('Everthing in sync');
+      }
+
+      return con;*/
+
+      if (connection.type === 'sqljs') {
+        return this.connectionManager.get(connection.name);
+      }
+      this.logger.info('Closing the [%s] connection', connection.name);
+      await this.connectionManager.get(connection.name).close();
+    }
+
     let link: Connection;
 
-    this.logger.debug('Creating connection to [%s]', connection.name);
+    this.logger.debug(
+      'Creating connection to [%s] at [%s]',
+      connection.name,
+      connection.url,
+    );
 
     switch (connection.type) {
       case 'mongodb':
-        link = this.createMongoConnection(connection, collections);
+        link = this.createMongoConnection(connection, schemas);
         break;
       case 'postgres':
-        link = this.createPostgresConnection(connection, collections);
+        link = this.createPostgresConnection(connection, schemas);
         break;
       case 'mysql':
-        link = this.createMySQLConnection(connection, collections);
+        link = this.createMySQLConnection(connection, schemas);
+        break;
+      case 'sqljs':
+        link = this.createSqlJSConenction(connection, schemas);
         break;
       default:
         this.logger.error(
@@ -83,38 +88,41 @@ export class ConnectionService {
     } catch (error) {
       this.logger.error(
         'Connection to the [%s] database has failed',
-        connection.name,
+        link.options.name,
       );
       this.logger.error(getErrorMessage(error));
+      console.log(error);
 
       return false;
     }
 
-    for (const collection of collections) {
-      const key = `collection.${connection.name}.${collection.name}`;
-
-      if (!this.ctx.contains(key)) {
-        this.logger.info('Storing reference [%s] for collection', key);
-
-        this.ctx.bind(key).to(collection);
-      }
-    }
-
-    this.logger.info('Database [%s] connected', connection.name);
+    this.logger.info('Database [%s] connected', link.options.name);
 
     return link;
   }
 
+  protected createSqlJSConenction(
+    connection: Omit<IConnection, 'id'>,
+    schemas: EntitySchema[],
+  ): Connection {
+    return this.connectionManager.create({
+      name: connection.name,
+      type: 'sqljs',
+      entities: schemas,
+      synchronize: true,
+    });
+  }
+
   protected createMongoConnection(
     connection: Omit<IConnection, 'id'>,
-    collections: Constructor<unknown>[],
+    schemas: EntitySchema[],
   ): Connection {
     return this.connectionManager.create({
       name: connection.name,
       url: connection.url,
       type: 'mongodb',
       loggerLevel: 'info',
-      entities: collections,
+      entities: schemas,
       synchronize: true,
       useUnifiedTopology: true,
     });
@@ -122,51 +130,51 @@ export class ConnectionService {
 
   protected createPostgresConnection(
     connection: Omit<IConnection, 'id'>,
-    collections: Constructor<unknown>[],
+    schemas: EntitySchema[],
   ): Connection {
     return this.connectionManager.create({
       name: connection.name,
       url: connection.url,
       type: 'postgres',
-      entities: collections,
+      entities: schemas,
       synchronize: true,
     });
   }
 
   protected createMySQLConnection(
     connection: Omit<IConnection, 'id'>,
-    collections: Constructor<unknown>[],
+    schemas: EntitySchema[],
   ): Connection {
     return this.connectionManager.create({
       name: connection.name,
       url: connection.url,
       type: 'mysql',
       timezone: 'UTC',
-      entities: collections,
+      entities: schemas,
       synchronize: true,
     });
   }
 
   /**
-   * Store the connection in the ArtgenDatabases collection so we can reconnect to it.
+   * Store the connection in the ArtgenDatabases schemas so we can reconnect to it.
    */
   async create(connection: Omit<IConnection, 'id'>) {
-    const link = this.connectionManager.get('system');
-    const repository = link.getRepository(DatabaseEntity);
-    let record: DatabaseEntity = await repository.findOne({
+    const repository = this.schema.getRepository('system', 'Database');
+    let record = await repository.findOne({
       name: connection.name,
-    });
+    } as any);
 
     if (!record) {
-      record = new DatabaseEntity();
-      record.name = connection.name;
-      record.tags = ['active'];
+      record = repository.create(connection);
     }
 
     record.type = connection.type;
     record.url = connection.url;
 
     await repository.save(record);
+
+    this.ctx.bind(`database.${connection.name}.type`).to(connection.type);
+    this.ctx.bind(`database.${connection.name}.url`).to(connection.url);
 
     return record;
   }

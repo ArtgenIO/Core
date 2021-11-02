@@ -1,5 +1,5 @@
 {
-  "id": "6180ebc55cdfcb77b8f974c7",
+  "id": "ced473f0-522c-47db-a88c-f0f981d93f9e",
   "name": "Authentication",
   "nodes": [
     {
@@ -92,7 +92,7 @@
       "type": "db.insert",
       "config": {
         "database": "system",
-        "collection": "AccountEntity"
+        "schema": "Account"
       },
       "label": "Create Account",
       "position": [

@@ -16,7 +16,7 @@ type IConfig = {
   type: 'terminate.http',
   icon: 'response.png',
   description: 'Formulate a HTTP response',
-  handles: [new InputHandleDTO('response', {})],
+  handles: [new InputHandleDTO('response', null)],
   config: {
     type: 'object',
     properties: {
