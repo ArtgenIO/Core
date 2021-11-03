@@ -1,4 +1,5 @@
 import { createLogger } from 'winston';
+import { SchemaModule } from '../../../content/schema/schema.module';
 import { Application } from '../../app/application';
 import { IApplication } from '../../app/application.interface';
 import { DatabaseModule } from '../database.module';
@@ -14,19 +15,20 @@ describe('ConnectionService', () => {
   beforeEach(() => {
     Application.prototype['createLogger'] = createLogger;
     app = new Application();
-    app.bootstrap([DatabaseModule]);
+    app.bootstrap([DatabaseModule, SchemaModule]);
   });
 
   test('should be able to resolve the connection service', async () => {
     expect(await app.context.get(ServiceKey)).toBeInstanceOf(ConnectionService);
   });
 
-  describe.skip('Creating Connections', () => {
+  describe('Creating Connections', () => {
     test('should create a mongo connection', async () => {
       const url = 'mongodb://localhost:1234';
 
       const linkMock = jest.fn();
       const managerMock = {
+        has: () => false,
         create: () => ({
           connect: linkMock,
         }),
@@ -51,6 +53,7 @@ describe('ConnectionService', () => {
 
       const linkMock = jest.fn();
       const managerMock = {
+        has: () => false,
         create: () => ({
           connect: linkMock,
         }),
@@ -75,6 +78,7 @@ describe('ConnectionService', () => {
 
       const linkMock = jest.fn();
       const managerMock = {
+        has: () => false,
         create: () => ({
           connect: linkMock,
         }),
@@ -105,6 +109,7 @@ describe('ConnectionService', () => {
       };
 
       app.context.bind(ManagerKey).to({
+        has: () => false,
         get: (name: string) => ({
           getRepository: forEntity => repositoryMock,
         }),

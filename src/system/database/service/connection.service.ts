@@ -88,15 +88,14 @@ export class ConnectionService {
     } catch (error) {
       this.logger.error(
         'Connection to the [%s] database has failed',
-        link.options.name,
+        connection.name,
       );
       this.logger.error(getErrorMessage(error));
-      console.log(error);
 
       return false;
     }
 
-    this.logger.info('Database [%s] connected', link.options.name);
+    this.logger.info('Database [%s] connected', connection.name);
 
     return link;
   }
