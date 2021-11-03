@@ -62,8 +62,6 @@
     "lodash.merge": "^4.6.2",
     "lodash.startcase": "^4.4.0",
     "moleculer": "^0.14.18",
-    "mongodb": "^3.7.0",
-    "mongodb-memory-server": "^7.6.0",
     "mysql": "^2.18.1",
     "nunjucks": "^3.2.3",
     "p-timeout": "^4.0.0",

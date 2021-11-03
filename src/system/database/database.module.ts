@@ -8,14 +8,12 @@ import { IConnection } from './interface/connection.interface';
 import { DatabaseInsertLambda } from './lambda/insert.lambda';
 import { getDatabaseTypeFromUrl } from './library/get-database-type';
 import { ConnectionManagerProvider } from './providers/connection-manager.provider';
-import { EphemeralDatabaseProvider } from './providers/ephemeral-database.provider';
 import { ConnectionService } from './service/connection.service';
 
 @Module({
   providers: [
     ConnectionManagerProvider,
     ConnectionService,
-    EphemeralDatabaseProvider,
     DatabaseInsertLambda,
   ],
 })
