@@ -1,33 +1,28 @@
 import { EditOutlined, FileAddOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Empty, Form, Input, List, notification, Tabs } from 'antd';
-import { useForm } from 'antd/lib/form/Form';
 import { cloneDeep } from 'lodash';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { ISchema } from '..';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms';
 import PageHeader from '../../../management/backoffice/layout/PageHeader';
 import PageWithHeader from '../../../management/backoffice/layout/PageWithHeader';
 import { useHttpClient } from '../../../management/backoffice/library/http-client';
+import { ISchema } from '../interface';
 import { FieldType } from '../interface/field-type.enum';
 import { schemaAtom, schemasAtom } from '../schema.atoms';
 import SchenaEditFieldComponent from './edit-field.component';
 
-type SchemaRow = {
-  id: string;
-  reference: string;
-  schema: ISchema;
-  tags: string[];
-};
-
 export default function SchemaEditorComponent() {
   const params = useParams<{ id: string }>();
-  const [schemas, setSchemas] = useRecoilState(schemasAtom);
+  const schemas = useRecoilValue(schemasAtom);
   const [record, setRecord] = useRecoilState<ISchema>(schemaAtom);
   const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
-  const [generalForm] = useForm();
   const httpClient = useHttpClient();
+
+  const [ref, setRef] = useState(record ? record.reference : null);
+  const [label, setLabel] = useState(record ? record.label : null);
+  const [tableName, setTableName] = useState(record ? record.tableName : null);
 
   const addNewField = () => {
     setRecord(currentState => {
@@ -59,6 +54,9 @@ export default function SchemaEditorComponent() {
       const current = schemas.find(record => record.id == params.id);
 
       setRecord(current);
+      setRef(current.reference);
+      setLabel(current.label);
+      setTableName(current.tableName);
       setBreadcrumb(routes =>
         routes.concat({
           breadcrumbName: current.label,
@@ -70,7 +68,7 @@ export default function SchemaEditorComponent() {
     return () => {
       setBreadcrumb(routes => routes.slice(0, routes.length - 1));
     };
-  }, [schemas]);
+  }, [schemas, params.id]);
 
   const SaveChanges = () => {
     console.log('Sending', record);
@@ -94,25 +92,13 @@ export default function SchemaEditorComponent() {
   };
 
   const onGeneralFormChange = () => {
-    setSchemas(currentRecords => {
-      const newRecords: ISchema[] = [];
+    setRecord(curr => {
+      const newRecord: ISchema = cloneDeep(curr);
 
-      for (const curr of currentRecords) {
-        if (curr.id === params.id) {
-          const newRecord: ISchema = cloneDeep(curr);
+      newRecord.label = label;
+      newRecord.tableName = tableName;
 
-          newRecord.label = generalForm.getFieldValue('label');
-          newRecord.tableName = generalForm.getFieldValue('dbName');
-
-          newRecords.push(newRecord);
-
-          setRecord(newRecord);
-        } else {
-          newRecords.push(curr);
-        }
-      }
-
-      return newRecords;
+      return newRecord;
     });
   };
 
@@ -145,44 +131,29 @@ export default function SchemaEditorComponent() {
     >
       {!!record ? (
         <div>
-          <Tabs
-            tabPosition="left"
-            defaultActiveKey="fields"
-            size="large"
-            style={{ minHeight: 320 }}
-          >
+          <Tabs tabPosition="left" size="large" style={{ minHeight: 320 }}>
             <Tabs.TabPane tab="General" key="table">
               <div className="content-box pt-6">
                 <Form
-                  form={generalForm}
-                  name="general"
                   labelCol={{ span: 4 }}
                   wrapperCol={{ span: 12 }}
-                  initialValues={{
-                    reference: record.reference,
-                    label: record.label,
-                    dbName: record.tableName,
-                  }}
-                  onBlur={event => onGeneralFormChange()}
+                  initialValues={{ label, tableName, reference: ref }}
+                  onChange={onGeneralFormChange}
                 >
                   <Form.Item label="Reference" name="reference">
                     <Input readOnly disabled />
                   </Form.Item>
 
-                  <Form.Item
-                    label="Label"
-                    name="label"
-                    rules={[{ required: true }]}
-                  >
-                    <Input />
+                  <Form.Item label="Label" name="label">
+                    <Input
+                      onChange={e => {
+                        setLabel(e.target.value);
+                      }}
+                    />
                   </Form.Item>
 
-                  <Form.Item
-                    label="Table Name"
-                    name="dbName"
-                    rules={[{ required: true }]}
-                  >
-                    <Input />
+                  <Form.Item label="Table Name" name="tableName">
+                    <Input onChange={e => setTableName(e.target.value)} />
                   </Form.Item>
                 </Form>
               </div>
