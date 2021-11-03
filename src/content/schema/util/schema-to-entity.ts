@@ -24,7 +24,7 @@ export const schemaToEntity = (
     let defaultValue = field?.defaultValue ?? undefined;
     let nullable = field.tags.includes(FieldTag.NULLABLE);
 
-    if (databaseType === 'sqlite' || databaseType === 'sqljs') {
+    if (databaseType === 'sqlite') {
       if (type === 'json') {
         type = 'simple-json';
       }

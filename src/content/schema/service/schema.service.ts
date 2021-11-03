@@ -1,4 +1,5 @@
 import { ConnectionManager, EntitySchema, Repository } from 'typeorm';
+import { WorkflowSchema } from '../../../management/workflow/schema/workflow.schema';
 import {
   IContext,
   ILogger,
@@ -6,7 +7,10 @@ import {
   Logger,
   Service,
 } from '../../../system/container';
+import { DatabaseSchema } from '../../../system/database/schema/database.schema';
+import { AccountSchema } from '../../../system/security/authentication/schema/account.schema';
 import { ISchema } from '../interface/schema.interface';
+import { SchemaSchema } from '../schema/schema.schema';
 import { schemaToEntity } from '../util/schema-to-entity';
 
 type RecordSource = 'disk' | 'database';
@@ -29,6 +33,13 @@ export class SchemaService {
     @Inject('providers.ConnectionManagerProvider')
     readonly connectionManager: ConnectionManager,
   ) {}
+
+  initialzie() {
+    this.register(AccountSchema, 'disk');
+    this.register(SchemaSchema, 'disk');
+    this.register(DatabaseSchema, 'disk');
+    this.register(WorkflowSchema, 'disk');
+  }
 
   /**
    * Register the schema and convert it into an entity schema.

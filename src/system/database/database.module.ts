@@ -33,6 +33,7 @@ export class DatabaseModule implements IModule {
     const schemaService = await app.context.get<SchemaService>(
       'classes.SchemaService',
     );
+    schemaService.initialzie();
     const offlineSchemas = schemaService.getSystemSchemas().map(r => r.entity);
 
     // Phase 1, create the default connection, with offline schemas
@@ -71,7 +72,7 @@ export class DatabaseModule implements IModule {
 
   protected setSystemDatabaseMeta(app: IApplication) {
     const url: string = app.isEphemeral
-      ? 'sqljs'
+      ? 'sqlite'
       : config.get<string>('database.url');
 
     app.context.bind('database.system.url').to(url);

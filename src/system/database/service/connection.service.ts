@@ -1,9 +1,10 @@
 import { Connection, ConnectionManager, EntitySchema } from 'typeorm';
 import { SchemaService } from '../../../content/schema/service/schema.service';
 import { getErrorMessage } from '../../app/util/extract-error';
-import { IContext, ILogger, Inject, Logger } from '../../container';
+import { IContext, ILogger, Inject, Logger, Service } from '../../container';
 import { IConnection } from '../interface/connection.interface';
 
+@Service()
 export class ConnectionService {
   constructor(
     @Inject.context()
@@ -45,7 +46,7 @@ export class ConnectionService {
 
       return con;*/
 
-      if (connection.type === 'sqljs') {
+      if (connection.type === 'sqlite') {
         return this.connectionManager.get(connection.name);
       }
       this.logger.info('Closing the [%s] connection', connection.name);
@@ -70,8 +71,8 @@ export class ConnectionService {
       case 'mysql':
         link = this.createMySQLConnection(connection, schemas);
         break;
-      case 'sqljs':
-        link = this.createSqlJSConenction(connection, schemas);
+      case 'sqlite':
+        link = this.createSQLiteConnection(connection, schemas);
         break;
       default:
         this.logger.error(
@@ -100,13 +101,15 @@ export class ConnectionService {
     return link;
   }
 
-  protected createSqlJSConenction(
+  protected createSQLiteConnection(
     connection: Omit<IConnection, 'id'>,
     schemas: EntitySchema[],
   ): Connection {
     return this.connectionManager.create({
       name: connection.name,
-      type: 'sqljs',
+      database: ':memory:',
+      type: 'sqlite',
+      logging: 'all',
       entities: schemas,
       synchronize: true,
     });

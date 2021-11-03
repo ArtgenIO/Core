@@ -6,12 +6,13 @@ import { v4 } from 'uuid';
 import walkdir from 'walkdir';
 import { SchemaService } from '../../../content/schema/service/schema.service';
 import { ROOT_DIR } from '../../../paths';
-import { ILogger, Inject, Logger } from '../../../system/container';
+import { ILogger, Inject, Logger, Service } from '../../../system/container';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { IWorkflow } from '../interface/workflow.interface';
 import { WorkflowSession } from '../library/workflow.session';
 
 // Hook everything here, we can emit new and removed events so the http, and other triggers can be updated
+@Service()
 export class WorkflowService {
   protected isSeedFinished: Promise<boolean> | true;
   protected repository: Repository<IWorkflow>;
@@ -37,8 +38,15 @@ export class WorkflowService {
       for (const workflow of await walkdir.async(path)) {
         this.logger.info('Seeding [%s] workflow', basename(workflow));
         const seed = JSON.parse((await readFile(workflow)).toString());
+        const exists = await this.repository.count({
+          where: {
+            id: seed.id,
+          },
+        });
 
-        await this.createWorkflow(seed).catch(() => {});
+        if (!exists) {
+          await this.createWorkflow(seed);
+        }
       }
 
       ok(true);

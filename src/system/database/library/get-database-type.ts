@@ -1,8 +1,8 @@
 import { DatabaseType } from 'typeorm';
 
 export const getDatabaseTypeFromUrl = (url: string): DatabaseType => {
-  if (url === 'sqljs') {
-    return 'sqljs';
+  if (url === 'sqlite') {
+    return 'sqlite';
   }
 
   let protocol: string = new URL(url).protocol.replace(':', '').toLowerCase();

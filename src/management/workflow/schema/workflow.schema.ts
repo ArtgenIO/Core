@@ -21,7 +21,7 @@ export const WorkflowSchema: ISchema = {
       columnName: 'name',
       label: 'Name',
       type: FieldType.TEXT,
-      tags: [FieldTag.UNIQUE],
+      tags: [],
     },
     {
       reference: 'nodes',
