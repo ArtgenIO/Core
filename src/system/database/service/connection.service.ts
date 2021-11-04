@@ -54,7 +54,6 @@ export class ConnectionService {
       const con = this.connectionManager.get(connection.name);
 
       this.logger.info('Injecting the entities');
-      console.log(entities.map(e => e.options.name));
 
       // Inject the entities.
       (con.options.entities as unknown) = entities;

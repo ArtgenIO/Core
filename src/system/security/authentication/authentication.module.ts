@@ -23,6 +23,16 @@ export class AuthenticationModule implements IModule {
 
       const col = await app.context.get<SchemaService>('classes.SchemaService');
       const repository = col.getRepository('system', 'Account');
+      const check = await repository.count({
+        where: {
+          email: 'demo@artgen.io',
+        },
+      });
+
+      if (check) {
+        return;
+      }
+
       const account = repository.create({
         email: 'demo@artgen.io',
         password: hashSync('demo', 3),

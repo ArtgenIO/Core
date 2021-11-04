@@ -40,6 +40,12 @@ export default function PageContent() {
                 () => import('../../../content/crud/component/index.component'),
               )}
             />
+            <Route
+              path="/backoffice/content/page"
+              component={lazy(
+                () => import('../../../content/page/component/index.component'),
+              )}
+            />
 
             {/* Hygen insert routes above */}
             <Route path="*" component={Route404} />

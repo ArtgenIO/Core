@@ -5,7 +5,7 @@
     "removeComments": false,
     "incremental": false,
     "noEmitOnError": true,
-    "declaration": false,
+    "declaration": false
   },
   "include": ["./src"]
 }

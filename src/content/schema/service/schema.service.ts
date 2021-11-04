@@ -10,6 +10,7 @@ import {
 } from '../../../system/container';
 import { DatabaseSchema } from '../../../system/database/schema/database.schema';
 import { AccountSchema } from '../../../system/security/authentication/schema/account.schema';
+import { PageSchema } from '../../page/schema/page.schema';
 import { ISchema } from '../interface/schema.interface';
 import { SchemaSchema } from '../schema/schema.schema';
 import { schemaToEntity } from '../util/schema-to-entity';
@@ -41,6 +42,7 @@ export class SchemaService {
     this.register(AccountSchema, 'disk');
     this.register(SchemaSchema, 'disk');
     this.register(DatabaseSchema, 'disk');
+    this.register(PageSchema, 'disk');
     this.register(WorkflowSchema, 'disk');
   }
 

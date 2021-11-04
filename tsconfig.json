@@ -7,5 +7,5 @@
       "node_modules/@types"
     ],
   },
-  "include": ["./src", "./tests", "jest.config.js"]
+  "include": ["./src", "./tests", "jest.config.js", "typings/grapesjs.d.ts"]
 }

@@ -1,10 +1,11 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import TemplateEngine from 'nunjucks';
-import { dirname, join } from 'path';
+import { join } from 'path';
 import pov from 'point-of-view';
 import { ROOT_DIR } from '../../../paths';
-import { ILogger, Logger, Service } from '../../../system/container';
+import { ILogger, Inject, Logger, Service } from '../../../system/container';
 import { IHttpGateway } from '../../../system/server/interface/http-gateway.interface';
+import { PageService } from '../service/page.service';
 
 @Service({
   tags: 'http:gateway',
@@ -13,6 +14,8 @@ export class PageGateway implements IHttpGateway {
   constructor(
     @Logger('PageGateway')
     readonly logger: ILogger,
+    @Inject('classes.PageService')
+    readonly service: PageService,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
@@ -27,17 +30,19 @@ export class PageGateway implements IHttpGateway {
     });
     this.logger.info('Plugin [PoV] registered');
 
-    httpServer.get(
-      '/',
-      async (req: FastifyRequest, res: FastifyReply): Promise<string> => {
-        const indexPath = join(
-          ROOT_DIR,
-          'template/nightglow/storefront/index.html',
-        );
-
-        return res.sendFile('index.html', dirname(indexPath));
-      },
-    );
-    this.logger.info('Page [Home] registered at [GET][/]');
+    for (const page of await this.service.loadRoutes()) {
+      httpServer.get(
+        page.path,
+        async (req: FastifyRequest, res: FastifyReply): Promise<string> => {
+          res.header('content-type', 'text/html');
+          return this.service.getHtml(page.id);
+        },
+      );
+      this.logger.info(
+        'Page [%s] registered at [GET][%s]',
+        page.label,
+        page.path,
+      );
+    }
   }
 }
