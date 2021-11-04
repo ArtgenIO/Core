@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { breadcrumbsAtom } from '../backoffice.atoms';
 
 type Props = {
-  title: string;
+  title: string | ReactNode;
   subTitle?: string;
   actions?: ReactNode;
   footer?: ReactNode;

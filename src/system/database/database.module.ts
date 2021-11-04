@@ -43,14 +43,14 @@ export class DatabaseModule implements IModule {
     // Phase 3 reconnect to databases with the full resource list
     const schemas = await schemaService.findAll();
 
-    if (1) {
-      await this.createSystemConnection(
-        app,
-        schemas.map(schema =>
-          schemaToEntity(schema, app.context.getSync('database.system.type')),
-        ),
-      );
-    }
+    await this.createSystemConnection(
+      app,
+      schemas.map(schema =>
+        schemaToEntity(schema, app.context.getSync('database.system.type')),
+      ),
+    );
+
+    schemas.forEach(s => schemaService.register(s, 'database'));
   }
 
   async onStop(app: IApplication) {

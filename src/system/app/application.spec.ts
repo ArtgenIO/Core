@@ -25,9 +25,15 @@ describe('Application', () => {
 
     test('should be in ephemeral mode by default', () => {
       const app = new Application();
+      let defoveride = true;
+
+      // In dev mode it's often used to test persistent databases.
+      if (process.env?.ARTGEN_EPHEMERAL === '0') {
+        defoveride = false;
+      }
 
       expect(app).toHaveProperty('isEphemeral');
-      expect(app.isEphemeral).toBe(true);
+      expect(app.isEphemeral).toBe(defoveride);
     });
 
     test('should create a valid logger', () => {

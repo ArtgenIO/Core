@@ -45,14 +45,22 @@ export class SchemaService {
    * Register the schema and convert it into an entity schema.
    */
   register(schema: ISchema, source: RecordSource) {
-    this.registry.push({
-      schema,
-      entity: schemaToEntity(
+    if (
+      !this.registry.find(
+        r =>
+          r.schema.database === schema.database &&
+          r.schema.reference === schema.reference,
+      )
+    ) {
+      this.registry.push({
         schema,
-        this.ctx.getSync(`database.${schema.database}.type`),
-      ),
-      source,
-    });
+        entity: schemaToEntity(
+          schema,
+          this.ctx.getSync(`database.${schema.database}.type`),
+        ),
+        source,
+      });
+    }
   }
 
   /**
@@ -134,6 +142,18 @@ export class SchemaService {
    */
   async findAll(): Promise<ISchema[]> {
     return this.getRepository('system', 'Schema').find();
+  }
+
+  /**
+   * Get a schema by it's ID
+   */
+  async findById(id: string): Promise<ISchema> {
+    const row: ISchema = await this.getRepository(
+      'system',
+      'Schema',
+    ).findOneOrFail(id);
+
+    return row;
   }
 
   async create(schema: Omit<ISchema, 'id'>) {

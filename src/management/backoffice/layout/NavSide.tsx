@@ -50,13 +50,8 @@ const menuItems: IMenuItem[] = [
     children: [
       {
         icon: <UnorderedListOutlined />,
-        to: '/backoffice/content/collection',
-        label: 'Collections',
-      },
-      {
-        icon: <UnorderedListOutlined />,
-        to: '/backoffice/content/set',
-        label: 'Sets',
+        to: '/backoffice/content/crud',
+        label: 'CRUD Manager',
       },
       {
         icon: <BarChartOutlined />,

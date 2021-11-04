@@ -2,6 +2,8 @@ import { animated, useTransition } from '@react-spring/web';
 import { Layout } from 'antd';
 import React, { lazy, Suspense } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { animatedLoadingAtom } from '../backoffice.atoms';
 import DashboardPage from '../component/dashboard.component';
 import Route404 from '../route/404.route';
 import PageLoading from './PageLoading';
@@ -11,6 +13,7 @@ const { Content } = Layout;
 
 export default function PageContent() {
   const location = useLocation();
+  const animateLoading = useRecoilValue(animatedLoadingAtom);
 
   const transitions = useTransition(location, {
     from: { x: 500, opacity: 0 },
@@ -18,6 +21,7 @@ export default function PageContent() {
     config: {
       duration: 266,
     },
+    immediate: !animateLoading,
   });
 
   return (
@@ -45,6 +49,13 @@ export default function PageContent() {
                       import(
                         '../../../content/schema/component/index.component'
                       ),
+                  )}
+                />
+                <Route
+                  path="/backoffice/content/crud"
+                  component={lazy(
+                    () =>
+                      import('../../../content/crud/component/index.component'),
                   )}
                 />
 
