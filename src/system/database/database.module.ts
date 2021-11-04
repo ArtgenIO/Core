@@ -72,7 +72,7 @@ export class DatabaseModule implements IModule {
 
   protected setSystemDatabaseMeta(app: IApplication) {
     const url: string = app.isEphemeral
-      ? 'sqlite'
+      ? ':memory:'
       : config.get<string>('database.url');
 
     app.context.bind('database.system.url').to(url);

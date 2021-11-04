@@ -2,7 +2,7 @@ import { SaveOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useHttpClient } from '../../../backoffice/library/http-client';
+import { useHttpClientOld } from '../../../backoffice/library/http-client';
 import {
   flowInstanceAtom,
   workflowAtom,
@@ -14,7 +14,7 @@ import { serializeWorkflow } from '../../util/serialize-workflow';
 const SAVING_NOTIFICATION = 'saving-workflow';
 
 export default function DrawboardSave() {
-  const httpClient = useHttpClient();
+  const httpClient = useHttpClientOld();
   const workflow = useRecoilValue(workflowAtom);
   const flowInstance = useRecoilValue(flowInstanceAtom);
   const [isWorkflowChanged, setIsWorkflowChanged] =

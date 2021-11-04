@@ -21,13 +21,13 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../../backoffice/layout/PageHeader';
 import PageWithHeader from '../../backoffice/layout/PageWithHeader';
-import { useHttpClient } from '../../backoffice/library/http-client';
+import { useHttpClientOld } from '../../backoffice/library/http-client';
 import { IWorkflow } from '../interface/workflow.interface';
 
 export default function WorkflowListComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [workflows, setWorkflows] = useState<IWorkflow[]>([]);
-  const httpClient = useHttpClient();
+  const httpClient = useHttpClientOld();
 
   const doDeleteWorkflow = async (id: string) => {
     const workflow = workflows.find(wf => wf.id === id);

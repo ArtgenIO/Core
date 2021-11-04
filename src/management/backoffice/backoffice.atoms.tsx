@@ -31,8 +31,3 @@ export const pageDrawerAtom = atom<ReactChild>({
   key: 'pageDrawer',
   default: undefined,
 });
-
-export const animatedLoadingAtom = atom<boolean>({
-  key: 'animatedLoading',
-  default: true,
-});

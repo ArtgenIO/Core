@@ -5,12 +5,12 @@ import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import PageHeader from '../../backoffice/layout/PageHeader';
 import PageWithHeader from '../../backoffice/layout/PageWithHeader';
-import { useHttpClient } from '../../backoffice/library/http-client';
+import { useHttpClientOld } from '../../backoffice/library/http-client';
 import { IWorkflow } from '../interface/workflow.interface';
 
 export default function CreateWorkflowComponent() {
   const history = useHistory();
-  const httpClient = useHttpClient();
+  const httpClient = useHttpClientOld();
 
   const sendRequest = async (data: Omit<IWorkflow, 'id'>) => {
     const response = await httpClient.post<IWorkflow>('/api/workflow', data);

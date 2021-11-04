@@ -1,3 +1,5 @@
+import { merge } from 'lodash';
+import { executeQuery } from 'odata-v4-typeorm';
 import { ILogger, Inject, Logger, Service } from '../../../system/container';
 import { FieldTag } from '../../schema';
 import { SchemaService } from '../../schema/service/schema.service';
@@ -11,12 +13,12 @@ export class CrudService {
     readonly schema: SchemaService,
   ) {}
 
-  async create(schemaId: string, data: unknown): Promise<unknown[]> {
-    const schema = await this.schema.findById(schemaId);
-    const repository = this.schema.getRepository(
-      schema.database,
-      schema.reference,
-    );
+  async create(
+    database: string,
+    reference: string,
+    data: unknown,
+  ): Promise<unknown[]> {
+    const repository = this.schema.getRepository(database, reference);
     const row = repository.create(data);
 
     await repository.save(row);
@@ -24,39 +26,42 @@ export class CrudService {
     return row;
   }
 
-  async fetchAll(schemaId: string): Promise<unknown[]> {
-    const schema = await this.schema.findById(schemaId);
-    const repository = this.schema.getRepository(
-      schema.database,
-      schema.reference,
-    );
-    const rows = await repository.find();
+  async read(
+    database: string,
+    reference: string,
+    odata: Record<string, unknown>,
+  ): Promise<unknown[]> {
+    const repository = this.schema.getRepository(database, reference);
+    const baseOptions = {
+      $top: 10,
+      $skip: 0,
+    };
+
+    const rows = await executeQuery(repository, merge(baseOptions, odata), {});
 
     return rows;
   }
 
-  async fetchOne(schemaId: string, recordId: string): Promise<unknown> {
-    const schema = await this.schema.findById(schemaId);
-    const repository = this.schema.getRepository(
-      schema.database,
-      schema.reference,
-    );
-    const record = await repository.findOneOrFail(recordId);
-
-    return record;
-  }
-
   async update(
-    schemaId: string,
-    recordId: string,
+    database: string,
+    reference: string,
+    odata: Record<string, unknown>,
     data: object,
   ): Promise<unknown> {
-    const schema = await this.schema.findById(schemaId);
-    const repository = this.schema.getRepository(
-      schema.database,
-      schema.reference,
-    );
-    const record = await repository.findOneOrFail(recordId);
+    const schema = this.schema.findOne(database, reference).schema;
+    const repository = this.schema.getRepository(database, reference);
+    const baseOptions = {
+      $top: 1,
+      $skip: 0,
+    };
+
+    const rows = await executeQuery(repository, merge(odata, baseOptions), {});
+
+    if (!rows.length) {
+      throw new Error('Not a found');
+    }
+
+    const record = rows[0];
 
     for (const key in data) {
       if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -84,13 +89,24 @@ export class CrudService {
     return record;
   }
 
-  async delete(schemaId: string, recordId: string): Promise<unknown> {
-    const schema = await this.schema.findById(schemaId);
-    const repository = this.schema.getRepository(
-      schema.database,
-      schema.reference,
-    );
-    const record = await repository.findOneOrFail(recordId);
+  async delete(
+    database: string,
+    reference: string,
+    odata: Record<string, unknown>,
+  ): Promise<unknown> {
+    const repository = this.schema.getRepository(database, reference);
+    const baseOptions = {
+      $top: 1,
+      $skip: 0,
+    };
+
+    const rows = await executeQuery(repository, merge(odata, baseOptions), {});
+
+    if (!rows.length) {
+      throw new Error('Not a found');
+    }
+
+    const record = rows[0];
 
     await repository.remove(record);
 

@@ -3,7 +3,7 @@ import { Route, Switch, useLocation } from 'react-router';
 import { useSetRecoilState } from 'recoil';
 import { ISchema } from '..';
 import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms';
-import { useHttpClient } from '../../../management/backoffice/library/http-client';
+import { useHttpClientOld } from '../../../management/backoffice/library/http-client';
 import { schemasAtom } from '../schema.atoms';
 import CreateSchemaComponent from './create.component';
 import SchemaEditorComponent from './edit.component';
@@ -13,7 +13,7 @@ export default function SchemaIndexComponent() {
   const location = useLocation();
   const setSchemas = useSetRecoilState(schemasAtom);
   const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
-  const httpClient = useHttpClient();
+  const httpClient = useHttpClientOld();
 
   useEffect(() => {
     httpClient.get<ISchema[]>('/api/$system/content/schema').then(response => {

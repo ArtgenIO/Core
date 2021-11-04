@@ -1,82 +1,92 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { ILogger, Inject, Logger, Service } from '../../../system/container';
+import { Inject, Service } from '../../../system/container';
 import { IHttpGateway } from '../../../system/server/interface/http-gateway.interface';
 import { CrudService } from '../service/crud.service';
+
+type SchemaParams = {
+  database: string;
+  reference: string;
+};
+
+type RecordParams = SchemaParams & { record: string };
 
 @Service({
   tags: 'http:gateway',
 })
 export class CrudGateway implements IHttpGateway {
   constructor(
-    @Logger()
-    readonly logger: ILogger,
     @Inject('classes.CrudService')
     readonly service: CrudService,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
+    const schemaURL = '/api/content/:database/:reference';
+    const recordURL = `${schemaURL}/:record`;
+
     // Create action
     httpServer.post(
-      '/api/$system/content/crud/:id',
+      schemaURL,
       async (
-        req: FastifyRequest<{ Params: { id: string } }>,
+        req: FastifyRequest<{ Params: SchemaParams }>,
         res: FastifyReply,
       ): Promise<unknown[]> => {
-        return this.service.create(req.params.id, req.body);
-      },
-    );
-
-    // Read
-    httpServer.get(
-      '/api/$system/content/crud/:id/read/:record',
-      async (
-        req: FastifyRequest<{ Params: { id: string; record: string } }>,
-        res: FastifyReply,
-      ): Promise<unknown> => {
-        return this.service.fetchOne(req.params.id, req.params.record);
+        return this.service.create(
+          req.params.database,
+          req.params.reference,
+          req.body,
+        );
       },
     );
 
     // Update
     httpServer.patch(
-      '/api/$system/content/crud/:id/update/:record',
+      schemaURL,
       async (
         req: FastifyRequest<{
-          Params: { id: string; record: string };
+          Params: RecordParams;
           Body: object;
         }>,
         res: FastifyReply,
       ): Promise<unknown> => {
-        return this.service.update(req.params.id, req.params.record, req.body);
+        return this.service.update(
+          req.params.database,
+          req.params.reference,
+          req.query as Record<string, any>,
+          req.body,
+        );
       },
     );
 
     // Delete
     httpServer.delete(
-      '/api/$system/content/crud/:id/delete/:record',
+      schemaURL,
       async (
         req: FastifyRequest<{
-          Params: { id: string; record: string };
+          Params: RecordParams;
         }>,
         res: FastifyReply,
       ): Promise<unknown> => {
-        return this.service.delete(req.params.id, req.params.record);
+        return this.service.delete(
+          req.params.database,
+          req.params.reference,
+          req.query as Record<string, any>,
+        );
       },
     );
 
-    // List action
+    // Read action
     httpServer.get(
-      '/api/$system/content/crud/:id',
+      schemaURL,
       async (
-        req: FastifyRequest<{ Params: { id: string } }>,
+        req: FastifyRequest<{ Params: SchemaParams }>,
         res: FastifyReply,
       ): Promise<unknown[]> => {
-        return this.service.fetchAll(req.params.id);
+        return this.service.read(
+          req.params.database,
+          req.params.reference,
+          req.query as Record<string, any>,
+        );
       },
-    );
-
-    this.logger.info(
-      'CRUD [Index] registered at [GET][/api/$system/content/crud]',
     );
   }
 }

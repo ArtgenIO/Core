@@ -7,7 +7,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms';
 import PageHeader from '../../../management/backoffice/layout/PageHeader';
 import PageWithHeader from '../../../management/backoffice/layout/PageWithHeader';
-import { useHttpClient } from '../../../management/backoffice/library/http-client';
+import { useHttpClientOld } from '../../../management/backoffice/library/http-client';
 import { ISchema } from '../interface';
 import { FieldType } from '../interface/field-type.enum';
 import { schemaAtom, schemasAtom } from '../schema.atoms';
@@ -18,7 +18,7 @@ export default function SchemaEditorComponent() {
   const schemas = useRecoilValue(schemasAtom);
   const [record, setRecord] = useRecoilState<ISchema>(schemaAtom);
   const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
-  const httpClient = useHttpClient();
+  const httpClient = useHttpClientOld();
 
   const [ref, setRef] = useState(record ? record.reference : null);
   const [label, setLabel] = useState(record ? record.label : null);

@@ -19,7 +19,7 @@
 .brand-name {
   @apply text-center text-2xl flex-grow mr-8;
 
-  line-height: 34px;
+  line-height: 28px;
   text-overflow: ellipsis;
   font-weight: 200;
 }

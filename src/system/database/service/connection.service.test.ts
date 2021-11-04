@@ -23,8 +23,8 @@ describe('ConnectionService', () => {
   });
 
   describe('Creating Connections', () => {
-    test('should create a mongo connection', async () => {
-      const url = 'mongodb://localhost:1234';
+    test('should create an sqlite connection', async () => {
+      const url = ':memory:';
 
       const linkMock = jest.fn();
       const managerMock = {
@@ -38,7 +38,7 @@ describe('ConnectionService', () => {
 
       const connection: Omit<IConnection, 'id'> = {
         name: 'test',
-        type: 'mongodb',
+        type: 'sqlite',
         url: url,
       };
       const service = await app.context.get<ConnectionService>(ServiceKey);

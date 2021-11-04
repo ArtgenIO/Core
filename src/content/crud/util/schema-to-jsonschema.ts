@@ -13,7 +13,7 @@ export const schemaToJsonSchema = (
   };
 
   for (const field of schema.fields) {
-    if (action === CrudAction.CREATE) {
+    if (action === CrudAction.CREATE || action === CrudAction.UPDATE) {
       // Primary UUID is auto generated
       if (
         field.tags.includes(FieldTag.PRIMARY) &&

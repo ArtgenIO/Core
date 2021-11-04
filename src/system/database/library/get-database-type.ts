@@ -1,7 +1,7 @@
 import { DatabaseType } from 'typeorm';
 
 export const getDatabaseTypeFromUrl = (url: string): DatabaseType => {
-  if (url === 'sqlite') {
+  if (url === ':memory:') {
     return 'sqlite';
   }
 
@@ -9,10 +9,6 @@ export const getDatabaseTypeFromUrl = (url: string): DatabaseType => {
 
   if (protocol === 'postgresql') {
     protocol = 'postgres';
-  }
-
-  if (protocol === 'mongodb+srv') {
-    protocol = 'mongodb';
   }
 
   if (protocol === 'mariadb') {

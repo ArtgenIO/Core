@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { ISchema } from '..';
 import PageHeader from '../../../management/backoffice/layout/PageHeader';
 import PageWithHeader from '../../../management/backoffice/layout/PageWithHeader';
-import { useHttpClient } from '../../../management/backoffice/library/http-client';
+import { useHttpClientOld } from '../../../management/backoffice/library/http-client';
 import { FieldTag } from '../interface/field-tags.enum';
 import { FieldType } from '../interface/field-type.enum';
 import { schemasAtom } from '../schema.atoms';
@@ -20,7 +20,7 @@ type FormValues = {
 
 export default function CreateSchemaComponent() {
   const history = useHistory();
-  const httpClient = useHttpClient();
+  const httpClient = useHttpClientOld();
   const setSchemas = useSetRecoilState(schemasAtom);
 
   const doCreateSchema = async (formValues: FormValues) => {

@@ -14,7 +14,7 @@ import { useParams } from 'react-router';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { pageDrawerAtom } from '../../backoffice/backoffice.atoms';
-import { useHttpClient } from '../../backoffice/library/http-client';
+import { useHttpClientOld } from '../../backoffice/library/http-client';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import {
   catalogCollapsedAtom,
@@ -44,7 +44,7 @@ export default function DrawboardComponent() {
   const resetPageDrawerState = useResetRecoilState(pageDrawerAtom);
   // Router
   const workflowId = useParams<{ id: string }>().id;
-  const httpClient = useHttpClient();
+  const httpClient = useHttpClientOld();
 
   // Local state
   const flowWrapper = useRef(null);

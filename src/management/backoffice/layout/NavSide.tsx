@@ -51,7 +51,7 @@ const menuItems: IMenuItem[] = [
       {
         icon: <UnorderedListOutlined />,
         to: '/backoffice/content/crud',
-        label: 'CRUD Manager',
+        label: 'Manager',
       },
       {
         icon: <BarChartOutlined />,
@@ -61,7 +61,7 @@ const menuItems: IMenuItem[] = [
       {
         icon: <TableOutlined />,
         to: '/backoffice/content/schema',
-        label: 'Schema Manager',
+        label: 'Schema',
       },
     ],
   },
@@ -170,7 +170,7 @@ const NavSide = () => {
           </Link>
         </div>
         <div className={'brand-name ' + (menuCollapse ? 'hidden' : 'block')}>
-          Artgen
+          artgen
         </div>
       </div>
       <Menu

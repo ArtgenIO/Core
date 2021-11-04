@@ -29,6 +29,10 @@ export const schemaToEntity = (
         type = 'simple-json';
       }
 
+      if (type === 'timestamp') {
+        type = 'datetime';
+      }
+
       defaultValue = '';
     }
 

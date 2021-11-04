@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { jwtAtom } from '../backoffice.atoms';
 
-export const useHttpClient = () => {
+export const useHttpClientOld = () => {
   const jwt = useRecoilValue(jwtAtom);
   const resetJwt = useResetRecoilState(jwtAtom);
 

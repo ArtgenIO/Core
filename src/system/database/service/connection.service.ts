@@ -1,4 +1,6 @@
+import { EventEmitter2 } from 'eventemitter2';
 import { Connection, ConnectionManager, EntitySchema } from 'typeorm';
+import { ISchema } from '../../../content/schema';
 import { SchemaService } from '../../../content/schema/service/schema.service';
 import { getErrorMessage } from '../../app/util/extract-error';
 import { IContext, ILogger, Inject, Logger, Service } from '../../container';
@@ -6,6 +8,8 @@ import { IConnection } from '../interface/connection.interface';
 
 @Service()
 export class ConnectionService {
+  readonly connections = new Map<string, Omit<IConnection, 'id'>>();
+
   constructor(
     @Inject.context()
     readonly ctx: IContext,
@@ -15,7 +19,28 @@ export class ConnectionService {
     readonly schema: SchemaService,
     @Logger()
     protected logger: ILogger,
-  ) {}
+    @Inject('providers.EventHandlerProvider')
+    readonly event: EventEmitter2,
+  ) {
+    this.event.on('content.schema.*', async (schema: ISchema) => {
+      this.logger.info(
+        'Content schema changed! Subject schema [%s]',
+        schema.reference,
+      );
+
+      const entities = this.schema
+        .findByDatabase(schema.database)
+        .map(r => r.entity);
+
+      this.logger.info('Gathered the entities');
+      const connection = this.connections.get(schema.database);
+      this.logger.info('Got the connection [%s]', connection.name);
+
+      this.logger.info('Reconnecting');
+      await this.connect(connection, entities);
+      this.logger.info('Connection is updated');
+    });
+  }
 
   /**
    * Create a connection to the named database.
@@ -23,34 +48,23 @@ export class ConnectionService {
    */
   async connect(
     connection: Omit<IConnection, 'id'>,
-    schemas: EntitySchema[],
+    entities: EntitySchema[],
   ): Promise<Connection | false> {
     if (this.connectionManager.has(connection.name)) {
-      /*const con = this.connectionManager.get(connection.name);
+      const con = this.connectionManager.get(connection.name);
+
+      this.logger.info('Injecting the entities');
+      console.log(entities.map(e => e.options.name));
 
       // Inject the entities.
-      (con.options.entities as unknown) = schemas;
+      (con.options.entities as unknown) = entities;
+      con['buildMetadatas']();
+      // END OF HACK :D
 
-      const changeQueries = await con.driver.createSchemaBuilder().log();
-      const isInSync = changeQueries.upQueries.length === 0;
+      await con.synchronize(false);
+      this.logger.info('Everthing in sync');
 
-      if (!isInSync) {
-        this.logger.warn(
-          'Database [%s] is out of sync, updating now',
-          connection.name,
-        );
-        await con.synchronize(false);
-      } else {
-        this.logger.info('Everthing in sync');
-      }
-
-      return con;*/
-
-      if (connection.type === 'sqlite') {
-        return this.connectionManager.get(connection.name);
-      }
-      this.logger.info('Closing the [%s] connection', connection.name);
-      await this.connectionManager.get(connection.name).close();
+      return con;
     }
 
     let link: Connection;
@@ -62,17 +76,14 @@ export class ConnectionService {
     );
 
     switch (connection.type) {
-      case 'mongodb':
-        link = this.createMongoConnection(connection, schemas);
-        break;
       case 'postgres':
-        link = this.createPostgresConnection(connection, schemas);
+        link = this.createPostgresConnection(connection, entities);
         break;
       case 'mysql':
-        link = this.createMySQLConnection(connection, schemas);
+        link = this.createMySQLConnection(connection, entities);
         break;
       case 'sqlite':
-        link = this.createSQLiteConnection(connection, schemas);
+        link = this.createSQLiteConnection(connection, entities);
         break;
       default:
         this.logger.error(
@@ -96,6 +107,10 @@ export class ConnectionService {
       return false;
     }
 
+    if (!this.connections.has(connection.name)) {
+      this.connections.set(connection.name, connection);
+    }
+
     this.logger.info('Database [%s] connected', connection.name);
 
     return link;
@@ -103,56 +118,42 @@ export class ConnectionService {
 
   protected createSQLiteConnection(
     connection: Omit<IConnection, 'id'>,
-    schemas: EntitySchema[],
+    entities: EntitySchema[],
   ): Connection {
     return this.connectionManager.create({
       name: connection.name,
-      database: ':memory:',
+      database: connection.url,
       type: 'sqlite',
       logging: 'all',
-      entities: schemas,
+      entities,
       synchronize: true,
-    });
-  }
-
-  protected createMongoConnection(
-    connection: Omit<IConnection, 'id'>,
-    schemas: EntitySchema[],
-  ): Connection {
-    return this.connectionManager.create({
-      name: connection.name,
-      url: connection.url,
-      type: 'mongodb',
-      loggerLevel: 'info',
-      entities: schemas,
-      synchronize: true,
-      useUnifiedTopology: true,
     });
   }
 
   protected createPostgresConnection(
     connection: Omit<IConnection, 'id'>,
-    schemas: EntitySchema[],
+    entities: EntitySchema[],
   ): Connection {
     return this.connectionManager.create({
       name: connection.name,
       url: connection.url,
       type: 'postgres',
-      entities: schemas,
+      logging: ['error', 'warn', 'migration'],
+      entities,
       synchronize: true,
     });
   }
 
   protected createMySQLConnection(
     connection: Omit<IConnection, 'id'>,
-    schemas: EntitySchema[],
+    entities: EntitySchema[],
   ): Connection {
     return this.connectionManager.create({
       name: connection.name,
       url: connection.url,
       type: 'mysql',
       timezone: 'UTC',
-      entities: schemas,
+      entities,
       synchronize: true,
     });
   }

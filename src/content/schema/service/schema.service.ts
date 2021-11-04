@@ -1,3 +1,4 @@
+import { EventEmitter2 } from 'eventemitter2';
 import { ConnectionManager, EntitySchema, Repository } from 'typeorm';
 import { WorkflowSchema } from '../../../management/workflow/schema/workflow.schema';
 import {
@@ -23,7 +24,7 @@ type Record = {
 
 @Service()
 export class SchemaService {
-  protected registry: Record[] = [];
+  registry: Record[] = [];
 
   constructor(
     @Logger()
@@ -32,6 +33,8 @@ export class SchemaService {
     readonly ctx: IContext,
     @Inject('providers.ConnectionManagerProvider')
     readonly connectionManager: ConnectionManager,
+    @Inject('providers.EventHandlerProvider')
+    readonly event: EventEmitter2,
   ) {}
 
   initialzie() {
@@ -45,28 +48,34 @@ export class SchemaService {
    * Register the schema and convert it into an entity schema.
    */
   register(schema: ISchema, source: RecordSource) {
-    if (
-      !this.registry.find(
-        r =>
-          r.schema.database === schema.database &&
-          r.schema.reference === schema.reference,
-      )
-    ) {
-      this.registry.push({
+    const record: Record = {
+      schema,
+      entity: schemaToEntity(
         schema,
-        entity: schemaToEntity(
-          schema,
-          this.ctx.getSync(`database.${schema.database}.type`),
+        this.ctx.getSync(`database.${schema.database}.type`),
+      ),
+      source,
+    };
+
+    this.registry = this.registry.filter(
+      r =>
+        !(
+          r.schema.database === schema.database &&
+          r.schema.reference === schema.reference
         ),
-        source,
-      });
-    }
+    );
+
+    this.registry.push(record);
+  }
+
+  findByDatabase(database: string) {
+    return this.registry.filter(r => r.schema.database === database);
   }
 
   /**
    * Get the registry record for a schema
    */
-  getRecord(databaseName: string, schemaRef: string) {
+  findOne(databaseName: string, schemaRef: string): Record {
     return this.registry.find(
       record =>
         record.schema.database === databaseName &&
@@ -122,7 +131,7 @@ export class SchemaService {
       throw new Error(`Database [${databaseName}] is not registered`);
     }
 
-    const record = this.getRecord(databaseName, schemaRef);
+    const record = this.findOne(databaseName, schemaRef);
 
     if (!record) {
       throw new Error(
@@ -160,7 +169,12 @@ export class SchemaService {
     const repository = this.getRepository('system', 'Schema');
     const entity: ISchema = repository.create(schema);
 
-    return await repository.save(entity);
+    const result = await repository.save(entity);
+
+    this.register(schema, 'database');
+    this.event.emit('content.schema.created', entity);
+
+    return result;
   }
 
   async update(schema: ISchema) {
@@ -174,6 +188,11 @@ export class SchemaService {
     entity.uniques = schema.uniques;
     entity.tags = schema.tags;
 
-    return await repository.save(entity);
+    const result = await repository.save(entity);
+
+    this.register(schema, 'database');
+    this.event.emit('content.schema.updated', entity);
+
+    return result;
   }
 }
