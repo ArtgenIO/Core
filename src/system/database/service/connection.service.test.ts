@@ -2,6 +2,7 @@ import { createLogger } from 'winston';
 import { SchemaModule } from '../../../content/schema/schema.module';
 import { Application } from '../../app/application';
 import { IApplication } from '../../app/application.interface';
+import { EventModule } from '../../event/event.module';
 import { DatabaseModule } from '../database.module';
 import { IConnection } from '../interface/connection.interface';
 import { ConnectionService } from './connection.service';
@@ -15,7 +16,7 @@ describe('ConnectionService', () => {
   beforeEach(() => {
     Application.prototype['createLogger'] = createLogger;
     app = new Application();
-    app.bootstrap([DatabaseModule, SchemaModule]);
+    app.bootstrap([DatabaseModule, SchemaModule, EventModule]);
   });
 
   test('should be able to resolve the connection service', async () => {
