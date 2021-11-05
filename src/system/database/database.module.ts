@@ -31,7 +31,7 @@ export class DatabaseModule implements IModule {
     this.setSystemDatabaseMeta(app);
 
     const schemaService = await app.context.get<SchemaService>(
-      'classes.SchemaService',
+      SchemaService.name,
     );
     schemaService.initialzie();
     const offlineSchemas = schemaService.getSystemSchemas().map(r => r.entity);
@@ -55,7 +55,7 @@ export class DatabaseModule implements IModule {
 
   async onStop(app: IApplication) {
     const connectionManager = await app.context.get<ConnectionManager>(
-      'providers.ConnectionManagerProvider',
+      ConnectionManager.name,
     );
 
     // Close open connections
@@ -82,7 +82,7 @@ export class DatabaseModule implements IModule {
     schemas: EntitySchema[],
   ) {
     const connectionService = await app.context.get<ConnectionService>(
-      'classes.ConnectionService',
+      ConnectionService.name,
     );
 
     const connection: Omit<IConnection, 'id'> = {

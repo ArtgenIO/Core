@@ -11,7 +11,7 @@ import { PageService } from './service/page.service';
 })
 export class PageModule implements IModule {
   async onStart(app: IApplication) {
-    const service = await app.context.get<PageService>('classes.PageService');
+    const service = await app.context.get<PageService>(PageService.name);
 
     await service.seed();
   }

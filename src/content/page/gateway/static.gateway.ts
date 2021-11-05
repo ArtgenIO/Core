@@ -10,7 +10,7 @@ import { IHttpGateway } from '../../../system/server/interface/http-gateway.inte
 })
 export class StaticGateway implements IHttpGateway {
   constructor(
-    @Logger('StaticGateway')
+    @Logger()
     readonly logger: ILogger,
   ) {}
 

@@ -59,9 +59,9 @@ type Config = {
 })
 export class DatabaseInsertLambda implements ILambda {
   constructor(
-    @Inject('providers.ConnectionManagerProvider')
+    @Inject(ConnectionManager)
     readonly connectionManager: ConnectionManager,
-    @Inject('classes.SchemaService')
+    @Inject(SchemaService)
     readonly schema: SchemaService,
   ) {}
 

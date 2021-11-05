@@ -15,7 +15,7 @@ type RecordParams = SchemaParams & { record: string };
 })
 export class CrudGateway implements IHttpGateway {
   constructor(
-    @Inject('classes.CrudService')
+    @Inject(CrudService)
     readonly service: CrudService,
   ) {}
 

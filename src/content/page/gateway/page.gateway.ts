@@ -12,9 +12,9 @@ import { PageService } from '../service/page.service';
 })
 export class PageGateway implements IHttpGateway {
   constructor(
-    @Logger('PageGateway')
+    @Logger()
     readonly logger: ILogger,
-    @Inject('classes.PageService')
+    @Inject(PageService)
     readonly service: PageService,
   ) {}
 

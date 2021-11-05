@@ -11,7 +11,7 @@ import { IHttpGateway } from '../../../system/server/interface/http-gateway.inte
 })
 export class BackOfficeGateway implements IHttpGateway {
   constructor(
-    @Logger('BackOfficeGateway')
+    @Logger()
     readonly logger: ILogger,
   ) {}
 

@@ -163,6 +163,33 @@ export class Application implements IApplication {
               const binding = createBindingFromClass(provider);
               this.context.add(binding);
 
+              if (binding.tagNames.includes('provides')) {
+                // @Service(MyProvider)
+                const objectBinding = new Binding(
+                  binding.tagMap.provides,
+                ).toAlias(binding.key);
+
+                if (this.context.contains(objectBinding.key)) {
+                  throw new Error(
+                    `Binding [${objectBinding.key}] is already bound to the context`,
+                  );
+                }
+                this.context.add(objectBinding);
+              } else {
+                // Simplified object binding.
+                // This allows us to use the @Inject(MyService) syntax
+                const objectBinding = new Binding(provider.name).toAlias(
+                  binding.key,
+                );
+
+                if (this.context.contains(objectBinding.key)) {
+                  throw new Error(
+                    `Binding [${objectBinding.key}] is already bound to the context`,
+                  );
+                }
+                this.context.add(objectBinding);
+              }
+
               this.logger.debug(
                 'Bound [%s] with tags [%s]',
                 binding.key,

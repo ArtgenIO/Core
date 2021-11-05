@@ -1,4 +1,5 @@
-import { IContext, Inject, Service } from '../../../system/container';
+import { inject } from '@loopback/context';
+import { IContext, Service } from '../../../system/container';
 import { WorkflowSession } from '../../workflow/library/workflow.session';
 import { Lambda } from '../decorator/lambda.decorator';
 import { InputHandleDTO } from '../dto/input-handle.dto';
@@ -29,7 +30,7 @@ type IConfig = {
 })
 export class HttpResponseLambda implements ILambda {
   constructor(
-    @Inject.context()
+    @inject.context()
     readonly ctx: IContext,
   ) {}
 

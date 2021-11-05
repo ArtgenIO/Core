@@ -29,7 +29,7 @@ export class ServerModule implements IModule {
   }
 
   protected async startRpcServer(ctx: IContext): Promise<void> {
-    const server = await ctx.get<ServiceBroker>('providers.RpcServerProvider');
+    const server = await ctx.get<ServiceBroker>(ServiceBroker.name);
 
     await Promise.all(
       ctx
@@ -70,9 +70,7 @@ export class ServerModule implements IModule {
   }
 
   async onStop(app: IApplication) {
-    const rpc = await app.context.get<ServiceBroker>(
-      'providers.RpcServerProvider',
-    );
+    const rpc = await app.context.get<ServiceBroker>(ServiceBroker.name);
     const http = await app.context.get<FastifyInstance>(
       'providers.HttpServerProvider',
     );

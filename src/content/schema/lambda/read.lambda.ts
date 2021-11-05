@@ -21,7 +21,7 @@ import { SchemaService } from '../service/schema.service';
 })
 export class ReadSchemaLambda implements ILambda {
   constructor(
-    @Inject('classes.SchemaService')
+    @Inject(SchemaService)
     readonly svc: SchemaService,
   ) {}
 

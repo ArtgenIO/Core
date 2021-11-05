@@ -11,9 +11,9 @@ export class WorkflowRpcGateway implements IRpcGateway {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject('classes.WorkflowService')
+    @Inject(WorkflowService)
     readonly workflow: WorkflowService,
-    @Inject('classes.LambdaService')
+    @Inject(LambdaService)
     readonly node: LambdaService,
   ) {}
 

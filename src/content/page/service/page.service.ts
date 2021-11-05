@@ -8,7 +8,7 @@ import { IPage } from '../interface/page.interface';
 @Service()
 export class PageService {
   constructor(
-    @Inject('classes.SchemaService')
+    @Inject(SchemaService)
     readonly schema: SchemaService,
   ) {}
 

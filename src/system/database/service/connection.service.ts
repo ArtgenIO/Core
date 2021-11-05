@@ -1,3 +1,4 @@
+import { inject } from '@loopback/context';
 import { EventEmitter2 } from 'eventemitter2';
 import { Connection, ConnectionManager, EntitySchema } from 'typeorm';
 import { ISchema } from '../../../content/schema';
@@ -11,15 +12,15 @@ export class ConnectionService {
   readonly connections = new Map<string, Omit<IConnection, 'id'>>();
 
   constructor(
-    @Inject.context()
+    @inject.context()
     readonly ctx: IContext,
-    @Inject('providers.ConnectionManagerProvider')
+    @Inject(ConnectionManager)
     readonly connectionManager: ConnectionManager,
-    @Inject('classes.SchemaService')
+    @Inject(SchemaService)
     readonly schema: SchemaService,
     @Logger()
     protected logger: ILogger,
-    @Inject('providers.EventHandlerProvider')
+    @Inject(EventEmitter2)
     readonly event: EventEmitter2,
   ) {
     this.event.on('content.schema.*', async (schema: ISchema) => {

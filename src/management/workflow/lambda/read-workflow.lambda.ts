@@ -1,4 +1,5 @@
-import { IContext, Inject, Service } from '../../../system/container';
+import { inject } from '@loopback/context';
+import { IContext, Service } from '../../../system/container';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
@@ -21,14 +22,14 @@ import { WorkflowService } from '../service/workflow.service';
 })
 export class ReadWorkflowLambda implements ILambda {
   constructor(
-    @Inject.context()
+    @inject.context()
     readonly ctx: IContext,
   ) {}
 
   async invoke() {
     return {
       result: await (
-        await this.ctx.get<WorkflowService>('classes.WorkflowService')
+        await this.ctx.get<WorkflowService>(WorkflowService.name)
       ).findAll(),
     };
   }

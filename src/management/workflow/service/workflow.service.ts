@@ -20,11 +20,11 @@ export class WorkflowService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject('providers.RpcServerProvider')
+    @Inject(ServiceBroker)
     readonly rpcServer: ServiceBroker,
-    @Inject('classes.LambdaService')
+    @Inject(LambdaService)
     readonly lambda: LambdaService,
-    @Inject('classes.SchemaService')
+    @Inject(SchemaService)
     readonly schemas: SchemaService,
   ) {
     this.repository = this.schemas.getRepository('system', 'Workflow');

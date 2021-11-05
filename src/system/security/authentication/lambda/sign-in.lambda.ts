@@ -54,7 +54,7 @@ type Input = {
 })
 export class SignInLambda implements ILambda {
   constructor(
-    @Inject('classes.SchemaService')
+    @Inject(SchemaService)
     readonly schemas: SchemaService,
   ) {}
 

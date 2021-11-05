@@ -10,7 +10,7 @@ import { ILogger, Logger, Service } from '../container';
 @Service()
 export class HttpServerProvider implements Provider<FastifyInstance> {
   constructor(
-    @Logger('HttpServerProvider')
+    @Logger()
     protected readonly logger: ILogger,
   ) {}
 

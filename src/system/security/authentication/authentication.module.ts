@@ -20,7 +20,7 @@ export class AuthenticationModule implements IModule {
     // Seed the demo account
     this.logger.debug('Seeding [demo] account');
 
-    const col = await app.context.get<SchemaService>('classes.SchemaService');
+    const col = await app.context.get<SchemaService>(SchemaService.name);
     const repository = col.getRepository('system', 'Account');
     const check = await repository.count({
       where: {

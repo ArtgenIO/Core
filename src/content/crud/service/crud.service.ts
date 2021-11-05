@@ -9,7 +9,7 @@ export class CrudService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject('classes.SchemaService')
+    @Inject(SchemaService)
     readonly schema: SchemaService,
   ) {}
 

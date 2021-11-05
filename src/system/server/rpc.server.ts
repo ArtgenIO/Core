@@ -3,7 +3,7 @@ import { ServiceBroker } from 'moleculer';
 import { IApplication } from '../app/application.interface';
 import { Inject, Service } from '../container';
 
-@Service()
+@Service(ServiceBroker)
 export class RpcServerProvider implements Provider<ServiceBroker> {
   constructor(
     @Inject('Application')

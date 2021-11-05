@@ -1,3 +1,4 @@
+import { inject } from '@loopback/context';
 import { EventEmitter2 } from 'eventemitter2';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -29,11 +30,11 @@ export class SchemaService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject.context()
+    @inject.context()
     readonly ctx: IContext,
-    @Inject('providers.ConnectionManagerProvider')
+    @Inject(ConnectionManager)
     readonly connectionManager: ConnectionManager,
-    @Inject('providers.EventHandlerProvider')
+    @Inject(EventEmitter2)
     readonly event: EventEmitter2,
   ) {}
 
