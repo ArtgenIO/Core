@@ -3,17 +3,6 @@ import { IContext, ILogger, IModule } from '../container';
 
 export interface IApplication {
   /**
-   * Indicats that the application is purely in ephemeral mode so every module
-   * should use non persistent resources.
-   *
-   * Mainly important for development and demo modes, where the user just wants to see the application
-   * and no need to setup database, storage, mailing etc..
-   *
-   * Can be initiated with the ARTGEN_EPHEMERAL=1 environment variable, also it is the default in development mode.
-   */
-  readonly isEphemeral: boolean;
-
-  /**
    * Environment configured unique identifier,
    * used when the application is running in scaled multi node mode.
    */

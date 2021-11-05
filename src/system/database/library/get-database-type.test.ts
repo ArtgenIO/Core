@@ -16,7 +16,7 @@ describe('ConnectionService', () => {
       );
     });
 
-    test('should be able to match the ephemeral database', async () => {
+    test('should be able to match the ephemeral memory database', async () => {
       expect(getDatabaseTypeFromUrl(':memory:')).toBe('sqlite');
     });
 

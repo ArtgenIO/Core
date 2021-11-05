@@ -1,9 +1,8 @@
 {
   "id": "standalone",
   "database": {
-    "url": "postgres://localhost:5432/artgen"
+    "url": ":memory:"
   },
-  "ephemeral": "1",
   "http": {
     "port": "7200"
   }

@@ -1,5 +1,5 @@
 import {
-  BarChartOutlined,
+  CloudDownloadOutlined,
   DatabaseOutlined,
   DeleteOutlined,
   EditOutlined,
@@ -8,8 +8,19 @@ import {
   QuestionCircleOutlined,
   TableOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, List, Popconfirm, Skeleton, Tabs, Tag } from 'antd';
-import React, { useEffect } from 'react';
+import {
+  Avatar,
+  Button,
+  Input,
+  List,
+  Modal,
+  Popconfirm,
+  Skeleton,
+  Tabs,
+  Tag,
+  Tooltip,
+} from 'antd';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { pageDrawerAtom } from '../../../management/backoffice/backoffice.atoms';
@@ -22,6 +33,8 @@ export default function SchemaListComponent() {
   const schemas = useRecoilValue(schemasAtom);
   const setPageDrawer = useSetRecoilState(pageDrawerAtom);
   const resetPageDrawer = useResetRecoilState(pageDrawerAtom);
+
+  const [showSerialized, setShowSerialized] = useState<string>('');
 
   useEffect(() => {
     return () => {
@@ -80,12 +93,21 @@ export default function SchemaListComponent() {
               {r.tags.map(t => (
                 <Tag key={r.id + t}>{t}</Tag>
               ))}
-              <Button
-                icon={<BarChartOutlined />}
-                className="rounded-md mr-1 "
-              ></Button>
-              <Link to={`/backoffice/content/schema/${r.id}/view`}>
+              <Tooltip title="Serialize" placement="left">
                 <Button
+                  onClick={e => {
+                    e.stopPropagation();
+                    setShowSerialized(JSON.stringify(r, null, 2));
+                  }}
+                  icon={<CloudDownloadOutlined />}
+                  className="rounded-md mr-1 "
+                ></Button>
+              </Tooltip>
+              <Link
+                to={`/backoffice/content/crud/${r.database}/${r.reference}`}
+              >
+                <Button
+                  onClick={e => e.stopPropagation()}
                   icon={<EyeOutlined />}
                   className="rounded-md mr-1 hover:text-green-500 hover:border-green-500"
                 ></Button>
@@ -107,6 +129,7 @@ export default function SchemaListComponent() {
                 icon={<QuestionCircleOutlined />}
               >
                 <Button
+                  onClick={e => e.stopPropagation()}
                   icon={<DeleteOutlined />}
                   className="rounded-md hover:text-red-500 hover:border-red-500"
                 ></Button>
@@ -114,6 +137,20 @@ export default function SchemaListComponent() {
             </List.Item>
           )}
         ></List>
+        <Modal
+          visible={!!showSerialized.length}
+          centered
+          width={960}
+          maskClosable
+          footer={null}
+          onCancel={() => setShowSerialized('')}
+        >
+          <Input.TextArea
+            rows={32}
+            className="w-full"
+            value={showSerialized}
+          ></Input.TextArea>
+        </Modal>
       </Skeleton>
     </PageWithHeader>
   );

@@ -18,34 +18,32 @@ export class AuthenticationModule implements IModule {
 
   async onStart(app: IApplication) {
     // Seed the demo account
-    if (app.isEphemeral || process.env.NODE_ENV !== 'production') {
-      this.logger.debug('Seeding [demo] account');
+    this.logger.debug('Seeding [demo] account');
 
-      const col = await app.context.get<SchemaService>('classes.SchemaService');
-      const repository = col.getRepository('system', 'Account');
-      const check = await repository.count({
-        where: {
-          email: 'demo@artgen.io',
-        },
-      });
-
-      if (check) {
-        return;
-      }
-
-      const account = repository.create({
+    const col = await app.context.get<SchemaService>('classes.SchemaService');
+    const repository = col.getRepository('system', 'Account');
+    const check = await repository.count({
+      where: {
         email: 'demo@artgen.io',
-        password: hashSync('demo', 3),
-      });
+      },
+    });
 
-      await repository
-        .save(account)
-        .then(() =>
-          this.logger.info(
-            'Demo account is ready under the [demo@artgen.io] email address',
-          ),
-        )
-        .catch(() => this.logger.error('Demo account could not be created!'));
+    if (check) {
+      return;
     }
+
+    const account = repository.create({
+      email: 'demo@artgen.io',
+      password: hashSync('demo', 3),
+    });
+
+    await repository
+      .save(account)
+      .then(() =>
+        this.logger.info(
+          'Demo account is ready under the [demo@artgen.io] email address',
+        ),
+      )
+      .catch(() => this.logger.error('Demo account could not be created!'));
   }
 }

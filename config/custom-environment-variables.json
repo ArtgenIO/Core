@@ -3,7 +3,6 @@
   "database": {
     "url": "ARTGEN_DATABASE_URL"
   },
-  "ephemeral": "ARTGEN_EPHEMERAL",
   "http": {
     "port": "ARTGEN_HTTP_PORT"
   }

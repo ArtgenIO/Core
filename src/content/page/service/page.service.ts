@@ -43,7 +43,9 @@ export class PageService {
       return;
     }
 
-    const landing = await readFile(join(ROOT_DIR, 'storage/page/landing.json'));
+    const landing = await readFile(
+      join(ROOT_DIR, 'storage/seed/page/landing.page.json'),
+    );
     const record = repository.create(JSON.parse(landing.toString()));
 
     await repository.save(record);

@@ -1,0 +1,49 @@
+{
+  "id": "1a9adbd1-2971-43c8-b12a-00f5a45921b2",
+  "database": "system",
+  "reference": "Workflow",
+  "label": "Workflows",
+  "tableName": "ArtgenWorkflows",
+  "fields": [
+    {
+      "reference": "id",
+      "columnName": "id",
+      "label": "Identifier",
+      "type": "uuid",
+      "tags": [
+        "primary"
+      ]
+    },
+    {
+      "reference": "name",
+      "columnName": "name",
+      "label": "Name",
+      "type": "text",
+      "tags": [
+        "unique"
+      ]
+    },
+    {
+      "reference": "nodes",
+      "columnName": "nodes",
+      "label": "Nodes",
+      "type": "json",
+      "tags": [],
+      "defaultValue": []
+    },
+    {
+      "reference": "edges",
+      "columnName": "edges",
+      "label": "Edges",
+      "type": "json",
+      "tags": [],
+      "defaultValue": []
+    }
+  ],
+  "indices": [],
+  "uniques": [],
+  "tags": [
+    "active",
+    "system"
+  ]
+}

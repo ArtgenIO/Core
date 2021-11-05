@@ -1,6 +1,9 @@
 import { EventEmitter2 } from 'eventemitter2';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { ConnectionManager, EntitySchema, Repository } from 'typeorm';
-import { WorkflowSchema } from '../../../management/workflow/schema/workflow.schema';
+import walkdir from 'walkdir';
+import { ROOT_DIR } from '../../../paths';
 import {
   IContext,
   ILogger,
@@ -8,11 +11,7 @@ import {
   Logger,
   Service,
 } from '../../../system/container';
-import { DatabaseSchema } from '../../../system/database/schema/database.schema';
-import { AccountSchema } from '../../../system/security/authentication/schema/account.schema';
-import { PageSchema } from '../../page/schema/page.schema';
 import { ISchema } from '../interface/schema.interface';
-import { SchemaSchema } from '../schema/schema.schema';
 import { schemaToEntity } from '../util/schema-to-entity';
 
 type RecordSource = 'disk' | 'database';
@@ -39,11 +38,10 @@ export class SchemaService {
   ) {}
 
   initialzie() {
-    this.register(AccountSchema, 'disk');
-    this.register(SchemaSchema, 'disk');
-    this.register(DatabaseSchema, 'disk');
-    this.register(PageSchema, 'disk');
-    this.register(WorkflowSchema, 'disk');
+    for (const path of walkdir.sync(join(ROOT_DIR, 'storage/seed/schema'))) {
+      const schema: ISchema = JSON.parse(readFileSync(path).toString());
+      this.register(schema, 'disk');
+    }
   }
 
   /**

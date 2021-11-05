@@ -6,7 +6,10 @@ import { useEffect, useState } from 'react';
 import { Route, Switch, useHistory, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms';
+import {
+  breadcrumbsAtom,
+  pageNavCollapseAtom,
+} from '../../../management/backoffice/backoffice.atoms';
 import { useHttpClient } from '../../../management/backoffice/library/use-http-client';
 import { ISchema } from '../../schema';
 import { routeCrudAPI, routeCrudUI } from '../util/schema-url';
@@ -19,6 +22,7 @@ export default function CrudIndexComponent() {
   const history = useHistory();
   const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
   const [search, setSearch] = useState<string>(null);
+  const setPageNavCollapse = useSetRecoilState(pageNavCollapseAtom);
 
   const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
     routeCrudAPI({ database: 'system', reference: 'Schema' }) +
@@ -61,6 +65,8 @@ export default function CrudIndexComponent() {
         path: 'content/crud',
       }),
     );
+
+    setPageNavCollapse(true);
 
     return () => {
       setBreadcrumb(routes => routes.slice(0, routes.length - 1));

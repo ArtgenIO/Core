@@ -25,14 +25,12 @@ import { getErrorMessage } from './util/extract-error';
 const { combine, timestamp, printf, splat } = format;
 
 export class Application implements IApplication {
-  readonly isEphemeral: boolean = false;
   readonly id: string;
   readonly context: IContext;
   readonly logger: ILogger;
   readonly dependencyGraph: DepGraph<void>;
 
   constructor() {
-    this.isEphemeral = config.get('ephemeral') === '1';
     this.id = config.get('id');
     this.logger = this.createLogger();
     this.logger.debug('Creating the context...');
