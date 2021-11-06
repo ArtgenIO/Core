@@ -5,8 +5,8 @@ import { OutputHandleDTO } from '../../../management/lambda/dto/output-handle.dt
 import { ILambda } from '../../../management/lambda/interface/lambda.interface';
 import { JSCHEMA_ERR } from '../../../management/lambda/utility/json-schema.helpers';
 import { WorkflowSession } from '../../../management/workflow/library/workflow.session';
-import { getErrorMessage } from '../../../system/app/util/extract-error';
 import { Inject, Service } from '../../../system/container';
+import { getErrorMessage } from '../../../system/kernel/util/extract-error';
 import { SchemaService } from '../service/schema.service';
 
 @Service({

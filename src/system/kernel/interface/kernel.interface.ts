@@ -1,12 +1,12 @@
 import { Constructor } from '@loopback/context';
-import { IContext, ILogger, IModule } from '../container';
+import { IContext, ILogger, IModule } from '../../container';
 
-export interface IApplication {
+export interface IKernel {
   /**
    * Environment configured unique identifier,
-   * used when the application is running in scaled multi node mode.
+   * used when the kernel is running in scaled multi node mode.
    */
-  readonly id: string;
+  readonly nodeID: string;
 
   /**
    * Global context with the 'app' identifier, every class uses this for injection.
@@ -24,12 +24,12 @@ export interface IApplication {
   bootstrap(modules: Constructor<IModule>[]): boolean;
 
   /**
-   * Start the application and invoke the modules
+   * Start the kernel and invoke the modules
    */
   start(): Promise<boolean>;
 
   /**
-   * Stop the application and propagate the shutdown request to the modules
+   * Stop the kernel and propagate the shutdown request to the modules
    */
   stop(): Promise<boolean>;
 }

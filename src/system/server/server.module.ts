@@ -7,9 +7,9 @@ import {
   IRpcGateway,
   RpcServerProvider,
 } from '.';
-import { IApplication } from '../app/application.interface';
 import { IContext, ILogger, IModule, Logger, Module } from '../container';
 import { DatabaseModule } from '../database/database.module';
+import { IKernel } from '../kernel/interface/kernel.interface';
 
 @Module({
   dependsOn: [DatabaseModule],
@@ -21,7 +21,7 @@ export class ServerModule implements IModule {
     protected logger: ILogger,
   ) {}
 
-  async onStart(application: IApplication): Promise<void> {
+  async onStart(application: IKernel): Promise<void> {
     await Promise.all([
       this.startRpcServer(application.context),
       this.startHttpServer(application.context),
@@ -69,7 +69,7 @@ export class ServerModule implements IModule {
     this.logger.info('HTTP server listening at [0.0.0.0:%d]', port);
   }
 
-  async onStop(app: IApplication) {
+  async onStop(app: IKernel) {
     const rpc = await app.context.get<ServiceBroker>(ServiceBroker.name);
     const http = await app.context.get<FastifyInstance>(
       'providers.HttpServerProvider',

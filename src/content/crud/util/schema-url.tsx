@@ -2,7 +2,10 @@ import { QueryBuilder } from 'odata-query-builder';
 import { FieldTag, ISchema } from '../../schema';
 import { CrudAction } from '../interface/crud-action.enum';
 
-const routeFilterOne = (schema: ISchema, record: Record<string, unknown>) => {
+const routeFilterOne = (
+  schema: Partial<ISchema>,
+  record: Record<string, unknown>,
+) => {
   const primaryKeys = schema.fields
     .filter(f => f.tags.includes(FieldTag.PRIMARY))
     .map(f => f.reference);
@@ -29,7 +32,7 @@ export const routeCrudAPI = (schema: Pick<ISchema, 'database' | 'reference'>) =>
  * Build route to a specific record on the UI
  */
 export const routeCrudRecordUI = (
-  schema: ISchema,
+  schema: Partial<ISchema>,
   record: Record<string, unknown>,
   action: CrudAction,
 ) => {
@@ -42,7 +45,7 @@ export const routeCrudRecordUI = (
  * Build route to a specific record on the API
  */
 export const routeCrudRecordAPI = (
-  schema: ISchema,
+  schema: Partial<ISchema>,
   record: Record<string, unknown>,
 ) => {
   return `/api/content/${schema.database}/${schema.reference}${routeFilterOne(

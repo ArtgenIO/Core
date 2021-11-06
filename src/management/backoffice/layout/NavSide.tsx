@@ -107,7 +107,7 @@ const menuItems: IMenuItem[] = [
       },
       {
         icon: <DatabaseOutlined />,
-        to: '/backoffice/content/databases',
+        to: '/backoffice/system/database',
         label: 'Databases',
       },
     ],

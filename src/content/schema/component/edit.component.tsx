@@ -8,13 +8,14 @@ import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms
 import PageHeader from '../../../management/backoffice/layout/PageHeader';
 import PageWithHeader from '../../../management/backoffice/layout/PageWithHeader';
 import { useHttpClientOld } from '../../../management/backoffice/library/http-client';
+import { routeCrudRecordAPI } from '../../crud/util/schema-url';
 import { ISchema } from '../interface';
 import { FieldType } from '../interface/field-type.enum';
 import { schemaAtom, schemasAtom } from '../schema.atoms';
 import SchenaEditFieldComponent from './edit-field.component';
 
 export default function SchemaEditorComponent() {
-  const params = useParams<{ id: string }>();
+  const params = useParams<{ database: string; reference: string }>();
   const schemas = useRecoilValue(schemasAtom);
   const [record, setRecord] = useRecoilState<ISchema>(schemaAtom);
   const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
@@ -51,7 +52,11 @@ export default function SchemaEditorComponent() {
 
   useEffect(() => {
     if (schemas.length) {
-      const current = schemas.find(record => record.id == params.id);
+      const current = schemas.find(
+        record =>
+          record.database == params.database &&
+          record.reference === params.reference,
+      );
 
       setRecord(current);
       setRef(current.reference);
@@ -60,7 +65,7 @@ export default function SchemaEditorComponent() {
       setBreadcrumb(routes =>
         routes.concat({
           breadcrumbName: current.label,
-          path: `${current.id}/edit`,
+          path: `${current.database}/${current.reference}/edit`,
         }),
       );
     }
@@ -68,13 +73,19 @@ export default function SchemaEditorComponent() {
     return () => {
       setBreadcrumb(routes => routes.slice(0, routes.length - 1));
     };
-  }, [schemas, params.id]);
+  }, [schemas, params]);
 
   const SaveChanges = () => {
     console.log('Sending', record);
 
     httpClient
-      .patch(`/api/$system/content/schema/${record.id}`, record)
+      .patch(
+        routeCrudRecordAPI(
+          schemas.find(s => s.reference === 'Schema'),
+          record as any,
+        ),
+        record,
+      )
       .then(response => {
         notification.success({
           key: 'schema-save',

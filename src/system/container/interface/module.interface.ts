@@ -1,13 +1,13 @@
-import { IApplication } from '../../app/application.interface';
+import { IKernel } from '../../kernel/interface/kernel.interface';
 
 export interface IModule {
   /**
    * Hook for the application.start event
    */
-  onStart?(application: IApplication): Promise<void>;
+  onStart?(application: IKernel): Promise<void>;
 
   /**
    * Hook for the application.stop event
    */
-  onStop?(application: IApplication): Promise<void>;
+  onStop?(application: IKernel): Promise<void>;
 }

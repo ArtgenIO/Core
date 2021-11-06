@@ -1,18 +1,15 @@
 import { Provider } from '@loopback/context';
+import config from 'config';
 import { ServiceBroker } from 'moleculer';
-import { IApplication } from '../app/application.interface';
-import { Inject, Service } from '../container';
+import { Service } from '../container';
 
 @Service(ServiceBroker)
 export class RpcServerProvider implements Provider<ServiceBroker> {
-  constructor(
-    @Inject('Application')
-    readonly app: IApplication,
-  ) {}
+  constructor() {}
 
   value() {
     const broker = new ServiceBroker({
-      nodeID: this.app.id,
+      nodeID: config.get('node.id'),
       logLevel: 'warn',
     });
 

@@ -1,99 +1,83 @@
-import config from 'config';
-import { ConnectionManager, EntitySchema } from 'typeorm';
+import { CrudService } from '../../content/crud/service/crud.service';
 import { SchemaService } from '../../content/schema/service/schema.service';
-import { schemaToEntity } from '../../content/schema/util/schema-to-entity';
-import { IApplication } from '../app/application.interface';
-import { ILogger, IModule, Logger, Module } from '../container';
-import { IConnection } from './interface/connection.interface';
-import { DatabaseInsertLambda } from './lambda/insert.lambda';
-import { getDatabaseTypeFromUrl } from './library/get-database-type';
-import { ConnectionManagerProvider } from './providers/connection-manager.provider';
-import { ConnectionService } from './service/connection.service';
+import { ILogger, IModule, Inject, Logger, Module } from '../container';
+import { DatabaseImportLambda } from './lambda/import.lambda';
+import { DatabaseConnectionFactory } from './library/database-connection.factory';
+import { DatabaseService } from './service/database.service';
+import { LinkService } from './service/link.service';
 
 @Module({
   providers: [
-    ConnectionManagerProvider,
-    ConnectionService,
-    DatabaseInsertLambda,
+    LinkService,
+    DatabaseService,
+    DatabaseConnectionFactory,
+    DatabaseImportLambda,
   ],
 })
 export class DatabaseModule implements IModule {
   constructor(
     @Logger()
     protected logger: ILogger,
+    @Inject(CrudService)
+    protected crudService: CrudService,
+    @Inject(DatabaseService)
+    protected databaseService: DatabaseService,
+    @Inject(LinkService)
+    protected linkService: LinkService,
+    @Inject(SchemaService)
+    protected schemaService: SchemaService,
   ) {}
 
   /**
    * Prepare the database
    */
-  async onStart(app: IApplication): Promise<void> {
-    // Determine what kind of database we use for the system collections
-    this.setSystemDatabaseMeta(app);
-
-    const schemaService = await app.context.get<SchemaService>(
-      SchemaService.name,
-    );
-    schemaService.initialzie();
-    const offlineSchemas = schemaService.getSystemSchemas().map(r => r.entity);
-
-    // Phase 1, create the default connection, with offline schemas
-    await this.createSystemConnection(app, offlineSchemas);
-    // Phase 2, load the dynamic schemas
-    await schemaService.synchronizeOfflineSchemas();
-    // Phase 3 reconnect to databases with the full resource list
-    const schemas = await schemaService.findAll();
-
-    await this.createSystemConnection(
-      app,
-      schemas.map(schema =>
-        schemaToEntity(schema, app.context.getSync('database.system.type')),
-      ),
+  async onStart(): Promise<void> {
+    // Create the system database link.
+    const system = await this.linkService.create(
+      this.databaseService.getSystem(),
+      this.schemaService.getSystem(),
     );
 
-    schemas.forEach(s => schemaService.register(s, 'database'));
+    // Ensure that the system schemas are available in the database.
+    await this.schemaService.synchronize(system);
+    await this.databaseService.synchronize(system);
+
+    const [schemas, databases] = await Promise.all([
+      this.schemaService.findAll(),
+      this.databaseService.findAll(),
+    ]);
+
+    const updates: Promise<unknown>[] = [];
+
+    // Map schemas to databases.
+    for (const database of databases) {
+      const dbSchemas = schemas.filter(s => s.database === database.name);
+      const link = this.linkService.findByName(database.name);
+
+      // Connection does not exists yet, load up with the scheams.
+      if (!link) {
+        updates.push(this.linkService.create(database, dbSchemas));
+      }
+      // Existing connection (system)
+      else {
+        updates.push(link.manage(dbSchemas));
+      }
+    }
+
+    await Promise.all(updates);
   }
 
-  async onStop(app: IApplication) {
-    const connectionManager = await app.context.get<ConnectionManager>(
-      ConnectionManager.name,
-    );
-
-    // Close open connections
+  async onStop() {
     await Promise.all(
-      connectionManager.connections.map(c =>
-        c.isConnected
-          ? c
-              .close()
-              .then(() => this.logger.info('Connection [%s] closed', c.name))
-          : undefined,
-      ),
+      this.linkService
+        .findAll()
+        .map(c =>
+          c
+            .close()
+            .then(() =>
+              this.logger.info('Connection [%s] closed', c.database.name),
+            ),
+        ),
     );
-  }
-
-  protected setSystemDatabaseMeta(app: IApplication) {
-    const url: string = config.get<string>('database.url');
-
-    app.context.bind('database.system.url').to(url);
-    app.context.bind('database.system.type').to(getDatabaseTypeFromUrl(url));
-  }
-
-  protected async createSystemConnection(
-    app: IApplication,
-    schemas: EntitySchema[],
-  ) {
-    const connectionService = await app.context.get<ConnectionService>(
-      ConnectionService.name,
-    );
-
-    const connection: Omit<IConnection, 'id'> = {
-      name: 'system',
-      type: app.context.getSync('database.system.type'),
-      url: app.context.getSync('database.system.url'),
-    };
-
-    await connectionService.connect(connection, schemas);
-    await connectionService.create(connection);
-
-    this.logger.info('Connection [%s] is ready to be abused!', connection.name);
   }
 }

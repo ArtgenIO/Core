@@ -1,6 +1,6 @@
 ### Exit Code Guide
 
-Application handles the following exit codes:
+Kernel exit codes:
 
 | Code  | Reason                                                       |
 | ----- | ------------------------------------------------------------ |

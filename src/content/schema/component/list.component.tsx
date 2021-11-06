@@ -51,11 +51,18 @@ export default function SchemaListComponent() {
             icon: <TableOutlined />,
           }}
           actions={
-            <Link key="create" to="/backoffice/content/schema/create">
-              <Button type="primary" icon={<FileAddOutlined />}>
-                New Schema
-              </Button>
-            </Link>
+            <>
+              <Link key="new" to="/backoffice/content/schema/new">
+                <Button type="primary" ghost icon={<FileAddOutlined />}>
+                  New Schema
+                </Button>
+              </Link>
+              <Link key="create" to="/backoffice/content/schema/create">
+                <Button type="primary" icon={<FileAddOutlined />}>
+                  Create Schema
+                </Button>
+              </Link>
+            </>
           }
           footer={
             <Tabs defaultActiveKey="1">
@@ -72,11 +79,16 @@ export default function SchemaListComponent() {
           bordered
           size="small"
           dataSource={schemas}
-          renderItem={r => (
+          renderItem={(r, k) => (
             <List.Item
-              key={r.id}
+              key={`schema-${k}`}
               onClick={() =>
-                setPageDrawer(<SchemaDetailsComponent id={r.id} />)
+                setPageDrawer(
+                  <SchemaDetailsComponent
+                    database={r.database}
+                    reference={r.reference}
+                  />,
+                )
               }
             >
               <List.Item.Meta
@@ -91,7 +103,7 @@ export default function SchemaListComponent() {
                 title={<span className="text-xl font-thin">{r.label}</span>}
               />
               {r.tags.map(t => (
-                <Tag key={r.id + t}>{t}</Tag>
+                <Tag key={r.database + r.reference + t}>{t}</Tag>
               ))}
               <Tooltip title="Serialize" placement="left">
                 <Button
@@ -113,7 +125,7 @@ export default function SchemaListComponent() {
                 ></Button>
               </Link>
               <Link
-                to={`/backoffice/content/schema/${r.id}`}
+                to={`/backoffice/content/schema/${r.database}/${r.reference}`}
                 onClick={e => e.stopPropagation()}
               >
                 <Button

@@ -1,7 +1,21 @@
 import { IField } from './field.interface';
 
 export interface ISchema {
-  id?: string;
+  /**
+   * Migration tracker, to ensure compability.
+   * Everytime a schema is loaded the system executes the migrations
+   * until it's changed and being saved as a newer version.
+   *
+   * @since V2
+   */
+  version: number;
+
+  /**
+   * Display icon, used to help differentiate the schema in a list.
+   *
+   * @since V2
+   */
+  icon: string;
 
   /**
    * Unique name used to identify a data source as a model.
@@ -37,4 +51,10 @@ export interface ISchema {
 
   indices: { name: string; fields: string[] }[];
   uniques: { name: string; fields: string[] }[];
+
+  /**
+   * Readonly databases where we only fetch data, this is garanteed on the
+   * CRUD manager level.
+   */
+  permission: 'rw' | 'r';
 }

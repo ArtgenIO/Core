@@ -1,30 +1,30 @@
-import { Context } from '@loopback/context';
+import { Context, Provider } from '@loopback/context';
 import { createLogger } from 'winston';
-import { IModule, Module, Service } from '../container';
-import { Application } from './application';
-import { IApplication } from './application.interface';
+import { IModule, Inject, Module, Service } from '../container';
+import { IKernel } from './interface/kernel.interface';
+import { Kernel } from './kernel';
 
 jest.setTimeout(50);
 
-describe('Application', () => {
+describe('Kernel', () => {
   const createTestLogger = jest.fn(() => createLogger());
 
-  Application.prototype['createLogger'] = createTestLogger;
+  Kernel.prototype['createLogger'] = createTestLogger;
 
   describe('Initialization', () => {
     test('should construct without error', () => {
-      expect(() => new Application()).not.toThrow();
+      expect(() => new Kernel()).not.toThrow();
     });
 
     test('should have a node identifier', () => {
-      const app = new Application();
+      const app = new Kernel();
 
-      expect(app).toHaveProperty('id');
-      expect(app.id).toBe('standalone');
+      expect(app).toHaveProperty('nodeID');
+      expect(app.nodeID).toBe('main');
     });
 
     test('should create a valid logger', () => {
-      const app = new Application();
+      const app = new Kernel();
 
       expect(app).toHaveProperty('logger');
       expect(app.logger).toHaveProperty('debug');
@@ -33,27 +33,27 @@ describe('Application', () => {
       expect(app.logger).toHaveProperty('error');
     });
 
-    test('should register the "Application" in the context', () => {
-      const app = new Application();
+    test('should register the "Kernel" in the context', () => {
+      const app = new Kernel();
 
       expect(app).toHaveProperty('context');
       expect(app.context).toBeInstanceOf(Context);
     });
 
-    test('should register the "Application" in the context', () => {
-      expect(new Application().context.contains('Application')).toBe(true);
+    test('should register the "Kernel" in the context', () => {
+      expect(new Kernel().context.contains('Kernel')).toBe(true);
     });
   });
 
   describe('Bootstrapping', () => {
     test('should proceed even if no module is registered', () => {
-      const app = new Application();
+      const app = new Kernel();
 
       expect(app.bootstrap([])).toBe(true);
     });
 
     test('should fail when an invalid type is registered', () => {
-      const app = new Application();
+      const app = new Kernel();
       const nonModules: any[] = [{}, '', 2, true];
 
       for (const subject of nonModules) {
@@ -62,7 +62,7 @@ describe('Application', () => {
     });
 
     test('should fail when a non module class included', () => {
-      const app = new Application();
+      const app = new Kernel();
 
       class NotAModule {}
 
@@ -70,7 +70,7 @@ describe('Application', () => {
     });
 
     test('should register a blank module', () => {
-      const app = new Application();
+      const app = new Kernel();
 
       @Module()
       class BlankModule {}
@@ -80,7 +80,7 @@ describe('Application', () => {
     });
 
     test('should register module providers', () => {
-      const app = new Application();
+      const app = new Kernel();
 
       @Service()
       class ServiceA {}
@@ -98,7 +98,7 @@ describe('Application', () => {
     });
 
     test('should register submodule providers', () => {
-      const app = new Application();
+      const app = new Kernel();
 
       @Service()
       class ServiceA {}
@@ -134,23 +134,78 @@ describe('Application', () => {
       expect(app.context.contains('module.SubModule')).toBe(true);
       expect(app.context.contains('module.SubSubModule')).toBe(true);
     });
+
+    test('should resolve services by their class', () => {
+      const app = new Kernel();
+
+      @Service()
+      class ServiceA {}
+
+      @Service()
+      class ServiceB {
+        constructor(
+          @Inject(ServiceA)
+          readonly serviceA: ServiceA,
+        ) {}
+      }
+
+      @Module({
+        providers: [ServiceA, ServiceB],
+      })
+      class TestModule {}
+
+      expect(app.bootstrap([TestModule])).toBe(true);
+
+      const serviceA = app.context.getSync<ServiceA>(ServiceA.name);
+      const serviceB = app.context.getSync<ServiceB>(ServiceB.name);
+
+      expect(serviceA).toBeInstanceOf(ServiceA);
+      expect(serviceB).toBeInstanceOf(ServiceB);
+
+      expect(serviceB).toHaveProperty('serviceA');
+      expect(serviceB.serviceA).toBeInstanceOf(ServiceA);
+    });
+
+    test('should resolve provider values by their product', () => {
+      const app = new Kernel();
+
+      class Product {}
+
+      @Service(Product)
+      class ProviderA implements Provider<Product> {
+        value(): Product {
+          return new Product();
+        }
+      }
+
+      @Module({
+        providers: [ProviderA],
+      })
+      class TestModule {}
+
+      expect(app.bootstrap([TestModule])).toBe(true);
+
+      const product = app.context.getSync<Product>(Product.name);
+
+      expect(product).toBeInstanceOf(Product);
+    });
   });
 
   describe('Starting', () => {
     test('should start without modules', async () => {
-      const app = new Application();
+      const app = new Kernel();
       app.bootstrap([]);
 
       expect(await app.start()).toBe(true);
     });
 
     test('should invoke the onStart hook', async () => {
-      const app = new Application();
+      const app = new Kernel();
       const startMock = jest.fn();
 
       @Module({})
       class StartMeModule implements IModule {
-        async onStart(app: IApplication) {
+        async onStart(app: IKernel) {
           startMock(app);
         }
       }
@@ -164,11 +219,11 @@ describe('Application', () => {
     });
 
     test('should fail on erroring start', async () => {
-      const app = new Application();
+      const app = new Kernel();
 
       @Module({})
       class BadModule implements IModule {
-        async onStart(app: IApplication) {
+        async onStart(app: IKernel) {
           throw new Error('Stop it');
         }
       }
@@ -179,16 +234,16 @@ describe('Application', () => {
     });
 
     test('should call the onStop when the start failing', async () => {
-      const app = new Application();
+      const app = new Kernel();
       const stopMock = jest.fn();
 
       @Module({})
       class BadModule implements IModule {
-        async onStart(app: IApplication) {
+        async onStart(app: IKernel) {
           throw new Error('Stop it');
         }
 
-        async onStop(app: IApplication) {
+        async onStop(app: IKernel) {
           stopMock(app);
         }
       }
@@ -202,7 +257,7 @@ describe('Application', () => {
     });
 
     test('should start modules in dependency order', async () => {
-      const app = new Application();
+      const app = new Kernel();
       const order: string[] = [];
 
       @Module()
@@ -251,11 +306,11 @@ describe('Application', () => {
 
   describe('Stopping', () => {
     test('should complete the shutdown', async () => {
-      const app = new Application();
+      const app = new Kernel();
 
       @Module({})
       class BadModule implements IModule {
-        async onStop(app: IApplication) {}
+        async onStop(app: IKernel) {}
       }
 
       app.bootstrap([BadModule]);
@@ -264,11 +319,11 @@ describe('Application', () => {
     });
 
     test('should fail the shutdown', async () => {
-      const app = new Application();
+      const app = new Kernel();
 
       @Module({})
       class BadModule implements IModule {
-        async onStop(app: IApplication) {
+        async onStop(app: IKernel) {
           throw new Error('Stop it');
         }
       }
@@ -282,11 +337,11 @@ describe('Application', () => {
     // cannot see why, the log stream dies when I try to open a new promise
     // Seems like it's a one off problem.
     test.skip('should timeout the bad onStop', async () => {
-      const app = new Application();
+      const app = new Kernel();
 
       @Module({})
       class BadModule implements IModule {
-        async onStop(app: IApplication) {
+        async onStop(app: IKernel) {
           await new Promise(neverResolved => {
             // This promise hangs forever
           });
@@ -304,7 +359,7 @@ describe('Application', () => {
     test.skip('should kill the modules with a global timeout', () => {});
 
     test('should stop modules in reverse dependency order', async () => {
-      const app = new Application();
+      const app = new Kernel();
       const order: string[] = [];
 
       @Module()

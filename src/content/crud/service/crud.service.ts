@@ -1,5 +1,6 @@
 import { merge } from 'lodash';
-import { executeQuery } from 'odata-v4-typeorm';
+import parseOData from 'odata-sequelize';
+import { stringify } from 'querystring';
 import { ILogger, Inject, Logger, Service } from '../../../system/container';
 import { FieldTag } from '../../schema';
 import { SchemaService } from '../../schema/service/schema.service';
@@ -16,30 +17,36 @@ export class CrudService {
   async create(
     database: string,
     reference: string,
-    data: unknown,
-  ): Promise<unknown[]> {
-    const repository = this.schema.getRepository(database, reference);
-    const row = repository.create(data);
+    data: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const repository = this.schema.model(database, reference);
+    const row = await repository.create(data);
 
-    await repository.save(row);
-
-    return row;
+    return row.get({ plain: true });
   }
 
-  async read(
+  async readOData<T = Record<string, unknown>>(
     database: string,
     reference: string,
     odata: Record<string, unknown>,
-  ): Promise<unknown[]> {
-    const repository = this.schema.getRepository(database, reference);
-    const baseOptions = {
-      $top: 10,
-      $skip: 0,
-    };
+  ): Promise<any[]> {
+    const model = this.schema.model(database, reference);
+    const options = merge(
+      {
+        $top: 10,
+        $skip: 0,
+      },
+      odata,
+    );
 
-    const rows = await executeQuery(repository, merge(baseOptions, odata), {});
+    const q = decodeURIComponent(stringify(options as any));
 
-    return rows;
+    this.logger.info('Got [%s]', q);
+
+    const query = parseOData(q, model.sequelize);
+    const rows = await model.findAll(query);
+
+    return rows.map(r => r.get({ plain: true }));
   }
 
   async update(
@@ -48,14 +55,17 @@ export class CrudService {
     odata: Record<string, unknown>,
     data: object,
   ): Promise<unknown> {
-    const schema = this.schema.findOne(database, reference).schema;
-    const repository = this.schema.getRepository(database, reference);
-    const baseOptions = {
+    const schema = this.schema.findOne(database, reference);
+    const model = this.schema.model(database, reference);
+    const options = merge(odata, {
       $top: 1,
       $skip: 0,
-    };
+    });
 
-    const rows = await executeQuery(repository, merge(odata, baseOptions), {});
+    const q = decodeURIComponent(stringify(options as any));
+
+    const query = parseOData(q.toString(), model.sequelize);
+    const rows = await model.findAll(query);
 
     if (!rows.length) {
       throw new Error('Not a found');
@@ -68,6 +78,16 @@ export class CrudService {
         const value = data[key];
         const def = schema.fields.find(f => f.reference === key);
 
+        // Extra field?
+        if (!def) {
+          this.logger.warn(
+            'Field [%s] does not exists on the schema [%s]',
+            key,
+            schema.reference,
+          );
+          continue;
+        }
+
         // Skip on generated fields.
         if (
           def.tags.includes(FieldTag.PRIMARY) ||
@@ -79,12 +99,12 @@ export class CrudService {
           continue;
         }
 
-        record[key] = value;
+        record.set(key, value);
       }
     }
 
     // Save changes
-    await repository.save(record);
+    await record.save();
 
     return record;
   }
@@ -94,13 +114,15 @@ export class CrudService {
     reference: string,
     odata: Record<string, unknown>,
   ): Promise<unknown> {
-    const repository = this.schema.getRepository(database, reference);
-    const baseOptions = {
+    const model = this.schema.model(database, reference);
+    const options = merge(odata, {
       $top: 1,
       $skip: 0,
-    };
+    });
+    const q = decodeURIComponent(stringify(options as any));
 
-    const rows = await executeQuery(repository, merge(odata, baseOptions), {});
+    const query = parseOData(q.toString(), model.sequelize);
+    const rows = await model.findAll(query);
 
     if (!rows.length) {
       throw new Error('Not a found');
@@ -108,7 +130,7 @@ export class CrudService {
 
     const record = rows[0];
 
-    await repository.remove(record);
+    await record.destroy();
 
     return record;
   }

@@ -1,15 +1,13 @@
 import 'reflect-metadata';
-import { ContentModule } from './content/content.module';
-import { ManagementModule } from './management/management.module';
-import { Application } from './system/app/application';
-import { SystemModule } from './system/system.module';
+import { AppModule } from './app.module';
+import { Kernel } from './system/kernel/kernel';
 
 (async function main() {
   // Bootstrap with the production features.
-  const app = new Application();
+  const app = new Kernel();
 
   // Register the base modules.
-  if (app.bootstrap([ContentModule, ManagementModule, SystemModule])) {
+  if (app.bootstrap([AppModule])) {
     // Start the application!
     if (await app.start()) {
       // Shutdown handler

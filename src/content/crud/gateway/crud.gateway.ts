@@ -21,7 +21,6 @@ export class CrudGateway implements IHttpGateway {
 
   async register(httpServer: FastifyInstance): Promise<void> {
     const schemaURL = '/api/content/:database/:reference';
-    const recordURL = `${schemaURL}/:record`;
 
     // Create action
     httpServer.post(
@@ -29,11 +28,11 @@ export class CrudGateway implements IHttpGateway {
       async (
         req: FastifyRequest<{ Params: SchemaParams }>,
         res: FastifyReply,
-      ): Promise<unknown[]> => {
+      ): Promise<Record<string, unknown>> => {
         return this.service.create(
           req.params.database,
           req.params.reference,
-          req.body,
+          req.body as any,
         );
       },
     );
@@ -81,7 +80,7 @@ export class CrudGateway implements IHttpGateway {
         req: FastifyRequest<{ Params: SchemaParams }>,
         res: FastifyReply,
       ): Promise<unknown[]> => {
-        return this.service.read(
+        return this.service.readOData(
           req.params.database,
           req.params.reference,
           req.query as Record<string, any>,

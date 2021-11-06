@@ -27,7 +27,7 @@ export default function CrudIndexComponent() {
   const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
     routeCrudAPI({ database: 'system', reference: 'Schema' }) +
       new QueryBuilder()
-        .select('id,database,reference,label,tableName,tags')
+        .select('database,reference,label,tableName,tags')
         .orderBy('label')
         .top(100)
         .toQuery(),
@@ -103,9 +103,9 @@ export default function CrudIndexComponent() {
             triggerSubMenuAction="hover"
           >
             {schemas
-              ? schemas.filter(menuFilter).map(schema => {
+              ? schemas.filter(menuFilter).map((schema, k) => {
                   return (
-                    <Menu.Item key={`schema-${schema.id}`}>
+                    <Menu.Item key={`schema-${k}`}>
                       <Link to={routeCrudUI(schema)}>{schema.label}</Link>
                     </Menu.Item>
                   );

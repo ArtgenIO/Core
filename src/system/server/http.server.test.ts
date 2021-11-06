@@ -5,19 +5,19 @@ import {
   isProviderClass,
 } from '@loopback/context';
 import { createLogger } from 'winston';
-import { Application } from '../app/application';
-import { IApplication } from '../app/application.interface';
+import { IKernel } from '../kernel/interface/kernel.interface';
+import { Kernel } from '../kernel/kernel';
 import { HttpServerProvider } from './http.server';
 
 describe('HTTPServerProvider', () => {
   beforeAll(() => {
-    Application.prototype['createLogger'] = createLogger;
+    Kernel.prototype['createLogger'] = createLogger;
   });
 
-  let app: IApplication;
+  let app: IKernel;
 
   beforeEach(() => {
-    app = new Application();
+    app = new Kernel();
   });
 
   test('should be defined as a provider', () => {

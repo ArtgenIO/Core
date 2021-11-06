@@ -25,5 +25,28 @@
 @text-color: @ag-white;
 @text-color-secondary: @ag-white;
 
+@typography-title-font-weight: 100;
+
+.ant-list-item-meta-title {
+  font-weight: 400;
+  font-size: 18px;
+}
+
 @import './style/buttons.less';
 @import './style/list.less';
+
+.ant-list-item-meta-avatar > span {
+  @apply text-5xl p-2 rounded-md;
+}
+
+.ant-list-item:hover {
+  background-color: #151719;
+
+  .ant-list-item-meta-avatar > span {
+    background-color: #25282b;
+  }
+}
+
+.ant-list-item {
+  @apply transition-all duration-300 ease-out;
+}

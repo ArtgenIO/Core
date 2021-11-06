@@ -19,28 +19,33 @@ import {
   IModuleMeta,
   MODULE_KEY,
 } from '../container';
-import { IApplication } from './application.interface';
+import { IKernel } from './interface/kernel.interface';
 import { getErrorMessage } from './util/extract-error';
 
 const { combine, timestamp, printf, splat } = format;
 
-export class Application implements IApplication {
-  readonly id: string;
+export class Kernel implements IKernel {
+  readonly nodeID: string;
   readonly context: IContext;
   readonly logger: ILogger;
-  readonly dependencyGraph: DepGraph<void>;
+
+  /**
+   * Used to build the module loading graph, stores the startup dependency links
+   * this way we can start the modules in ideal order.
+   */
+  protected moduleGraph: DepGraph<void> = new DepGraph({
+    circular: false,
+  });
 
   constructor() {
-    this.id = config.get('id');
+    this.nodeID = config.get('node.id');
     this.logger = this.createLogger();
     this.logger.debug('Creating the context...');
 
     this.context = new Context('app');
-    this.context.bind('Application').to(this);
+    this.context.bind('Kernel').to(this);
 
     this.logger.info('Context is ready!');
-
-    this.dependencyGraph = new DepGraph();
   }
 
   protected createLogger(): ILogger {
@@ -55,7 +60,7 @@ export class Application implements IApplication {
       verbose: chalk.gray('verbose'),
     };
     const variable = chalk.yellow('$1');
-    const application = chalk.cyan(this.id);
+    const application = chalk.cyan(this.nodeID);
 
     const loggedAt = timestamp({
       format: 'hh:mm:ss.SSS',
@@ -79,7 +84,7 @@ export class Application implements IApplication {
 
               return `[${application}][${chalk.gray(timestamp)}][${
                 levels[level]
-              }][${chalk.green(scope ?? 'Application')}] ${message} `;
+              }][${chalk.green(scope ?? 'Kernel')}] ${message} `;
             }),
           ),
         }),
@@ -107,8 +112,8 @@ export class Application implements IApplication {
       // Register the module in the context
       if (!this.context.contains(key)) {
         // Register for dependency loading
-        if (!this.dependencyGraph.hasNode(key)) {
-          this.dependencyGraph.addNode(key);
+        if (!this.moduleGraph.hasNode(key)) {
+          this.moduleGraph.addNode(key);
         }
 
         this.logger.debug('Discovered [%s] module', name);
@@ -137,7 +142,7 @@ export class Application implements IApplication {
             this.register(meta.exports);
           }
 
-          // Register dependency
+          // Register dependencies
           if (meta.dependsOn) {
             for (const dependency of meta.dependsOn) {
               const dependencyKey = `module.${dependency.name}`;
@@ -150,44 +155,38 @@ export class Application implements IApplication {
 
               // Inject the dependency, because the discovery is not executed in
               // dependency order, and causes to break the node tree.
-              if (!this.dependencyGraph.hasNode(dependencyKey)) {
-                this.dependencyGraph.addNode(dependencyKey);
+              if (!this.moduleGraph.hasNode(dependencyKey)) {
+                this.moduleGraph.addNode(dependencyKey);
               }
 
-              this.dependencyGraph.addDependency(key, dependencyKey);
+              this.moduleGraph.addDependency(key, dependencyKey);
             }
           }
 
           if (meta.providers) {
             for (const provider of meta.providers) {
               const binding = createBindingFromClass(provider);
+              binding.lock();
+
               this.context.add(binding);
 
-              if (binding.tagNames.includes('provides')) {
-                // @Service(MyProvider)
-                const objectBinding = new Binding(
-                  binding.tagMap.provides,
-                ).toAlias(binding.key);
-
-                if (this.context.contains(objectBinding.key)) {
-                  throw new Error(
-                    `Binding [${objectBinding.key}] is already bound to the context`,
-                  );
-                }
-                this.context.add(objectBinding);
+              // Implementation to support the provider injection by values
+              // This allows the developer to register a provider by simply
+              // adding the @Service(PRODUCED_CLASS) constructor to the meta
+              // and when needed just use the @Inject(PRODUCED_CLASS) to
+              // resolve the provider's value.
+              if (binding.tagNames.includes('product')) {
+                // Alias the value to the provider's product @Service(MyProvider)
+                this.context.add(
+                  new Binding(binding.tagMap.product).toAlias(binding.key),
+                );
               } else {
                 // Simplified object binding.
                 // This allows us to use the @Inject(MyService) syntax
-                const objectBinding = new Binding(provider.name).toAlias(
-                  binding.key,
-                );
 
-                if (this.context.contains(objectBinding.key)) {
-                  throw new Error(
-                    `Binding [${objectBinding.key}] is already bound to the context`,
-                  );
-                }
-                this.context.add(objectBinding);
+                this.context.add(
+                  new Binding(provider.name).toAlias(binding.key),
+                );
               }
 
               this.logger.debug(
@@ -246,7 +245,7 @@ export class Application implements IApplication {
     this.logger.debug('Invoking the module startup sequence...');
 
     try {
-      const dependencies = this.dependencyGraph.overallOrder(false);
+      const dependencies = this.moduleGraph.overallOrder(false);
 
       for (const key of dependencies) {
         const binding = this.context.getBinding(key);
@@ -300,7 +299,7 @@ export class Application implements IApplication {
     this.logger.debug('Invoking the graceful shutdown sequence...');
 
     try {
-      const dependencies = this.dependencyGraph.overallOrder(false);
+      const dependencies = this.moduleGraph.overallOrder(false);
 
       for (const key of dependencies.reverse()) {
         const binding = this.context.getBinding(key);

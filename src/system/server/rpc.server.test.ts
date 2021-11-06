@@ -6,19 +6,19 @@ import {
 } from '@loopback/context';
 import { ServiceBroker } from 'moleculer';
 import { createLogger } from 'winston';
-import { Application } from '../app/application';
-import { IApplication } from '../app/application.interface';
+import { IKernel } from '../kernel/interface/kernel.interface';
+import { Kernel } from '../kernel/kernel';
 import { RpcServerProvider } from './rpc.server';
 
 describe('RpcServerProvider', () => {
   beforeAll(() => {
-    Application.prototype['createLogger'] = createLogger;
+    Kernel.prototype['createLogger'] = createLogger;
   });
 
-  let app: IApplication;
+  let app: IKernel;
 
   beforeEach(() => {
-    app = new Application();
+    app = new Kernel();
   });
 
   test('should be defined as a provider', () => {
@@ -51,6 +51,6 @@ describe('RpcServerProvider', () => {
     const instance = await instantiateClass(RpcServerProvider, app.context);
     const broker = instance.value();
 
-    expect(broker.nodeID).toBe('standalone');
+    expect(broker.nodeID).toBe('main');
   });
 });

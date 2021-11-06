@@ -46,6 +46,13 @@ export default function PageContent() {
                 () => import('../../../content/page/component/index.component'),
               )}
             />
+            <Route
+              path="/backoffice/system/database"
+              component={lazy(
+                () =>
+                  import('../../../system/database/component/index.component'),
+              )}
+            />
 
             {/* Hygen insert routes above */}
             <Route path="*" component={Route404} />

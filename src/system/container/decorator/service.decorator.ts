@@ -11,7 +11,7 @@ export const Service = (
   if (typeof config === 'function' && config?.name) {
     return injectable(binding => {
       binding.inScope(BindingScope.SINGLETON).tag({
-        provides: config?.name,
+        product: config?.name,
       });
     });
   }

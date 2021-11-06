@@ -4,6 +4,7 @@ export enum FieldTag {
   UPDATED = 'updated',
   DELETED = 'deleted',
   VERSION = 'version',
+  TAGS = 'tags',
   NULLABLE = 'nullable',
   INDEX = 'index',
   UNIQUE = 'unique',

@@ -59,21 +59,28 @@ export class SignInLambda implements ILambda {
   ) {}
 
   async invoke(ctx: WorkflowSession) {
-    const repository = this.schemas.getRepository('system', 'Account');
+    const model = this.schemas.model<{
+      id: string;
+      email: string;
+      password: string;
+    }>('system', 'Account');
     const credentials = ctx.getInput('credentials') as Input;
 
-    const account = await repository.findOne({
+    const account = await model.findOne({
       where: {
         email: credentials.email,
       },
     });
 
-    if (account && compareSync(credentials.password, account.password)) {
+    if (
+      account &&
+      compareSync(credentials.password, account.get('password') as string)
+    ) {
       return {
         jwt: jsonwebtoken.sign(
           {
-            id: account.id,
-            email: account.email,
+            id: account.get('id'),
+            email: account.get('email'),
           },
           'TEST_JWT',
           {

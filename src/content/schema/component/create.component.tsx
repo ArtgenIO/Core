@@ -1,174 +1,124 @@
-import { TableOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message, Select } from 'antd';
+import {
+  DatabaseOutlined,
+  LeftOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
+import { Button, Divider, message, Steps } from 'antd';
+import { useState } from 'react';
 import { useHistory } from 'react-router';
-import { useSetRecoilState } from 'recoil';
-import { ISchema } from '..';
+import { FieldTag, FieldType, ISchema } from '..';
 import PageHeader from '../../../management/backoffice/layout/PageHeader';
 import PageWithHeader from '../../../management/backoffice/layout/PageWithHeader';
-import { useHttpClientOld } from '../../../management/backoffice/library/http-client';
-import { FieldTag } from '../interface/field-tags.enum';
-import { FieldType } from '../interface/field-type.enum';
-import { schemasAtom } from '../schema.atoms';
-
-type FormValues = {
-  reference: string;
-  label: string;
-  tableName: string;
-  database: string;
-  capabilities: string[];
-};
+import BehaviorsComponent from './create/behaviors.component';
+import CustomFieldsComponent from './create/custom-fields.component';
+import NamingComponent from './create/naming.component';
+import SelectDatabaseComponent from './create/select-database.component';
 
 export default function CreateSchemaComponent() {
   const history = useHistory();
-  const httpClient = useHttpClientOld();
-  const setSchemas = useSetRecoilState(schemasAtom);
-
-  const doCreateSchema = async (formValues: FormValues) => {
-    const data: Omit<ISchema, 'id'> = {
-      reference: formValues.reference,
-      database: formValues.database,
-      tableName: formValues.tableName,
-      label: formValues.label,
-      fields: [],
-      indices: [],
-      uniques: [],
-      tags: ['active'],
-    };
-
-    const cap = formValues.capabilities;
-
-    if (cap.includes('id')) {
-      data.fields.unshift({
+  const [step, setStep] = useState(3);
+  const [schema, setSchema] = useState<ISchema>({
+    icon: 'table',
+    permission: 'rw',
+    version: 2,
+    database: null,
+    label: null,
+    reference: null,
+    tableName: null,
+    fields: [
+      {
+        label: 'Identifier',
         reference: 'id',
         columnName: 'id',
-        label: 'Identifier',
-        tags: [FieldTag.PRIMARY],
         type: FieldType.UUID,
-      });
-    }
+        tags: [FieldTag.PRIMARY],
+      },
+      {
+        label: 'Tags',
+        reference: 'tags',
+        columnName: 'tags',
+        type: FieldType.JSON,
+        tags: [FieldTag.TAGS],
+        defaultValue: [],
+      },
+    ],
+    indices: [],
+    uniques: [],
+    tags: ['active'],
+  });
 
-    if (cap.includes('created')) {
-      data.fields.push({
-        reference: 'createdAt',
-        columnName: 'createdAt',
-        label: 'Created At',
-        tags: [FieldTag.CREATED],
-        type: FieldType.DATE,
-      });
-    }
+  const proceed = () => {
+    setStep(s => {
+      if (s < 6) {
+        return s + 1;
+      } else {
+        message.info('Schema has been created <3');
 
-    if (cap.includes('updated')) {
-      data.fields.push({
-        reference: 'updatedAt',
-        columnName: 'updatedAt',
-        label: 'Last Updated At',
-        tags: [FieldTag.UPDATED],
-        type: FieldType.DATE,
-      });
-    }
-
-    if (cap.includes('deleted')) {
-      data.fields.push({
-        reference: 'deletedAt',
-        columnName: 'deletedAt',
-        label: 'Deleted At',
-        tags: [FieldTag.DELETED],
-        type: FieldType.DATE,
-        defaultValue: null,
-      });
-    }
-
-    if (cap.includes('version')) {
-      data.fields.push({
-        reference: 'version',
-        columnName: 'version',
-        label: 'Version Lock',
-        tags: [FieldTag.VERSION],
-        type: FieldType.INTEGER,
-        defaultValue: 1,
-      });
-    }
-
-    console.log('Sending', data);
-
-    const response = await httpClient.post<ISchema>(
-      '/api/$system/content/schema',
-      data,
-    );
-
-    return response.data;
+        return s;
+      }
+    });
   };
+
+  const previous = () => setStep(s => Math.max(0, s - 1));
+
+  const steps = [
+    <SelectDatabaseComponent schema={schema} setSchema={setSchema} />,
+    <NamingComponent schema={schema} setSchema={setSchema} />,
+    <BehaviorsComponent schema={schema} setSchema={setSchema} />,
+    <CustomFieldsComponent schema={schema} setSchema={setSchema} />,
+  ];
 
   return (
     <PageWithHeader
       header={
         <PageHeader
-          title="Create New Schema"
+          title="Schema Creation Wizard"
           avatar={{
-            icon: <TableOutlined />,
+            icon: <DatabaseOutlined />,
           }}
         />
       }
     >
-      <div className="content-box px-24 py-12 w-2/3 mx-auto">
-        <Form
-          name="workflow"
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ capabilities: ['id', 'created'] }}
-          onFinish={(formValues: FormValues) => {
-            doCreateSchema(formValues)
-              .then(record => {
-                setSchemas(curr => curr.concat(record));
-                history.push(`/backoffice/content/schema/${record.id}`);
-                message.success('Schema is ready!');
-              })
-              .catch(e => message.error(e.message));
-          }}
-          onFinishFailed={() => message.error('Failed to validate')}
-        >
-          <Form.Item label="Label" name="label">
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="Reference" name="reference">
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="Table Name" name="tableName">
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="Database ID" name="database">
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="Capabilities" name="capabilities">
-            <Select mode="multiple" allowClear placeholder="Capabilities">
-              <Select.Option key="id" value="id">
-                Identifiable
-              </Select.Option>
-              <Select.Option key="created" value="created">
-                Creation Date
-              </Select.Option>
-              <Select.Option key="updated" value="updated">
-                Last Update Date
-              </Select.Option>
-              <Select.Option key="deleted" value="deleted">
-                Soft Deleting
-              </Select.Option>
-              <Select.Option key="version" value="version">
-                Version Locking
-              </Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-            <Button type="primary" block htmlType="submit">
-              Create
+      <div className="content-box px-12 py-12 w-full mx-auto">
+        <div className="flex flex-row">
+          <div className="flex-initial" style={{ minWidth: 260 }}>
+            <Steps direction="vertical" current={step}>
+              <Steps.Step
+                title="Select Database"
+                description="Choose target database."
+              />
+              <Steps.Step title="Naming" description="Name the schema." />
+              <Steps.Step
+                title="Behaviors"
+                description="Add predefined behaviors."
+              />
+              <Steps.Step
+                title="Custom Fields"
+                description="Manage custom fields."
+              />
+              <Steps.Step
+                title="Relations"
+                description="Setup data relation network."
+              />
+              <Steps.Step title="Indexes" description="Configure indexes." />
+              <Steps.Step title="Finish" description="Finalize the schema." />
+            </Steps>
+          </div>
+          <div className="flex-auto pl-8">{steps[step]}</div>
+        </div>
+        <Divider />
+        <div className="flex flex-row">
+          <div className="text-left flex-auto">
+            <Button icon={<LeftOutlined />} disabled={!step} onClick={previous}>
+              Previous
             </Button>
-          </Form.Item>
-        </Form>
+          </div>
+          <div className="text-right flex-auto">
+            <Button type="primary" onClick={proceed}>
+              {step < 5 ? 'Proceed' : 'Finish'} <RightOutlined />
+            </Button>
+          </div>
+        </div>
       </div>
     </PageWithHeader>
   );

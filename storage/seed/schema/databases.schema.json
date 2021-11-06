@@ -1,39 +1,31 @@
 {
-  "id": "4ad34f6d-432a-41f8-a32f-ea9344c6f382",
   "database": "system",
   "reference": "Database",
   "label": "Databases",
   "tableName": "ArtgenDatabases",
   "fields": [
     {
-      "reference": "id",
-      "columnName": "id",
-      "label": "Identifier",
-      "type": "uuid",
+      "reference": "name",
+      "columnName": "name",
+      "label": "Name",
+      "type": "text",
       "tags": [
         "primary"
       ]
     },
     {
-      "reference": "name",
-      "columnName": "name",
-      "label": "Name",
+      "reference": "dsn",
+      "columnName": "dsn",
+      "label": "Data Source Name (DSN)",
       "type": "text",
       "tags": [
         "unique"
       ]
     },
     {
-      "reference": "url",
-      "columnName": "url",
-      "label": "Connection URL",
-      "type": "text",
-      "tags": []
-    },
-    {
       "reference": "type",
       "columnName": "type",
-      "label": "Type",
+      "label": "Database Type",
       "type": "text",
       "tags": []
     }
@@ -41,7 +33,6 @@
   "indices": [],
   "uniques": [],
   "tags": [
-    "active",
     "system"
   ]
 }

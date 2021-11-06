@@ -147,6 +147,10 @@ export class WorkflowSession {
 
       if (result) {
         return true;
+      } else {
+        console.log('Schema', schema);
+        console.log('Data', data);
+        console.log('Errors', validator.errors);
       }
     } else {
       return true;

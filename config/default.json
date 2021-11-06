@@ -1,7 +1,9 @@
 {
-  "id": "standalone",
+  "node": {
+    "id": "main"
+  },
   "database": {
-    "url": ":memory:"
+    "dsn": "sqlite::memory:"
   },
   "http": {
     "port": "7200"

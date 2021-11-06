@@ -1,32 +1,26 @@
 {
-  "id": "1a8a2e8c-3569-4bf2-a0dd-e56db9ecf92c",
   "database": "system",
   "reference": "Schema",
   "label": "Schemas",
   "tableName": "ArtgenSchemas",
   "fields": [
     {
-      "reference": "id",
-      "columnName": "id",
-      "label": "Identifier",
-      "type": "uuid",
-      "tags": [
-        "primary"
-      ]
-    },
-    {
       "reference": "database",
       "columnName": "database",
       "label": "Database",
       "type": "text",
-      "tags": []
+      "tags": [
+        "primary"
+      ]
     },
     {
       "reference": "reference",
       "columnName": "reference",
       "label": "Rerefence",
       "type": "text",
-      "tags": []
+      "tags": [
+        "primary"
+      ]
     },
     {
       "reference": "label",
@@ -78,15 +72,7 @@
     }
   ],
   "indices": [],
-  "uniques": [
-    {
-      "name": "database_reference_unq",
-      "fields": [
-        "database",
-        "reference"
-      ]
-    }
-  ],
+  "uniques": [],
   "tags": [
     "active",
     "system"

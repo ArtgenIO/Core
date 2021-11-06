@@ -8,6 +8,7 @@ import { schemasAtom } from '../schema.atoms';
 import CreateSchemaComponent from './create.component';
 import SchemaEditorComponent from './edit.component';
 import SchemaListComponent from './list.component';
+import NewSchemaComponent from './new.component';
 
 export default function SchemaIndexComponent() {
   const location = useLocation();
@@ -42,12 +43,17 @@ export default function SchemaIndexComponent() {
         />
         <Route
           exact
+          path="/backoffice/content/schema/new"
+          component={NewSchemaComponent}
+        />
+        <Route
+          exact
           path="/backoffice/content/schema/create"
           component={CreateSchemaComponent}
         />
         <Route
           exact
-          path="/backoffice/content/schema/:id"
+          path="/backoffice/content/schema/:database/:reference"
           component={SchemaEditorComponent}
         />
       </Switch>

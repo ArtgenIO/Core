@@ -8,19 +8,22 @@ import { ISchema } from '..';
 import { schemasAtom } from '../schema.atoms';
 
 type Props = {
-  id: string;
+  database: string;
+  reference: string;
 };
 
-export default function SchemaDetailsComponent({ id }: Props) {
+export default function SchemaDetailsComponent({ database, reference }: Props) {
   const schemas = useRecoilValue(schemasAtom);
   const [schema, setSchema] = useState<ISchema>(null);
 
   useEffect(() => {
-    setSchema(schemas.find(s => s.id === id));
+    setSchema(
+      schemas.find(s => s.database === database && s.reference === s.reference),
+    );
     return () => {
       setSchema(null);
     };
-  }, [id, schemas]);
+  }, [database, reference, schemas]);
 
   return (
     <Sider
@@ -47,10 +50,10 @@ export default function SchemaDetailsComponent({ id }: Props) {
               <Descriptions.Item label="Label">
                 {schema.label}
               </Descriptions.Item>
-              <Descriptions.Item label="Identifier">
-                <code>{schema.id}</code>
+              <Descriptions.Item label="Reference">
+                <code>{schema.reference}</code>
               </Descriptions.Item>
-              <Descriptions.Item label="Database ID">
+              <Descriptions.Item label="Database">
                 <code>{schema.database}</code>
               </Descriptions.Item>
               <Descriptions.Item label="Table Name">

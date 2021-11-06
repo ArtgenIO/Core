@@ -1,5 +1,5 @@
 import { Context, inject } from '@loopback/context';
-import { IApplication } from '../../app/application.interface';
+import { IKernel } from '../../kernel/interface/kernel.interface';
 import { ILogger } from '../interface/logger.interface';
 
 export function Logger(
@@ -10,12 +10,12 @@ export function Logger(
   methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<unknown>,
 ) => void {
   return inject(
-    'Application',
+    'Kernel',
     {
       decorator: '@Logger',
     },
     async (ctx: Context, injection): Promise<ILogger> =>
-      (await ctx.get<IApplication>('Application')).logger.child({
+      (await ctx.get<IKernel>('Kernel')).logger.child({
         scope: scope ?? (injection.target as Function).name,
       }),
   );

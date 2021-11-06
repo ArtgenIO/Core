@@ -5,8 +5,8 @@ import {
   RouteShorthandOptions,
 } from 'fastify';
 import jsonwebtoken from 'jsonwebtoken';
-import { getErrorMessage } from '../../../system/app/util/extract-error';
 import { ILogger, Inject, Logger, Service } from '../../../system/container';
+import { getErrorMessage } from '../../../system/kernel/util/extract-error';
 import { IHttpGateway } from '../../../system/server/interface/http-gateway.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { HttpTriggerConfig } from '../../lambda/trigger/http.trigger';

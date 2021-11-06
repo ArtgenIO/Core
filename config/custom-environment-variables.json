@@ -1,7 +1,9 @@
 {
-  "id": "ARTGEN_ID",
+  "node": {
+    "id": "ARTGEN_NODE_ID"
+  },
   "database": {
-    "url": "ARTGEN_DATABASE_URL"
+    "dsn": "ARTGEN_DATABASE_DSN"
   },
   "http": {
     "port": "ARTGEN_HTTP_PORT"
