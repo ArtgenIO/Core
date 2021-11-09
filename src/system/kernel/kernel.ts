@@ -4,13 +4,11 @@ import {
   Constructor,
   Context,
   createBindingFromClass,
-  MetadataInspector,
   Reflector,
 } from '@loopback/context';
 import chalk from 'chalk';
 import config from 'config';
 import { DepGraph } from 'dependency-graph';
-import { EventEmitter2 } from 'eventemitter2';
 import { default as timeout } from 'p-timeout';
 import { createLogger as factory, format } from 'winston';
 import { Console } from 'winston/lib/winston/transports';
@@ -22,7 +20,6 @@ import {
   IModuleMeta,
   MODULE_KEY,
 } from '../container';
-import { OnParams, ON_META_KEY } from '../event';
 import { IKernel } from './interface/kernel.interface';
 import { getErrorMessage } from './util/extract-error';
 
@@ -279,29 +276,6 @@ export class Kernel implements IKernel {
           .get<IModule>(binding.key)
           .then(module => this.doStartModule(binding, module));
       }
-
-      // Register event observers.
-      const event = await this.context.get<EventEmitter2>(EventEmitter2.name);
-
-      for (const key of this.context.findByTag<Constructor<unknown>>(
-        'observer',
-      )) {
-        const observer = await key.getValue(this.context);
-        const metadatas = MetadataInspector.getAllMethodMetadata<OnParams>(
-          ON_META_KEY,
-          observer,
-        );
-
-        for (const method in metadatas) {
-          if (Object.prototype.hasOwnProperty.call(metadatas, method)) {
-            event['on'](
-              metadatas[method].event,
-              observer[method].bind(observer),
-              metadatas[method].options,
-            );
-          }
-        }
-      }
     } catch (error) {
       this.logger.error('Startup sequence failed!');
       this.logger.error(getErrorMessage(error));
@@ -360,11 +334,6 @@ export class Kernel implements IKernel {
           .then(module => this.doStopModule(binding, module));
       }
       this.logger.info('Shutdown sequence successful! See You <3');
-
-      // Deregister event handlers.
-      (
-        await this.context.get<EventEmitter2>(EventEmitter2.name)
-      ).removeAllListeners();
 
       return true;
     } catch (error) {

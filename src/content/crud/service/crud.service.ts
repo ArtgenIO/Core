@@ -1,3 +1,4 @@
+import { EventEmitter2 } from 'eventemitter2';
 import { merge } from 'lodash';
 import parseOData from 'odata-sequelize';
 import { stringify } from 'querystring';
@@ -12,6 +13,8 @@ export class CrudService {
     readonly logger: ILogger,
     @Inject(SchemaService)
     readonly schema: SchemaService,
+    @Inject(EventEmitter2)
+    readonly event: EventEmitter2,
   ) {}
 
   async create(
@@ -20,9 +23,11 @@ export class CrudService {
     data: Record<string, unknown>,
   ): Promise<Record<string, unknown>> {
     const model = this.schema.model(database, reference);
-    const row = await model.create(data);
+    const record = await model.create(data);
 
-    return row.get({ plain: true });
+    this.event.emit(`crud.${database}.${reference}.created`, record);
+
+    return record.get({ plain: true });
   }
 
   async readOData<T = Record<string, unknown>>(
@@ -106,6 +111,8 @@ export class CrudService {
     // Save changes
     await record.save();
 
+    this.event.emit(`crud.${database}.${reference}.updated`, record);
+
     return record;
   }
 
@@ -131,6 +138,8 @@ export class CrudService {
     const record = rows[0];
 
     await record.destroy();
+
+    this.event.emit(`crud.${database}.${reference}.deleted`, record);
 
     return record;
   }

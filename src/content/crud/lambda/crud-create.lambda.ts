@@ -1,5 +1,4 @@
 import { genSaltSync, hashSync } from 'bcrypt';
-import { SchemaService } from '../../../content/schema/service/schema.service';
 import { Lambda } from '../../../management/lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../../management/lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../../management/lambda/dto/output-handle.dto';
@@ -7,6 +6,7 @@ import { ILambda } from '../../../management/lambda/interface/lambda.interface';
 import { WorkflowSession } from '../../../management/workflow/library/workflow.session';
 import { Inject, Service } from '../../../system/container';
 import { getErrorMessage } from '../../../system/kernel';
+import { CrudService } from '../service/crud.service';
 
 type Config = {
   database: string;
@@ -58,14 +58,13 @@ type Config = {
 })
 export class CrudCreateLambda implements ILambda {
   constructor(
-    @Inject(SchemaService)
-    readonly schema: SchemaService,
+    @Inject(CrudService)
+    readonly crud: CrudService,
   ) {}
 
   async invoke(session: WorkflowSession) {
     const input = session.getInput('record') as any;
     const config = session.getConfig() as Config;
-    const model = this.schema.model(config.database, config.schema);
 
     try {
       // TODO: remove this!
@@ -76,7 +75,11 @@ export class CrudCreateLambda implements ILambda {
         );
       }
 
-      const result = await model.create(input);
+      const result = await this.crud.create(
+        config.database,
+        config.schema,
+        input,
+      );
 
       return {
         result,
