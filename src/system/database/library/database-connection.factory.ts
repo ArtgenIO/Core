@@ -17,8 +17,9 @@ export class DatabaseConnectionFactory {
       case 'postgres':
         return this.createPostgresConnection(database);
       case 'mysql':
-      case 'mariadb':
         return this.createMySQLConnection(database);
+      case 'mariadb':
+        return this.createMariaDBConnection(database);
       default:
         throw new Exception(
           `Database type [${database.type}] is not supported`,
@@ -37,14 +38,21 @@ export class DatabaseConnectionFactory {
   protected createPostgresConnection(connection: IDatabase): Sequelize {
     return new Sequelize(connection.dsn, {
       dialect: 'postgres',
-      logging: true,
+      logging: false,
     });
   }
 
   protected createMySQLConnection(connection: IDatabase): Sequelize {
     return new Sequelize(connection.dsn, {
       dialect: 'mysql',
-      logging: true,
+      logging: false,
+    });
+  }
+
+  protected createMariaDBConnection(connection: IDatabase): Sequelize {
+    return new Sequelize(connection.dsn, {
+      dialect: 'mariadb',
+      logging: false,
     });
   }
 }

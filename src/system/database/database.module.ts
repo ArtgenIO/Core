@@ -1,6 +1,9 @@
 import { CrudService } from '../../content/crud/service/crud.service';
 import { SchemaService } from '../../content/schema/service/schema.service';
 import { ILogger, IModule, Inject, Logger, Module } from '../container';
+import { getErrorMessage } from '../kernel';
+import { DatabaseObserver } from './database.observer';
+import { ILink } from './interface';
 import { DatabaseImportLambda } from './lambda/import.lambda';
 import { DatabaseConnectionFactory } from './library/database-connection.factory';
 import { DatabaseService } from './service/database.service';
@@ -12,6 +15,7 @@ import { LinkService } from './service/link.service';
     DatabaseService,
     DatabaseConnectionFactory,
     DatabaseImportLambda,
+    DatabaseObserver,
   ],
 })
 export class DatabaseModule implements IModule {
@@ -47,7 +51,7 @@ export class DatabaseModule implements IModule {
       this.databaseService.findAll(),
     ]);
 
-    const updates: Promise<unknown>[] = [];
+    const links: Promise<ILink | unknown>[] = [];
 
     // Map schemas to databases.
     for (const database of databases) {
@@ -56,15 +60,34 @@ export class DatabaseModule implements IModule {
 
       // Connection does not exists yet, load up with the scheams.
       if (!link) {
-        updates.push(this.linkService.create(database, dbSchemas));
+        links.push(
+          this.linkService
+            .create(database, dbSchemas)
+            .catch(e =>
+              this.logger
+                .warn('Could not connect to [%s] database', database.name)
+                .warn(getErrorMessage(e)),
+            ),
+        );
       }
       // Existing connection (system)
       else {
-        updates.push(link.manage(dbSchemas));
+        links.push(
+          link
+            .manage(dbSchemas)
+            .catch(e =>
+              this.logger
+                .warn(
+                  'Could not load schemas to the [%s] database',
+                  database.name,
+                )
+                .warn(getErrorMessage(e)),
+            ),
+        );
       }
     }
 
-    await Promise.all(updates);
+    await Promise.all(links);
   }
 
   async onStop() {

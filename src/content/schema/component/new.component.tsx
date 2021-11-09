@@ -92,8 +92,6 @@ export default function NewSchemaComponent() {
       });
     }
 
-    console.log('Sending', data);
-
     const response = await httpClient.post<ISchema>(
       '/api/$system/content/schema',
       data,

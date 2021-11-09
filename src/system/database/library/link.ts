@@ -11,7 +11,6 @@ export class Link implements ILink {
   constructor(protected connection: Sequelize, readonly database: IDatabase) {}
 
   model<T = Record<string, unknown>>(schema: string): ModelCtor<Model<T, T>> {
-    console.log('Resolving', schema, 'for', this.database.name);
     return this.connection.model(schema);
   }
 

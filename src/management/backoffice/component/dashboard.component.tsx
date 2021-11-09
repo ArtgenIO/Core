@@ -8,8 +8,7 @@ import { ResponsiveLine } from '@nivo/line';
 import { Button, Statistic } from 'antd';
 import { useEffect } from 'react';
 import GridLayout from 'react-grid-layout';
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
-import { breadcrumbsAtom } from '../backoffice.atoms';
+import { useRecoilState } from 'recoil';
 import PageHeader from '../layout/PageHeader';
 import PageWithHeader from '../layout/PageWithHeader';
 import { dashboarGridAtom } from './dashboard.atoms';
@@ -27,28 +26,16 @@ function DataWidget({ id, backgroundColor }) {
 }
 
 export default function DashboardPage() {
-  const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
-  const resetBreadcrumb = useResetRecoilState(breadcrumbsAtom);
   const [gridState, setGridState] = useRecoilState(dashboarGridAtom);
 
   const onLayoutChange = (currentGridState, allLayouts) => {
     if (currentGridState) {
       setGridState(currentGridState);
-      console.log(currentGridState);
     }
   };
 
   useEffect(() => {
-    setBreadcrumb(routes =>
-      routes.concat({
-        breadcrumbName: 'Dashboard',
-        path: '',
-      }),
-    );
-
-    return () => {
-      resetBreadcrumb();
-    };
+    return () => {};
   }, []);
 
   return (

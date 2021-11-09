@@ -40,8 +40,6 @@ export default function PageEditorComponent() {
   if (editor) {
     (editor as any).StorageManager.add('artgen-storage', {
       load(keys, onDone, onErr) {
-        console.log('Storage manager LOAD', { keys });
-
         httpClient
           .get(storeURL)
           .then(resp => {
@@ -52,8 +50,6 @@ export default function PageEditorComponent() {
           .catch(err => onErr(err));
       },
       store(data, onDone, onErr) {
-        console.log('Storage manager STORE', { data });
-
         const page = pages[0];
         page.content = data;
 
@@ -66,11 +62,7 @@ export default function PageEditorComponent() {
       },
     });
 
-    (editor as any).load(res => console.log('Loaded!'));
-
     document.getElementById('page-editor').style.height = '100vh';
-
-    console.log('Storage manager registered');
   }
 
   const editorRef = (

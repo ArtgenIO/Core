@@ -5,8 +5,6 @@ import { QueryBuilder } from 'odata-query-builder';
 import { useEffect, useState } from 'react';
 import { Route, Switch, useHistory, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
-import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms';
 import { useHttpClient } from '../../../management/backoffice/library/use-http-client';
 import { routeCrudAPI } from '../../crud/util/schema-url';
 import { IPage } from '../interface/page.interface';
@@ -15,7 +13,6 @@ import PageEditorComponent from './editor.component';
 export default function PageIndexComponent() {
   const location = useLocation();
   const history = useHistory();
-  const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
   const [search, setSearch] = useState<string>(null);
 
   const [{ data: pages, loading, error }] = useHttpClient<IPage[]>(
@@ -53,16 +50,7 @@ export default function PageIndexComponent() {
   };
 
   useEffect(() => {
-    setBreadcrumb(routes =>
-      routes.concat({
-        breadcrumbName: 'Page',
-        path: 'content/page',
-      }),
-    );
-
-    return () => {
-      setBreadcrumb(routes => routes.slice(0, routes.length - 1));
-    };
+    return () => {};
   }, [location]);
 
   return (

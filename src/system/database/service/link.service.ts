@@ -1,4 +1,3 @@
-import { EventEmitter2 } from 'eventemitter2';
 import { Sequelize } from 'sequelize';
 import { ISchema } from '../../../content/schema';
 import { ILogger, Inject, Logger, Service } from '../../container';
@@ -7,38 +6,26 @@ import { DatabaseConnectionFactory } from '../library/database-connection.factor
 import { Link } from '../library/link';
 
 /**
- * Responsible to create links to databases, currently only supports the TypeORM connection,
+ * Responsible to create links to databases, currently only supports the ORM connections,
  * but later this will be the service managing the excel, and API like connections too.
+ *
+ * Just a self note, investigate this awesome looking library: https://www.js-data.io/
+ * I like their way to solve the data management, maybe we can make use of it when
+ * the database migrations are managed with a self adjusted library.
  */
 @Service()
 export class LinkService {
   /**
-   * Quick hash map to store and lookup links.
+   * In memory registry for links, mapped to the database name.
    */
   protected registry = new Map<string, Link>();
 
   constructor(
     @Logger()
     protected logger: ILogger,
-    @Inject(EventEmitter2)
-    readonly event: EventEmitter2,
     @Inject(DatabaseConnectionFactory)
     readonly connectionFactory: DatabaseConnectionFactory,
-  ) {
-    this.onSchemaCreated();
-  }
-
-  /**
-   * Listen for schema create event, and update the link when it happened.
-   */
-  protected onSchemaCreated() {
-    this.event.on('schema.created', async (schema: ISchema) => {
-      this.logger.info(
-        'Schema change detected! Updating the link [%s]',
-        schema.database,
-      );
-    });
-  }
+  ) {}
 
   /**
    * Create a connection to the given database.

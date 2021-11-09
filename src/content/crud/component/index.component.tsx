@@ -6,10 +6,7 @@ import { useEffect, useState } from 'react';
 import { Route, Switch, useHistory, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import {
-  breadcrumbsAtom,
-  pageNavCollapseAtom,
-} from '../../../management/backoffice/backoffice.atoms';
+import { pageNavCollapseAtom } from '../../../management/backoffice/backoffice.atoms';
 import { useHttpClient } from '../../../management/backoffice/library/use-http-client';
 import { ISchema } from '../../schema';
 import { routeCrudAPI, routeCrudUI } from '../util/schema-url';
@@ -20,7 +17,6 @@ import CrudUpdateComponent from './update.component';
 export default function CrudIndexComponent() {
   const location = useLocation();
   const history = useHistory();
-  const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
   const [search, setSearch] = useState<string>(null);
   const setPageNavCollapse = useSetRecoilState(pageNavCollapseAtom);
 
@@ -29,7 +25,7 @@ export default function CrudIndexComponent() {
       new QueryBuilder()
         .select('database,reference,label,tableName,tags')
         .orderBy('label')
-        .top(100)
+        .top(1000)
         .toQuery(),
   );
 
@@ -59,18 +55,9 @@ export default function CrudIndexComponent() {
   };
 
   useEffect(() => {
-    setBreadcrumb(routes =>
-      routes.concat({
-        breadcrumbName: 'Manager',
-        path: 'content/crud',
-      }),
-    );
-
     setPageNavCollapse(true);
 
-    return () => {
-      setBreadcrumb(routes => routes.slice(0, routes.length - 1));
-    };
+    return () => {};
   }, [location]);
 
   return (

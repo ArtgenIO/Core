@@ -19,8 +19,8 @@ export class CrudService {
     reference: string,
     data: Record<string, unknown>,
   ): Promise<Record<string, unknown>> {
-    const repository = this.schema.model(database, reference);
-    const row = await repository.create(data);
+    const model = this.schema.model(database, reference);
+    const row = await model.create(data);
 
     return row.get({ plain: true });
   }

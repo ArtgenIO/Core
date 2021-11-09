@@ -32,14 +32,14 @@ export default function DatabaseAddComponent() {
     <PageWithHeader
       header={
         <PageHeader
-          title="Add Database"
+          title="Add New Database"
           avatar={{
             icon: <FileAddOutlined />,
           }}
         />
       }
     >
-      <div className="content-box px-24 py-12 w-2/3 mx-auto">
+      <div className="content-box px-24 py-12 w-2/3">
         <Form
           name="database"
           labelCol={{ span: 4 }}

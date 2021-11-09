@@ -16,7 +16,7 @@ export class StaticGateway implements IHttpGateway {
 
   async register(httpServer: FastifyInstance): Promise<void> {
     httpServer.register(staticMiddleware, {
-      root: join(ROOT_DIR, 'tassets'),
+      root: join(ROOT_DIR, 'assets'),
       prefix: '/assets/',
     });
     this.logger.info('Static directory [/assets] registered');

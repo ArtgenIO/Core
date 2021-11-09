@@ -7,19 +7,15 @@ import {
 } from '@ant-design/icons';
 import { Avatar, Button, List, Popconfirm, Skeleton } from 'antd';
 import { QueryBuilder } from 'odata-query-builder';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 import { routeCrudAPI } from '../../../content/crud/util/schema-url';
-import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms';
 import PageHeader from '../../../management/backoffice/layout/PageHeader';
 import PageWithHeader from '../../../management/backoffice/layout/PageWithHeader';
 import { useHttpClient } from '../../../management/backoffice/library/use-http-client';
 import { IDatabase } from '../interface';
 
 export default function DatabaseListComponent() {
-  const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
-
   const [{ data: databases, loading, error }] = useHttpClient<IDatabase[]>(
     routeCrudAPI({ database: 'system', reference: 'Database' }) +
       new QueryBuilder().top(100).toQuery(),
@@ -28,19 +24,6 @@ export default function DatabaseListComponent() {
   if (error) {
     return <h1>Error while loading the page</h1>;
   }
-
-  useEffect(() => {
-    setBreadcrumb(routes =>
-      routes.concat({
-        breadcrumbName: 'Database List',
-        path: 'system/database',
-      }),
-    );
-
-    return () => {
-      setBreadcrumb(routes => routes.slice(0, routes.length - 1));
-    };
-  }, [location]);
 
   return (
     <PageWithHeader

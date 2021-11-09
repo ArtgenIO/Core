@@ -3,8 +3,7 @@ import { Button, Empty, Form, Input, List, notification, Tabs } from 'antd';
 import { cloneDeep } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import PageHeader from '../../../management/backoffice/layout/PageHeader';
 import PageWithHeader from '../../../management/backoffice/layout/PageWithHeader';
 import { useHttpClientOld } from '../../../management/backoffice/library/http-client';
@@ -18,7 +17,6 @@ export default function SchemaEditorComponent() {
   const params = useParams<{ database: string; reference: string }>();
   const schemas = useRecoilValue(schemasAtom);
   const [record, setRecord] = useRecoilState<ISchema>(schemaAtom);
-  const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
   const httpClient = useHttpClientOld();
 
   const [ref, setRef] = useState(record ? record.reference : null);
@@ -62,22 +60,12 @@ export default function SchemaEditorComponent() {
       setRef(current.reference);
       setLabel(current.label);
       setTableName(current.tableName);
-      setBreadcrumb(routes =>
-        routes.concat({
-          breadcrumbName: current.label,
-          path: `${current.database}/${current.reference}/edit`,
-        }),
-      );
     }
 
-    return () => {
-      setBreadcrumb(routes => routes.slice(0, routes.length - 1));
-    };
+    return () => {};
   }, [schemas, params]);
 
   const SaveChanges = () => {
-    console.log('Sending', record);
-
     httpClient
       .patch(
         routeCrudRecordAPI(

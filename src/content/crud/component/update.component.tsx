@@ -58,8 +58,6 @@ export default function CrudUpdateComponent() {
   const handleSubmit = async (form: any) => {
     const data = form.formData;
 
-    console.log('Sending', data);
-
     try {
       await httpClient.patch<any>(APIURL, data);
 

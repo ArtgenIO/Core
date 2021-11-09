@@ -6,7 +6,6 @@ import {
   HomeOutlined,
   LayoutOutlined,
   LockOutlined,
-  LogoutOutlined,
   PartitionOutlined,
   ProfileOutlined,
   SettingOutlined,
@@ -156,8 +155,8 @@ const NavSide = () => {
 
   return (
     <Sider
-      collapsible
-      collapsed={menuCollapse}
+      collapsible={false}
+      collapsed={true}
       onCollapse={() => setMenuCollapse(!menuCollapse)}
       width={240}
       className="left-nav relative"
@@ -206,12 +205,14 @@ const NavSide = () => {
       <div
         key="bottom-menus"
         className="w-full absolute bottom-0"
-        style={{ bottom: 48 }}
+        style={{ bottom: 4 }}
       >
         <Menu key="user-menu" theme="dark" mode="inline">
           <Menu.Item
             key={`profile`}
-            icon={<LogoutOutlined />}
+            icon={
+              <span className="material-icons-outlined ">account_circle</span>
+            }
             onClick={() => {
               resetJwt();
               message.info('Bye bye! Come back soon <3');

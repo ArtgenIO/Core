@@ -1,7 +1,5 @@
 import { AvatarProps, PageHeader as PH } from 'antd';
 import { ReactNode } from 'react';
-import { useRecoilValue } from 'recoil';
-import { breadcrumbsAtom } from '../backoffice.atoms';
 
 type Props = {
   title: string | ReactNode;
@@ -12,13 +10,8 @@ type Props = {
 };
 
 export default function PageHeader(props: Props) {
-  const breadcrumbsState = useRecoilValue(breadcrumbsAtom);
-
   return (
     <PH
-      onBack={
-        props.title === 'Dashboard' ? undefined : () => window.history.back()
-      }
       title={props.title}
       subTitle={props.subTitle}
       extra={props.actions}
@@ -33,7 +26,6 @@ export default function PageHeader(props: Props) {
             }
           : undefined
       }
-      breadcrumb={{ routes: breadcrumbsState }}
       className="mb-4"
     ></PH>
   );

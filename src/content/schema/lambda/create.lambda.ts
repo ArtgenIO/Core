@@ -41,8 +41,6 @@ export class CreateSchemaLambda implements ILambda {
       sess.setOutput('error', {
         message: getErrorMessage(error),
       });
-
-      console.error('Save error', error);
     }
   }
 }

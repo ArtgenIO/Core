@@ -157,8 +157,6 @@ export default function CrudReadComponent() {
     return () => {};
   }, [schemas]);
 
-  console.log({ schema: schemas });
-
   return (
     <Skeleton loading={iSchemaLoading}>
       <PageWithHeader

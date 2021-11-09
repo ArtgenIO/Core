@@ -3,8 +3,8 @@ import { Dialect } from 'sequelize';
 import { SchemaService } from '../../../content/schema/service/schema.service';
 import { Exception } from '../../../exception';
 import { Inject, Service } from '../../container';
+import { ILink } from '../interface';
 import { IDatabase } from '../interface/database.interface';
-import { Link } from '../library/link';
 
 @Service()
 export class DatabaseService {
@@ -21,7 +21,7 @@ export class DatabaseService {
   /**
    * Synchronize a link's database into the database which stores the connections.
    */
-  async synchronize(link: Link) {
+  async synchronize(link: ILink) {
     const model = this.schemaService.model<IDatabase>('system', 'Database');
 
     let record = await model.findOne({

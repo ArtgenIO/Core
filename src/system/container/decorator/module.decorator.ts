@@ -8,10 +8,12 @@ export type IModuleMeta = {
    * Injectable services
    */
   providers?: Constructor<unknown>[];
+
   /**
    * Sub modules provided by the module
    */
   exports?: Constructor<unknown>[];
+
   /**
    * Modules used in the module as a dependency,
    * this enforces the rule that the module cannot start until the dependency is ready.

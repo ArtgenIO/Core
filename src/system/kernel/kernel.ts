@@ -4,14 +4,17 @@ import {
   Constructor,
   Context,
   createBindingFromClass,
+  MetadataInspector,
   Reflector,
 } from '@loopback/context';
 import chalk from 'chalk';
 import config from 'config';
 import { DepGraph } from 'dependency-graph';
+import { EventEmitter2 } from 'eventemitter2';
 import { default as timeout } from 'p-timeout';
 import { createLogger as factory, format } from 'winston';
 import { Console } from 'winston/lib/winston/transports';
+import { Exception } from '../../exception';
 import {
   IContext,
   ILogger,
@@ -19,11 +22,21 @@ import {
   IModuleMeta,
   MODULE_KEY,
 } from '../container';
+import { OnParams, ON_META_KEY } from '../event';
 import { IKernel } from './interface/kernel.interface';
 import { getErrorMessage } from './util/extract-error';
 
 const { combine, timestamp, printf, splat } = format;
 
+/**
+ * Kernel is responsible to manage the modules defined by the developer,
+ * every dependency and application flow is managed by the start / stop
+ * functionality.
+ *
+ * You can bootstrap the kernel without starting the application to create
+ * a test environment where every resource is available without the
+ * module onStart hooks.
+ */
 export class Kernel implements IKernel {
   readonly nodeID: string;
   readonly context: IContext;
@@ -31,12 +44,15 @@ export class Kernel implements IKernel {
 
   /**
    * Used to build the module loading graph, stores the startup dependency links
-   * this way we can start the modules in ideal order.
+   * this way we can start and stop the modules in ideal order.
    */
   protected moduleGraph: DepGraph<void> = new DepGraph({
     circular: false,
   });
 
+  /**
+   * Initialize the kernel.
+   */
   constructor() {
     this.nodeID = config.get('node.id');
     this.logger = this.createLogger();
@@ -48,6 +64,9 @@ export class Kernel implements IKernel {
     this.logger.info('Context is ready!');
   }
 
+  /**
+   * Creates a console logger, patch this out with the winston createLogger function while testing.
+   */
   protected createLogger(): ILogger {
     console.clear();
 
@@ -95,21 +114,21 @@ export class Kernel implements IKernel {
     return logger;
   }
 
+  /**
+   * Register modules in the dependency container and module load graph.
+   */
   protected register(modules: Constructor<IModule>[]) {
     for (const module of modules) {
       // Test for basic module expectations
       if (typeof module !== 'function') {
-        throw new Error(
-          `Could not register [${(
-            module as unknown
-          ).toString()}], it's not a constructor!`,
+        throw new Exception(
+          `Could not register [${module}], it's not a module!`,
         );
       }
 
       const name = module.name;
       const key = `module.${name}`;
 
-      // Register the module in the context
       if (!this.context.contains(key)) {
         // Register for dependency loading
         if (!this.moduleGraph.hasNode(key)) {
@@ -203,6 +222,9 @@ export class Kernel implements IKernel {
     }
   }
 
+  /**
+   * @inheritdoc
+   */
   bootstrap(modules: Constructor<IModule>[]): boolean {
     this.logger.debug('Bootstrap sequence initialized...');
 
@@ -240,6 +262,9 @@ export class Kernel implements IKernel {
     }
   }
 
+  /**
+   * @inheritdoc
+   */
   async start(): Promise<boolean> {
     this.logger.debug('Startup request received');
     this.logger.debug('Invoking the module startup sequence...');
@@ -253,6 +278,29 @@ export class Kernel implements IKernel {
         await this.context
           .get<IModule>(binding.key)
           .then(module => this.doStartModule(binding, module));
+      }
+
+      // Register event observers.
+      const event = await this.context.get<EventEmitter2>(EventEmitter2.name);
+
+      for (const key of this.context.findByTag<Constructor<unknown>>(
+        'observer',
+      )) {
+        const observer = await key.getValue(this.context);
+        const metadatas = MetadataInspector.getAllMethodMetadata<OnParams>(
+          ON_META_KEY,
+          observer,
+        );
+
+        for (const method in metadatas) {
+          if (Object.prototype.hasOwnProperty.call(metadatas, method)) {
+            event['on'](
+              metadatas[method].event,
+              observer[method].bind(observer),
+              metadatas[method].options,
+            );
+          }
+        }
       }
     } catch (error) {
       this.logger.error('Startup sequence failed!');
@@ -294,6 +342,9 @@ export class Kernel implements IKernel {
     }
   }
 
+  /**
+   * @inheritdoc
+   */
   async stop(): Promise<boolean> {
     this.logger.debug('Shutdown request received');
     this.logger.debug('Invoking the graceful shutdown sequence...');
@@ -309,6 +360,11 @@ export class Kernel implements IKernel {
           .then(module => this.doStopModule(binding, module));
       }
       this.logger.info('Shutdown sequence successful! See You <3');
+
+      // Deregister event handlers.
+      (
+        await this.context.get<EventEmitter2>(EventEmitter2.name)
+      ).removeAllListeners();
 
       return true;
     } catch (error) {

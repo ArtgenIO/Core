@@ -6,7 +6,7 @@ import walkdir from 'walkdir';
 import { Exception } from '../../../exception';
 import { ROOT_DIR } from '../../../paths';
 import { ILogger, Inject, Logger, Service } from '../../../system/container';
-import { Link } from '../../../system/database/library/link';
+import { ILink } from '../../../system/database/interface';
 import { LinkService } from '../../../system/database/service/link.service';
 import { getErrorMessage } from '../../../system/kernel/util/extract-error';
 import { ISchema } from '../interface/schema.interface';
@@ -35,7 +35,7 @@ export class SchemaService {
    * to extend on the system's behavior, the synchronizer will only ensure the
    * existence of the schema and does not overide it if its present.
    */
-  async synchronize(link: Link) {
+  async synchronize(link: ILink) {
     // Get the schema repository.
     const model = this.model<ISchema>('system', 'Schema');
 

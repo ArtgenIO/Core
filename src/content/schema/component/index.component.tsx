@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Route, Switch, useLocation } from 'react-router';
 import { useSetRecoilState } from 'recoil';
 import { ISchema } from '..';
-import { breadcrumbsAtom } from '../../../management/backoffice/backoffice.atoms';
 import { useHttpClientOld } from '../../../management/backoffice/library/http-client';
 import { schemasAtom } from '../schema.atoms';
 import CreateSchemaComponent from './create.component';
@@ -13,7 +12,6 @@ import NewSchemaComponent from './new.component';
 export default function SchemaIndexComponent() {
   const location = useLocation();
   const setSchemas = useSetRecoilState(schemasAtom);
-  const setBreadcrumb = useSetRecoilState(breadcrumbsAtom);
   const httpClient = useHttpClientOld();
 
   useEffect(() => {
@@ -21,16 +19,7 @@ export default function SchemaIndexComponent() {
       setSchemas(() => response.data);
     });
 
-    setBreadcrumb(routes =>
-      routes.concat({
-        breadcrumbName: 'Schemas',
-        path: 'content/schema',
-      }),
-    );
-
-    return () => {
-      setBreadcrumb(routes => routes.slice(0, routes.length - 1));
-    };
+    return () => {};
   }, [location]);
 
   return (

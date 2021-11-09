@@ -35,8 +35,6 @@ export class UpdateSchemaLambda implements ILambda {
       sess.setOutput('success', true);
     } catch (error) {
       sess.setOutput('success', false);
-
-      console.error('Save error', error);
     }
   }
 }
