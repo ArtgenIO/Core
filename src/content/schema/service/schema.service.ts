@@ -1,7 +1,6 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { readFileSync } from 'fs';
-import { join } from 'path';
-import { basename } from 'path/posix';
+import { basename, join } from 'path';
 import { ModelDefined } from 'sequelize';
 import walkdir from 'walkdir';
 import { Exception } from '../../../exception';
