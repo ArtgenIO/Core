@@ -1,311 +1,63 @@
-import { DeleteOutlined } from '@ant-design/icons';
 import {
+  DatabaseOutlined,
+  DeleteOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
+import {
+  Avatar,
   Button,
   Divider,
-  Form,
-  Input,
-  Select,
-  Tabs,
-  Tooltip,
+  List,
+  message,
+  Popconfirm,
+  Tag,
   Typography,
 } from 'antd';
-import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { IField, ISchema } from '../..';
-
-type CustomFieldProp = {
-  field: IField;
-  setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
-};
-
-type InputLinkedProps = {
-  isLinked: boolean;
-  setIsLinked: (s: (c: boolean) => boolean) => void;
-};
-
-function InputLinked({ isLinked, setIsLinked }: InputLinkedProps) {
-  return (
-    <Tooltip
-      placement="topRight"
-      title={
-        isLinked
-          ? 'Click to edit independently'
-          : 'Input is independent from the label name'
-      }
-    >
-      <span
-        className="material-icons cursor-pointer"
-        onClick={() => setIsLinked(c => !c)}
-      >
-        {isLinked ? 'insert_link' : 'link_off'}
-      </span>
-    </Tooltip>
-  );
-}
-
-function CustomField({ field, setSchema }: CustomFieldProp) {
-  const [form] = Form.useForm();
-
-  const [refLinked, setRefLinked] = useState(true);
-  const [clmLinked, setClmLinked] = useState(true);
-
-  return (
-    <div className="mb-4 bg-dark rounded-md gray-border">
-      <div className="flex flex-row flex-nowrap">
-        <div
-          className="flex-shrink rounded-tl-md rounded-bl-md"
-          style={{ backgroundColor: '#37393f' }}
-        >
-          <div
-            className="w-8 text-center"
-            style={{ borderBottom: '1px solid #333' }}
-          >
-            <span
-              className="material-icons-outlined"
-              style={{ lineHeight: '134px' }}
-            >
-              north
-            </span>
-          </div>
-
-          <div className="w-8 text-center">
-            <span
-              className="material-icons-outlined"
-              style={{ lineHeight: '134px' }}
-            >
-              south
-            </span>
-          </div>
-        </div>
-
-        <Tabs
-          defaultActiveKey="1"
-          tabPosition="bottom"
-          size="small"
-          type="line"
-          className="w-full"
-          tabBarExtraContent={{
-            right: (
-              <Button size="small" className="mr-8" danger>
-                Delete <DeleteOutlined />
-              </Button>
-            ),
-          }}
-          tabBarStyle={{ paddingLeft: '32px' }}
-        >
-          <Tabs.TabPane key="general" tab="General Config">
-            <div className="flex flex-row flex-nowrap flex-grow">
-              <div className="flex pt-3 pl-2">
-                <span className="material-icons-outlined bg-light-dark text-7xl text-center align-middle pt-3 rounded-md h-24 w-24 m-2">
-                  view_week
-                </span>
-              </div>
-
-              <div className="flex pl-2 py-4 w-96">
-                <Form
-                  form={form}
-                  name="naming"
-                  layout="vertical"
-                  initialValues={field}
-                  requiredMark="optional"
-                  className="w-full"
-                  size="small"
-                  onValuesChange={changedValues => {
-                    const keys = Object.keys(changedValues);
-
-                    if (keys.includes('label')) {
-                      if (refLinked) {
-                        form.setFieldsValue({
-                          reference: upperFirst(
-                            camelCase(changedValues['label']),
-                          ),
-                        });
-                      }
-
-                      if (clmLinked) {
-                        form.setFieldsValue({
-                          tableName: snakeCase(
-                            camelCase(changedValues['label']),
-                          ),
-                        });
-                      }
-                    }
-                  }}
-                  onChange={e => {
-                    setSchema(current => {
-                      const update = cloneDeep(current);
-
-                      update.label = form.getFieldValue('label');
-                      update.reference = form.getFieldValue('reference');
-                      update.tableName = form.getFieldValue('tableName');
-
-                      return update;
-                    });
-                  }}
-                >
-                  <Form.Item
-                    className="mb-4"
-                    name="label"
-                    rules={[
-                      { required: true, message: 'Please type a label!' },
-                    ]}
-                  >
-                    <Input
-                      size="small"
-                      className="text-2xl pl-0"
-                      bordered={false}
-                      placeholder="Just a human friendly label"
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    className="mb-2"
-                    label="Reference"
-                    name="reference"
-                    rules={[
-                      { required: true, message: 'Please type a reference!' },
-                    ]}
-                  >
-                    <Input
-                      placeholder="System inner reference, used as a unique identifier per database"
-                      disabled={refLinked}
-                      suffix={
-                        <InputLinked
-                          isLinked={refLinked}
-                          setIsLinked={setRefLinked}
-                        />
-                      }
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="Column Name"
-                    name="columnName"
-                    className="mb-2"
-                    rules={[
-                      { required: true, message: 'Please type a column name!' },
-                    ]}
-                  >
-                    <Input
-                      className="mb-2"
-                      placeholder="The table's name created in the database server"
-                      disabled={clmLinked}
-                      suffix={
-                        <InputLinked
-                          isLinked={clmLinked}
-                          setIsLinked={setClmLinked}
-                        />
-                      }
-                    />
-                  </Form.Item>
-                </Form>
-              </div>
-
-              <div
-                className="flex-shrink ml-4 pl-4 my-4"
-                style={{ borderLeft: '1px solid #363636' }}
-              >
-                <div className="mb-2 text-lg">Data Type:</div>
-                <Select
-                  className="w-64 mr-2"
-                  placeholder="Type"
-                  defaultValue={field.type}
-                >
-                  <Select.Option key="uuid" value="uuid">
-                    UUID
-                  </Select.Option>
-                  <Select.Option key="text" value="text">
-                    Text
-                  </Select.Option>
-                  <Select.Option key="json" value="json">
-                    JSON
-                  </Select.Option>
-                  <Select.Option key="int" value="int">
-                    Integer
-                  </Select.Option>
-                  <Select.Option key="boolean" value="boolean">
-                    Boolean
-                  </Select.Option>
-                </Select>
-
-                <div className="mb-2 mt-2 text-lg">Data Length:</div>
-                <Input placeholder="Not available" disabled />
-              </div>
-
-              <div
-                className="flex-shrink ml-4 pl-4 my-4"
-                style={{ borderLeft: '1px solid #363636' }}
-              >
-                <div className="mb-2 text-lg">Behavior:</div>
-
-                <Select
-                  className="w-64 mr-2"
-                  placeholder="Type"
-                  defaultValue={'primary'}
-                >
-                  <Select.Option key="primary" value="primary">
-                    Primary
-                  </Select.Option>
-                  <Select.Option key="created" value="created">
-                    Created
-                  </Select.Option>
-                  <Select.Option key="updated" value="updated">
-                    Updated
-                  </Select.Option>
-                  <Select.Option key="deleted" value="deleted">
-                    Deleted
-                  </Select.Option>
-                  <Select.Option key="version" value="version">
-                    Version
-                  </Select.Option>
-                  <Select.Option key="version" value="tags">
-                    Tag Engine
-                  </Select.Option>
-                </Select>
-              </div>
-              <div className="flex-grow text-right pr-4 pt-4">
-                <div className="h-10">
-                  <span className="material-icons-outlined">key</span>
-                </div>
-
-                <div className="h-10">
-                  <span className="material-icons-outlined">ac_unit</span>
-                </div>
-
-                <div className="h-10">
-                  <span className="material-icons-outlined">bolt</span>
-                </div>
-
-                <div className="h-10">
-                  <span className="material-icons-outlined">
-                    comments_disabled
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Tabs.TabPane>
-          <Tabs.TabPane key="2" tab="Interfaces">
-            Choose editor interface
-          </Tabs.TabPane>
-          <Tabs.TabPane key="3" tab="Content Rules">
-            Validation, nullable, required,
-          </Tabs.TabPane>
-          <Tabs.TabPane key="4" tab="Accessors">
-            Accessors
-          </Tabs.TabPane>
-        </Tabs>
-      </div>
-    </div>
-  );
-}
+import { cloneDeep } from 'lodash';
+import { Dispatch, SetStateAction } from 'react';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { FieldType, ISchema } from '../..';
+import { pageDrawerAtom } from '../../../../management/backoffice/backoffice.atoms';
+import FieldTuningComponent from './field-tune.component';
 
 export default function CustomFieldsComponent({
   schema,
   setSchema,
 }: {
-  schema: Partial<ISchema>;
-  setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
+  schema: ISchema;
+  setSchema: Dispatch<SetStateAction<ISchema>>;
 }) {
+  const setPageDrawler = useSetRecoilState(pageDrawerAtom);
+  const resetPageDrawler = useResetRecoilState(pageDrawerAtom);
+
+  const addNewField = () => {
+    setSchema(s => {
+      const newState = cloneDeep(s);
+      const fieldKeys = newState.fields.map(f => f.reference);
+      let fieldKey = 0;
+
+      while (++fieldKey) {
+        if (!fieldKeys.includes(`newField${fieldKey}`)) {
+          break;
+        }
+      }
+
+      newState.fields.push({
+        reference: `newField${fieldKey}`,
+        columnName: `newField${fieldKey}`,
+        label: `New Field ${fieldKey}`,
+        type: FieldType.TEXT,
+        defaultValue: null,
+        typeParams: {
+          values: [],
+        },
+        tags: [],
+      });
+
+      return newState;
+    });
+  };
+
   return (
     <>
       <Typography className="mb-8">
@@ -321,11 +73,82 @@ export default function CustomFieldsComponent({
         </Typography.Paragraph>
       </Typography>
 
-      <div>
-        {schema.fields.map((field, k) => (
-          <CustomField setSchema={setSchema} key={k} field={field} />
-        ))}
-      </div>
+      <List
+        bordered
+        size="small"
+        dataSource={schema.fields}
+        renderItem={(field, k) => (
+          <List.Item
+            key={`field-${k}`}
+            onClick={() =>
+              setPageDrawler(
+                <FieldTuningComponent
+                  fieldKey={k}
+                  schema={schema}
+                  setSchema={setSchema}
+                />,
+              )
+            }
+          >
+            <List.Item.Meta
+              avatar={
+                <Avatar
+                  shape="square"
+                  size="large"
+                  className="bg-dark"
+                  icon={<DatabaseOutlined />}
+                />
+              }
+              title={<span className="text-xl font-thin">{field.label}</span>}
+            />
+            {field.tags.map(t => (
+              <Tag key={t}>{t}</Tag>
+            ))}
+
+            <Popconfirm
+              title="Are You sure to delete this field?"
+              okText="Yes, delete"
+              cancelText="No"
+              placement="left"
+              icon={<QuestionCircleOutlined />}
+              onConfirm={e => {
+                e.stopPropagation();
+
+                setSchema(schema => {
+                  if (schema.fields.length === 1) {
+                    message.warn('You need to have at least one field');
+
+                    return schema;
+                  }
+
+                  const newSchema = cloneDeep(schema);
+                  newSchema.fields.splice(k, 1);
+
+                  return newSchema;
+                });
+
+                resetPageDrawler();
+              }}
+            >
+              <Button
+                onClick={e => e.stopPropagation()}
+                icon={<DeleteOutlined />}
+                className="rounded-md hover:text-red-500 hover:border-red-500"
+              ></Button>
+            </Popconfirm>
+          </List.Item>
+        )}
+      ></List>
+      <Button
+        ghost
+        block
+        size="large"
+        type="dashed"
+        onClick={() => addNewField()}
+        className="mt-4 hover:text-green-400"
+      >
+        <span className="material-icons-outlined">add</span>
+      </Button>
     </>
   );
 }

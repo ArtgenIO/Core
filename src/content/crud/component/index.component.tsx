@@ -1,5 +1,5 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Divider, Input, Layout, Menu, Skeleton } from 'antd';
+import { Divider, Input, Layout, Menu } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import { QueryBuilder } from 'odata-query-builder';
 import { useEffect, useState } from 'react';
@@ -27,6 +27,9 @@ export default function CrudIndexComponent() {
         .orderBy('label')
         .top(1000)
         .toQuery(),
+    {
+      useCache: true,
+    },
   );
 
   if (!loading) {
@@ -61,63 +64,61 @@ export default function CrudIndexComponent() {
   }, [location]);
 
   return (
-    <Skeleton loading={loading}>
-      <Layout hasSider>
-        <Sider collapsible={false} width={200} className="h-screen sider-2nd">
-          <div className="pt-2 -mb-2 px-2">
-            <Input
-              placeholder="Search content..."
-              prefix={<SearchOutlined />}
-              onChange={e => setSearch(e.target.value.toLowerCase())}
-              onKeyPress={event => {
-                if (event.key === 'Enter') {
-                  const match = schemas.filter(menuFilter);
+    <Layout hasSider>
+      <Sider collapsible={false} width={200} className="h-screen sider-2nd">
+        <div className="pt-2 -mb-2 px-2">
+          <Input
+            placeholder="Search content..."
+            prefix={<SearchOutlined />}
+            onChange={e => setSearch(e.target.value.toLowerCase())}
+            onKeyPress={event => {
+              if (event.key === 'Enter') {
+                const match = schemas.filter(menuFilter);
 
-                  if (match.length === 1) {
-                    history.push(routeCrudUI(match[0]));
-                  }
+                if (match.length === 1) {
+                  history.push(routeCrudUI(match[0]));
                 }
-              }}
-            />
-          </div>
-          <Divider />
-          <Menu
-            key="menus"
-            className="menu -mt-2"
-            theme="dark"
-            defaultSelectedKeys={[]}
-            mode="inline"
-            triggerSubMenuAction="hover"
-          >
-            {schemas
-              ? schemas.filter(menuFilter).map((schema, k) => {
-                  return (
-                    <Menu.Item key={`schema-${k}`}>
-                      <Link to={routeCrudUI(schema)}>{schema.label}</Link>
-                    </Menu.Item>
-                  );
-                })
-              : undefined}
-          </Menu>
-        </Sider>
+              }
+            }}
+          />
+        </div>
+        <Divider />
+        <Menu
+          key="menus"
+          className="menu -mt-2"
+          theme="dark"
+          defaultSelectedKeys={[]}
+          mode="inline"
+          triggerSubMenuAction="hover"
+        >
+          {schemas
+            ? schemas.filter(menuFilter).map((schema, k) => {
+                return (
+                  <Menu.Item key={`schema-${k}`}>
+                    <Link to={routeCrudUI(schema)}>{schema.label}</Link>
+                  </Menu.Item>
+                );
+              })
+            : undefined}
+        </Menu>
+      </Sider>
 
-        <Layout>
-          <Switch location={location}>
-            <Route
-              path="/backoffice/content/crud/:database/:reference/update"
-              component={CrudUpdateComponent}
-            ></Route>
-            <Route
-              path="/backoffice/content/crud/:database/:reference/create"
-              component={CrudCreateComponent}
-            ></Route>
-            <Route
-              path="/backoffice/content/crud/:database/:reference"
-              component={CrudReadComponent}
-            ></Route>
-          </Switch>
-        </Layout>
+      <Layout>
+        <Switch location={location}>
+          <Route
+            path="/backoffice/content/crud/:database/:reference/update"
+            component={CrudUpdateComponent}
+          ></Route>
+          <Route
+            path="/backoffice/content/crud/:database/:reference/create"
+            component={CrudCreateComponent}
+          ></Route>
+          <Route
+            path="/backoffice/content/crud/:database/:reference"
+            component={CrudReadComponent}
+          ></Route>
+        </Switch>
       </Layout>
-    </Skeleton>
+    </Layout>
   );
 }

@@ -32,6 +32,7 @@ export default function NewSchemaComponent() {
       fields: [],
       indices: [],
       uniques: [],
+      relations: [],
       icon: 'table',
       permission: 'rw',
       version: 2,
@@ -47,6 +48,7 @@ export default function NewSchemaComponent() {
         label: 'Identifier',
         tags: [FieldTag.PRIMARY],
         type: FieldType.UUID,
+        typeParams: { values: [] },
       });
     }
 
@@ -56,7 +58,8 @@ export default function NewSchemaComponent() {
         columnName: 'createdAt',
         label: 'Created At',
         tags: [FieldTag.CREATED],
-        type: FieldType.DATE,
+        type: FieldType.DATETIME,
+        typeParams: { values: [] },
       });
     }
 
@@ -66,7 +69,8 @@ export default function NewSchemaComponent() {
         columnName: 'updatedAt',
         label: 'Last Updated At',
         tags: [FieldTag.UPDATED],
-        type: FieldType.DATE,
+        type: FieldType.DATETIME,
+        typeParams: { values: [] },
       });
     }
 
@@ -76,8 +80,9 @@ export default function NewSchemaComponent() {
         columnName: 'deletedAt',
         label: 'Deleted At',
         tags: [FieldTag.DELETED],
-        type: FieldType.DATE,
+        type: FieldType.DATETIME,
         defaultValue: null,
+        typeParams: { values: [] },
       });
     }
 
@@ -89,6 +94,7 @@ export default function NewSchemaComponent() {
         tags: [FieldTag.VERSION],
         type: FieldType.INTEGER,
         defaultValue: 1,
+        typeParams: { values: [] },
       });
     }
 

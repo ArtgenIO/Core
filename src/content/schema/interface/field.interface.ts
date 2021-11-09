@@ -1,5 +1,17 @@
+import { TextLength } from 'sequelize/types';
 import { FieldTag } from './field-tags.enum';
 import { FieldType } from './field-type.enum';
+
+type TypeParams = {
+  binary?: boolean;
+  length?: number | TextLength;
+  zerofill?: boolean;
+  unsigned?: boolean;
+  decimals?: number;
+  scale?: number;
+  precision?: number;
+  values: string[];
+};
 
 export interface IField {
   /**
@@ -15,7 +27,7 @@ export interface IField {
   label: string;
 
   /**
-   * Real coloumn name in the database.
+   * Real column name in the database.
    */
   columnName: string;
 
@@ -28,6 +40,11 @@ export interface IField {
    * Intersected local type.
    */
   type: FieldType;
+
+  /**
+   * Type parameters
+   */
+  typeParams: TypeParams;
 
   /**
    * Behavior tags.

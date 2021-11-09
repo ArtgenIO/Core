@@ -1319,6 +1319,11 @@
     "@types/react" "*"
     hoist-non-react-statics "^3.3.0"
 
+"@types/inflection@^1.13.0":
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/@types/inflection/-/inflection-1.13.0.tgz#d641b773317f2e71e5c7c80809057e3101c4b2bf"
+  integrity sha512-kZSETqAVS74XC/K3mPX/tbMEi/Zy1KP0Wc59dB1i5P72AHz4eSW+UIpzWxmQnDxipoKSX5eRgUXy+wUr+bY73g==
+
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0", "@types/istanbul-lib-coverage@^2.0.1":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.3.tgz#4ba8ddb720221f432e443bd5f9117fd22cfd4762"
@@ -1701,6 +1706,16 @@ ajv@^6.10.0, ajv@^6.11.0, ajv@^6.12.3, ajv@^6.12.4, ajv@^6.12.6, ajv@^6.7.0:
     fast-deep-equal "^3.1.1"
     fast-json-stable-stringify "^2.0.0"
     json-schema-traverse "^0.4.1"
+    uri-js "^4.2.2"
+
+ajv@^7.0.2:
+  version "7.2.4"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-7.2.4.tgz#8e239d4d56cf884bccca8cca362f508446dc160f"
+  integrity sha512-nBeQgg/ZZA3u3SYxyaDvpvDtgZ/EZPF547ARgZBrG9Bhu1vKDwAIjtIf+sDtJUKa2zOcEbmRLBRSyMraS/Oy1A==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    json-schema-traverse "^1.0.0"
+    require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
 ajv@^8.0.1, ajv@^8.1.0, ajv@^8.6.3:
@@ -3416,6 +3431,15 @@ fastify-formbody@^5.1.0:
   dependencies:
     fastify-plugin "^3.0.0"
 
+fastify-http-errors-enhanced@2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/fastify-http-errors-enhanced/-/fastify-http-errors-enhanced-2.7.0.tgz#853a1a4d887ea293c1da6434607553df6e439faf"
+  integrity sha512-nbmJ2n5zENyHiPhqxGquO8nH4LgWn41o4jGIrdOxuUBrQNSkD7ggtMXmZObdPbFEn4j5QAjdEKP6BO5URFTaEA==
+  dependencies:
+    ajv "^7.0.2"
+    fastify-plugin "^3.0.0"
+    http-errors-enhanced "^0.6.0"
+
 fastify-plugin@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-3.0.0.tgz#cf1b8c8098e3b5a7c8c30e6aeb06903370c054ca"
@@ -3929,6 +3953,11 @@ html-tags@^3.1.0:
   resolved "https://registry.yarnpkg.com/html-tags/-/html-tags-3.1.0.tgz#7b5e6f7e665e9fb41f30007ed9e0d41e97fb2140"
   integrity sha512-1qYz89hW3lFDEazhjW0yVAV87lw8lVkrJocr72XmBkMKsoSVJCQx3W8BXsC7hO2qAt8BoVjYjtAcZ9perqGnNg==
 
+http-errors-enhanced@^0.6.0:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/http-errors-enhanced/-/http-errors-enhanced-0.6.1.tgz#0f34d6bf27cccc64d67c133bdb6a5f17427efff9"
+  integrity sha512-Uu66qOpgMLJ/id5/buNpWhlvFvDDQWZiOmrL5XYa4FkGPGPPoJGCTWoertEcSWUVhtfIYclUC0yYrP0elSL0Gw==
+
 http-errors@~1.7.2:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-1.7.3.tgz#6c619e4f9c60308c38519498c14fbb10aacebb06"
@@ -4055,7 +4084,7 @@ imurmurhash@^0.1.4:
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
   integrity sha1-khi5srkoojixPcT7a21XbyMUU+o=
 
-inflection@1.13.1:
+inflection@1.13.1, inflection@^1.13.1:
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/inflection/-/inflection-1.13.1.tgz#c5cadd80888a90cf84c2e96e340d7edc85d5f0cb"
   integrity sha512-dldYtl2WlN0QDkIDtg8+xFwOS2Tbmp12t1cHa5/YClU6ZQjTFm7B66UcVbh9NQB+HvT5BAd2t5+yKsBkw5pcqA==

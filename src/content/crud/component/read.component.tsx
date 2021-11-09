@@ -58,7 +58,9 @@ export default function CrudReadComponent() {
   // Load content
   const [{ data: content, loading: isContentLoading }, refetch] = useHttpClient<
     object[]
-  >(routeCrudAPI(route));
+  >(routeCrudAPI(route), {
+    useCache: false,
+  });
 
   // Local state
   const [columns, setColumns] = useState<TableColumnsType>([]);
@@ -87,22 +89,25 @@ export default function CrudReadComponent() {
 
         // Render UUID with monospace
         if (isPrimary(field) && field.type === FieldType.UUID) {
-          fieldDef.render = value => (
-            <span style={{ fontFamily: 'monospace' }}>{value}</span>
+          fieldDef.render = (value, record, idx) => (
+            <span key={`ids-${idx}`} style={{ fontFamily: 'monospace' }}>
+              {value}
+            </span>
           );
         }
 
         // Render boolean checkbox
         if (field.type === FieldType.BOOLEAN) {
-          fieldDef.render = value => (
-            <Checkbox checked={value} disabled></Checkbox>
+          fieldDef.render = (value, record, idx) => (
+            <Checkbox key={`cbox-${idx}`} checked={value} disabled></Checkbox>
           );
         }
 
         // Render JSON
         if (field.type === FieldType.JSON) {
-          fieldDef.render = value => (
+          fieldDef.render = (value, record, idx) => (
             <code
+              key={`code-${idx}`}
               className="bg-gray-700 p-1 rounded-md"
               style={{ fontSize: 11 }}
             >
@@ -120,11 +125,12 @@ export default function CrudReadComponent() {
         fixed: 'right',
         width: 80,
         align: 'center',
-        render: (text, record: Record<string, unknown>) => {
+        render: (text, record: Record<string, unknown>, idx) => {
           return (
-            <span>
+            <span key={`actions-${idx}`}>
               <Link
                 to={routeCrudRecordUI(schemas[0], record, CrudAction.UPDATE)}
+                key={`editl-${idx}`}
               >
                 <Button
                   icon={<EditOutlined />}
@@ -139,6 +145,7 @@ export default function CrudReadComponent() {
                 placement="left"
                 icon={<QuestionCircleOutlined />}
                 onConfirm={() => doDelete(record)}
+                key={`delcon-${idx}`}
               >
                 <Button
                   icon={<DeleteOutlined />}
@@ -158,7 +165,7 @@ export default function CrudReadComponent() {
   }, [schemas]);
 
   return (
-    <Skeleton loading={iSchemaLoading}>
+    <>
       <PageWithHeader
         header={
           <PageHeader
@@ -204,6 +211,6 @@ export default function CrudReadComponent() {
           <Table dataSource={content} columns={columns} size="small" />
         </Skeleton>
       </PageWithHeader>
-    </Skeleton>
+    </>
   );
 }

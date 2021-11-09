@@ -9,6 +9,7 @@ import {
 import { ISchema } from '../../../content/schema';
 import { FieldTag } from '../../../content/schema/interface/field-tags.enum';
 import { FieldType } from '../../../content/schema/interface/field-type.enum';
+import { getDataTypeFromField } from '../../../content/schema/util/field-mapper';
 import { isPrimary } from '../../../content/schema/util/is-primary';
 
 type ModelDefinition = {
@@ -27,30 +28,9 @@ export const schemaToModel = (
     // Local mapped name
     const ref = field.reference;
 
-    let type: DataType;
+    let type: DataType = getDataTypeFromField(field);
     let defaultValue = field?.defaultValue ?? undefined;
     let nullable = field.tags.includes(FieldTag.NULLABLE);
-
-    switch (field.type) {
-      case FieldType.BOOLEAN:
-        type = DataTypes.BOOLEAN;
-        break;
-      case FieldType.DATE:
-        type = DataTypes.DATE;
-        break;
-      case FieldType.INTEGER:
-        type = DataTypes.INTEGER;
-        break;
-      case FieldType.JSON:
-        type = DataTypes.JSON;
-        break;
-      case FieldType.TEXT:
-        type = DataTypes.TEXT;
-        break;
-      case FieldType.UUID:
-        type = DataTypes.UUID;
-        break;
-    }
 
     const column: ModelAttributeColumnOptions = {
       type,

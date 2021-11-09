@@ -1,4 +1,5 @@
 import { IField } from './field.interface';
+import { IRelation } from './relation.interface';
 
 export interface ISchema {
   /**
@@ -51,6 +52,11 @@ export interface ISchema {
 
   indices: { name: string; fields: string[] }[];
   uniques: { name: string; fields: string[] }[];
+
+  /**
+   * Associations / relations between models.
+   */
+  relations: IRelation[];
 
   /**
    * Readonly databases where we only fetch data, this is garanteed on the

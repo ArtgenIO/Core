@@ -58,6 +58,7 @@ export default function SchenaEditFieldComponent({ field, idx }: Props) {
         reference,
         type,
         tags,
+        typeParams: { values: [] },
       };
 
       return newSchema;

@@ -37,6 +37,24 @@ export class SchemaMigrationService {
       schema.permission = 'rw';
     }
 
+    // Add the relations.
+    if (!schema?.relations) {
+      schema.relations = [];
+    }
+
+    // Add the field typeParams.
+    for (const field of schema.fields) {
+      if (!field?.typeParams) {
+        field.typeParams = {
+          values: [],
+        };
+      }
+
+      if (!field.typeParams?.values) {
+        field.typeParams.values = [];
+      }
+    }
+
     return schema;
   }
 }

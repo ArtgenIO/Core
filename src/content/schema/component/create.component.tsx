@@ -1,22 +1,26 @@
-import {
-  DatabaseOutlined,
-  LeftOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Button, Divider, message, Steps } from 'antd';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
+import { useResetRecoilState } from 'recoil';
 import { FieldTag, FieldType, ISchema } from '..';
 import PageHeader from '../../../management/backoffice/layout/PageHeader';
 import PageWithHeader from '../../../management/backoffice/layout/PageWithHeader';
-import BehaviorsComponent from './create/behaviors.component';
+import { useHttpClientOld } from '../../../management/backoffice/library/http-client';
+import { schemasAtom } from '../schema.atoms';
+import CapabilitiesComponent from './create/capabilities.component';
 import CustomFieldsComponent from './create/custom-fields.component';
+import FinishComponent from './create/finish.component';
+import IndexesComponent from './create/indexes.component';
 import NamingComponent from './create/naming.component';
+import RelationsComponent from './create/relations.component';
 import SelectDatabaseComponent from './create/select-database.component';
 
 export default function CreateSchemaComponent() {
   const history = useHistory();
-  const [step, setStep] = useState(3);
+  const resetSchemas = useResetRecoilState(schemasAtom);
+  const httpClient = useHttpClientOld();
+  const [step, setStep] = useState(0);
   const [schema, setSchema] = useState<ISchema>({
     icon: 'table',
     permission: 'rw',
@@ -31,6 +35,9 @@ export default function CreateSchemaComponent() {
         reference: 'id',
         columnName: 'id',
         type: FieldType.UUID,
+        typeParams: {
+          values: [],
+        },
         tags: [FieldTag.PRIMARY],
       },
       {
@@ -39,20 +46,45 @@ export default function CreateSchemaComponent() {
         columnName: 'tags',
         type: FieldType.JSON,
         tags: [FieldTag.TAGS],
+        typeParams: {
+          values: [],
+        },
         defaultValue: [],
       },
     ],
     indices: [],
     uniques: [],
+    relations: [],
     tags: ['active'],
   });
+
+  const doCreateSchema = async () => {
+    const response = await httpClient.post<ISchema>(
+      '/api/$system/content/schema',
+      schema,
+    );
+
+    resetSchemas();
+
+    return response.data;
+  };
 
   const proceed = () => {
     setStep(s => {
       if (s < 6) {
         return s + 1;
       } else {
-        message.info('Schema has been created <3');
+        doCreateSchema()
+          .then(record => {
+            message.success('Schema is created <3, redirecting...');
+
+            setTimeout(() => {
+              history.push(
+                `/backoffice/content/schema/${record.database}/${record.reference}`,
+              );
+            }, 1000);
+          })
+          .catch(e => message.error(e.message));
 
         return s;
       }
@@ -64,21 +96,15 @@ export default function CreateSchemaComponent() {
   const steps = [
     <SelectDatabaseComponent schema={schema} setSchema={setSchema} />,
     <NamingComponent schema={schema} setSchema={setSchema} />,
-    <BehaviorsComponent schema={schema} setSchema={setSchema} />,
+    <CapabilitiesComponent schema={schema} setSchema={setSchema} />,
     <CustomFieldsComponent schema={schema} setSchema={setSchema} />,
+    <RelationsComponent schema={schema} setSchema={setSchema} />,
+    <IndexesComponent schema={schema} setSchema={setSchema} />,
+    <FinishComponent schema={schema} setSchema={setSchema} />,
   ];
 
   return (
-    <PageWithHeader
-      header={
-        <PageHeader
-          title="Schema Creation Wizard"
-          avatar={{
-            icon: <DatabaseOutlined />,
-          }}
-        />
-      }
-    >
+    <PageWithHeader header={<PageHeader title="Schema Creation Wizard" />}>
       <div className="content-box px-12 py-12 w-full mx-auto">
         <div className="flex flex-row">
           <div className="flex-initial" style={{ minWidth: 260 }}>
@@ -89,8 +115,8 @@ export default function CreateSchemaComponent() {
               />
               <Steps.Step title="Naming" description="Name the schema." />
               <Steps.Step
-                title="Behaviors"
-                description="Add predefined behaviors."
+                title="Capabilities"
+                description="Add predefined capabilities."
               />
               <Steps.Step
                 title="Custom Fields"

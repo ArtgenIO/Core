@@ -43,8 +43,8 @@ export class DatabaseModule implements IModule {
     );
 
     // Ensure that the system schemas are available in the database.
-    await this.schemaService.synchronize(system);
     await this.databaseService.synchronize(system);
+    await this.schemaService.synchronize(system);
 
     const [schemas, databases] = await Promise.all([
       this.schemaService.findAll(),
@@ -74,7 +74,7 @@ export class DatabaseModule implements IModule {
       else {
         links.push(
           link
-            .manage(dbSchemas)
+            .setSchemas(dbSchemas)
             .catch(e =>
               this.logger
                 .warn(

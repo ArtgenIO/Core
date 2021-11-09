@@ -56,7 +56,7 @@ export class DatabaseImportLambda implements ILambda {
       if (!link) {
         throw new Exception(`Unknown database [${name}]`);
       }
-      const schemas = await link.importExisting();
+      const schemas = await this.link.discover(link);
 
       for (const schema of schemas) {
         try {

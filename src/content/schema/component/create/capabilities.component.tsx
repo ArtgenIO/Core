@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { FieldTag, FieldType, ISchema } from '../..';
 
-export default function BehaviorsComponent({
+export default function CapabilitiesComponent({
   schema,
   setSchema,
 }: {
@@ -64,6 +64,9 @@ export default function BehaviorsComponent({
                     reference: 'id',
                     columnName: 'id',
                     type: FieldType.UUID,
+                    typeParams: {
+                      values: [],
+                    },
                     tags: [FieldTag.PRIMARY],
                   });
                 } else {
@@ -105,6 +108,9 @@ export default function BehaviorsComponent({
                     columnName: 'tags',
                     type: FieldType.JSON,
                     tags: [FieldTag.TAGS],
+                    typeParams: {
+                      values: [],
+                    },
                     defaultValue: [],
                   });
                 } else {
@@ -140,7 +146,10 @@ export default function BehaviorsComponent({
                     label: 'Created Date',
                     reference: 'createdAt',
                     columnName: 'created_at',
-                    type: FieldType.DATE,
+                    type: FieldType.DATETIME,
+                    typeParams: {
+                      values: [],
+                    },
                     tags: [FieldTag.CREATED],
                   });
                 } else {
@@ -176,7 +185,10 @@ export default function BehaviorsComponent({
                     label: 'Updated Date',
                     reference: 'updatedAt',
                     columnName: 'updated_at',
-                    type: FieldType.DATE,
+                    typeParams: {
+                      values: [],
+                    },
+                    type: FieldType.DATETIME,
                     tags: [FieldTag.UPDATED],
                   });
                 } else {
@@ -212,7 +224,10 @@ export default function BehaviorsComponent({
                     label: 'Deleted Date',
                     reference: 'deletedAt',
                     columnName: 'deleted_at',
-                    type: FieldType.DATE,
+                    typeParams: {
+                      values: [],
+                    },
+                    type: FieldType.DATETIME,
                     tags: [FieldTag.DELETED],
                   });
                 } else {
@@ -248,6 +263,9 @@ export default function BehaviorsComponent({
                     label: 'Revision',
                     reference: 'Revision',
                     columnName: 'revision',
+                    typeParams: {
+                      values: [],
+                    },
                     type: FieldType.INTEGER,
                     tags: [FieldTag.VERSION],
                     defaultValue: 1,

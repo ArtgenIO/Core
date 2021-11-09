@@ -3,6 +3,7 @@ import fastify, { FastifyInstance } from 'fastify';
 import auth from 'fastify-auth';
 import cors from 'fastify-cors';
 import formBody from 'fastify-formbody';
+import fastifyHttpErrorsEnhanced from 'fastify-http-errors-enhanced';
 import swagger from 'fastify-swagger';
 import { v4 } from 'uuid';
 import { ILogger, Logger, Service } from '../container';
@@ -67,6 +68,8 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
       exposeRoute: true,
     });
     this.logger.debug('Plugin [Swagger] registered');
+
+    await server.register(fastifyHttpErrorsEnhanced);
 
     return server;
   }

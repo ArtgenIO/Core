@@ -17,7 +17,7 @@ export class SchemaService {
   /**
    * In memory cache to access schemas.
    */
-  protected registry: ISchema[] = [];
+  registry: ISchema[] = [];
 
   constructor(
     @Logger()

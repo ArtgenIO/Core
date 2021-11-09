@@ -25,7 +25,10 @@ export class CrudService {
     const model = this.schema.model(database, reference);
     const record = await model.create(data);
 
-    this.event.emit(`crud.${database}.${reference}.created`, record);
+    this.event.emit(
+      `crud.${database}.${reference}.created`,
+      record.get({ plain: true }),
+    );
 
     return record.get({ plain: true });
   }
@@ -111,7 +114,10 @@ export class CrudService {
     // Save changes
     await record.save();
 
-    this.event.emit(`crud.${database}.${reference}.updated`, record);
+    this.event.emit(
+      `crud.${database}.${reference}.updated`,
+      record.get({ plain: true }),
+    );
 
     return record;
   }
@@ -139,7 +145,10 @@ export class CrudService {
 
     await record.destroy();
 
-    this.event.emit(`crud.${database}.${reference}.deleted`, record);
+    this.event.emit(
+      `crud.${database}.${reference}.deleted`,
+      record.get({ plain: true }),
+    );
 
     return record;
   }

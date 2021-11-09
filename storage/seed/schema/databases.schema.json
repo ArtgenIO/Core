@@ -26,7 +26,14 @@
       "reference": "type",
       "columnName": "type",
       "label": "Database Type",
-      "type": "text",
+      "type": "enum",
+      "typeParams": {
+        "values": [
+          "postgres",
+          "mysql",
+          "sqlite"
+        ]
+      },
       "tags": []
     }
   ],

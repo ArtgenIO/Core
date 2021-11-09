@@ -2,8 +2,10 @@ import { FileAddOutlined } from '@ant-design/icons';
 import { Button, Divider, Result, Select, Spin, Typography } from 'antd';
 import { cloneDeep, startCase } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
+import { Link } from 'react-router-dom';
 import { ISchema } from '../..';
 import { useHttpClient } from '../../../../management/backoffice/library/use-http-client';
+import { IDatabase } from '../../../../system/database/interface';
 import { routeCrudAPI } from '../../../crud/util/schema-url';
 
 export default function SelectDatabaseComponent({
@@ -13,7 +15,7 @@ export default function SelectDatabaseComponent({
   schema: Partial<ISchema>;
   setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
 }) {
-  const [{ data: databases, loading, error }] = useHttpClient(
+  const [{ data: databases, loading, error }] = useHttpClient<IDatabase[]>(
     routeCrudAPI({
       database: 'system',
       reference: 'Database',
@@ -35,14 +37,16 @@ export default function SelectDatabaseComponent({
       <Typography className="mb-8">
         <Typography.Title>
           Select the Target Database
-          <Button
-            className="float-right"
-            type="primary"
-            icon={<FileAddOutlined />}
-            ghost
-          >
-            Create Database
-          </Button>
+          <Link to="/backoffice/content/crud/system/Database/create">
+            <Button
+              className="float-right"
+              type="primary"
+              icon={<FileAddOutlined />}
+              ghost
+            >
+              Add New Database
+            </Button>
+          </Link>
         </Typography.Title>
         <Divider />
         <Typography.Paragraph>
@@ -72,8 +76,8 @@ export default function SelectDatabaseComponent({
         >
           {databases
             ? databases.map(db => (
-                <Select.Option key={db.id} value={db.name}>
-                  {startCase(db.name)}
+                <Select.Option key={db.name} value={db.name}>
+                  [{db.type}] {startCase(db.name)}
                 </Select.Option>
               ))
             : undefined}

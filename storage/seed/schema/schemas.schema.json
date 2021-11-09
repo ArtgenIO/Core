@@ -61,6 +61,14 @@
       "defaultValue": []
     },
     {
+      "reference": "relations",
+      "columnName": "relations",
+      "label": "Relations",
+      "type": "json",
+      "tags": [],
+      "defaultValue": []
+    },
+    {
       "reference": "tags",
       "columnName": "tags",
       "label": "Tags",
@@ -73,6 +81,15 @@
   ],
   "indices": [],
   "uniques": [],
+  "relations": [
+    {
+      "kind": "belongs-to-one",
+      "name": "db",
+      "target": "Database",
+      "localField": "database",
+      "remoteField": "name"
+    }
+  ],
   "tags": [
     "active",
     "system"
