@@ -108,6 +108,12 @@ export class LinkService {
           tags: ['readonly'],
           relations: [],
           version: 2,
+          artboard: {
+            position: {
+              x: 0,
+              y: 0,
+            },
+          },
         };
 
         for (const columnName in definition) {

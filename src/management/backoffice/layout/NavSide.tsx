@@ -1,17 +1,9 @@
 import {
   AppstoreOutlined,
   DatabaseOutlined,
-  FileProtectOutlined,
-  FunnelPlotOutlined,
   HomeOutlined,
   LayoutOutlined,
-  LockOutlined,
   PartitionOutlined,
-  ProfileOutlined,
-  SettingOutlined,
-  SlidersOutlined,
-  TableOutlined,
-  TagsOutlined,
   UnorderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -44,72 +36,30 @@ const menuItems: IMenuItem[] = [
     label: 'Dashboard',
   },
   {
-    icon: <ProfileOutlined />,
+    icon: <UnorderedListOutlined />,
+    to: '/backoffice/content/crud',
     label: 'Content',
-    children: [
-      {
-        icon: <UnorderedListOutlined />,
-        to: '/backoffice/content/crud',
-        label: 'Manager',
-      },
-      {
-        icon: <LayoutOutlined />,
-        to: '/backoffice/content/page',
-        label: 'Pages',
-      },
-      {
-        icon: <TableOutlined />,
-        to: '/backoffice/content/schema',
-        label: 'Schemas',
-      },
-    ],
   },
   {
-    icon: <SlidersOutlined />,
-    label: 'Management',
-    children: [
-      {
-        icon: <PartitionOutlined />,
-        to: '/backoffice/management/workflow',
-        label: 'Workflows',
-      },
-      {
-        icon: <FunnelPlotOutlined />,
-        to: '/backoffice/missing-page-replace-this',
-        label: 'State Machines',
-      },
-      {
-        icon: <TagsOutlined />,
-        to: '/backoffice/missing-page-replace-this',
-        label: 'Tag Engine',
-      },
-      {
-        icon: <FileProtectOutlined />,
-        to: '/backoffice/missing-page-replace-this',
-        label: 'Credentials',
-      },
-    ],
+    icon: <LayoutOutlined />,
+    to: '/backoffice/content/page',
+    label: 'Pages',
   },
   {
-    icon: <SettingOutlined />,
-    label: 'System',
-    children: [
-      {
-        icon: <UserOutlined />,
-        label: 'User Management',
-        to: '/backoffice',
-      },
-      {
-        icon: <LockOutlined />,
-        label: 'Access Control',
-        to: '/backoffice/auth/signup',
-      },
-      {
-        icon: <DatabaseOutlined />,
-        to: '/backoffice/system/database',
-        label: 'Databases',
-      },
-    ],
+    icon: <PartitionOutlined />,
+    to: '/backoffice/management/workflow',
+    label: 'Workflows',
+  },
+  {
+    icon: <DatabaseOutlined />,
+    to: '/backoffice/system/database',
+    label: 'Database',
+  },
+
+  {
+    icon: <UserOutlined />,
+    label: 'Users',
+    to: '/backoffice',
   },
   {
     icon: <AppstoreOutlined />,

@@ -15,7 +15,6 @@ import {
   message,
   Popconfirm,
   Skeleton,
-  Tabs,
 } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -73,13 +72,6 @@ export default function WorkflowListComponent() {
                 New Workflow
               </Button>
             </Link>
-          }
-          footer={
-            <Tabs defaultActiveKey="1">
-              <Tabs.TabPane tab="Custom Workflows" key="1" />
-              <Tabs.TabPane tab="System Workflows" key="2" />
-              <Tabs.TabPane tab="Telemetry" key="3" />
-            </Tabs>
           }
         />
       }

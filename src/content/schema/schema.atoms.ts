@@ -10,3 +10,8 @@ export const schemaAtom = atom<ISchema>({
   key: 'schema',
   default: null,
 });
+
+export const selectedSchemaAtom = atom<string>({
+  key: 'selectedSchema',
+  default: null,
+});

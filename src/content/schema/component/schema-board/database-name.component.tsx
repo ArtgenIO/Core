@@ -10,7 +10,7 @@ export default function DatabaseNameComponent({ name }: { name: string }) {
       </div>
       <div>
         <Input
-          defaultValue={`${startCase(name)} Database`}
+          defaultValue={startCase(name)}
           bordered={false}
           placeholder="Database name"
           required

@@ -1,4 +1,4 @@
-import { Divider, Form, Input, Tooltip, Typography } from 'antd';
+import { Form, Input, Tooltip, Typography } from 'antd';
 import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ISchema } from '../..';
@@ -43,8 +43,6 @@ export default function NamingComponent({
   return (
     <>
       <Typography>
-        <Typography.Title>Name Your Data Schema</Typography.Title>
-        <Divider />
         <Typography.Paragraph>
           Choose which database you want to create the schema to. Please be
           aware that different database providers come with different

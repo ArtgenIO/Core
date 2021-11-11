@@ -1,14 +1,5 @@
-import {
-  Button,
-  Divider,
-  Form,
-  Input,
-  PageHeader,
-  Select,
-  Tooltip,
-} from 'antd';
+import { Button, Divider, Drawer, Form, Input, Select, Tooltip } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
-import Sider from 'antd/lib/layout/Sider';
 import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useResetRecoilState } from 'recoil';
@@ -54,6 +45,7 @@ export default function FieldTuningComponent({
   const [refLinked, setRefLinked] = useState(true);
   const [clmLinked, setClmLinked] = useState(true);
   const [type, setType] = useState<FieldType>(null);
+  const [visisble, setVisisble] = useState(true);
 
   if (idx === null || idx === undefined) {
     return <></>;
@@ -119,15 +111,13 @@ export default function FieldTuningComponent({
   };
 
   return (
-    <Sider
-      width="380px"
-      collapsible
-      reverseArrow={true}
-      collapsedWidth={0}
-      trigger={<span className="material-icons-outlined">close</span>}
-      onCollapse={() => resetPageDrawler()}
-    >
-      <ErrorBoundary>
+    <ErrorBoundary>
+      <Drawer
+        width="420px"
+        visible={visisble}
+        onClose={() => resetPageDrawler()}
+        title={null}
+      >
         <Form
           form={form}
           name="naming"
@@ -156,30 +146,22 @@ export default function FieldTuningComponent({
             updateSchema();
           }}
         >
-          <PageHeader
-            title={
-              <div className="flex">
-                <span className="material-icons-outlined text-3xl">
-                  view_week
-                </span>
-                &nbsp;
-                <Form.Item
-                  className="mb-4"
-                  name="label"
-                  rules={[{ required: true, message: 'Please type a label!' }]}
-                >
-                  <Input
-                    size="small"
-                    className="text-2xl pl-0"
-                    bordered={false}
-                    placeholder="Just a human friendly label"
-                  />
-                </Form.Item>
-              </div>
-            }
-            ghost
-          ></PageHeader>
-          <Divider className="mt-0" />
+          <div className="flex -mt-2">
+            <span className="material-icons-outlined text-3xl">view_week</span>
+            &nbsp;
+            <Form.Item
+              className="mb-4"
+              name="label"
+              rules={[{ required: true, message: 'Please type a label!' }]}
+            >
+              <Input
+                size="small"
+                className="text-2xl pl-0"
+                bordered={false}
+                placeholder="Just a human friendly label"
+              />
+            </Form.Item>
+          </div>
           <div className="px-4">
             <Form.Item
               className="mb-2"
@@ -393,7 +375,7 @@ export default function FieldTuningComponent({
             </Form.Item>
           </div>
         </Form>
-      </ErrorBoundary>
-    </Sider>
+      </Drawer>
+    </ErrorBoundary>
   );
 }

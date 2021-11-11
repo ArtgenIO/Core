@@ -66,7 +66,7 @@ export default function DatabaseListComponent() {
               />
 
               <Link
-                to={`/backoffice/system/database/${db.name}/edit`}
+                to={`/backoffice/content/schema/board/${db.name}`}
                 onClick={e => e.stopPropagation()}
               >
                 <Button

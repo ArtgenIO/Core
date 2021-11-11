@@ -1,4 +1,4 @@
-import { Button, Divider, List, Result, Skeleton, Typography } from 'antd';
+import { Button, List, Result, Skeleton, Typography } from 'antd';
 import { cloneDeep } from 'lodash';
 import { QueryBuilder } from 'odata-query-builder';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
@@ -122,11 +122,13 @@ export default function RelationsComponent({
     );
   }
 
+  if (loading || !schemas) {
+    return <h1>Loading</h1>;
+  }
+
   return (
     <>
       <Typography className="mb-8">
-        <Typography.Title>Relations</Typography.Title>
-        <Divider />
         <Typography.Paragraph>
           You can connect tables in three diffent way <strong>has one</strong>,{' '}
           <strong>has many</strong>, and <strong>many to many</strong>. With

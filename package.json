@@ -99,6 +99,7 @@
     "@rjsf/core": "^3.2.0",
     "@types/bcrypt": "^5.0.0",
     "@types/config": "^0.0.39",
+    "@types/dagre": "^0.7.46",
     "@types/eventemitter2": "^4.1.0",
     "@types/inflection": "^1.13.0",
     "@types/jest": "^26.0.24",

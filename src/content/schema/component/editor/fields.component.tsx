@@ -6,7 +6,6 @@ import {
 import {
   Avatar,
   Button,
-  Divider,
   List,
   message,
   Popconfirm,
@@ -20,7 +19,7 @@ import { FieldType, ISchema } from '../..';
 import { pageDrawerAtom } from '../../../../management/backoffice/backoffice.atoms';
 import FieldTuningComponent from './field-tune.component';
 
-export default function CustomFieldsComponent({
+export default function SchemaFieldsComponent({
   schema,
   setSchema,
 }: {
@@ -60,9 +59,7 @@ export default function CustomFieldsComponent({
 
   return (
     <>
-      <Typography className="mb-8">
-        <Typography.Title>Custom Fields</Typography.Title>
-        <Divider />
+      <Typography>
         <Typography.Paragraph>
           Here You can customize the additional data fields, those will be
           translated as table columns for your chosen database. At first it can

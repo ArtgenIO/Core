@@ -63,4 +63,14 @@ export interface ISchema {
    * CRUD manager level.
    */
   permission: 'rw' | 'r';
+
+  /**
+   * ArtBoard meta data.
+   */
+  artboard: {
+    position: {
+      x: number;
+      y: number;
+    };
+  };
 }

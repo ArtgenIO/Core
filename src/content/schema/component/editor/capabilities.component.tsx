@@ -1,4 +1,4 @@
-import { Divider, List, Switch, Typography } from 'antd';
+import { List, Switch, Typography } from 'antd';
 import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { FieldTag, FieldType, ISchema } from '../..';
@@ -30,8 +30,6 @@ export default function CapabilitiesComponent({
   return (
     <>
       <Typography>
-        <Typography.Title>Behaviors</Typography.Title>
-        <Divider />
         <Typography.Paragraph>
           Configure what kind of system backed behaviors you would like to use.
           You can smarten up your schema with predefined functionality, this

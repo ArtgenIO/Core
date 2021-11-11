@@ -55,6 +55,16 @@ export class SchemaMigrationService {
       }
     }
 
+    // Add the artboard meta.
+    if (!schema?.artboard) {
+      schema.artboard = {
+        position: {
+          x: 0,
+          y: 0,
+        },
+      };
+    }
+
     return schema;
   }
 }

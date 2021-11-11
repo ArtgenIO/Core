@@ -1,4 +1,5 @@
-import dagre from 'dagre';
+import { message, notification } from 'antd';
+import { diff } from 'just-diff';
 import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactFlow, {
@@ -6,9 +7,7 @@ import ReactFlow, {
   BackgroundVariant,
   Elements,
   isNode,
-  NodeTypesType,
   OnLoadParams,
-  Position,
   ReactFlowProvider,
 } from 'react-flow-renderer';
 import { useParams } from 'react-router';
@@ -17,51 +16,16 @@ import { ISchema } from '../..';
 import { pageDrawerAtom } from '../../../../management/backoffice/backoffice.atoms';
 import { useHttpClientOld } from '../../../../management/backoffice/library/http-client';
 import { routeCrudAPI } from '../../../crud/util/schema-url';
-import { schemasToElements } from '../../util/schemas-to-elements';
+import { SchemaSerializer } from '../../serializer/schema.serializer';
+import { createEmptySchema } from '../../util/get-new-schema';
+import { createLayouOrganizer } from '../../util/layout-organizer';
 import DatabaseNameComponent from './database-name.component';
 import './schema-board.component.less';
-import { SchemaNode } from './schema-node.component';
+import SchemaEditorComponent from './schema-editor.component';
+import { createSchemaNode } from './schema-node.component';
+import SchemaToolsComponent from './schema-tools.component';
 
 export default function SchemaBoardComponent() {
-  const dagreGraph = new dagre.graphlib.Graph();
-  dagreGraph.setDefaultEdgeLabel(() => ({}));
-
-  const nodeWidth = 100;
-  const nodeHeight = 100;
-
-  const getLayoutedElements = (elements: Elements, direction = 'RL') => {
-    const isHorizontal = direction === 'LR';
-    dagreGraph.setGraph({ rankdir: direction });
-
-    elements.forEach(el => {
-      if (isNode(el)) {
-        dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
-      } else {
-        dagreGraph.setEdge(el.source, el.target);
-      }
-    });
-
-    dagre.layout(dagreGraph);
-
-    return elements.map(el => {
-      if (isNode(el)) {
-        const nodeWithPosition = dagreGraph.node(el.id);
-        el.targetPosition = isHorizontal ? Position.Left : Position.Top;
-        el.sourcePosition = isHorizontal ? Position.Right : Position.Bottom;
-
-        // unfortunately we need this little hack to pass a slightly different position
-        // to notify react flow about the change. Moreover we are shifting the dagre node position
-        // (anchor=center center) to the top left so it matches the react flow node anchor point (top left).
-        el.position = {
-          x: 200 + nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
-          y: 60 + nodeWithPosition.y - nodeHeight / 2,
-        };
-      }
-
-      return el;
-    });
-  };
-
   // Page state
   const setPageDrawer = useSetRecoilState(pageDrawerAtom);
   const resetPageDrawerState = useResetRecoilState(pageDrawerAtom);
@@ -78,30 +42,142 @@ export default function SchemaBoardComponent() {
       .filter(f => f.filterExpression('database', 'eq', databaseName))
       .toQuery();
 
+  // Artboard state
   const flowWrapper = useRef(null);
-  const schemaNodeTypes: NodeTypesType = {
-    schema: SchemaNode,
-  };
   const [flowInstance, setFlowInstance] = useState<OnLoadParams>(null);
   const [elements, setElements] = useState<Elements>([]);
+  const [openedNode, setOpenedNode] = useState<string>(null);
+  const [selectedNode, setSelectedNode] = useState<string>(null);
+  const [savedState, setSavedState] = useState<ISchema[]>(null);
+
+  const layoutOrganizer = createLayouOrganizer();
 
   useEffect(() => {
     (async () => {
       const response = await httpClient.get<ISchema[]>(apiReadUrl);
 
-      setElements(() => getLayoutedElements(schemasToElements(response.data)));
-
-      if (flowInstance) {
-        flowInstance.fitView({
-          padding: 50,
-        });
-      }
+      setElements(() =>
+        layoutOrganizer(SchemaSerializer.toElements(response.data)),
+      );
+      setSavedState(response.data);
     })();
 
     return () => {
       resetPageDrawerState();
     };
   }, [databaseName]);
+
+  const doSave = async () => {
+    const currentState = SchemaSerializer.fromElements(
+      flowInstance.getElements(),
+    );
+
+    for (const schema of currentState) {
+      const original = savedState.find(s => s.reference === schema.reference);
+
+      // New schema create now
+      if (!original) {
+        await httpClient
+          .post(
+            routeCrudAPI({
+              database: 'system',
+              reference: 'Schema',
+            }),
+            schema,
+          )
+          .then(() => {
+            //message.success(`Schema [${schema.reference}] created!`);
+          })
+          .catch(e => {
+            message.error(`Schema [${schema.reference}] creating error!`);
+          });
+      }
+      // Already had
+      else {
+        const changes = diff(original, schema);
+
+        if (!changes || !changes.length) {
+          //message.info(`Schema [${schema.reference}] is unchanged`);
+        } else {
+          await httpClient
+            .patch(
+              routeCrudAPI({
+                database: 'system',
+                reference: 'Schema',
+              }) +
+                new QueryBuilder()
+                  .top(1)
+                  .filter(f => {
+                    f.filterExpression('database', 'eq', databaseName);
+                    f.filterExpression('reference', 'eq', schema.reference);
+
+                    return f;
+                  }, 'and')
+                  .toQuery(),
+              schema,
+            )
+            .then(() => {
+              //message.success(`Schema [${schema.reference}] updated!`);
+            })
+            .catch(e => {
+              message.error(`Schema [${schema.reference}] update error!`);
+            });
+        }
+      }
+    }
+
+    // Find deleted ones.
+    const deletedRefs = savedState.filter(
+      o => !currentState.some(c => c.reference === o.reference),
+    );
+
+    for (const deleted of deletedRefs) {
+      await httpClient
+        .delete(
+          routeCrudAPI({
+            database: 'system',
+            reference: 'Schema',
+          }) +
+            new QueryBuilder()
+              .top(1)
+              .filter(f => {
+                f.filterExpression('database', 'eq', databaseName);
+                f.filterExpression('reference', 'eq', deleted.reference);
+
+                return f;
+              }, 'and')
+              .toQuery(),
+        )
+        .then(() => {
+          // message.success(`Schema [${deleted.reference}] deleted!`);
+        })
+        .catch(e => {
+          message.error(`Schema [${deleted.reference}] delete error!`);
+        });
+    }
+
+    setSavedState(currentState);
+    notification.success({
+      message: 'Changes has been saved!',
+      placement: 'bottomRight',
+    });
+  };
+
+  const doNew = () => {
+    const currentState = SchemaSerializer.fromElements(
+      flowInstance.getElements(),
+    );
+
+    currentState.push(createEmptySchema(databaseName));
+
+    setElements(SchemaSerializer.toElements(currentState));
+    flowInstance.fitView();
+  };
+
+  const doRemove = () => {
+    setElements(els => els.filter(el => el.id !== selectedNode));
+    setSelectedNode(null);
+  };
 
   return (
     <>
@@ -111,8 +187,19 @@ export default function SchemaBoardComponent() {
             <ReactFlow
               elements={elements}
               onLoad={(instance: OnLoadParams) => setFlowInstance(instance)}
-              nodeTypes={schemaNodeTypes}
-              defaultZoom={1.5}
+              nodeTypes={{
+                schema: createSchemaNode(setOpenedNode),
+              }}
+              defaultZoom={1.2}
+              onSelectionChange={selections => {
+                if (selections?.length) {
+                  if (isNode(selections[0])) {
+                    setSelectedNode(selections[0].id);
+                  }
+                } else {
+                  setSelectedNode(null);
+                }
+              }}
             >
               <Background
                 variant={BackgroundVariant.Lines}
@@ -121,6 +208,22 @@ export default function SchemaBoardComponent() {
                 color="#37393f"
               />
               <DatabaseNameComponent name={databaseName} />
+              <SchemaEditorComponent
+                flowInstance={flowInstance}
+                openedNode={openedNode}
+                setOpenedNode={setOpenedNode}
+                setElements={setElements}
+              />
+              <SchemaToolsComponent
+                doNew={doNew}
+                selectedNode={selectedNode}
+                doSave={doSave}
+                doRemove={doRemove}
+                setOpenedNode={setOpenedNode}
+                flowInstance={flowInstance}
+                setElements={setElements}
+                layoutOrganizer={layoutOrganizer}
+              />
             </ReactFlow>
           </div>
         </ReactFlowProvider>
