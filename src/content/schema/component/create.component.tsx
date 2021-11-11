@@ -7,6 +7,7 @@ import { FieldTag, FieldType, ISchema } from '..';
 import PageHeader from '../../../management/backoffice/layout/PageHeader';
 import PageWithHeader from '../../../management/backoffice/layout/PageWithHeader';
 import { useHttpClientOld } from '../../../management/backoffice/library/http-client';
+import { routeCrudAPI } from '../../crud/util/schema-url';
 import { schemasAtom } from '../schema.atoms';
 import CapabilitiesComponent from './create/capabilities.component';
 import CustomFieldsComponent from './create/custom-fields.component';
@@ -60,7 +61,10 @@ export default function CreateSchemaComponent() {
 
   const doCreateSchema = async () => {
     const response = await httpClient.post<ISchema>(
-      '/api/$system/content/schema',
+      routeCrudAPI({
+        database: 'system',
+        reference: 'Schema',
+      }),
       schema,
     );
 
@@ -80,9 +84,9 @@ export default function CreateSchemaComponent() {
 
             setTimeout(() => {
               history.push(
-                `/backoffice/content/schema/${record.database}/${record.reference}`,
+                `/backoffice/content/crud/${record.database}/${record.reference}`,
               );
-            }, 1000);
+            }, 500);
           })
           .catch(e => message.error(e.message));
 
