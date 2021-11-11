@@ -8,6 +8,7 @@ import CreateSchemaComponent from './create.component';
 import SchemaEditorComponent from './edit.component';
 import SchemaListComponent from './list.component';
 import NewSchemaComponent from './new.component';
+import SchemaBoardComponent from './schema-board/schema-board.component';
 
 export default function SchemaIndexComponent() {
   const location = useLocation();
@@ -39,6 +40,11 @@ export default function SchemaIndexComponent() {
           exact
           path="/backoffice/content/schema/create"
           component={CreateSchemaComponent}
+        />
+        <Route
+          exact
+          path="/backoffice/content/schema/board/:database"
+          component={SchemaBoardComponent}
         />
         <Route
           exact

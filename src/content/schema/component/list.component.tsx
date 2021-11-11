@@ -5,6 +5,7 @@ import {
   EditOutlined,
   EyeOutlined,
   FileAddOutlined,
+  NodeIndexOutlined,
   QuestionCircleOutlined,
   TableOutlined,
 } from '@ant-design/icons';
@@ -60,6 +61,14 @@ export default function SchemaListComponent() {
               <Link key="create" to="/backoffice/content/schema/create">
                 <Button type="primary" icon={<FileAddOutlined />}>
                   Create Schema
+                </Button>
+              </Link>
+              <Link
+                key="drawboard"
+                to="/backoffice/content/schema/board/system"
+              >
+                <Button type="primary" icon={<NodeIndexOutlined />}>
+                  Schema Board
                 </Button>
               </Link>
             </>

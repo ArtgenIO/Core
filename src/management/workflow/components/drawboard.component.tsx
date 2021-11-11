@@ -152,7 +152,7 @@ export default function DrawboardComponent() {
 
   return (
     <>
-      <div style={{ backgroundColor: '#151719' }} className="h-screen">
+      <div className="h-screen bg-dark">
         <Skeleton loading={isLoading}>
           <ReactFlowProvider>
             <div className="w-full h-full" ref={flowWrapper}>

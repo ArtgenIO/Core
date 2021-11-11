@@ -44,6 +44,7 @@
     "cache-manager": "^3.4.4",
     "chalk": "^4.1.2",
     "config": "^3.3.6",
+    "dagre": "^0.8.5",
     "dependency-graph": "^0.11.0",
     "eventemitter2": "^6.4.5",
     "fastify": "^3.20.1",
