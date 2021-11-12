@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { ISchema } from '../..';
+import { ISchema } from '../../../../../content/schema';
 
-export default function IndexesComponent({
+export default function SchemaEditorIndexesComponent({
   schema,
   setSchema,
 }: {

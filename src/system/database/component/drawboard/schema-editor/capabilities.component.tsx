@@ -1,9 +1,9 @@
 import { List, Switch, Typography } from 'antd';
 import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
-import { FieldTag, FieldType, ISchema } from '../..';
+import { FieldTag, FieldType, ISchema } from '../../../../../content/schema';
 
-export default function CapabilitiesComponent({
+export default function SchemaEditorCapabilitiesComponent({
   schema,
   setSchema,
 }: {

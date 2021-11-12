@@ -1,9 +1,9 @@
 import { Modal, Typography } from 'antd';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Elements, isNode, Node, OnLoadParams } from 'react-flow-renderer';
-import { ISchema } from '../..';
-import { SchemaSerializer } from '../../serializer/schema.serializer';
-import SchemaEditorFrameComponent from '../editor/_frame.component';
+import { ISchema } from '../../../../content/schema';
+import { SchemaSerializer } from '../../../../content/schema/serializer/schema.serializer';
+import SchemaEditorFrameComponent from './schema-editor/_frame.component';
 
 type Props = {
   flowInstance: OnLoadParams;
@@ -12,7 +12,7 @@ type Props = {
   setElements: Dispatch<SetStateAction<Elements>>;
 };
 
-export default function SchemaEditorComponent({
+export default function DatabaseSchemaEditorComponent({
   flowInstance,
   openedNode,
   setOpenedNode,
@@ -29,7 +29,7 @@ export default function SchemaEditorComponent({
         .find(n => n.id === openedNode);
       const schema = node.data.schema;
 
-      schema.artboard.position = node.position;
+      schema.drawboard.position = node.position;
 
       setOriginalRef(schema.reference);
       setSchema(schema);

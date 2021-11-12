@@ -35,7 +35,7 @@ export const createEmptySchema = (database: string): ISchema => ({
   relations: [],
   tags: ['active'],
   permission: 'rw',
-  artboard: {
+  drawboard: {
     position: {
       x: 50,
       y: 50,

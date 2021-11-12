@@ -11,10 +11,10 @@ import {
 import { Popconfirm } from 'antd';
 import React, { Dispatch, SetStateAction } from 'react';
 import { Elements, OnLoadParams } from 'react-flow-renderer';
-import DartBoardSaveComponent from './dartboard-save.component';
-import SchemaSerializerComponent from './schema-serializer.component';
+import DatabaseSaveComponent from './save.component';
+import DatabaseSerializerComponent from './serializer.component';
 
-export default function SchemaToolsComponent({
+export default function DatabaseToolsComponent({
   flowInstance,
   layoutOrganizer,
   setElements,
@@ -48,7 +48,7 @@ export default function SchemaToolsComponent({
           <div>{1 ? 'Create Schema' : 'Close Catalog'}</div>
         </div>
 
-        <DartBoardSaveComponent doSave={doSave} />
+        <DatabaseSaveComponent doSave={doSave} />
 
         <div onClick={() => setElements(el => layoutOrganizer(el))}>
           <ClusterOutlined />
@@ -70,7 +70,7 @@ export default function SchemaToolsComponent({
           <div>Zoom To Fit</div>
         </div>
 
-        <SchemaSerializerComponent flowInstance={flowInstance} />
+        <DatabaseSerializerComponent flowInstance={flowInstance} />
       </div>
 
       <div className="absolute right-4 bottom-4 w-10 rounded-md drawboard-tools text-center">

@@ -3,18 +3,18 @@ import { cloneDeep } from 'lodash';
 import { QueryBuilder } from 'odata-query-builder';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useResetRecoilState } from 'recoil';
-import { ISchema } from '../..';
-import { Exception } from '../../../../exception';
-import { pageDrawerAtom } from '../../../../management/backoffice/backoffice.atoms';
-import { useHttpClient } from '../../../../management/backoffice/library/use-http-client';
-import { routeCrudAPI } from '../../../crud/util/schema-url';
-import { RelationKind } from '../../interface/relation.interface';
-import { isPrimary } from '../../util/is-primary';
-import RelationBelongsToMany from './relation-belongs-many.component';
-import RelationBelongsToOne from './relation-belongs-one.component';
-import RelationHasMany from './relation-has-many.component';
-import RelationHasOne from './relation-has-one.component';
-import RelationManyToMany from './relation-many-to-many.component';
+import { routeCrudAPI } from '../../../../../content/crud/util/schema-url';
+import { ISchema } from '../../../../../content/schema';
+import { RelationKind } from '../../../../../content/schema/interface/relation.interface';
+import { isPrimary } from '../../../../../content/schema/util/is-primary';
+import { Exception } from '../../../../../exception';
+import { pageDrawerAtom } from '../../../../../management/backoffice/backoffice.atoms';
+import { useHttpClient } from '../../../../../management/backoffice/library/use-http-client';
+import RelationBelongsToMany from './relation/belongs-many.component';
+import RelationBelongsToOne from './relation/belongs-one.component';
+import RelationHasMany from './relation/has-many.component';
+import RelationHasOne from './relation/has-one.component';
+import RelationManyToMany from './relation/many-to-many.component';
 
 export default function RelationsComponent({
   schema,

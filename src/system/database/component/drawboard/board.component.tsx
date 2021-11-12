@@ -11,24 +11,19 @@ import ReactFlow, {
   ReactFlowProvider,
 } from 'react-flow-renderer';
 import { useParams } from 'react-router';
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
-import { ISchema } from '../..';
-import { pageDrawerAtom } from '../../../../management/backoffice/backoffice.atoms';
+import { routeCrudAPI } from '../../../../content/crud/util/schema-url';
+import { ISchema } from '../../../../content/schema';
+import { SchemaSerializer } from '../../../../content/schema/serializer/schema.serializer';
+import { createEmptySchema } from '../../../../content/schema/util/get-new-schema';
+import { createLayouOrganizer } from '../../../../content/schema/util/layout-organizer';
 import { useHttpClientOld } from '../../../../management/backoffice/library/http-client';
-import { routeCrudAPI } from '../../../crud/util/schema-url';
-import { SchemaSerializer } from '../../serializer/schema.serializer';
-import { createEmptySchema } from '../../util/get-new-schema';
-import { createLayouOrganizer } from '../../util/layout-organizer';
-import DatabaseNameComponent from './database-name.component';
-import './schema-board.component.less';
-import SchemaEditorComponent from './schema-editor.component';
+import './board.component.less';
+import DatabaseNameComponent from './name.component';
+import DatabaseSchemaEditorComponent from './schema-editor.component';
 import { createSchemaNode } from './schema-node.component';
-import SchemaToolsComponent from './schema-tools.component';
+import DatabaseToolsComponent from './tools.component';
 
-export default function SchemaBoardComponent() {
-  // Page state
-  const setPageDrawer = useSetRecoilState(pageDrawerAtom);
-  const resetPageDrawerState = useResetRecoilState(pageDrawerAtom);
+export default function DatabaseBoardComponent() {
   // Router
   const httpClient = useHttpClientOld();
   const databaseName = useParams<{ database: string }>().database;
@@ -61,10 +56,6 @@ export default function SchemaBoardComponent() {
       );
       setSavedState(response.data);
     })();
-
-    return () => {
-      resetPageDrawerState();
-    };
   }, [databaseName]);
 
   const doSave = async () => {
@@ -208,13 +199,13 @@ export default function SchemaBoardComponent() {
                 color="#37393f"
               />
               <DatabaseNameComponent name={databaseName} />
-              <SchemaEditorComponent
+              <DatabaseSchemaEditorComponent
                 flowInstance={flowInstance}
                 openedNode={openedNode}
                 setOpenedNode={setOpenedNode}
                 setElements={setElements}
               />
-              <SchemaToolsComponent
+              <DatabaseToolsComponent
                 doNew={doNew}
                 selectedNode={selectedNode}
                 doSave={doSave}

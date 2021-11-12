@@ -1,8 +1,8 @@
 import { Tooltip } from 'antd';
 import React, { Dispatch, SetStateAction } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
-import { FieldTag, ISchema } from '../..';
-import { isPrimary } from '../../util/is-primary';
+import { FieldTag, ISchema } from '../../../../content/schema';
+import { isPrimary } from '../../../../content/schema/util/is-primary';
 
 export const createSchemaNode =
   (dblClickHandler: Dispatch<SetStateAction<unknown>>) =>

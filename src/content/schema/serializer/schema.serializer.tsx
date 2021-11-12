@@ -12,8 +12,8 @@ export class SchemaSerializer {
     const elements: Elements = [];
 
     for (const schema of schemas) {
-      if (!schema.artboard) {
-        schema.artboard = {
+      if (!schema.drawboard) {
+        schema.drawboard = {
           position: {
             x: offsetX++ * 100 + 100,
             y: offsetX * 50 + 100,
@@ -25,7 +25,7 @@ export class SchemaSerializer {
       const node: Node = {
         id: nodeID,
         type: 'schema',
-        position: schema.artboard.position,
+        position: schema.drawboard.position,
         data: {
           schema,
         },
@@ -85,12 +85,12 @@ export class SchemaSerializer {
       if (isNode(element)) {
         const schema = element.data.schema;
 
-        if (!schema.artboard) {
-          schema.artboard = { position: { x: 0, y: 0 } };
+        if (!schema.drawboard) {
+          schema.drawboard = { position: { x: 0, y: 0 } };
         }
 
         // Keep the position meta.
-        schema.artboard.position = element.position;
+        schema.drawboard.position = element.position;
 
         schemas.push(schema);
       }

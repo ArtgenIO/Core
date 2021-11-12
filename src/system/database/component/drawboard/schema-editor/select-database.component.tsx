@@ -3,10 +3,10 @@ import { Button, Divider, Result, Select, Spin, Typography } from 'antd';
 import { cloneDeep, startCase } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { Link } from 'react-router-dom';
-import { ISchema } from '../..';
-import { useHttpClient } from '../../../../management/backoffice/library/use-http-client';
-import { IDatabase } from '../../../../system/database/interface';
-import { routeCrudAPI } from '../../../crud/util/schema-url';
+import { routeCrudAPI } from '../../../../../content/crud/util/schema-url';
+import { ISchema } from '../../../../../content/schema';
+import { useHttpClient } from '../../../../../management/backoffice/library/use-http-client';
+import { IDatabase } from '../../../interface';
 
 export default function SelectDatabaseComponent({
   schema,

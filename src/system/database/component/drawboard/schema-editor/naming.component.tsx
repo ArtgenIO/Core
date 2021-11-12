@@ -1,7 +1,7 @@
 import { Form, Input, Tooltip, Typography } from 'antd';
 import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ISchema } from '../..';
+import { ISchema } from '../../../../../content/schema';
 
 type InputLinkedProps = {
   isLinked: boolean;
@@ -28,7 +28,7 @@ function InputLinked({ isLinked, setIsLinked }: InputLinkedProps) {
   );
 }
 
-export default function NamingComponent({
+export default function SchemaEditorNamingComponent({
   schema,
   setSchema,
 }: {

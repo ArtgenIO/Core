@@ -3,8 +3,8 @@ import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useResetRecoilState } from 'recoil';
-import { FieldType, IField, ISchema } from '../..';
-import { pageDrawerAtom } from '../../../../management/backoffice/backoffice.atoms';
+import { FieldType, IField, ISchema } from '../../../../../content/schema';
+import { pageDrawerAtom } from '../../../../../management/backoffice/backoffice.atoms';
 
 type InputLinkedProps = {
   isLinked: boolean;
@@ -31,7 +31,7 @@ function InputLinked({ isLinked, setIsLinked }: InputLinkedProps) {
   );
 }
 
-export default function FieldTuningComponent({
+export default function SchemaEditorFieldTunerComponent({
   fieldKey: idx,
   schema,
   setSchema,

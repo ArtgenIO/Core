@@ -1,14 +1,11 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { readFileSync } from 'fs';
-import { basename, join } from 'path';
+import { join } from 'path';
 import { ModelDefined } from 'sequelize';
-import walkdir from 'walkdir';
-import { Exception } from '../../../exception';
 import { ROOT_DIR } from '../../../paths';
 import { ILogger, Inject, Logger, Service } from '../../../system/container';
 import { ILink } from '../../../system/database/interface';
 import { LinkService } from '../../../system/database/service/link.service';
-import { getErrorMessage } from '../../../system/kernel/util/extract-error';
 import { ISchema } from '../interface/schema.interface';
 import { SchemaMigrationService } from './schema-migration.service';
 
@@ -65,33 +62,13 @@ export class SchemaService {
    * schemas from local disk.
    */
   getSystem(): ISchema[] {
-    const collection: ISchema[] = [];
-
-    for (const path of walkdir.sync(join(ROOT_DIR, 'storage/seed/schema'))) {
-      const fmString: string = readFileSync(path).toString();
-      const baseName: string = basename(path);
-
-      // Empty schema, some leftover or smth
-      if (!fmString.length) {
-        this.logger.warn(
-          'Schema [%s] has no content, skipping on it, please remove it from the seed directory',
-          baseName,
-        );
-        continue;
-      }
-
-      try {
-        collection.push(this.migrator.migrate(JSON.parse(fmString)));
-      } catch (error) {
-        this.logger.error(getErrorMessage(error));
-
-        throw new Exception(
-          `Could not parse the [${baseName}] schema, please verify the JSON syntax`,
-        );
-      }
-    }
-
-    return collection;
+    return (
+      JSON.parse(
+        readFileSync(
+          join(ROOT_DIR, 'storage/seed/schema/system.database.json'),
+        ).toString(),
+      ) as ISchema[]
+    ).map(s => this.migrator.migrate(s));
   }
 
   /**

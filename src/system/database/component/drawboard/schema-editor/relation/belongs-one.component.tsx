@@ -1,27 +1,33 @@
 import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Avatar, Button, Input, List, Popconfirm, Select, Tooltip } from 'antd';
-import { camelCase, cloneDeep, upperFirst } from 'lodash';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { ISchema } from '../..';
-import { IRelation } from '../../interface/relation.interface';
-import { getTakenColumNames, isPrimary } from '../../util/is-primary';
+import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { ISchema } from '../../../../../../content/schema';
+import { IRelation } from '../../../../../../content/schema/interface/relation.interface';
+import {
+  getTakenColumNames,
+  isPrimary,
+} from '../../../../../../content/schema/util/is-primary';
 
-export default function RelationBelongsToMany({
+export default function RelationBelongsToOne({
   relation,
   setSchema,
-  schema,
   idx,
   schemas,
 }: {
   relation: IRelation;
-  schema: ISchema;
   setSchema: Dispatch<SetStateAction<ISchema>>;
   idx: number;
   schemas: ISchema[];
 }) {
-  const primary = schema.fields.find(isPrimary);
   const [name, setName] = useState(relation.name);
   const [remoteField, setRemoteField] = useState<string>(relation.remoteField);
+  const [localField, setLocalField] = useState<string>(relation.localField);
+
+  useEffect(() => {
+    setRemoteField(relation.remoteField);
+    setLocalField(relation.localField);
+  }, [idx]);
 
   return (
     <List.Item>
@@ -30,13 +36,13 @@ export default function RelationBelongsToMany({
           <Avatar
             shape="square"
             size="large"
-            className="bg-green-500"
+            className="bg-yellow-500"
             icon={
               <span className="material-icons-outlined">settings_ethernet</span>
             }
           />
         }
-        description="Belongs To Many"
+        description="Belongs To One"
         title={
           <Input
             bordered={false}
@@ -55,23 +61,6 @@ export default function RelationBelongsToMany({
       />
 
       <div className="flex">
-        <div className="hidden">
-          <Tooltip
-            title="Local field name, will be added to the schema before generation"
-            placement="left"
-          >
-            <Input
-              value={relation.localField}
-              disabled
-              placeholder="Local field"
-              addonAfter={
-                <span className="material-icons-outlined">anchor</span>
-              }
-              className="mr-2 w-64"
-            />
-          </Tooltip>
-        </div>
-
         <div>
           <Select
             defaultValue={relation.target}
@@ -79,6 +68,15 @@ export default function RelationBelongsToMany({
             placeholder="Select Target"
             onChange={newTarget => {
               setSchema(s => {
+                const remoteField = schemas
+                  .find(rs => rs.reference === newTarget)
+                  .fields.find(isPrimary).reference;
+
+                s.relations[idx].target = newTarget;
+                s.relations[idx].remoteField = remoteField;
+
+                setRemoteField(remoteField);
+
                 const usedNames = getTakenColumNames(s);
                 let newName = camelCase(newTarget);
 
@@ -97,15 +95,15 @@ export default function RelationBelongsToMany({
                   }
                 }
 
+                let localName =
+                  snakeCase(newName) + '_' + snakeCase(remoteField);
+
+                s.relations[idx].localField = localName;
+                setLocalField(localName);
                 s.relations[idx].name = newName;
-                s.relations[idx].target = newTarget;
-                s.relations[idx].remoteField = schemas
-                  .find(s => s.reference === newTarget)
-                  .fields.find(
-                    f => f.type === primary.type && !isPrimary(f),
-                  ).reference;
                 setName(newName);
-                setRemoteField(s.relations[idx].remoteField);
+
+                console.log(s.relations[idx]);
 
                 return s;
               });
@@ -113,11 +111,8 @@ export default function RelationBelongsToMany({
           >
             {schemas.map(opt => {
               const primaries = opt.fields.filter(isPrimary).length;
-              const sameType = opt.fields.some(
-                f => f.type === primary.type && !isPrimary(f),
-              );
 
-              if (primaries === 1 && sameType) {
+              if (primaries === 1) {
                 return (
                   <Select.Option key={opt.reference} value={opt.reference}>
                     {opt.label}
@@ -130,33 +125,45 @@ export default function RelationBelongsToMany({
           </Select>
         </div>
 
-        <div className="mr-2">
-          <Tooltip title="Target schema's relation key" placement="left">
-            <Select
+        <div>
+          <Tooltip
+            title="Local field name, will be added to the schema before generation"
+            placement="bottom"
+          >
+            <Input
+              value={localField}
               disabled={!relation.target}
-              value={remoteField}
-              placeholder="Remote field"
-              className="w-64"
-              onChange={newRemoteField => {
+              placeholder="Local field"
+              addonAfter={
+                <span className="material-icons-outlined text-sm">anchor</span>
+              }
+              className="mr-2 w-64"
+              onChange={e => {
+                setLocalField(e.target.value);
+                console.log('Set local nanme', e.target.value);
                 setSchema(s => {
-                  s.relations[idx].remoteField = newRemoteField;
-                  setRemoteField(newRemoteField);
+                  s.relations[idx].localField = e.target.value;
+
                   return s;
                 });
               }}
-            >
-              {relation.target
-                ? schemas
-                    .find(s => s.reference === relation.target)
-                    .fields.filter(f => !isPrimary(f))
-                    .filter(f => f.type === primary.type)
-                    .map(f => (
-                      <Select.Option key={f.reference} value={f.reference}>
-                        {f.reference}
-                      </Select.Option>
-                    ))
-                : undefined}
-            </Select>
+            />
+          </Tooltip>
+        </div>
+
+        <div className="hidden">
+          <Tooltip
+            title="Target schema's primary key, automaticaly selected"
+            placement="bottom"
+          >
+            <Input
+              value={remoteField}
+              disabled
+              readOnly
+              placeholder="Remote field"
+              className="w-64"
+              addonAfter={<span className="material-icons-outlined">key</span>}
+            />
           </Tooltip>
         </div>
       </div>

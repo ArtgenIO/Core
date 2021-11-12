@@ -28,10 +28,10 @@ export default function PageContent() {
               )}
             />
             <Route
-              path="/backoffice/content/schema"
+              path="/backoffice/database"
               component={lazy(
                 () =>
-                  import('../../../content/schema/component/index.component'),
+                  import('../../../system/database/component/index.component'),
               )}
             />
             <Route

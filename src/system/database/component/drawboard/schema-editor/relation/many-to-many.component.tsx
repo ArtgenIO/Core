@@ -3,12 +3,15 @@ import { Avatar, Button, Input, List, Popconfirm, Select, Tooltip } from 'antd';
 import { pluralize } from 'inflection';
 import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ISchema } from '../..';
+import { ISchema } from '../../../../../../content/schema';
 import {
   IRelation,
   IRelationManyToMany,
-} from '../../interface/relation.interface';
-import { getTakenColumNames, isPrimary } from '../../util/is-primary';
+} from '../../../../../../content/schema/interface/relation.interface';
+import {
+  getTakenColumNames,
+  isPrimary,
+} from '../../../../../../content/schema/util/is-primary';
 
 export default function RelationManyToMany({
   relation,

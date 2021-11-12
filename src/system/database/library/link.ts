@@ -78,6 +78,19 @@ export class Link implements ILink {
               });
             }
 
+            if (relation.kind === RelationKind.BELONGS_TO_MANY) {
+              const remote = this.connection.models[relation.target];
+
+              local.belongsToMany(remote, {
+                as: relation.name,
+                through: (relation as unknown as IRelationManyToMany).through,
+                foreignKey: relation.localField,
+                targetKey: relation.remoteField,
+                constraints: true,
+                onDelete: 'CASCADE',
+              });
+            }
+
             if (relation.kind === RelationKind.HAS_ONE) {
               const remote = this.connection.models[relation.target];
 
@@ -96,24 +109,11 @@ export class Link implements ILink {
 
               local.hasMany(remote, {
                 as: relation.name,
-                foreignKey: relation.remoteField,
                 sourceKey: relation.localField,
+                foreignKey: relation.remoteField,
                 constraints: true,
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',
-              });
-            }
-
-            if (relation.kind === RelationKind.BELONGS_TO_MANY) {
-              const remote = this.connection.models[relation.target];
-
-              local.belongsToMany(remote, {
-                as: relation.name,
-                through: (relation as unknown as IRelationManyToMany).through,
-                foreignKey: relation.localField,
-                targetKey: relation.remoteField,
-                constraints: true,
-                onDelete: 'CASCADE',
               });
             }
           }

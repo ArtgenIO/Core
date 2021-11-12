@@ -2,9 +2,9 @@ import { CloudDownloadOutlined } from '@ant-design/icons';
 import { Input, Modal } from 'antd';
 import { useState } from 'react';
 import { OnLoadParams } from 'react-flow-renderer';
-import { SchemaSerializer } from '../../serializer/schema.serializer';
+import { SchemaSerializer } from '../../../../content/schema/serializer/schema.serializer';
 
-export default function SchemaSerializerComponent({
+export default function DatabaseSerializerComponent({
   flowInstance,
 }: {
   flowInstance: OnLoadParams;

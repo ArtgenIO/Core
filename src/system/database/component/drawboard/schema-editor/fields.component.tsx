@@ -15,11 +15,11 @@ import {
 import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
-import { FieldType, ISchema } from '../..';
-import { pageDrawerAtom } from '../../../../management/backoffice/backoffice.atoms';
-import FieldTuningComponent from './field-tune.component';
+import { FieldType, ISchema } from '../../../../../content/schema';
+import { pageDrawerAtom } from '../../../../../management/backoffice/backoffice.atoms';
+import SchemaEditorFieldTunerComponent from './field-tune.component';
 
-export default function SchemaFieldsComponent({
+export default function SchemaEditorFieldsComponent({
   schema,
   setSchema,
 }: {
@@ -79,7 +79,7 @@ export default function SchemaFieldsComponent({
             key={`field-${k}`}
             onClick={() =>
               setPageDrawler(
-                <FieldTuningComponent
+                <SchemaEditorFieldTunerComponent
                   fieldKey={k}
                   schema={schema}
                   setSchema={setSchema}
