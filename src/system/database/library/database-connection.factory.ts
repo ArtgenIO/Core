@@ -38,7 +38,7 @@ export class DatabaseConnectionFactory {
   protected createPostgresConnection(connection: IDatabase): Sequelize {
     return new Sequelize(connection.dsn, {
       dialect: 'postgres',
-      logging: true,
+      logging: false,
     });
   }
 
