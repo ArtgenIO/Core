@@ -4,6 +4,7 @@ import {
   HomeOutlined,
   LayoutOutlined,
   PartitionOutlined,
+  PieChartOutlined,
   UnorderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -41,6 +42,11 @@ const menuItems: IMenuItem[] = [
     label: 'Content',
   },
   {
+    icon: <PieChartOutlined />,
+    to: '/backoffice/analytics',
+    label: 'Analytics',
+  },
+  {
     icon: <LayoutOutlined />,
     to: '/backoffice/content/page',
     label: 'Pages',
@@ -55,16 +61,15 @@ const menuItems: IMenuItem[] = [
     to: '/backoffice/database',
     label: 'Databases',
   },
-
   {
     icon: <UserOutlined />,
     label: 'Users',
-    to: '/backoffice',
+    to: '/backoffice/content/crud/system/Account',
   },
   {
     icon: <AppstoreOutlined />,
-    label: 'Plugins',
-    to: '/backoffice',
+    label: 'Extensions',
+    to: '/backoffice/tba',
   },
 ];
 

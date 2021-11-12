@@ -47,10 +47,12 @@ export default function PageContent() {
               )}
             />
             <Route
-              path="/backoffice/system/database"
+              path="/backoffice/analytics"
               component={lazy(
                 () =>
-                  import('../../../system/database/component/index.component'),
+                  import(
+                    '../../../content/analytics/component/index.component'
+                  ),
               )}
             />
 
