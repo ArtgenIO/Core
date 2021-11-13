@@ -44,13 +44,9 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
       mode: 'dynamic',
       openapi: {
         info: {
-          title: 'Artgen CMS',
+          title: 'Artgen API',
           description: 'Http Server Documentation',
           version: `RV1`,
-          license: {
-            name: 'License CC BY-NC-ND 4.0',
-            url: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
-          },
         },
         components: {
           securitySchemes: {
@@ -60,9 +56,27 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
             },
           },
         },
+        tags: [
+          {
+            name: 'OData',
+            description: 'OData backed endpoints',
+          },
+          {
+            name: 'Rest',
+            description: 'Rest structured endpoints',
+          },
+          {
+            name: 'Workflow',
+            description: 'Workflow defined HTTP triggers',
+          },
+        ],
       },
       uiConfig: {
         displayRequestDuration: true,
+        docExpansion: 'none',
+        syntaxHighlight: {
+          theme: 'monokai',
+        },
       },
       hideUntagged: false,
       exposeRoute: true,

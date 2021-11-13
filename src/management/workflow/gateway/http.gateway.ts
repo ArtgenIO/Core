@@ -151,7 +151,7 @@ export class WorkflowHttpGateway implements IHttpGateway {
         const method = routeConfig.method.toLowerCase();
         const options: RouteShorthandOptions = {
           schema: {
-            tags: ['$webhook'],
+            tags: ['Workflow'],
             description: `Invokes the [${workflow.id}/${trigger.id}] node`,
             params: paramSchema,
             security: swaggerSecurity,

@@ -62,6 +62,7 @@ export class SchemaSerializer {
 
         const edge: Edge = {
           id: `${nodeID}.relation.${relation.name}`,
+          type: 'smoothstep',
           source: nodeID,
           target: relation.target,
           sourceHandle,
@@ -69,6 +70,7 @@ export class SchemaSerializer {
           data: {
             relation,
           },
+          animated: !!relation.kind.match('has'),
         };
 
         elements.push(edge);

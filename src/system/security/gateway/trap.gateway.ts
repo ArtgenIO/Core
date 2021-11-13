@@ -25,30 +25,10 @@ export class TrapGateway implements IHttpGateway {
       return 'Match made in heaven <3';
     };
 
-    WPTrapPaths.forEach(path =>
-      httpServer.get(
-        path,
-        {
-          schema: {
-            tags: ['$trap'],
-          },
-        },
-        handler,
-      ),
-    );
+    WPTrapPaths.forEach(path => httpServer.get(path, handler));
     this.logger.info('Traps for [WordPress] registered');
 
-    OCTrapPaths.forEach(path =>
-      httpServer.get(
-        path,
-        {
-          schema: {
-            tags: ['$trap'],
-          },
-        },
-        handler,
-      ),
-    );
+    OCTrapPaths.forEach(path => httpServer.get(path, handler));
     this.logger.info('Traps for [OpenCart] registered');
   }
 }
