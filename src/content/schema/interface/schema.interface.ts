@@ -12,6 +12,13 @@ export interface ISchema {
   version: number;
 
   /**
+   * Data abstraction driver.
+   *
+   * @since V2
+   */
+  //abstraction: 'collection' | 'singleton' | 'set';
+
+  /**
    * Display icon, used to help differentiate the schema in a list.
    *
    * @since V2

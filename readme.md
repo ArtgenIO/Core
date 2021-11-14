@@ -1,38 +1,34 @@
-# Artgen - Low Code Headless CMS
-
----
+![Artgen Banner](https://user-images.githubusercontent.com/3441017/140712817-6de39d70-74ab-43d2-924f-b02776953c27.png)
 
 [![Continuous Delivery](https://github.com/artgenio/core/actions/workflows/cd.yml/badge.svg?branch=main)](https://github.com/artgenio/core/actions/workflows/cd.yml)
-
-![Artgen Banner](https://user-images.githubusercontent.com/3441017/140712817-6de39d70-74ab-43d2-924f-b02776953c27.png)
-2-d345ae0a7d24.png)
-
----
-
-Artgen has a simple goal, reduce the meaningless work for developers. As a developer your skills should be used to solve programming challanges, not to manage lists, or script rest endpoints. This is why Artgen provides you with a workflow engine, database manager, and a drag and drop user interface designer.
-
-This project aims to eridicate all of those simple problems, while providing a toolset for everyone in your company to develop a useful product. Even tho, I have titled it as a headless CMS, but it aims to be much more than that.
-
-How we gona achieve this enormous goal? With three main segment, as most of the programming work can be split into those categories.
-
-First, managed data schema, Artgen comes with a built in SQL data model manager fully managed from a user interface. Your colleagues can create a new database table within seconds, and customize data relations on an visual interface.
-
-Second, managed workflow. Most of the business logic are so simple that you can draw it to a napkin, this is why we have a visual workflow engine where you and everyone in the company simply reprogram the business flow by connecting nodes on a drawboard.
-
-Third, managed graphical interface. Every data scheme automatically gets it's own CRUD page so you will never gona write a new list page, nor a create X form. This is easily the most wasteful work in your and your companies life.
-
-What is left for you is to write real programs and let the rest of it to us <3
+![Docker Pulls](https://img.shields.io/docker/pulls/artgenio/core)
+![Docker Image Version](https://img.shields.io/docker/v/artgenio/core)
+![GitHub last commit](https://img.shields.io/github/last-commit/artgenio/core)
+![License](https://img.shields.io/github/license/artgenio/core)
 
 ### Get Started!
 
 ---
 
-```
-Nope, don't do it just yet! You can install the repo, but it's just way too unstable for any kind of real life usage now :3
+```sh
+docker pull -p 80:7200 artgenio/core:latest
 ```
 
-### Current Status
+#### Project Status
 
 ---
 
-At this moment the project is just passed the initial validation, now we know this is a feasable and what we aim to do is not just a brain f\*rt. In the following weeks the repo will continiously gets stabilished, and when a segment is stable enough for testing will be documented.
+Currently the project in the **alpha preview** phase, nothing is finalized and we are just experimenting with solutions, the proof of concept works and the goal is clear, but the features will be documented when they reach a stable enough status to be used in a beta preview like environment.
+
+### Features
+
+- Visual data modeller
+- Visual workflow engine
+- Drag and Drop UI editor
+- PostgreSQL / MySQL / SQLite based data modeling even with existing databases
+- Rest API generator
+- OData API generator
+- User authentication
+- Chart / Analytics builder (under development)
+- GraphQL API generator (coming soon)
+- Customizable dashboard

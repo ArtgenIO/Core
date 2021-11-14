@@ -4,6 +4,7 @@
   "description": "Versatily headless CMS",
   "main": "build/main.js",
   "homepage": "https://artgen.io",
+  "license": "CC-BY-NC-ND-4.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/artgenio/core.git"
