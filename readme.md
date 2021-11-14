@@ -4,7 +4,7 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/artgenio/core)
 ![Docker Image Version](https://img.shields.io/docker/v/artgenio/core)
 ![GitHub last commit](https://img.shields.io/github/last-commit/artgenio/core)
-![License](https://img.shields.io/github/license/artgenio/core)
+[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 ### Get Started!
 
