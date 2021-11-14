@@ -1,7 +1,6 @@
 FROM node:16-alpine AS builder
 WORKDIR /temp
 
-COPY .yarnrc .yarnrc
 COPY package.json package.json
 COPY yarn.lock yarn.lock
 
@@ -17,7 +16,6 @@ FROM node:16-alpine AS production
 WORKDIR /srv
 
 COPY --from=builder /temp/.yarnclean .yarnclean
-COPY --from=builder /temp/.yarnrc .yarnrc
 COPY --from=builder /temp/package.json package.json
 COPY --from=builder /temp/yarn.lock yarn.lock
 COPY --from=builder /temp/build build
