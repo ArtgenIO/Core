@@ -21,13 +21,12 @@ COPY --from=builder /temp/yarn.lock yarn.lock
 COPY --from=builder /temp/.yarnclean .yarnclean
 COPY --from=builder /temp/build build
 COPY --from=builder /temp/storage storage
-COPY --from=builder /temp/template template
 COPY --from=builder /temp/config config
 COPY --from=builder /temp/assets assets
 COPY --from=builder /temp/docs docs
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=7200
 
 RUN ["yarn", "install", "--frozen-lockfile", "--production"]
 RUN ["yarn", "autoclean", "--force"]
