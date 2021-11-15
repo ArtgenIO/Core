@@ -10,7 +10,10 @@ import { ISchema } from '../../../content/schema';
 import { FieldTag } from '../../../content/schema/interface/field-tags.enum';
 import { FieldType } from '../../../content/schema/interface/field-type.enum';
 import { getDataTypeFromField } from '../../../content/schema/util/field-mapper';
-import { isPrimary } from '../../../content/schema/util/is-primary';
+import {
+  isManagedField,
+  isPrimary,
+} from '../../../content/schema/util/is-primary';
 
 type ModelDefinition = {
   modelName: string;
@@ -30,7 +33,8 @@ export const schemaToModel = (
 
     let type: DataType = getDataTypeFromField(field);
     let defaultValue = field?.defaultValue ?? undefined;
-    let nullable = field.tags.includes(FieldTag.NULLABLE);
+    let nullable =
+      field.tags.includes(FieldTag.NULLABLE) || isManagedField(field);
 
     const column: ModelAttributeColumnOptions = {
       type,
@@ -74,22 +78,27 @@ export const schemaToModel = (
     attributes[ref] = column;
   }
 
+  const createdAt =
+    schema.fields.find(s => s.tags.includes(FieldTag.CREATED))?.reference ??
+    false;
+  const updatedAt =
+    schema.fields.find(s => s.tags.includes(FieldTag.UPDATED))?.reference ??
+    false;
+  const deletedAt =
+    schema.fields.find(s => s.tags.includes(FieldTag.DELETED))?.reference ??
+    false;
+  const version =
+    schema.fields.find(s => s.tags.includes(FieldTag.VERSION))?.reference ??
+    false;
+
   const options: ModelOptions = {
     modelName: schema.reference,
     tableName: schema.tableName,
-    createdAt:
-      schema.fields.find(s => s.tags.includes(FieldTag.CREATED))?.columnName ??
-      false,
-    updatedAt:
-      schema.fields.find(s => s.tags.includes(FieldTag.UPDATED))?.columnName ??
-      false,
-    deletedAt:
-      schema.fields.find(s => s.tags.includes(FieldTag.DELETED))?.columnName ??
-      false,
-    version:
-      schema.fields.find(s => s.tags.includes(FieldTag.VERSION))?.columnName ??
-      false,
-    paranoid: !!schema.fields.find(s => s.tags.includes(FieldTag.VERSION)),
+    createdAt,
+    updatedAt,
+    deletedAt,
+    version,
+    paranoid: !!version,
     freezeTableName: true,
   };
 

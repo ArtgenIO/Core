@@ -27,7 +27,6 @@ export default function SignInComponent() {
         setJwt(response.data);
       })
       .catch(error => {
-        console.error(error);
         message.error('Sign In failed!');
       });
   };

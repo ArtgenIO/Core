@@ -13,6 +13,7 @@ import {
   RelationKind,
 } from '../../../content/schema/interface/relation.interface';
 import { isPrimary } from '../../../content/schema/util/is-primary';
+import { Exception } from '../../../exception';
 import { getErrorMessage } from '../../kernel';
 import { IDatabase, ILink } from '../interface';
 import { schemaToModel } from './schema-to-model';
@@ -65,13 +66,39 @@ export class Link implements ILink {
           const local = this.connection.models[schema.reference];
 
           for (const relation of schema.relations) {
-            if (relation.kind === RelationKind.BELONGS_TO_ONE) {
-              const remote = this.connection.models[relation.target];
+            const remote = this.connection.models[relation.target];
 
+            const localField = schema.fields.find(
+              f => f.reference == relation.localField,
+            );
+            const remoteField = schemas
+              .find(s => s.reference === relation.target)
+              .fields.find(f => f.reference == relation.remoteField);
+
+            let localColumn: string;
+            let remoteColumn: string;
+
+            if (localField) {
+              localColumn = localField.reference;
+            } else {
+              throw new Exception(
+                `Relation [${schema.reference}][${relation.name}] has invalid local field [${relation.localField}]`,
+              );
+            }
+
+            if (remoteField) {
+              remoteColumn = remoteField.reference;
+            } else {
+              throw new Exception(
+                `Relation [${schema.reference}][${relation.name}] has invalid remote field [${relation.remoteField}]`,
+              );
+            }
+
+            if (relation.kind === RelationKind.BELONGS_TO_ONE) {
               local.belongsTo(remote, {
                 as: relation.name,
-                foreignKey: relation.localField,
-                targetKey: relation.remoteField,
+                foreignKey: localColumn,
+                targetKey: remoteColumn,
                 constraints: true,
                 onDelete: 'CASCADE', // TODO: make options for those
                 onUpdate: 'CASCADE', // dont want users to be deleted because their avatar is removed :D
@@ -79,25 +106,21 @@ export class Link implements ILink {
             }
 
             if (relation.kind === RelationKind.BELONGS_TO_MANY) {
-              const remote = this.connection.models[relation.target];
-
               local.belongsToMany(remote, {
                 as: relation.name,
                 through: (relation as unknown as IRelationManyToMany).through,
-                foreignKey: relation.localField,
-                targetKey: relation.remoteField,
+                foreignKey: localColumn,
+                targetKey: remoteColumn,
                 constraints: true,
                 onDelete: 'CASCADE',
               });
             }
 
             if (relation.kind === RelationKind.HAS_ONE) {
-              const remote = this.connection.models[relation.target];
-
               local.hasOne(remote, {
                 as: relation.name,
-                foreignKey: relation.remoteField,
-                sourceKey: relation.localField,
+                foreignKey: remoteColumn,
+                sourceKey: localColumn,
                 constraints: true,
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',
@@ -105,12 +128,10 @@ export class Link implements ILink {
             }
 
             if (relation.kind === RelationKind.HAS_MANY) {
-              const remote = this.connection.models[relation.target];
-
               local.hasMany(remote, {
                 as: relation.name,
-                sourceKey: relation.localField,
-                foreignKey: relation.remoteField,
+                sourceKey: localColumn,
+                foreignKey: remoteColumn,
                 constraints: true,
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',

@@ -50,8 +50,6 @@ export default function CrudCreateComponent() {
   }, [schemas]);
 
   const doCreate = async (form: any) => {
-    console.log('Sending', form.formData);
-
     try {
       await httpClient.post<any>(routeCrudAPI(schemas[0]), form.formData);
       message.success(`New record created!`);

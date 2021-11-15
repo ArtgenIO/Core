@@ -4,9 +4,9 @@ import {
   FastifyRequest,
   RouteShorthandOptions,
 } from 'fastify';
-import jsonwebtoken from 'jsonwebtoken';
+import { Authenticator } from 'fastify-passport';
 import { ILogger, Inject, Logger, Service } from '../../../system/container';
-import { getErrorMessage } from '../../../system/kernel/util/extract-error';
+import { STRATEGY_CONFIG } from '../../../system/security/authentication/util/strategy.config';
 import { IHttpGateway } from '../../../system/server/interface/http-gateway.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { HttpTriggerConfig } from '../../lambda/trigger/http.trigger';
@@ -24,6 +24,8 @@ export class WorkflowHttpGateway implements IHttpGateway {
     readonly workflow: WorkflowService,
     @Inject(LambdaService)
     readonly node: LambdaService,
+    @Inject(Authenticator)
+    readonly authenticator: Authenticator,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
@@ -115,36 +117,7 @@ export class WorkflowHttpGateway implements IHttpGateway {
           });
 
           preHandlers.push(
-            httpServer.auth(
-              [
-                (request, reply, done) => {
-                  this.logger.debug('Authenticating the request');
-
-                  if (request.headers['authorization']) {
-                    const tokenString = request.headers[
-                      'authorization'
-                    ].replace(/Bearer:\s+/, '');
-
-                    try {
-                      jsonwebtoken.verify(tokenString, 'TEST_JWT', {});
-
-                      done();
-                    } catch (error) {
-                      this.logger.warn(
-                        'Token problem! [%s]',
-                        getErrorMessage(error),
-                      );
-                      done(new Error('Invalid JWT'));
-                    }
-                  } else {
-                    done(new Error('Missing bearer token'));
-                  }
-                },
-              ],
-              {
-                relation: 'or',
-              },
-            ),
+            this.authenticator.authenticate(['token', 'jwt'], STRATEGY_CONFIG),
           );
         }
 

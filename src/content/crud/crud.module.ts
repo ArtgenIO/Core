@@ -1,4 +1,5 @@
 import { IModule, Module } from '../../system/container';
+import { AuthenticationModule } from '../../system/security/authentication/authentication.module';
 import { SchemaModule } from '../schema/schema.module';
 import { CrudGateway } from './gateway/crud.gateway';
 import { ODataGateway } from './gateway/odata.gateway';
@@ -9,7 +10,7 @@ import { ODataService } from './service/odata.service';
 import { RestService } from './service/rest.service';
 
 @Module({
-  dependsOn: [SchemaModule],
+  dependsOn: [SchemaModule, AuthenticationModule],
   providers: [
     CrudService,
     CrudGateway,

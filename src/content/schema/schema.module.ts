@@ -2,6 +2,7 @@ import { Module } from '../../system/container';
 import { CreateSchemaLambda } from './lambda/create.lambda';
 import { ReadSchemaLambda } from './lambda/read.lambda';
 import { UpdateSchemaLambda } from './lambda/update.lambda';
+import { KeyValueService } from './service/key-value.service';
 import { SchemaMigrationService } from './service/schema-migration.service';
 import { SchemaService } from './service/schema.service';
 
@@ -12,6 +13,7 @@ import { SchemaService } from './service/schema.service';
     CreateSchemaLambda,
     ReadSchemaLambda,
     UpdateSchemaLambda,
+    KeyValueService,
   ],
 })
 export class SchemaModule {}

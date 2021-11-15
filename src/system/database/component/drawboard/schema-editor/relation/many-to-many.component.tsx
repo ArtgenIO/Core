@@ -104,8 +104,6 @@ export default function RelationManyToMany({
                 setName(newName);
                 setRemoteField(s.relations[idx].remoteField);
 
-                console.log(s.relations[idx]);
-
                 return s;
               });
             }}
@@ -169,7 +167,7 @@ export default function RelationManyToMany({
       </div>
 
       <Popconfirm
-        title="Are You sure to delete this field?"
+        title="Are You sure to delete this relation?"
         okText="Yes, delete"
         cancelText="No"
         placement="left"

@@ -96,10 +96,10 @@ export default function RelationBelongsToOne({
                 }
 
                 let localName =
-                  snakeCase(newName) + '_' + snakeCase(remoteField);
+                  snakeCase(newName) + upperFirst(snakeCase(remoteField));
 
                 s.relations[idx].localField = localName;
-                setLocalField(localName);
+                setLocalField(localName); // Just preset
                 s.relations[idx].name = newName;
                 setName(newName);
 
@@ -140,7 +140,6 @@ export default function RelationBelongsToOne({
               className="mr-2 w-64"
               onChange={e => {
                 setLocalField(e.target.value);
-                console.log('Set local nanme', e.target.value);
                 setSchema(s => {
                   s.relations[idx].localField = e.target.value;
 
@@ -169,7 +168,7 @@ export default function RelationBelongsToOne({
       </div>
 
       <Popconfirm
-        title="Are You sure to delete this field?"
+        title="Are You sure to delete this relation?"
         okText="Yes, delete"
         cancelText="No"
         placement="left"

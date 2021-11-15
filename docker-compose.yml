@@ -16,25 +16,22 @@ services:
     volumes:
       - ag_postgresql:/var/lib/postgresql/data/pgdata
 
-  ag-core:
-    image: node:16-alpine
-    hostname: ag-core
+  ag-mysql:
+    image: mariadb:latest
+    hostname: ag-mysql
+    restart: unless-stopped
     ports:
-      - 8080:7200
+      - 3306:3306
     environment:
-      NODE_ENV: production
+      MARIADB_DATABASE: artgen
+      MARIADB_USER: artgen
+      MARIADB_PASSWORD: artgen
+      MARIADB_ROOT_PASSWORD: artgen
       TZ: UTC
-    working_dir: /srv
     volumes:
-      - ./build:/srv/build
-      - ./config:/srv/config
-      - ./node_modules:/srv/node_modules
-      - ./storage:/srv/storage
-      - ./template:/srv/template
-      - ./package.json:/srv/package.json
-    environment:
-      DB_URL: postgres://artgen:artgen@ag-postgres:5432/artgen
-    command: yarn start
+      - ag_mysql:/var/lib/mysql
 
 volumes:
   ag_postgresql:
+
+  ag_mysql:

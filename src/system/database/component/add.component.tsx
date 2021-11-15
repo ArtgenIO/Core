@@ -24,7 +24,6 @@ export default function DatabaseAddComponent() {
       history.goBack();
     } catch (error) {
       message.error(`Error while creating the database!`);
-      console.error(error);
     }
   };
 

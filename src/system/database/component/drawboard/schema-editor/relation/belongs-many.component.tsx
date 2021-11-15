@@ -155,7 +155,7 @@ export default function RelationBelongsToMany({
                     .filter(f => f.type === primary.type)
                     .map(f => (
                       <Select.Option key={f.reference} value={f.reference}>
-                        {f.reference}
+                        {f.label}
                       </Select.Option>
                     ))
                 : undefined}
@@ -165,7 +165,7 @@ export default function RelationBelongsToMany({
       </div>
 
       <Popconfirm
-        title="Are You sure to delete this field?"
+        title="Are You sure to delete this relation?"
         okText="Yes, delete"
         cancelText="No"
         placement="left"

@@ -14,7 +14,7 @@ export const useHttpClientOld = () => {
 
   httpClient.interceptors.request.use((config: AxiosRequestConfig) => {
     if (jwt) {
-      config.headers['authorization'] = `Bearer: ${jwt}`;
+      config.headers['authorization'] = `Bearer ${jwt}`;
 
       return config;
     }

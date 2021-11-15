@@ -7,6 +7,8 @@ import { OutputHandleDTO } from '../../../../management/lambda/dto/output-handle
 import { ILambda } from '../../../../management/lambda/interface/lambda.interface';
 import { WorkflowSession } from '../../../../management/workflow/library/workflow.session';
 import { Inject, Service } from '../../../container';
+import { IAccount } from '../interface/account.interface';
+import { AuthenticationService } from '../service/authentication.service';
 
 type Input = {
   email: string;
@@ -56,14 +58,12 @@ export class SignInLambda implements ILambda {
   constructor(
     @Inject(SchemaService)
     readonly schemas: SchemaService,
+    @Inject(AuthenticationService)
+    readonly authService: AuthenticationService,
   ) {}
 
   async invoke(ctx: WorkflowSession) {
-    const model = this.schemas.model<{
-      id: string;
-      email: string;
-      password: string;
-    }>('system', 'Account');
+    const model = this.schemas.model<IAccount>('system', 'Account');
     const credentials = ctx.getInput('credentials') as Input;
 
     const account = await model.findOne({
@@ -79,10 +79,9 @@ export class SignInLambda implements ILambda {
       return {
         jwt: jsonwebtoken.sign(
           {
-            id: account.get('id'),
-            email: account.get('email'),
+            aid: account.get('id'),
           },
-          'TEST_JWT',
+          await this.authService.getJwtSecret(),
           {
             expiresIn: '24h',
           },

@@ -1,5 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { Authenticator } from 'fastify-passport';
 import { Inject, Service } from '../../../system/container';
+import { STRATEGY_CONFIG } from '../../../system/security/authentication/util/strategy.config';
 import { IHttpGateway } from '../../../system/server/interface/http-gateway.interface';
 import { CrudService } from '../service/crud.service';
 
@@ -17,14 +19,40 @@ export class CrudGateway implements IHttpGateway {
   constructor(
     @Inject(CrudService)
     readonly service: CrudService,
+    @Inject(Authenticator)
+    readonly authenticator: Authenticator,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
     const schemaURL = '/api/content/:database/:reference';
+    const preHandler = this.authenticator.authenticate(
+      ['jwt', 'token'],
+      STRATEGY_CONFIG,
+      async (
+        request: FastifyRequest,
+        reply: FastifyReply,
+        err: null | Error,
+        user?: unknown,
+        info?: unknown,
+        statuses?: (number | undefined)[],
+      ) => {
+        if (!user) {
+          reply.statusCode = 401;
+          reply.send({
+            error: 'Unauthorized',
+            message: 'Please authenticate your request',
+            statusCode: 401,
+          });
+        }
+      },
+    );
 
     // Create action
     httpServer.post(
       schemaURL,
+      {
+        preHandler,
+      },
       async (
         req: FastifyRequest<{ Params: SchemaParams }>,
         res: FastifyReply,
@@ -40,6 +68,9 @@ export class CrudGateway implements IHttpGateway {
     // Update
     httpServer.patch(
       schemaURL,
+      {
+        preHandler,
+      },
       async (
         req: FastifyRequest<{
           Params: RecordParams;
@@ -59,6 +90,9 @@ export class CrudGateway implements IHttpGateway {
     // Delete
     httpServer.delete(
       schemaURL,
+      {
+        preHandler,
+      },
       async (
         req: FastifyRequest<{
           Params: RecordParams;
@@ -76,6 +110,9 @@ export class CrudGateway implements IHttpGateway {
     // Read action
     httpServer.get(
       schemaURL,
+      {
+        preHandler,
+      },
       async (
         req: FastifyRequest<{ Params: SchemaParams }>,
         res: FastifyReply,

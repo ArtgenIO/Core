@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { ILogger, Logger, Service } from '../../../container';
+import { Authenticator } from 'fastify-passport';
+import { Inject, Service } from '../../../container';
 import { IHttpGateway } from '../../../server/interface/http-gateway.interface';
 
 @Service({
@@ -7,9 +8,12 @@ import { IHttpGateway } from '../../../server/interface/http-gateway.interface';
 })
 export class AuthenticationGateway implements IHttpGateway {
   constructor(
-    @Logger()
-    readonly logger: ILogger,
+    @Inject(Authenticator)
+    readonly authenticator: Authenticator,
   ) {}
 
-  async register(httpServer: FastifyInstance): Promise<void> {}
+  async register(httpServer: FastifyInstance): Promise<void> {
+    await httpServer.register(this.authenticator.initialize());
+    await httpServer.register(this.authenticator.secureSession());
+  }
 }

@@ -1,6 +1,204 @@
 [
   {
     "database": "system",
+    "reference": "Workflow",
+    "label": "Workflows",
+    "tableName": "__artgen_workflows",
+    "fields": [
+      {
+        "reference": "id",
+        "columnName": "id",
+        "label": "Identifier",
+        "type": "uuid",
+        "tags": [
+          "primary"
+        ],
+        "typeParams": {
+          "values": []
+        }
+      },
+      {
+        "reference": "name",
+        "columnName": "name",
+        "label": "Name",
+        "type": "text",
+        "tags": [
+          "unique"
+        ],
+        "typeParams": {
+          "values": []
+        }
+      },
+      {
+        "reference": "nodes",
+        "columnName": "nodes",
+        "label": "Nodes",
+        "type": "json",
+        "tags": [],
+        "defaultValue": [],
+        "typeParams": {
+          "values": []
+        }
+      },
+      {
+        "reference": "edges",
+        "columnName": "edges",
+        "label": "Edges",
+        "type": "json",
+        "tags": [],
+        "defaultValue": [],
+        "typeParams": {
+          "values": []
+        }
+      }
+    ],
+    "indices": [],
+    "uniques": [],
+    "relations": [],
+    "tags": [
+      "active",
+      "system"
+    ],
+    "drawboard": {
+      "position": {
+        "x": 370.00044138667477,
+        "y": 60
+      }
+    }
+  },
+  {
+    "database": "system",
+    "reference": "Dashboard",
+    "label": "Dashboard",
+    "tableName": "__artgen_dashboards",
+    "fields": [
+      {
+        "label": "Identifier",
+        "reference": "id",
+        "columnName": "id",
+        "type": "uuid",
+        "typeParams": {
+          "values": []
+        },
+        "tags": [
+          "primary"
+        ]
+      },
+      {
+        "reference": "label",
+        "label": "Label",
+        "columnName": "label",
+        "defaultValue": null,
+        "type": "text",
+        "typeParams": {
+          "values": []
+        },
+        "tags": [
+          "unique"
+        ]
+      },
+      {
+        "reference": "widgets",
+        "label": "Widgets",
+        "columnName": "widgets",
+        "defaultValue": "[]",
+        "type": "json",
+        "typeParams": {
+          "values": []
+        },
+        "tags": []
+      },
+      {
+        "label": "Tags",
+        "reference": "tags",
+        "columnName": "__artgen_tags",
+        "type": "json",
+        "tags": [
+          "tags"
+        ],
+        "typeParams": {
+          "values": []
+        },
+        "defaultValue": []
+      }
+    ],
+    "indices": [],
+    "uniques": [],
+    "relations": [],
+    "tags": [
+      "active"
+    ],
+    "drawboard": {
+      "position": {
+        "x": 370.00040358751863,
+        "y": 274
+      }
+    }
+  },
+  {
+    "database": "system",
+    "reference": "AccessKey",
+    "label": "Access Keys",
+    "tableName": "__artgen_access_keys",
+    "fields": [
+      {
+        "label": "Key",
+        "reference": "key",
+        "columnName": "key",
+        "type": "uuid",
+        "typeParams": {
+          "values": []
+        },
+        "tags": [
+          "primary"
+        ]
+      },
+      {
+        "reference": "isseudAt",
+        "label": "Isseud At",
+        "columnName": "isseud_at",
+        "type": "timestamp",
+        "typeParams": {
+          "values": []
+        },
+        "tags": [
+          "created"
+        ]
+      },
+      {
+        "reference": "accoundId",
+        "label": "Accound ID",
+        "columnName": "accound_id",
+        "type": "uuid",
+        "typeParams": {
+          "values": []
+        },
+        "tags": []
+      }
+    ],
+    "indices": [],
+    "uniques": [],
+    "relations": [
+      {
+        "kind": "belongs-to-one",
+        "name": "account",
+        "target": "Account",
+        "localField": "accoundId",
+        "remoteField": "id"
+      }
+    ],
+    "tags": [
+      "active"
+    ],
+    "drawboard": {
+      "position": {
+        "x": 370.0006810298832,
+        "y": 488
+      }
+    }
+  },
+  {
+    "database": "system",
     "reference": "Account",
     "label": "Accounts",
     "tableName": "__artgen_accounts",
@@ -42,15 +240,23 @@
     ],
     "indices": [],
     "uniques": [],
-    "relations": [],
+    "relations": [
+      {
+        "kind": "has-many",
+        "name": "accessKeys",
+        "target": "AccessKey",
+        "localField": "id",
+        "remoteField": "accoundId"
+      }
+    ],
     "tags": [
       "system",
       "active"
     ],
     "drawboard": {
       "position": {
-        "x": 370,
-        "y": 60
+        "x": 200.00024520539853,
+        "y": 488
       }
     }
   },
@@ -116,8 +322,8 @@
     ],
     "drawboard": {
       "position": {
-        "x": 370,
-        "y": 274
+        "x": 370.00032306906684,
+        "y": 702
       }
     }
   },
@@ -212,8 +418,8 @@
     ],
     "drawboard": {
       "position": {
-        "x": 370,
-        "y": 488
+        "x": 370.00003013389363,
+        "y": 916
       }
     }
   },
@@ -358,74 +564,7 @@
     ],
     "drawboard": {
       "position": {
-        "x": 200,
-        "y": 274
-      }
-    }
-  },
-  {
-    "database": "system",
-    "reference": "Workflow",
-    "label": "Workflows",
-    "tableName": "__artgen_workflows",
-    "fields": [
-      {
-        "reference": "id",
-        "columnName": "id",
-        "label": "Identifier",
-        "type": "uuid",
-        "tags": [
-          "primary"
-        ],
-        "typeParams": {
-          "values": []
-        }
-      },
-      {
-        "reference": "name",
-        "columnName": "name",
-        "label": "Name",
-        "type": "text",
-        "tags": [
-          "unique"
-        ],
-        "typeParams": {
-          "values": []
-        }
-      },
-      {
-        "reference": "nodes",
-        "columnName": "nodes",
-        "label": "Nodes",
-        "type": "json",
-        "tags": [],
-        "defaultValue": [],
-        "typeParams": {
-          "values": []
-        }
-      },
-      {
-        "reference": "edges",
-        "columnName": "edges",
-        "label": "Edges",
-        "type": "json",
-        "tags": [],
-        "defaultValue": [],
-        "typeParams": {
-          "values": []
-        }
-      }
-    ],
-    "indices": [],
-    "uniques": [],
-    "relations": [],
-    "tags": [
-      "active",
-      "system"
-    ],
-    "drawboard": {
-      "position": {
-        "x": 370,
+        "x": 200.00058638224152,
         "y": 702
       }
     }
@@ -434,15 +573,16 @@
     "icon": "table",
     "version": 2,
     "database": "system",
-    "label": "Dashboard",
-    "reference": "Dashboard",
-    "tableName": "__artgen_dashboards",
+    "label": "Key-Value Storage",
+    "reference": "KeyValueStorage",
+    "tableName": "__artgen_key_value_storage",
     "fields": [
       {
-        "label": "Identifier",
-        "reference": "id",
-        "columnName": "id",
-        "type": "uuid",
+        "reference": "key",
+        "label": "Key",
+        "columnName": "key",
+        "defaultValue": null,
+        "type": "text",
         "typeParams": {
           "values": []
         },
@@ -451,41 +591,17 @@
         ]
       },
       {
-        "reference": "Label",
-        "label": "Label",
-        "columnName": "label",
+        "reference": "value",
+        "label": "Value",
+        "columnName": "value",
         "defaultValue": null,
-        "type": "text",
+        "type": "json",
         "typeParams": {
           "values": []
         },
         "tags": [
-          "unique"
+          "nullable"
         ]
-      },
-      {
-        "reference": "Widgets",
-        "label": "Widgets",
-        "columnName": "widgets",
-        "defaultValue": "[]",
-        "type": "json",
-        "typeParams": {
-          "values": []
-        },
-        "tags": []
-      },
-      {
-        "label": "Tags",
-        "reference": "tags",
-        "columnName": "__artgen_tags",
-        "type": "json",
-        "tags": [
-          "tags"
-        ],
-        "typeParams": {
-          "values": []
-        },
-        "defaultValue": []
       }
     ],
     "indices": [],
@@ -497,8 +613,8 @@
     "permission": "rw",
     "drawboard": {
       "position": {
-        "x": 603,
-        "y": 62
+        "x": 370.00027415118717,
+        "y": 1130
       }
     }
   }
