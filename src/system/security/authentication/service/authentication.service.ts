@@ -1,10 +1,12 @@
-import { hashSync } from 'bcrypt';
+import { compare, hashSync } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 import { KeyValueService } from '../../../../content/schema/service/key-value.service';
 import { SchemaService } from '../../../../content/schema/service/schema.service';
 import { ILogger, Inject, Logger } from '../../../container';
 import { IAccessKey } from '../interface/access-key.interface';
 import { IAccount } from '../interface/account.interface';
+import { IJwtPayload } from '../interface/jwt-payload.interface';
 
 export class AuthenticationService {
   protected deleteTimeout: NodeJS.Timeout;
@@ -27,6 +29,40 @@ export class AuthenticationService {
     }
 
     return secret;
+  }
+
+  async sigInWithCredentials(credentials: {
+    email: string;
+    password: string;
+  }): Promise<string | false> {
+    const model = this.schema.model<IAccount>('system', 'Account');
+
+    const account = await model.findOne({
+      where: {
+        email: credentials.email,
+      },
+    });
+
+    if (account) {
+      const isPasswordValid = await compare(
+        credentials.password,
+        account.get('password') as string,
+      );
+
+      if (isPasswordValid) {
+        const payload: IJwtPayload = {
+          aid: account.get('id') as string,
+          roles: [],
+        };
+
+        return sign(payload, await this.getJwtSecret(), {
+          expiresIn: '1h',
+          issuer: 'artgen.core',
+        });
+      }
+    }
+
+    return false;
   }
 
   async getAccountByID(id: string): Promise<IAccount | false> {

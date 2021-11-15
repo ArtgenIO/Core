@@ -1,5 +1,3 @@
-import { compareSync } from 'bcrypt';
-import jsonwebtoken from 'jsonwebtoken';
 import { SchemaService } from '../../../../content/schema/service/schema.service';
 import { Lambda } from '../../../../management/lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../../../management/lambda/dto/input-handle.dto';
@@ -7,7 +5,6 @@ import { OutputHandleDTO } from '../../../../management/lambda/dto/output-handle
 import { ILambda } from '../../../../management/lambda/interface/lambda.interface';
 import { WorkflowSession } from '../../../../management/workflow/library/workflow.session';
 import { Inject, Service } from '../../../container';
-import { IAccount } from '../interface/account.interface';
 import { AuthenticationService } from '../service/authentication.service';
 
 type Input = {
@@ -63,36 +60,20 @@ export class SignInLambda implements ILambda {
   ) {}
 
   async invoke(ctx: WorkflowSession) {
-    const model = this.schemas.model<IAccount>('system', 'Account');
-    const credentials = ctx.getInput('credentials') as Input;
+    const result = await this.authService.sigInWithCredentials(
+      ctx.getInput('credentials') as Input,
+    );
 
-    const account = await model.findOne({
-      where: {
-        email: credentials.email,
-      },
-    });
-
-    if (
-      account &&
-      compareSync(credentials.password, account.get('password') as string)
-    ) {
+    if (result !== false) {
       return {
-        jwt: jsonwebtoken.sign(
-          {
-            aid: account.get('id'),
-          },
-          await this.authService.getJwtSecret(),
-          {
-            expiresIn: '24h',
-          },
-        ),
+        jwt: result,
       };
     }
 
     return {
       error: {
-        message: 'Nope, failed',
-        code: 100,
+        message: 'Authentication failed',
+        code: 401,
       },
     };
   }

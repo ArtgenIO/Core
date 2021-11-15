@@ -10,7 +10,6 @@ import { STRATEGY_CONFIG } from '../../../system/security/authentication/util/st
 import { IHttpGateway } from '../../../system/server/interface/http-gateway.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { HttpTriggerConfig } from '../../lambda/trigger/http.trigger';
-import { IWorkflow } from '../interface/workflow.interface';
 import { WorkflowService } from '../service/workflow.service';
 
 @Service({
@@ -29,32 +28,6 @@ export class WorkflowHttpGateway implements IHttpGateway {
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
-    // Read WF
-    httpServer.get(
-      '/api/workflow/:id',
-      async (req: FastifyRequest<{ Params: { id: string } }>) => {
-        return (await this.workflow.findAll()).find(
-          wf => wf.id == req.params.id,
-        );
-      },
-    );
-
-    // Create WF
-    httpServer.post(
-      '/api/workflow',
-      async (req: FastifyRequest<{ Body: Omit<IWorkflow, 'id'> }>) => {
-        return await this.workflow.createWorkflow(req.body);
-      },
-    );
-
-    // Update WF
-    httpServer.patch(
-      '/api/workflow/:id',
-      async (req: FastifyRequest<{ Body: IWorkflow }>) => {
-        return await this.workflow.updateWorkflow(req.body);
-      },
-    );
-
     for (const workflow of await this.workflow.findAll()) {
       const triggers = workflow.nodes.filter(t => t.type === 'trigger.http');
 

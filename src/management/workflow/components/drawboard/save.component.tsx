@@ -27,7 +27,7 @@ export default function DrawboardSave() {
     );
 
     httpClient
-      .patch(`/api/workflow/${workflow.id}`, serializedWorkflow)
+      .patch(`/api/rest/system/workflow/${workflow.id}`, serializedWorkflow)
       .then(() => {
         notification.success({
           key: SAVING_NOTIFICATION,

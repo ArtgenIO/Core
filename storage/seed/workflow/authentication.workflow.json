@@ -71,23 +71,6 @@
       ]
     },
     {
-      "id": "trigger.http.143",
-      "type": "trigger.http",
-      "config": {
-        "path": "/api/$auth/signin",
-        "method": "POST",
-        "authentication": "public",
-        "responseFormat": "application/json",
-        "response": "{\"ack\": true}",
-        "waitForLastNode": "true"
-      },
-      "label": "Login EP",
-      "position": [
-        211.33333333333331,
-        434.33333333333337
-      ]
-    },
-    {
       "id": "crud.create.1",
       "type": "crud.create",
       "config": {
@@ -115,6 +98,24 @@
       "position": [
         263.5,
         5.583333333333311
+      ]
+    },
+    {
+      "id": "trigger.http.143",
+      "type": "trigger.http",
+      "config": {
+        "path": "/api/authentication/jwt/sign-in",
+        "method": "POST",
+        "statusCode": "200",
+        "authentication": "public",
+        "responseFormat": "application/json",
+        "response": "{\"ack\": true}",
+        "waitForLastNode": "true"
+      },
+      "label": "Login EP",
+      "position": [
+        211.33333333333331,
+        434.33333333333337
       ]
     }
   ],
@@ -181,7 +182,7 @@
       "targetNodeId": "terminate.http.207",
       "sourceHandle": "jwt",
       "targetHandle": "response",
-      "transform": "{{ $data | toJson }}"
+      "transform": "{\"accessToken\": {{ $data | toJson }}}"
     }
   ]
 }

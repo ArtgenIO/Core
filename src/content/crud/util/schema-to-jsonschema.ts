@@ -55,6 +55,23 @@ export const schemaToJsonSchema = (
         fieldDef.type = 'number';
         fieldDef.default = field.defaultValue as any;
         break;
+      case FieldType.JSON:
+        fieldDef.oneOf = [
+          {
+            type: 'object',
+          },
+          {
+            type: 'array',
+          },
+          {
+            type: 'string',
+          },
+          {
+            type: 'number',
+          },
+        ];
+        fieldDef.type = undefined;
+        break;
     }
 
     if (field.type === FieldType.ENUM) {

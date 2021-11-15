@@ -18,6 +18,7 @@ import {
 } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { routeCrudAPI } from '../../../content/crud/util/schema-url';
 import PageHeader from '../../backoffice/layout/PageHeader';
 import PageWithHeader from '../../backoffice/layout/PageWithHeader';
 import { useHttpClientOld } from '../../backoffice/library/http-client';
@@ -33,7 +34,7 @@ export default function WorkflowListComponent() {
 
     if (workflow) {
       try {
-        await httpClient.delete(`/api/workflow/${id}`);
+        await httpClient.delete(`/api/rest/system/workflow/${id}`);
 
         setWorkflows(wfs => wfs.filter(wf => wf.id !== id));
 
@@ -51,7 +52,9 @@ export default function WorkflowListComponent() {
 
   useEffect(() => {
     httpClient
-      .get<IWorkflow[]>('/api/$system/management/workflow')
+      .get<IWorkflow[]>(
+        routeCrudAPI({ database: 'system', reference: 'Workflow' }),
+      )
       .then(response => {
         setWorkflows(response.data);
         setIsLoading(false);

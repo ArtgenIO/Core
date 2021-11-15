@@ -19,7 +19,7 @@
         157.91666666666669
       ],
       "config": {
-        "path": "/api/$system/management/lambda",
+        "path": "/api/lambda",
         "method": "GET",
         "authentication": "protected",
         "responseFormat": "application/json",

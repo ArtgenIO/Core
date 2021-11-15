@@ -1,6 +1,8 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
-import { snakeCase } from 'lodash';
+import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { Authenticator } from 'fastify-passport';
+import { kebabCase } from 'lodash';
 import { Inject, Service } from '../../../system/container';
+import { STRATEGY_CONFIG } from '../../../system/security/authentication/util/strategy.config';
 import { IHttpGateway } from '../../../system/server/interface/http-gateway.interface';
 import { SchemaService } from '../../schema/service/schema.service';
 import { isPrimary } from '../../schema/util/is-primary';
@@ -18,13 +20,73 @@ export class RestGateway implements IHttpGateway {
     readonly service: RestService,
     @Inject(SchemaService)
     readonly schema: SchemaService,
+    @Inject(Authenticator)
+    readonly authenticator: Authenticator,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
     const schemas = await this.schema.findAll();
+    const security = [
+      {
+        jwt: [],
+        accessKeyQuery: [],
+        accessKeyHeader: [],
+      },
+    ];
+    const tags = ['Rest'];
+    const preHandler = this.authenticator.authenticate(
+      ['jwt', 'token'],
+      STRATEGY_CONFIG,
+      async (
+        request: FastifyRequest,
+        reply: FastifyReply,
+        err: null | Error,
+        user?: unknown,
+        info?: unknown,
+        statuses?: (number | undefined)[],
+      ) => {
+        if (!user) {
+          reply.statusCode = 401;
+          reply.send({
+            error: 'Unauthorized',
+            statusCode: 401,
+          });
+        }
+      },
+    );
+
+    const resp401 = {
+      description: 'Request is not authenticated',
+      type: 'object',
+      properties: {
+        error: {
+          type: 'string',
+          default: 'Unauthorized',
+        },
+        statusCode: {
+          type: 'number',
+          default: 401,
+        },
+      },
+    };
+
+    const resp404 = {
+      description: 'Resource not found',
+      type: 'object',
+      properties: {
+        error: {
+          type: 'string',
+          default: 'Not found',
+        },
+        statusCode: {
+          type: 'number',
+          default: 404,
+        },
+      },
+    };
 
     for (const schema of schemas) {
-      const url = `/api/rest/${snakeCase(schema.database)}/${snakeCase(
+      const url = `/api/rest/${kebabCase(schema.database)}/${kebabCase(
         schema.reference,
       )}`;
       const pks = schema.fields.filter(isPrimary);
@@ -45,23 +107,8 @@ export class RestGateway implements IHttpGateway {
       }
 
       const resp200 = {
-        description: 'OK',
-        ...(schemaToJsonSchema(schema, CrudAction.CREATE) as any),
-      };
-
-      const resp404 = {
-        description: 'Not found',
-        type: 'object',
-        properties: {
-          statusCode: {
-            type: 'number',
-            default: '404',
-          },
-          message: {
-            type: 'string',
-            default: 'Not a found',
-          },
-        },
+        description: 'Successfull',
+        ...(schemaToJsonSchema(schema, CrudAction.READ) as any),
       };
 
       // Create action
@@ -69,18 +116,15 @@ export class RestGateway implements IHttpGateway {
         url,
         {
           schema: {
-            tags: ['Rest'],
-            body: {
-              type: 'array',
-              items: schemaToJsonSchema(schema, CrudAction.CREATE),
-            },
+            tags,
+            security,
+            body: schemaToJsonSchema(schema, CrudAction.CREATE),
             response: {
-              201: {
-                ...resp200,
-                description: 'Created',
-              },
+              201: resp200,
+              401: resp401,
             },
           },
+          preHandler,
         },
         async (req: FastifyRequest): Promise<unknown> => {
           return this.service.create(
@@ -96,22 +140,36 @@ export class RestGateway implements IHttpGateway {
         url + urlOne,
         {
           schema: {
-            tags: ['Rest'],
+            tags,
+            security,
             params,
             response: {
               200: resp200,
+              401: resp401,
               404: resp404,
             },
           },
+          preHandler,
         },
         async (
-          req: FastifyRequest<{ Params: Record<string, string> }>,
+          request: FastifyRequest<{ Params: Record<string, string> }>,
+          response: FastifyReply,
         ): Promise<unknown> => {
-          return this.service.read(
+          const record = this.service.read(
             schema.database,
             schema.reference,
-            req.params as any,
+            request.params as any,
           );
+
+          if (!record) {
+            response.statusCode = 404;
+            return {
+              error: 'Not found',
+              statusCode: 404,
+            };
+          } else {
+            return record;
+          }
         },
       );
 
@@ -120,20 +178,17 @@ export class RestGateway implements IHttpGateway {
         url + urlOne,
         {
           schema: {
-            tags: ['Rest'],
-            body: {
-              type: 'array',
-              items: schemaToJsonSchema(schema, CrudAction.UPDATE),
-            },
+            tags,
+            security,
+            body: schemaToJsonSchema(schema, CrudAction.UPDATE),
             params,
             response: {
-              201: {
-                ...resp200,
-                description: 'Updated',
-              },
+              201: resp200,
+              401: resp401,
               404: resp404,
             },
           },
+          preHandler,
         },
         async (
           req: FastifyRequest<{
@@ -153,16 +208,16 @@ export class RestGateway implements IHttpGateway {
         url + urlOne,
         {
           schema: {
-            tags: ['Rest'],
+            tags,
+            security,
             params,
             response: {
-              201: {
-                ...resp200,
-                description: 'Updated',
-              },
+              201: resp200,
+              401: resp401,
               404: resp404,
             },
           },
+          preHandler,
         },
         async (req: FastifyRequest): Promise<IODataResult> => {
           return this.service.delete(

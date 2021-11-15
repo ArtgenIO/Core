@@ -21,10 +21,11 @@ export default function SignInComponent() {
 
   const doSignIn = (values: FormValues) => {
     axios
-      .post('/api/$auth/signin', values)
+      .post<{ accessToken: string }>('/api/authentication/jwt/sign-in', values)
       .then(response => {
         message.success('Welcome back!');
-        setJwt(response.data);
+
+        setJwt(response.data.accessToken);
       })
       .catch(error => {
         message.error('Sign In failed!');

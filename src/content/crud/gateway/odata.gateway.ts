@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
-import { snakeCase } from 'lodash';
+import { kebabCase } from 'lodash';
 import { Inject, Service } from '../../../system/container';
 import { IHttpGateway } from '../../../system/server/interface/http-gateway.interface';
 import { SchemaService } from '../../schema/service/schema.service';
@@ -23,7 +23,7 @@ export class ODataGateway implements IHttpGateway {
     const schemas = await this.schema.findAll();
 
     for (const schema of schemas) {
-      const url = `/api/odata/${snakeCase(schema.database)}/${snakeCase(
+      const url = `/api/odata/${kebabCase(schema.database)}/${kebabCase(
         schema.reference,
       )}`;
 

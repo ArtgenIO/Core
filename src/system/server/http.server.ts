@@ -37,7 +37,7 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
     this.logger.debug('Plugin [FormBody] registered');
 
     await server.register(swagger, {
-      routePrefix: `/swagger`,
+      routePrefix: '/api/docs',
       mode: 'dynamic',
       openapi: {
         info: {
@@ -50,6 +50,18 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
             jwt: {
               type: 'http',
               scheme: 'bearer',
+              description:
+                'Json Web Token transported in the Authentication headers',
+            },
+            accessKeyQuery: {
+              type: 'apiKey',
+              in: 'query',
+              name: 'access-key',
+            },
+            accessKeyHeader: {
+              type: 'apiKey',
+              in: 'header',
+              name: 'X-Access-Key',
             },
           },
         },

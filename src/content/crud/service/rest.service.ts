@@ -37,8 +37,6 @@ export class RestService {
     const model = this.schema.model(database, reference);
     const event = `crud.${database}.${reference}.created`;
 
-    const startedAt = Date.now();
-
     try {
       const record = await model.create(input);
       const object = record.get({ plain: true });
@@ -79,7 +77,7 @@ export class RestService {
       return record.get({ plain: true });
     }
 
-    throw new Exception('Not a found'); // 404
+    return null;
   }
 
   /**

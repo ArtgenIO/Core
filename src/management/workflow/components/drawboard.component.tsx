@@ -116,11 +116,9 @@ export default function DrawboardComponent() {
 
   useEffect(() => {
     (async () => {
-      const nodes = await httpClient.get<ILambdaMeta[]>(
-        '/api/$system/management/lambda',
-      );
+      const nodes = await httpClient.get<ILambdaMeta[]>('/api/lambda');
       const workflow = await httpClient.get<IWorkflow>(
-        `/api/workflow/${workflowId}`,
+        `/api/rest/system/workflow/${workflowId}`,
       );
 
       const customNodes: NodeTypesType = {};

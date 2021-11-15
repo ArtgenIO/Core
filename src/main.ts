@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { AppModule } from './app.module';
 import { Kernel } from './system/kernel/kernel';
 
