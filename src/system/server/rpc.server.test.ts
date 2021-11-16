@@ -48,6 +48,7 @@ describe('RpcServerProvider', () => {
   });
 
   test('should use the injected nodeid', async () => {
+    process.env.ARTGEN_NODE_ID = 'main';
     const instance = await instantiateClass(RpcServerProvider, app.context);
     const broker = instance.value();
 
