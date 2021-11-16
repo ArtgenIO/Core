@@ -45,7 +45,7 @@ jobs:
       - name: Install the interpreter
         uses: actions/setup-node@v2
         with:
-          node-version: 14.x
+          node-version: 16.x
           cache: yarn
 
       - name: Load the cached dependencies
@@ -61,11 +61,11 @@ jobs:
       #- name: Run lint tests
       #  run: yarn lint
 
+      - name: Run type checking
+        run: yarn test:types
+
       - name: Run unit tests
         run: yarn test
-
-      - name: Execute the Development Build
-        run: yarn build
 
     outputs:
       commit_message: ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}
@@ -92,7 +92,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: artgenio/core:latest,artgenio/core:${{ needs.check.outputs.tag }}
+          tags: artgenio/core:latest,artgenio/core:${{ needs.check.outputs.version }}
 
 
   release-gh:
@@ -120,7 +120,7 @@ jobs:
           body:
             "**Automated release ${{ needs.check.outputs.commit_message }}** by GitHub Actions <3\n\n
             ${{ needs.check.outputs.commit_body }}\n
-            Docker install ```docker run -p 80:7200 artgenio/core:${{ needs.check.outputs.tag }}```
+            Docker install ```docker run -p 80:7200 artgenio/core:${{ needs.check.outputs.version }}```
             "
           tag_name: ${{ needs.check.outputs.tag }}
           draft: false

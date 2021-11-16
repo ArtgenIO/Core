@@ -2,8 +2,8 @@
 const jestConfig = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  rootDir: '.',
-  testMatch: ['**/__tests__/**/*.(test|spec).ts', '**/src/**/*.(test|spec).ts'],
+  roots: ['./tests', './src'],
+  testMatch: ['**/*.(test|spec).ts'],
 
   silent: true,
   verbose: true,
@@ -12,12 +12,8 @@ const jestConfig = {
   // Coverage configuration
   collectCoverage: true,
   coverageDirectory: './coverage',
-  coverageReporters: ['clover', 'lcov', 'text'],
-  collectCoverageFrom: [
-    './src/**/*.ts',
-    '!./src/**/index.ts',
-    '!**/node_modules/**',
-  ],
+  coverageReporters: ['text'],
+  collectCoverageFrom: ['./src/**/*.ts'],
   coverageThreshold: {
     global: {
       branches: 10,

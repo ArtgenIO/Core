@@ -45,13 +45,13 @@ describe('HTTPServerProvider', () => {
     expect(server).toHaveProperty('listen');
   });
 
-  test('should have a swagger registered', async () => {
+  test('should have a openapi registered', async () => {
     const instance = await instantiateClass(HttpServerProvider, app.context);
     const server = await instance.value();
 
     const response = await server.inject({
       method: 'GET',
-      url: '/swagger/static/index.html',
+      url: '/api/docs/static/index.html',
     });
 
     expect(response.statusCode).toBe(200);

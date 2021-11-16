@@ -42,3 +42,6 @@ wercker.yml
 .travis.yml
 
 # misc
+
+*.test.js
+*.test.js.map

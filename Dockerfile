@@ -24,6 +24,7 @@ COPY --from=builder /temp/storage storage
 COPY --from=builder /temp/config config
 COPY --from=builder /temp/assets assets
 COPY --from=builder /temp/docs docs
+COPY --from=builder /temp/version version
 
 ENV NODE_ENV=production
 ENV PORT=7200
