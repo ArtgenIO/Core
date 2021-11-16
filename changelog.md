@@ -1,3 +1,9 @@
+### Version 0.0.6
+
+- Use the .env based config pattern
+- Remove dead codes
+- Use tsc to build the API
+
 ### Version 0.0.5
 
 - Authentication strategies
