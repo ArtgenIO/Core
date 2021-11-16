@@ -32,6 +32,18 @@ export class DatabaseObserver {
     }
   }
 
+  @On('crud.system.Schema.updated')
+  async handleSchemaUpdate(schema: ISchema) {
+    this.logger.warn('Schema changed! [%s]', schema.reference);
+
+    try {
+      const link = this.linkService.findByName(schema.database);
+      await link.setSchemas(link.getSchemas());
+    } catch (error) {
+      this.logger.error(getErrorMessage(error));
+    }
+  }
+
   @On('crud.system.Database.created')
   async handleDatabaseCreate(database: IDatabase) {
     this.logger.warn('New database created! [%s]', database.name);

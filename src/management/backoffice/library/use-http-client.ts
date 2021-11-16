@@ -1,7 +1,8 @@
+import { message } from 'antd';
 import axios, { AxiosRequestConfig } from 'axios';
 import { makeUseAxios, Options } from 'axios-hooks';
 import LRU from 'lru-cache';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { jwtAtom } from '../backoffice.atoms';
 
 const cache = new LRU({ max: 50 });
@@ -11,6 +12,7 @@ export const useHttpClient = <Resp = any, Body = any, Err = any>(
   options?: Options,
 ) => {
   const jwt = useRecoilValue(jwtAtom);
+  const resetJwt = useResetRecoilState(jwtAtom);
   const client = axios.create({
     headers: {
       'content-type': 'application/json',
@@ -26,6 +28,18 @@ export const useHttpClient = <Resp = any, Body = any, Err = any>(
 
     return Promise.reject('Does not have a JWT');
   });
+
+  client.interceptors.response.use(
+    response => response,
+    error => {
+      if (error?.response?.status === 401) {
+        resetJwt();
+        message.warn('Authentication token expired...');
+      }
+
+      return Promise.reject(error);
+    },
+  );
 
   const useAxios = makeUseAxios({ ...options, axios: client, cache });
 
