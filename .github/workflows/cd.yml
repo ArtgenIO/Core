@@ -98,7 +98,7 @@ jobs:
   release-gh:
     name: GitHub release
     runs-on: ubuntu-latest
-    needs: [check, testing]
+    needs: [check, testing, release-docker]
     if: ${{ success() && needs.check.outputs.is_release == 'true' }}
 
     steps:
