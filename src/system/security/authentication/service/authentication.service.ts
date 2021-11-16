@@ -10,6 +10,7 @@ import { IJwtPayload } from '../interface/jwt-payload.interface';
 
 export class AuthenticationService {
   protected deleteTimeout: NodeJS.Timeout;
+  protected jwtSecret: string;
 
   constructor(
     @Logger()
@@ -21,14 +22,18 @@ export class AuthenticationService {
   ) {}
 
   async getJwtSecret(): Promise<string> {
-    const key = 'authentication.jwt.secret';
-    const secret = await this.kv.get(key);
+    if (!this.jwtSecret) {
+      const key = 'authentication.jwt.secret';
+      let secret = await this.kv.get(key);
 
-    if (secret === null) {
-      return this.kv.set(key, nanoid(32));
+      if (secret === null) {
+        secret = await this.kv.set(key, nanoid(32));
+      }
+
+      this.jwtSecret = secret;
     }
 
-    return secret;
+    return this.jwtSecret;
   }
 
   async sigInWithCredentials(credentials: {
