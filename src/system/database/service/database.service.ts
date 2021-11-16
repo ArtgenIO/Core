@@ -1,4 +1,3 @@
-import config from 'config';
 import { Dialect } from 'sequelize';
 import { SchemaService } from '../../../content/schema/service/schema.service';
 import { Exception } from '../../../exception';
@@ -68,11 +67,11 @@ export class DatabaseService {
    * Database type is auto extracted from the DSN.
    */
   getSystem(): IDatabase {
-    const dsn = config.get<string>('database.dsn');
+    const dsn = process.env.ARTGEN_DATABASE_DSN;
 
     return {
       name: 'system',
-      dsn: dsn,
+      dsn,
       type: this.getTypeFromDSN(dsn),
     };
   }

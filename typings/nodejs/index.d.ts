@@ -1,6 +1,9 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    POSTGRES_DSN: string;
+    ARTGEN_NODE_ID: string;
+    ARTGEN_DATABASE_DSN: string;
+    ARTGEN_HTTP_PORT: string;
+
     NODE_ENV: 'production' | 'development' | 'test';
     PORT: string;
   }

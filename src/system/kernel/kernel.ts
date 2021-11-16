@@ -7,7 +7,6 @@ import {
   Reflector,
 } from '@loopback/context';
 import chalk from 'chalk';
-import config from 'config';
 import { DepGraph } from 'dependency-graph';
 import { default as timeout } from 'p-timeout';
 import { createLogger as factory, format } from 'winston';
@@ -35,7 +34,6 @@ const { combine, timestamp, printf, splat } = format;
  * module onStart hooks.
  */
 export class Kernel implements IKernel {
-  readonly nodeID: string;
   readonly context: IContext;
   readonly logger: ILogger;
 
@@ -51,7 +49,6 @@ export class Kernel implements IKernel {
    * Initialize the kernel.
    */
   constructor() {
-    this.nodeID = config.get('node.id');
     this.logger = this.createLogger();
     this.logger.debug('Creating the context...');
 
@@ -76,7 +73,7 @@ export class Kernel implements IKernel {
       verbose: chalk.gray('verbose'),
     };
     const variable = chalk.yellow('$1');
-    const application = chalk.cyan(this.nodeID);
+    const application = chalk.cyan(process.env.ARTGEN_NODE_ID);
 
     const loggedAt = timestamp({
       format: 'hh:mm:ss.SSS',

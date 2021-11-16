@@ -16,13 +16,6 @@ describe('Kernel', () => {
       expect(() => new Kernel()).not.toThrow();
     });
 
-    test('should have a node identifier', () => {
-      const app = new Kernel();
-
-      expect(app).toHaveProperty('nodeID');
-      expect(app.nodeID).toBe('main');
-    });
-
     test('should create a valid logger', () => {
       const app = new Kernel();
 

@@ -1,5 +1,4 @@
 import { Provider } from '@loopback/context';
-import config from 'config';
 import { ServiceBroker } from 'moleculer';
 import { Service } from '../container';
 
@@ -9,7 +8,7 @@ export class RpcServerProvider implements Provider<ServiceBroker> {
 
   value() {
     const broker = new ServiceBroker({
-      nodeID: config.get('node.id'),
+      nodeID: process.env.ARTGEN_NODE_ID,
       logLevel: 'warn',
     });
 

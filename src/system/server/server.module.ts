@@ -1,4 +1,3 @@
-import config from 'config';
 import { FastifyInstance } from 'fastify';
 import { ServiceBroker } from 'moleculer';
 import {
@@ -57,7 +56,7 @@ export class ServerModule implements IModule {
         ),
     );
 
-    let port = parseInt(config.get('http.port'), 10);
+    let port = parseInt(process.env.ARTGEN_HTTP_PORT, 10);
 
     // Heroku patch
     if (process.env.PORT) {

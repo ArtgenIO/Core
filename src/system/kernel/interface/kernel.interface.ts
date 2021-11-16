@@ -3,12 +3,6 @@ import { IContext, ILogger, IModule } from '../../container';
 
 export interface IKernel {
   /**
-   * Environment configured unique identifier,
-   * used when the kernel is running in scaled multi node mode.
-   */
-  readonly nodeID: string;
-
-  /**
    * Global context with the 'app' identifier, every class uses this for injection.
    */
   readonly context: IContext;
