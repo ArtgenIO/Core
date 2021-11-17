@@ -2,6 +2,7 @@ import { SchemaModule } from '../../../content/schema/schema.module';
 import { ILogger, IModule, Inject, Logger, Module } from '../../container';
 import { AuthenticationGateway } from './gateway/authentication.gateway';
 import { SignInLambda } from './lambda/sign-in.lambda';
+import { AuthenticationHandlerProvider } from './provider/authentication-handler.provider';
 import { AuthenticatorProvider } from './provider/authenticator.provider';
 import { AuthenticationService } from './service/authentication.service';
 
@@ -11,6 +12,7 @@ import { AuthenticationService } from './service/authentication.service';
     SignInLambda,
     AuthenticationService,
     AuthenticatorProvider,
+    AuthenticationHandlerProvider,
   ],
   dependsOn: [SchemaModule],
 })
