@@ -1,3 +1,4 @@
+import { DepGraph } from 'dependency-graph';
 import {
   DataType,
   DataTypes,
@@ -33,6 +34,10 @@ export class Link implements ILink {
 
   async setSchemas(schemas: ISchema[]): Promise<void> {
     if (schemas.length) {
+      const deps: DepGraph<void> = new DepGraph({
+        circular: true,
+      });
+
       // Remove current models
       for (const model of this.connection.modelManager.all) {
         this.connection.modelManager.removeModel(model as unknown as ModelType);
@@ -62,11 +67,23 @@ export class Link implements ILink {
 
       // Build relations
       for (const schema of schemas) {
+        if (!deps.hasNode(schema.reference)) {
+          deps.addNode(schema.reference);
+        }
+
         if (schema.relations) {
           const local = this.connection.models[schema.reference];
 
           for (const relation of schema.relations) {
             const remote = this.connection.models[relation.target];
+            const remoteSchema = schemas.find(
+              s => s.reference === relation.target,
+            );
+
+            // Add the relation node
+            if (!deps.hasNode(remoteSchema.reference)) {
+              deps.addNode(remoteSchema.reference);
+            }
 
             const localField = schema.fields.find(
               f => f.reference == relation.localField,
@@ -95,6 +112,8 @@ export class Link implements ILink {
             }
 
             if (relation.kind === RelationKind.BELONGS_TO_ONE) {
+              deps.addDependency(schema.reference, remoteSchema.reference);
+
               local.belongsTo(remote, {
                 as: relation.name,
                 foreignKey: localColumn,
@@ -141,7 +160,9 @@ export class Link implements ILink {
         }
       }
 
-      for (const schema of schemas) {
+      for (const schemaRef of deps.overallOrder(false)) {
+        const schema = schemas.find(s => s.reference === schemaRef);
+
         let shouldSync: boolean = false;
         let syncForce: boolean = false;
         let syncAlter: boolean = false;

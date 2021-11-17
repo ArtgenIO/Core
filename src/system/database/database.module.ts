@@ -72,18 +72,7 @@ export class DatabaseModule implements IModule {
       }
       // Existing connection (system)
       else {
-        links.push(
-          link
-            .setSchemas(dbSchemas)
-            .catch(e =>
-              this.logger
-                .warn(
-                  'Could not load schemas to the [%s] database',
-                  database.name,
-                )
-                .warn(getErrorMessage(e)),
-            ),
-        );
+        links.push(link.setSchemas(dbSchemas));
       }
     }
 
