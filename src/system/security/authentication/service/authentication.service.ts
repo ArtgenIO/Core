@@ -62,7 +62,6 @@ export class AuthenticationService {
 
         return sign(payload, await this.getJwtSecret(), {
           expiresIn: '1h',
-          issuer: 'artgen.core',
         });
       }
     }

@@ -17,7 +17,7 @@ export class KeyValueService {
     const record = await model.findByPk(key);
 
     if (record !== null) {
-      return record.getDataValue('value');
+      return record.get('value' as any);
     }
 
     return defaultValue;
