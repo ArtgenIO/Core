@@ -52,7 +52,10 @@ export class ServerService {
       this.logger.info('HTTP server is stopped');
     }
 
-    await this.httpServer.listen(port, '0.0.0.0');
+    if (process.env.NODE_ENV !== 'test') {
+      await this.httpServer.listen(port, '0.0.0.0');
+    }
+
     this.isHttpStarted = true;
 
     this.logger.info('HTTP server listening at [0.0.0.0:%d]', port);

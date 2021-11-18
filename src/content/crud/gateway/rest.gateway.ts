@@ -40,12 +40,25 @@ export class RestGateway implements IHttpGateway {
           ),
           preHandler,
         },
-        async (req: FastifyRequest): Promise<unknown> => {
-          return this.service.create(
-            schema.database,
-            schema.reference,
-            req.body as any,
-          );
+        async (req: FastifyRequest, reply: FastifyReply): Promise<unknown> => {
+          try {
+            const response = await this.service.create(
+              schema.database,
+              schema.reference,
+              req.body as any,
+            );
+
+            reply.statusCode = 201;
+
+            return response;
+          } catch (error) {
+            reply.statusCode = 400;
+
+            return {
+              statusCode: 400,
+              error: 'Bad Request',
+            };
+          }
         },
       );
 
@@ -58,7 +71,7 @@ export class RestGateway implements IHttpGateway {
         },
         async (
           request: FastifyRequest<{ Params: Record<string, string> }>,
-          response: FastifyReply,
+          reply: FastifyReply,
         ): Promise<unknown> => {
           const record = await this.service.read(
             schema.database,
@@ -71,7 +84,7 @@ export class RestGateway implements IHttpGateway {
           }
 
           // Handle the 404 error
-          response.statusCode = 404;
+          reply.statusCode = 404;
 
           return {
             error: 'Not found',

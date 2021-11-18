@@ -114,32 +114,41 @@ export class WorkflowHttpGateway implements IHttpGateway {
               workflow.id,
               request.id,
             );
+            try {
+              const response = await session.trigger(trigger.id, {
+                headers: request.headers,
+                params: request.params ?? {},
+                query: request.query ?? {},
+                body: request.body ?? null,
+                url: request.url,
+              });
 
-            const response = await session.trigger(trigger.id, {
-              headers: request.headers,
-              params: request.params ?? {},
-              query: request.query ?? {},
-              body: request.body ?? null,
-              url: request.url,
-            });
-
-            if (typeof response === 'object') {
-              if ((response.meta?.config as any)?.statusCode) {
-                reply.statusCode = parseInt(
-                  (response.meta.config as any).statusCode.toString(),
-                  10,
-                );
+              if (typeof response === 'object') {
+                if ((response.meta?.config as any)?.statusCode) {
+                  reply.statusCode = parseInt(
+                    (response.meta.config as any).statusCode.toString(),
+                    10,
+                  );
+                }
               }
+
+              const elapsed = Date.now() - startAt;
+              this.logger.info(
+                'WFSession [%s] executed in [%d] ms',
+                session.id,
+                elapsed,
+              );
+
+              return response.data;
+            } catch (error) {
+              reply.statusCode = 400;
+
+              return {
+                statusCode: 400,
+                error: 'Bad Request',
+                message: 'Request does not match the expected input data',
+              };
             }
-
-            const elapsed = Date.now() - startAt;
-            this.logger.info(
-              'WFSession [%s] executed in [%d] ms',
-              session.id,
-              elapsed,
-            );
-
-            return response.data;
           },
         );
       }

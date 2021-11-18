@@ -3,7 +3,7 @@ const jestConfig = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['./tests', './src'],
-  testMatch: ['**/*.(test|spec).ts'],
+  testMatch: ['**/*.(test|spec|e2e-test).ts'],
 
   silent: true,
   verbose: true,

@@ -30,7 +30,7 @@ export class DatabaseConnectionFactory {
   protected createSQLiteConnection(connection: IDatabase): Sequelize {
     return new Sequelize(connection.dsn, {
       dialect: 'sqlite',
-      logging: true,
+      logging: process.env.NODE_ENV !== 'test',
       logQueryParameters: true,
     });
   }
