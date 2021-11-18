@@ -6,7 +6,7 @@ import fastifyHttpErrorsEnhanced from 'fastify-http-errors-enhanced';
 import fastifySecureSession from 'fastify-secure-session';
 import swagger from 'fastify-swagger';
 import { v4 } from 'uuid';
-import { ILogger, Logger, Service } from '../container';
+import { ILogger, Logger, Service } from '../../container';
 
 @Service()
 export class HttpServerProvider implements Provider<FastifyInstance> {

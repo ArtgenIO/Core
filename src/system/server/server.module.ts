@@ -1,29 +1,40 @@
 import { FastifyInstance } from 'fastify';
 import { ServiceBroker } from 'moleculer';
+import { HttpServerProvider, IRpcGateway, RpcServerProvider } from '.';
 import {
-  HttpServerProvider,
-  IHttpGateway,
-  IRpcGateway,
-  RpcServerProvider,
-} from '.';
-import { IContext, ILogger, IModule, Logger, Module } from '../container';
+  IContext,
+  ILogger,
+  IModule,
+  Inject,
+  Logger,
+  Module,
+} from '../container';
 import { DatabaseModule } from '../database/database.module';
 import { IKernel } from '../kernel/interface/kernel.interface';
+import { ServerObserver } from './server.observer';
+import { ServerService } from './service/server.service';
 
 @Module({
   dependsOn: [DatabaseModule],
-  providers: [HttpServerProvider, RpcServerProvider],
+  providers: [
+    HttpServerProvider,
+    RpcServerProvider,
+    ServerService,
+    ServerObserver,
+  ],
 })
 export class ServerModule implements IModule {
   constructor(
     @Logger()
     protected logger: ILogger,
+    @Inject(ServerService)
+    protected service: ServerService,
   ) {}
 
   async onStart(application: IKernel): Promise<void> {
     await Promise.all([
       this.startRpcServer(application.context),
-      this.startHttpServer(application.context),
+      this.service.startHttpServer(),
     ]);
   }
 
@@ -41,31 +52,6 @@ export class ServerModule implements IModule {
     await server.start();
 
     this.logger.info('RPC server connected as [%s]', server.nodeID);
-  }
-
-  protected async startHttpServer(ctx: IContext): Promise<void> {
-    const server = await ctx.get<FastifyInstance>(
-      'providers.HttpServerProvider',
-    );
-
-    await Promise.all(
-      ctx
-        .findByTag('http:gateway')
-        .map(async gateway =>
-          (await ctx.get<IHttpGateway>(gateway.key)).register(server),
-        ),
-    );
-
-    let port = parseInt(process.env.ARTGEN_HTTP_PORT, 10);
-
-    // Heroku patch
-    if (process.env.PORT) {
-      port = parseInt(process.env.PORT, 10);
-    }
-
-    await server.listen(port, '0.0.0.0');
-
-    this.logger.info('HTTP server listening at [0.0.0.0:%d]', port);
   }
 
   async onStop(app: IKernel) {

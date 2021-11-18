@@ -6,8 +6,8 @@ import {
 } from '@loopback/context';
 import { ServiceBroker } from 'moleculer';
 import { createLogger } from 'winston';
-import { IKernel } from '../kernel/interface/kernel.interface';
-import { Kernel } from '../kernel/kernel';
+import { IKernel } from '../../kernel/interface/kernel.interface';
+import { Kernel } from '../../kernel/kernel';
 import { RpcServerProvider } from './rpc.server';
 
 describe('RpcServerProvider', () => {
