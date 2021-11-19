@@ -48,26 +48,16 @@ jobs:
           node-version: 16.x
           cache: yarn
 
-      - name: Load the cached dependencies
-        uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
       - name: Install development dependencies
         run: yarn install
-
-      # Temporary removed until the eslint is configured to be realistic
-      #- name: Run lint tests
-      #  run: yarn lint
 
       - name: Run type checking
         run: yarn test:types
 
-      - name: Run unit tests
+      - name: Run tests
         run: yarn test:cov
 
-      - name: Run build tests
+      - name: Run build
         run: yarn build
 
       - name: Collect coverage
