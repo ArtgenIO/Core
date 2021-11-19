@@ -2,6 +2,7 @@ import { inject } from '@loopback/context';
 import { FastifyInstance } from 'fastify';
 import { IHttpGateway } from '..';
 import { IContext, ILogger, Inject, Logger, Service } from '../../container';
+import { getErrorMessage } from '../../kernel';
 
 @Service()
 export class ServerService {
@@ -59,5 +60,19 @@ export class ServerService {
     this.isHttpStarted = true;
 
     this.logger.info('HTTP server listening at [0.0.0.0:%d]', port);
+  }
+
+  async stopHttpServer() {
+    await Promise.all(
+      this.ctx.findByTag('http:gateway').map(async gateway => {
+        const instance = await this.ctx.get<IHttpGateway>(gateway.key);
+
+        if (instance?.deregister) {
+          await instance
+            .deregister()
+            .catch(e => this.logger.warn(getErrorMessage(e)));
+        }
+      }),
+    );
   }
 }

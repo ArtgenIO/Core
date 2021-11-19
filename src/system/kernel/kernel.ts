@@ -310,6 +310,8 @@ export class Kernel implements IKernel {
         10_000,
         `Module [${binding.source.value.name}] could not finish it's shutdown in 10 seconds`,
       );
+    } else {
+      this.logger.debug('Module [%s] stopped', binding.source.value.name);
     }
   }
 
@@ -321,11 +323,10 @@ export class Kernel implements IKernel {
     this.logger.debug('Invoking the graceful shutdown sequence...');
 
     try {
-      const dependencies = this.moduleGraph.overallOrder(false);
+      const dependencies = this.moduleGraph.overallOrder(false).reverse();
 
-      for (const key of dependencies.reverse()) {
+      for (const key of dependencies) {
         const binding = this.context.getBinding(key);
-
         await this.context
           .get<IModule>(binding.key)
           .then(module => this.doStopModule(binding, module));

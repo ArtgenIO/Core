@@ -60,6 +60,9 @@ export class ServerModule implements IModule {
       'providers.HttpServerProvider',
     );
 
+    // Deregister gateways.
+    await this.service.stopHttpServer();
+
     await Promise.all([
       rpc.stop().then(() => this.logger.info('RPC server stopped')),
       http.close().then(() => this.logger.info('HTTP server stopped')),

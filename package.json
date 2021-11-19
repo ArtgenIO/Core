@@ -34,7 +34,7 @@
     "test:types": "tsc -p tsconfig.prod.json --noEmit",
     "test:cov": "jest",
     "test:watch": "jest --watch --collectCoverage=0",
-    "test": "jest --collectCoverage=0"
+    "test": "jest --collectCoverage=0 -i"
   },
   "dependencies": {
     "@loopback/context": "^3.17.1",

@@ -10,6 +10,8 @@ import { IHttpGateway } from '../../../system/server/interface/http-gateway.inte
   tags: 'http:gateway',
 })
 export class BackOfficeGateway implements IHttpGateway {
+  protected viteServer: any;
+
   constructor(
     @Logger()
     readonly logger: ILogger,
@@ -56,16 +58,25 @@ export class BackOfficeGateway implements IHttpGateway {
 
       // eslint-disable-next-line
       const vite = require('vite');
-      const srv = await vite.createServer(viteConfig);
+      this.viteServer = await vite.createServer(viteConfig);
       // eslint-disable-next-line
       const middie = import('middie');
 
       await httpServer.register(middie);
-      httpServer.use('/backoffice', srv.middlewares);
+      httpServer.use('/backoffice', this.viteServer.middlewares);
 
       this.logger.info(
         'Vite build [BackOffice] registered at [GET][/backoffice]',
       );
+    }
+  }
+
+  async deregister() {
+    if (this.viteServer) {
+      if (this.viteServer?.close) {
+        this.logger.debug('Closing the Vite dev server');
+        await this.viteServer.close();
+      }
     }
   }
 }
