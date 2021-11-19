@@ -1,6 +1,6 @@
 import { Route, Switch, useLocation } from 'react-router';
 import DatabaseAddComponent from './add.component';
-import DatabaseBoardComponent from './artboard/board.component';
+import DatabaseArtboardComponent from './artboard/artboard.component';
 import DatabaseListComponent from './list.component';
 
 export default function DatabaseIndexComponent() {
@@ -16,8 +16,8 @@ export default function DatabaseIndexComponent() {
         component={DatabaseAddComponent}
       ></Route>
       <Route
-        path={`${baseURL}/drawboard/:database`}
-        component={DatabaseBoardComponent}
+        path={`${baseURL}/artboard/:database`}
+        component={DatabaseArtboardComponent}
       />
     </Switch>
   );

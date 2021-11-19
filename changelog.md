@@ -1,3 +1,18 @@
+### Version 0.0.9
+
+- Reorganized base structure
+- More realistic tests
+- KV storage
+- JWT secret is persistent
+- Spliting the rest / odata modules
+- Use the more common Admin naming
+- Analytics bootstrapping
+- Group the HTTP resources into a module
+- RPC as separate module
+- Fixed a lot of open handles
+- Graceful shutdown should work now
+- HTTP gateways are deregistered
+
 ### Version 0.0.6
 
 - Use the .env based config pattern

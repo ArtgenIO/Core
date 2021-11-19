@@ -2,7 +2,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { Input, message } from 'antd';
 import React from 'react';
 import { useRecoilState } from 'recoil';
-import { workflowAtom } from '../../atom/drawboard.atoms';
+import { workflowAtom } from '../../atom/artboard.atoms';
 
 export default function WorkflowNameComponent() {
   const [workflow, setWorkflow] = useRecoilState(workflowAtom);

@@ -54,7 +54,7 @@ const menuItems: IMenuItem[] = [
   },
   {
     icon: <PartitionOutlined />,
-    to: ADMIN_BASE_URL + '/management/workflow',
+    to: ADMIN_BASE_URL + '/workflow',
     label: 'Workflows',
   },
   {

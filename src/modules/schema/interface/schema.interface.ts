@@ -74,7 +74,7 @@ export interface ISchema {
   /**
    * ArtBoard meta data.
    */
-  drawboard: {
+  artboard: {
     position: {
       x: number;
       y: number;

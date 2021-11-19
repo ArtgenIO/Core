@@ -25,20 +25,20 @@ import {
   selectedNodeIdAtom,
   workflowAtom,
   workflowChangedAtom,
-} from '../atom/drawboard.atoms';
+} from '../atom/artboard.atoms';
 import { NodeFactory } from '../factory/node.factory';
 import { IWorkflow } from '../interface/workflow.interface';
 import { createNode } from '../util/create-node';
 import { unserializeWorkflow } from '../util/unserialize-workflow';
-import DrawboardCatalogComponent from './artboard/catalog.component';
-import DrawboardNodeConfigComponent from './artboard/config.component';
-import DrawboardEdgeConfigComponent from './artboard/edge-config.component';
+import './artboard.component.less';
+import ArtboardCatalogComponent from './artboard/catalog.component';
+import ArtboardNodeConfigComponent from './artboard/config.component';
+import ArtboardEdgeConfigComponent from './artboard/edge-config.component';
 import CustomEdge from './artboard/edge.component';
 import WorkflowNameComponent from './artboard/name.component';
-import DrawboardToolsComponent from './artboard/tools.component';
-import './drawboard.less';
+import ArtboardToolsComponent from './artboard/tools.component';
 
-export default function DrawboardComponent() {
+export default function WorkflowArtboardComponent() {
   // Page state
   const setPageDrawer = useSetRecoilState(pageDrawerAtom);
   const resetPageDrawerState = useResetRecoilState(pageDrawerAtom);
@@ -51,7 +51,7 @@ export default function DrawboardComponent() {
   const [customNodes, setCustomNodes] = useState<NodeTypesType>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  // Drawboard state
+  // Artboard state
   const setWorkflow = useSetRecoilState(workflowAtom);
   const [elements, setElements] = useRecoilState(elementsAtom);
   const [lambdaMetas, setLambdaMetas] = useRecoilState(lambdaMetasAtom);
@@ -134,7 +134,7 @@ export default function DrawboardComponent() {
       setElements(unserializeWorkflow(workflow.data));
       setIsLoading(false);
 
-      setPageDrawer(<DrawboardCatalogComponent />);
+      setPageDrawer(<ArtboardCatalogComponent />);
 
       if (!workflow.data.nodes.length) {
         setCatalogCollapsed(false);
@@ -186,9 +186,9 @@ export default function DrawboardComponent() {
                   color="#37393f"
                 />
 
-                <DrawboardNodeConfigComponent />
-                <DrawboardEdgeConfigComponent />
-                <DrawboardToolsComponent />
+                <ArtboardNodeConfigComponent />
+                <ArtboardEdgeConfigComponent />
+                <ArtboardToolsComponent />
                 <WorkflowNameComponent />
               </ReactFlow>
             </div>

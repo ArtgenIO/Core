@@ -30,7 +30,9 @@ export class PageGateway implements IHttpGateway {
     });
     this.logger.info('Plugin [PoV] registered');
 
-    for (const page of await this.service.loadRoutes()) {
+    const routes = await this.service.loadRoutes();
+
+    for (const page of routes) {
       httpServer.get(
         page.path,
         async (req: FastifyRequest, res: FastifyReply): Promise<string> => {

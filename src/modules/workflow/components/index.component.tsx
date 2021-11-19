@@ -9,16 +9,16 @@ export default function WorkflowPageComponent() {
     <Switch location={location}>
       <Route
         exact
-        path="/admin/management/workflow"
+        path="/admin/workflow"
         component={WorkflowListComponent}
       ></Route>
       <Route
-        path="/admin/management/workflow/create"
+        path="/admin/workflow/create"
         component={lazy(() => import('./create.component'))}
       ></Route>
       <Route
-        path="/admin/management/workflow/drawboard/:id"
-        component={lazy(() => import('./drawboard.component'))}
+        path="/admin/workflow/artboard/:id"
+        component={lazy(() => import('./artboard.component'))}
       ></Route>
     </Switch>
   );

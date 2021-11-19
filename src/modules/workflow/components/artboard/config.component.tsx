@@ -27,11 +27,11 @@ import {
   lambdaMetasAtom,
   selectedNodeIdAtom,
   workflowChangedAtom,
-} from '../../atom/drawboard.atoms';
+} from '../../atom/artboard.atoms';
 import { CustomNode, CustomNodeData } from '../../interface/custom-node';
 
-export default function DrawboardNodeConfigComponent() {
-  // Drawboard states
+export default function ArtboardNodeConfigComponent() {
+  // Artboard states
   const lambdas = useRecoilValue(lambdaMetasAtom);
   const [selectedNodeId, setSelectedNodeId] =
     useRecoilState(selectedNodeIdAtom);

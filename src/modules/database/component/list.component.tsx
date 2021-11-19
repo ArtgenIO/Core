@@ -84,8 +84,8 @@ export default function DatabaseListComponent() {
                 </Tooltip>
               </Link>
 
-              <Link to={`/admin/database/drawboard/${db.name}`}>
-                <Tooltip title="Open Drawboard" placement="leftBottom">
+              <Link to={`/admin/database/artboard/${db.name}`}>
+                <Tooltip title="Open Artboard" placement="leftBottom">
                   <Button
                     icon={<BorderInnerOutlined />}
                     className="rounded-md mr-1 hover:text-blue-500 hover:border-blue-500"

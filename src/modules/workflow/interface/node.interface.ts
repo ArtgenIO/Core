@@ -10,7 +10,7 @@ export interface INode {
   readonly type: string;
 
   /**
-   * Display position, only relevant for the drawboard
+   * Display position, only relevant for the artboard
    */
   position: [number, number];
 

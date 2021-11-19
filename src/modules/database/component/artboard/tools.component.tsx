@@ -35,7 +35,7 @@ export default function DatabaseToolsComponent({
 }) {
   return (
     <>
-      <div className="absolute right-4 top-4 w-10 rounded-md drawboard-tools text-center">
+      <div className="absolute right-4 top-4 w-10 rounded-md artboard-tools text-center">
         <div
           className="rounded-t-md"
           onClick={e => {
@@ -73,7 +73,7 @@ export default function DatabaseToolsComponent({
         <DatabaseSerializerComponent flowInstance={flowInstance} />
       </div>
 
-      <div className="absolute right-4 bottom-4 w-10 rounded-md drawboard-tools text-center">
+      <div className="absolute right-4 bottom-4 w-10 rounded-md artboard-tools text-center">
         {selectedNode ? (
           <>
             <div

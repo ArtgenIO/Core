@@ -17,10 +17,10 @@ import {
   elementsAtom,
   selectedEdgeIdAtom,
   workflowChangedAtom,
-} from '../../atom/drawboard.atoms';
+} from '../../atom/artboard.atoms';
 
-export default function DrawboardEdgeConfigComponent() {
-  // Drawboard states
+export default function ArtboardEdgeConfigComponent() {
+  // Artboard states
   const [selectedEdgeId, setSelectedEdgeId] =
     useRecoilState(selectedEdgeIdAtom);
   const [elements, setElements] = useRecoilState(elementsAtom);

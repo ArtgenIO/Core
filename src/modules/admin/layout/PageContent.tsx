@@ -22,7 +22,7 @@ export default function PageContent() {
               component={DashboardPage}
             />
             <Route
-              path="/admin/management/workflow"
+              path="/admin/workflow"
               component={lazy(
                 () => import('../../workflow/components/index.component'),
               )}

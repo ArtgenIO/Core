@@ -18,11 +18,11 @@ import {
   flowInstanceAtom,
   selectedElementIdAtom,
   selectedNodeIdAtom,
-} from '../../atom/drawboard.atoms';
-import DrawboardDownload from './download.component';
-import DrawboardSave from './save.component';
+} from '../../atom/artboard.atoms';
+import ArtboardDownload from './download.component';
+import ArtboardSave from './save.component';
 
-export default function DrawboardToolsComponent() {
+export default function ArtboardToolsComponent() {
   const [isCollapsed, setCollapsed] = useRecoilState(catalogCollapsedAtom);
   const flowInstance = useRecoilValue(flowInstanceAtom);
   const selectedElementId = useRecoilValue(selectedElementIdAtom);
@@ -55,7 +55,7 @@ export default function DrawboardToolsComponent() {
 
   return (
     <>
-      <div className="absolute right-4 top-4 w-10 rounded-md drawboard-tools text-center">
+      <div className="absolute right-4 top-4 w-10 rounded-md artboard-tools text-center">
         <div
           className="rounded-t-md"
           onClick={e => {
@@ -68,7 +68,7 @@ export default function DrawboardToolsComponent() {
           <div>{isCollapsed ? 'Create Node' : 'Close Catalog'}</div>
         </div>
 
-        <DrawboardSave />
+        <ArtboardSave />
 
         <div onClick={() => message.info('Not yet implemented')}>
           <UnlockOutlined />
@@ -90,10 +90,10 @@ export default function DrawboardToolsComponent() {
           <div>Zoom To Fit</div>
         </div>
 
-        <DrawboardDownload />
+        <ArtboardDownload />
       </div>
 
-      <div className="absolute right-4 bottom-4 w-10 rounded-md drawboard-tools text-center">
+      <div className="absolute right-4 bottom-4 w-10 rounded-md artboard-tools text-center">
         {selectedElementId ? (
           <>
             <div

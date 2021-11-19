@@ -108,7 +108,7 @@ export class LinkService {
           tags: ['readonly'],
           relations: [],
           version: 2,
-          drawboard: {
+          artboard: {
             position: {
               x: 0,
               y: 0,

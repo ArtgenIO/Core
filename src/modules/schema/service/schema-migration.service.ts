@@ -55,9 +55,9 @@ export class SchemaMigrationService {
       }
     }
 
-    // Add the drawboard meta.
-    if (!schema?.drawboard) {
-      schema.drawboard = {
+    // Add the artboard meta.
+    if (!schema?.artboard) {
+      schema.artboard = {
         position: {
           x: 0,
           y: 0,

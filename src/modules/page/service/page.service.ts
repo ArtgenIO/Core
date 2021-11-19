@@ -1,18 +1,28 @@
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { Inject, Service } from '../../../app/container';
+import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { ROOT_DIR } from '../../../app/globals';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IPage } from '../interface/page.interface';
 
 @Service()
 export class PageService {
+  protected isSeeded: boolean = false;
+
   constructor(
+    @Logger()
+    readonly logger: ILogger,
     @Inject(SchemaService)
     readonly schema: SchemaService,
   ) {}
 
   async loadRoutes(): Promise<IPage[]> {
+    if (!this.isSeeded) {
+      await this.seed();
+
+      this.isSeeded = true;
+    }
+
     const model = this.schema.model<IPage>('system', 'Page');
     const pages = await model.findAll({
       attributes: ['id', 'label', 'domain', 'path', 'tags'],
@@ -48,5 +58,6 @@ export class PageService {
     );
 
     await model.create(JSON.parse(landing.toString()));
+    this.logger.info('Pages seeded');
   }
 }

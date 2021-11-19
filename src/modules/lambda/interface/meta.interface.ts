@@ -18,12 +18,12 @@ export interface ILambdaMeta {
   config?: JSONSchema7Definition;
 
   /**
-   * Drawboard icon
+   * Artboard icon
    */
   icon?: string;
 
   /**
-   * Drawboard description
+   * Artboard description
    */
   description: string;
 }

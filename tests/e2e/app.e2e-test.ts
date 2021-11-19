@@ -20,7 +20,7 @@ describe('Application (e2e)', () => {
 
   afterAll(async () => await app.stop());
 
-  test.skip('should server the [home] page', async () => {
+  test('should server the [home] page', async () => {
     const srv = await getServer();
 
     const response = await srv.inject({

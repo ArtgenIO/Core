@@ -2,11 +2,11 @@ import { CloudDownloadOutlined } from '@ant-design/icons';
 import { Input, Modal } from 'antd';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { flowInstanceAtom, workflowAtom } from '../../atom/drawboard.atoms';
+import { flowInstanceAtom, workflowAtom } from '../../atom/artboard.atoms';
 import { IWorkflow } from '../../interface/workflow.interface';
 import { serializeWorkflow } from '../../util/serialize-workflow';
 
-export default function DrawboardDownload() {
+export default function ArtboardDownload() {
   const workflow = useRecoilValue(workflowAtom);
   const flowInstance = useRecoilValue(flowInstanceAtom);
   const [source, setSource] = useState<string>('');

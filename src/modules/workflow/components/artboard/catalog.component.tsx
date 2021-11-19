@@ -13,7 +13,7 @@ import {
   elementsAtom,
   flowInstanceAtom,
   lambdaMetasAtom,
-} from '../../atom/drawboard.atoms';
+} from '../../atom/artboard.atoms';
 import { createNode } from '../../util/create-node';
 
 /**
@@ -45,7 +45,7 @@ const onDragStart = (event, nodeType: string) => {
   event.dataTransfer.effectAllowed = 'move';
 };
 
-export default function DrawboardCatalogComponent() {
+export default function ArtboardCatalogComponent() {
   const setMenuCollapse = useSetRecoilState(pageNavCollapseAtom);
   const lambdaMetas = useRecoilValue(lambdaMetasAtom);
   const setElements = useSetRecoilState(elementsAtom);

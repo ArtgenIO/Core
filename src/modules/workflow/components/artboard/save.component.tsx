@@ -7,13 +7,13 @@ import {
   flowInstanceAtom,
   workflowAtom,
   workflowChangedAtom,
-} from '../../atom/drawboard.atoms';
+} from '../../atom/artboard.atoms';
 import { IWorkflow } from '../../interface/workflow.interface';
 import { serializeWorkflow } from '../../util/serialize-workflow';
 
 const SAVING_NOTIFICATION = 'saving-workflow';
 
-export default function DrawboardSave() {
+export default function ArtboardSave() {
   const httpClient = useHttpClientOld();
   const workflow = useRecoilValue(workflowAtom);
   const flowInstance = useRecoilValue(flowInstanceAtom);

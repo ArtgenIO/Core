@@ -29,7 +29,7 @@ export default function DatabaseSchemaEditorComponent({
         .find(n => n.id === openedNode);
       const schema = node.data.schema;
 
-      schema.drawboard.position = node.position;
+      schema.artboard.position = node.position;
 
       setOriginalRef(schema.reference);
       setSchema(schema);

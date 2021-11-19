@@ -7,7 +7,7 @@ import {
   getSmoothStepPath,
 } from 'react-flow-renderer';
 import { useSetRecoilState } from 'recoil';
-import { selectedEdgeIdAtom } from '../../atom/drawboard.atoms';
+import { selectedEdgeIdAtom } from '../../atom/artboard.atoms';
 
 export default function CustomEdge({
   id,
@@ -22,7 +22,7 @@ export default function CustomEdge({
   arrowHeadType,
   markerEndId,
 }) {
-  // Drawboard state
+  // Artboard state
   const setSelectedEdgeId = useSetRecoilState(selectedEdgeIdAtom);
 
   const edgePath = getSmoothStepPath({
@@ -62,7 +62,7 @@ export default function CustomEdge({
           type="primary"
           shape="circle"
           size="small"
-          className="drawboard-edit-button"
+          className="artboard-edit-button"
           icon={<SettingOutlined className="opacity-80 hover:opacity-100" />}
         />
       </foreignObject>

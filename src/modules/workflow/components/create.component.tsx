@@ -27,7 +27,7 @@ export default function CreateWorkflowComponent() {
             icon: <PartitionOutlined />,
           }}
           actions={
-            <Link key="create" to="/admin/management/workflow/create">
+            <Link key="create" to="/admin/workflow/create">
               <Button type="primary" icon={<FileAddOutlined />}>
                 New Template
               </Button>
@@ -49,7 +49,7 @@ export default function CreateWorkflowComponent() {
               nodes: [],
               edges: [],
             }).then(id => {
-              history.push(`/admin/management/workflow/drawboard/${id}`);
+              history.push(`/admin/workflow/artboard/${id}`);
               message.success('Workflow ready!');
             });
           }}

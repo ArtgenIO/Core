@@ -59,7 +59,7 @@
       "active",
       "system"
     ],
-    "drawboard": {
+    "artboard": {
       "position": {
         "x": 370.00044138667477,
         "y": 60
@@ -128,7 +128,7 @@
     "tags": [
       "active"
     ],
-    "drawboard": {
+    "artboard": {
       "position": {
         "x": 370.00040358751863,
         "y": 274
@@ -190,7 +190,7 @@
     "tags": [
       "active"
     ],
-    "drawboard": {
+    "artboard": {
       "position": {
         "x": 370.0006810298832,
         "y": 488
@@ -253,7 +253,7 @@
       "system",
       "active"
     ],
-    "drawboard": {
+    "artboard": {
       "position": {
         "x": 200.00024520539853,
         "y": 488
@@ -320,7 +320,7 @@
       "system",
       "active"
     ],
-    "drawboard": {
+    "artboard": {
       "position": {
         "x": 370.00032306906684,
         "y": 702
@@ -416,7 +416,7 @@
       "active",
       "system"
     ],
-    "drawboard": {
+    "artboard": {
       "position": {
         "x": 370.00003013389363,
         "y": 916
@@ -531,9 +531,9 @@
         }
       },
       {
-        "reference": "drawboard",
-        "columnName": "drawboard",
-        "label": "Drawboard",
+        "reference": "artboard",
+        "columnName": "artboard",
+        "label": "Artboard",
         "type": "json",
         "tags": [],
         "defaultValue": {
@@ -562,7 +562,7 @@
       "active",
       "system"
     ],
-    "drawboard": {
+    "artboard": {
       "position": {
         "x": 200.00058638224152,
         "y": 702
@@ -611,7 +611,7 @@
       "active"
     ],
     "permission": "rw",
-    "drawboard": {
+    "artboard": {
       "position": {
         "x": 370.00027415118717,
         "y": 1130

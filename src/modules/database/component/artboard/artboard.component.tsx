@@ -17,13 +17,13 @@ import { ISchema } from '../../../schema';
 import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
 import { createEmptySchema } from '../../../schema/util/get-new-schema';
 import { createLayouOrganizer } from '../../../schema/util/layout-organizer';
-import './board.component.less';
+import './artboard.component.less';
 import DatabaseNameComponent from './name.component';
 import DatabaseSchemaEditorComponent from './schema-editor.component';
 import { createSchemaNode } from './schema-node.component';
 import DatabaseToolsComponent from './tools.component';
 
-export default function DatabaseBoardComponent() {
+export default function DatabaseArtboardComponent() {
   // Router
   const httpClient = useHttpClientOld();
   const databaseName = useParams<{ database: string }>().database;
