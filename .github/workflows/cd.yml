@@ -1,4 +1,4 @@
-name: 'Continuous Delivery'
+name: 'cd'
 
 on:
   push:
@@ -65,7 +65,15 @@ jobs:
         run: yarn test:types
 
       - name: Run unit tests
-        run: yarn test
+        run: yarn test:cov
+
+      - name: Run build tests
+        run: yarn build
+
+      - name: Collect coverage
+        uses: AndreMiras/coveralls-python-action@develop
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
     outputs:
       commit_message: ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}

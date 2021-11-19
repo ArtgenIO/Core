@@ -328,17 +328,16 @@ describe('Kernel', () => {
       @Module({})
       class BadModule implements IModule {
         async onStop(app: IKernel) {
-          await new Promise(neverResolved => {
-            // This promise hangs forever
-          });
+          await new Promise(hang => {});
         }
       }
 
-      jest.advanceTimersToNextTimer();
-
       app.bootstrap([BadModule]);
+      const stop = app.stop();
 
-      expect(await app.stop()).toBe(false);
+      jest.advanceTimersByTime(15_000);
+
+      expect(await stop).toBe(false);
     });
 
     // See above

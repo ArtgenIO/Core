@@ -4,6 +4,7 @@
 .prettierrc.js
 .vscode
 build
+coverage
 docker-compose.yml
 node_modules
 tests

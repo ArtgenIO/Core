@@ -6,27 +6,27 @@ import { ILogger } from '../container';
 const { combine, timestamp, printf, splat } = format;
 
 export const createLogger = (): ILogger => {
-  if (process.env.NODE_ENV === 'test') {
-    return factory();
+  const isSilent = process.env.NODE_ENV === 'test';
+
+  if (!isSilent) {
+    console.clear();
+    const s = ' '.repeat(16);
+
+    console.log(
+      '\n',
+      chalk.green('-'.repeat(80)),
+      '\n\n',
+      chalk.cyan(s + ' █████╗ ██████╗ ████████╗ ██████╗ ███████╗███╗   ██╗\n'),
+      chalk.cyan(s + '██╔══██╗██╔══██╗╚══██╔══╝██╔════╝ ██╔════╝████╗  ██║\n'),
+      chalk.cyan(s + '███████║██████╔╝   ██║   ██║  ███╗█████╗  ██╔██╗ ██║\n'),
+      chalk.cyan(s + '██╔══██║██╔══██╗   ██║   ██║   ██║██╔══╝  ██║╚██╗██║\n'),
+      chalk.cyan(s + '██║  ██║██║  ██║   ██║   ╚██████╔╝███████╗██║ ╚████║\n'),
+      chalk.cyan(s + '╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚══════╝╚═╝  ╚═══╝\n'),
+      '\n',
+      chalk.green('-'.repeat(80)),
+      '\n',
+    );
   }
-
-  console.clear();
-  const s = ' '.repeat(16);
-
-  console.log(
-    '\n',
-    chalk.green('-'.repeat(80)),
-    '\n\n',
-    chalk.cyan(s + ' █████╗ ██████╗ ████████╗ ██████╗ ███████╗███╗   ██╗\n'),
-    chalk.cyan(s + '██╔══██╗██╔══██╗╚══██╔══╝██╔════╝ ██╔════╝████╗  ██║\n'),
-    chalk.cyan(s + '███████║██████╔╝   ██║   ██║  ███╗█████╗  ██╔██╗ ██║\n'),
-    chalk.cyan(s + '██╔══██║██╔══██╗   ██║   ██║   ██║██╔══╝  ██║╚██╗██║\n'),
-    chalk.cyan(s + '██║  ██║██║  ██║   ██║   ╚██████╔╝███████╗██║ ╚████║\n'),
-    chalk.cyan(s + '╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚══════╝╚═╝  ╚═══╝\n'),
-    '\n',
-    chalk.green('-'.repeat(80)),
-    '\n',
-  );
 
   const levels = {
     debug: chalk.magenta('debug'),
@@ -47,6 +47,7 @@ export const createLogger = (): ILogger => {
     handleExceptions: false,
     transports: [
       new Console({
+        silent: isSilent,
         level: 'debug',
         stderrLevels: ['warn', 'error'],
         consoleWarnLevels: ['warn', 'error'],

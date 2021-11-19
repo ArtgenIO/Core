@@ -32,9 +32,9 @@
     "start:watch": "tsnd src/main.ts --watch",
     "start": "NODE_ENV=production node build/main.js",
     "test:types": "tsc -p tsconfig.prod.json --noEmit",
-    "test:cov": "jest",
+    "test:cov": "jest -i",
     "test:watch": "jest --watch --collectCoverage=0",
-    "test": "jest --collectCoverage=0 -i"
+    "test": "jest -i --collectCoverage=0"
   },
   "dependencies": {
     "@loopback/context": "^3.17.1",

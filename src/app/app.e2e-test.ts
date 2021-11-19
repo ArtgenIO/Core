@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { AppModule } from '../../src/app/app.module';
-import { IKernel, Kernel } from '../../src/app/kernel';
+import { AppModule } from './app.module';
+import { IKernel, Kernel } from './kernel';
 
 describe('Application (e2e)', () => {
   let app: IKernel;

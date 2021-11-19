@@ -1,8 +1,8 @@
 /** @type {import("ts-jest/dist/types").InitialOptionsTsJest} */
-const jestConfig = {
+const config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['./tests', './src'],
+  roots: ['./src'],
   testMatch: ['**/*.(test|spec|e2e-test).ts'],
 
   silent: true,
@@ -13,16 +13,16 @@ const jestConfig = {
   // Coverage configuration
   collectCoverage: true,
   coverageDirectory: './coverage',
-  coverageReporters: ['text'],
-  collectCoverageFrom: ['./src/**/*.ts'],
+  coverageReporters: ['lcov', 'text'],
+  collectCoverageFrom: ['./src/**/*.ts', '!./src/**/index.ts'],
   coverageThreshold: {
     global: {
-      branches: 10,
-      functions: 10,
-      lines: 10,
+      branches: 40,
+      functions: 40,
+      lines: 40,
       statements: -1000,
     },
   },
 };
 
-module.exports = jestConfig;
+module.exports = config;
