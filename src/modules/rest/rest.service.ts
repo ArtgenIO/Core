@@ -1,16 +1,11 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { FastifySchema } from 'fastify';
 import { JSONSchema7Definition, JSONSchema7Object } from 'json-schema';
-import { kebabCase, merge } from 'lodash';
-import parseOData from 'odata-sequelize';
-import { stringify } from 'querystring';
-import { Op, WhereOptions } from 'sequelize';
+import { kebabCase } from 'lodash';
 import { ILogger, Inject, Logger } from '../../app/container';
 import { Exception } from '../../app/exceptions/exception';
-import { getErrorMessage } from '../../app/kernel';
 import { ContentAction } from '../content/interface/content-action.enum';
 import { schemaToJsonSchema } from '../content/util/schema-to-jsonschema';
-import { IODataResult } from '../odata/interface/odata-result.interface';
 import { ISchema } from '../schema';
 import { SchemaService } from '../schema/service/schema.service';
 import { isManagedField, isPrimary } from '../schema/util/is-primary';
@@ -91,144 +86,60 @@ export class RestService {
   async update(
     database: string,
     reference: string,
-    inputs: SchemaInput[],
-  ): Promise<IODataResult[]> {
+    idValues: Record<string, string>,
+    input: object,
+  ): Promise<SchemaInput | null> {
     // Define the event key.
     const event = `crud.${database}.${reference}.updated`;
     // Load the model
     const model = this.schema.model(database, reference);
     // Load the data schema
     const schema = this.schema.findOne(database, reference);
-    const primaryKeys = schema.fields.filter(isPrimary).map(f => f.reference);
-    const result: IODataResult[] = [];
-    const queryFilters: WhereOptions = {};
-    const validInputs = [];
 
-    // Prebuidl the query filter with empty arrays
-    for (const pk of primaryKeys) {
-      queryFilters[pk] = { [Op.in]: [] };
-    }
-
-    for (const input of inputs) {
-      const startedAt = Date.now();
-      const inputKeys = Object.keys(input);
-      const hasPrimaryKeys = primaryKeys.every(pk => inputKeys.includes(pk));
-
-      // Check if the input provided the required primary keys.
-      if (!hasPrimaryKeys) {
-        result.push({
-          meta: {
-            status: 'error',
-            action: 'update',
-            executionTime: Date.now() - startedAt,
-          },
-          data: {
-            message: 'Input does not have the required primary key(s) defined',
-            input,
-          },
-        });
-
-        continue;
-      }
-
-      for (const pk of primaryKeys) {
-        queryFilters[pk][Op.in].push(input[pk]);
-      }
-
-      validInputs.push(input);
-    }
-
-    // Fetch the records subjected for the update
-    const records = await model.findAll({
-      where: queryFilters,
-      limit: validInputs.length,
+    // Fetch the record
+    const record = await model.findOne({
+      where: idValues,
     });
 
-    for (const input of validInputs) {
-      const startedAt = Date.now();
+    if (!record) {
+      return null;
+    }
 
-      // Find the recrod for the input
-      const record = records.find(r => {
-        for (const pk of primaryKeys) {
-          if (input[pk] !== r[pk]) {
-            return false;
-          }
+    for (const key in input) {
+      if (Object.prototype.hasOwnProperty.call(input, key)) {
+        const value = input[key];
+        const field = schema.fields.find(f => f.reference === key);
+
+        // Strip extra fields
+        if (!field) {
+          this.logger.warn(
+            'Field [%s] does not exists on the schema [%s]',
+            key,
+            schema.reference,
+          );
+          continue;
         }
 
-        return true;
-      });
-
-      // Check if the input matches any query-d PK
-      if (!record) {
-        result.push({
-          meta: {
-            status: 'error',
-            action: 'update',
-            executionTime: Date.now() - startedAt,
-          },
-          data: {
-            message: 'Input does not match any database record',
-            input,
-          },
-        });
-
-        continue;
-      }
-
-      for (const key in input) {
-        if (Object.prototype.hasOwnProperty.call(input, key)) {
-          const value = input[key];
-          const field = schema.fields.find(f => f.reference === key);
-
-          // Strip extra fields
-          if (!field) {
-            this.logger.warn(
-              'Field [%s] does not exists on the schema [%s]',
-              key,
-              schema.reference,
-            );
-            continue;
-          }
-
-          // Skip on generated fields.
-          if (isManagedField(field)) {
-            continue;
-          }
-
-          record.set(key, value);
+        // Skip on generated fields.
+        if (isManagedField(field) || isPrimary(field)) {
+          continue;
         }
-      }
 
-      try {
-        // Commit the changes
-        await record.save();
-        const object = record.get({ plain: true });
-
-        result.push({
-          meta: {
-            action: 'update',
-            status: 'success',
-            executionTime: Date.now() - startedAt,
-          },
-          data: object,
-        });
-
-        this.event.emit(event, object);
-      } catch (error) {
-        result.push({
-          meta: {
-            action: 'update',
-            status: 'error',
-            executionTime: Date.now() - startedAt,
-          },
-          data: {
-            message: getErrorMessage(error),
-          },
-        });
+        record.set(key, value);
       }
     }
 
-    return result;
+    try {
+      // Commit the changes
+      await record.save();
+      const object = record.get({ plain: true });
+
+      this.event.emit(event, object);
+
+      return object;
+    } catch (error) {
+      throw new Exception('Invalid input');
+    }
   }
 
   /**
@@ -237,35 +148,33 @@ export class RestService {
   async delete(
     database: string,
     reference: string,
-    filters: SchemaInput,
-  ): Promise<IODataResult> {
-    const startedAt = Date.now();
+    idValues: Record<string, string>,
+  ): Promise<SchemaInput | null> {
     // Define the event key.
     const event = `crud.${database}.${reference}.deleted`;
     // Get the model
     const model = this.schema.model(database, reference);
-    // Merge with a safer skip 0 option
-    const options = merge(filters, {
-      $skip: 0,
+
+    // Fetch the record
+    const record = await model.findOne({
+      where: idValues,
     });
-    const queryString = decodeURIComponent(stringify(options as any));
-    const queryFilter = parseOData(queryString.toString(), model.sequelize);
-    const records = await model.findAll(queryFilter);
 
-    for (const record of records) {
-      await record.destroy();
-
-      this.event.emit(event, record.get({ plain: true }));
+    if (!record) {
+      return null;
     }
 
-    return {
-      meta: {
-        status: 'success',
-        action: 'delete',
-        executionTime: Date.now() - startedAt,
-      },
-      data: records.length,
-    };
+    try {
+      // Delete record
+      const object = record.get({ plain: true });
+      await record.destroy();
+
+      this.event.emit(event, object);
+
+      return object;
+    } catch (error) {
+      throw new Exception('Invalid record');
+    }
   }
 
   getResourceURL(schema: ISchema): string {
@@ -302,6 +211,7 @@ export class RestService {
 
     switch (action) {
       case ContentAction.CREATE:
+        definition.response[400] = this.getBadRequestResponseSchema();
         definition.response[201] = {
           description: 'Created',
           ...(schemaToJsonSchema(
@@ -313,6 +223,7 @@ export class RestService {
         break;
 
       case ContentAction.READ:
+        definition.response[400] = this.getBadRequestResponseSchema();
         definition.response[404] = this.getNotFoundResponseSchema();
         definition.response[200] = {
           description: 'OK',
@@ -325,6 +236,7 @@ export class RestService {
         break;
 
       case ContentAction.UPDATE:
+        definition.response[400] = this.getBadRequestResponseSchema();
         definition.response[404] = this.getNotFoundResponseSchema();
         definition.response[200] = {
           description: 'OK',
@@ -338,6 +250,7 @@ export class RestService {
         break;
 
       case ContentAction.DELETE:
+        definition.response[400] = this.getBadRequestResponseSchema();
         definition.response[404] = this.getNotFoundResponseSchema();
         definition.response[200] = {
           description: 'OK',
@@ -384,6 +297,23 @@ export class RestService {
         statusCode: {
           type: 'number',
           default: 401,
+        },
+      },
+    };
+  }
+
+  protected getBadRequestResponseSchema(): JSONSchema7Definition {
+    return {
+      description: 'Request input is not valid',
+      type: 'object',
+      properties: {
+        error: {
+          type: 'string',
+          default: 'Bad Request',
+        },
+        statusCode: {
+          type: 'number',
+          default: 400,
         },
       },
     };

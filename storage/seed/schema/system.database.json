@@ -154,9 +154,9 @@
         ]
       },
       {
-        "reference": "isseudAt",
-        "label": "Isseud At",
-        "columnName": "isseud_at",
+        "reference": "issuedAt",
+        "label": "Issued At",
+        "columnName": "issued_at",
         "type": "timestamp",
         "typeParams": {
           "values": []
@@ -166,7 +166,7 @@
         ]
       },
       {
-        "reference": "accoundId",
+        "reference": "accountId",
         "label": "Accound ID",
         "columnName": "accound_id",
         "type": "uuid",
@@ -183,7 +183,7 @@
         "kind": "belongs-to-one",
         "name": "account",
         "target": "Account",
-        "localField": "accoundId",
+        "localField": "accountId",
         "remoteField": "id"
       }
     ],
@@ -246,7 +246,7 @@
         "name": "accessKeys",
         "target": "AccessKey",
         "localField": "id",
-        "remoteField": "accoundId"
+        "remoteField": "accountId"
       }
     ],
     "tags": [

@@ -78,68 +78,6 @@ describe('Application (e2e)', () => {
     expect(response.body).toMatch(/swagger/);
   });
 
-  describe('Authentication', () => {
-    test('should respond unauthorized', async () => {
-      const srv = await getServer();
-
-      const response = await srv.inject({
-        url: '/api/rest/system/database/system',
-      });
-
-      expect(response.statusCode).toBe(401);
-    });
-
-    test('should fail with 400', async () => {
-      const srv = await getServer();
-
-      const response = await srv.inject({
-        method: 'POST',
-        url: '/api/authentication/jwt/sign-in',
-        payload: {
-          email: 'asd',
-        },
-      });
-
-      expect(response.statusCode).toBe(400);
-      expect(response.json()).toHaveProperty('message');
-      expect(response.json().message).toBe(
-        'Request does not match the expected input data',
-      );
-    });
-
-    test('should fail with bad password', async () => {
-      const srv = await getServer();
-
-      const response = await srv.inject({
-        method: 'POST',
-        url: '/api/authentication/jwt/sign-in',
-        payload: {
-          email: 'demo@artgen.io',
-          password: 'almostdemo',
-        },
-      });
-
-      expect(response.statusCode).toBe(400);
-    });
-
-    test('should pass with the right credentials', async () => {
-      const srv = await getServer();
-
-      const response = await srv.inject({
-        method: 'POST',
-        url: '/api/authentication/jwt/sign-in',
-        payload: {
-          email: 'demo@artgen.io',
-          password: 'demo',
-        },
-      });
-
-      expect(response.statusCode).toBe(200);
-      expect(response.json()).toHaveProperty('accessToken');
-      expect(response.json().accessToken).toBeTruthy();
-    });
-  });
-
   describe('Rest', () => {
     let authHeader: { authorization: string };
 

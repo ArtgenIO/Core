@@ -1,3 +1,8 @@
+### Version 0.0.10
+
+- REST functionality tested and fixed
+- Authentication with header and access key query param tested
+
 ### Version 0.0.9
 
 - Reorganized base structure
