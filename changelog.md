@@ -12,6 +12,7 @@
 - Fixed a lot of open handles
 - Graceful shutdown should work now
 - HTTP gateways are deregistered
+- Page seed is not in race condition anymore (hacky but will be fixed later)
 
 ### Version 0.0.6
 
