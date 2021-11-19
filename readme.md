@@ -4,7 +4,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/artgenio/core)](https://hub.docker.com/r/artgenio/core)
 [![Docker Image Version](https://img.shields.io/docker/v/artgenio/core)](https://hub.docker.com/r/artgenio/core)
 [![GitHub last commit](https://img.shields.io/github/last-commit/artgenio/core)](https://github.com/ArtgenIO/Core/commits/main)
-[![Coverage Status](https://coveralls.io/repos/github/artgenio/core/badge.svg?branch=main)](https://coveralls.io/github/artgenio/core?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/ArtgenIO/Core/badge.svg?branch=main)](https://coveralls.io/github/ArtgenIO/Core?branch=main)
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 ### Get Started!
