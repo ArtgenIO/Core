@@ -71,8 +71,8 @@
       ]
     },
     {
-      "id": "crud.create.1",
-      "type": "crud.create",
+      "id": "content.create.1",
+      "type": "content.create",
       "config": {
         "database": "system",
         "schema": "Account"
@@ -139,14 +139,14 @@
     {
       "id": "ccd1444c-5a31-4666-bd08-9d3fcc3bcfd1",
       "sourceNodeId": "trigger.http.26",
-      "targetNodeId": "crud.create.1",
+      "targetNodeId": "content.create.1",
       "sourceHandle": "request",
       "targetHandle": "record",
       "transform": "{{ $data.body | toJson }}"
     },
     {
       "id": "99cb86e8-524f-4cfd-b896-930277803ea2",
-      "sourceNodeId": "crud.create.1",
+      "sourceNodeId": "content.create.1",
       "targetNodeId": "terminate.http.182",
       "sourceHandle": "error",
       "targetHandle": "response",
@@ -162,7 +162,7 @@
     },
     {
       "id": "e85f0ddc-ce06-479b-9cd0-1bbaceaca2ae",
-      "sourceNodeId": "crud.create.1",
+      "sourceNodeId": "content.create.1",
       "targetNodeId": "auth.sign.in.44",
       "sourceHandle": "result",
       "targetHandle": "credentials",

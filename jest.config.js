@@ -8,6 +8,7 @@ const jestConfig = {
   silent: true,
   verbose: true,
   bail: true,
+  testTimeout: 5000,
 
   // Coverage configuration
   collectCoverage: true,

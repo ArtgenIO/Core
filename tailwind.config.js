@@ -1,7 +1,7 @@
 const { join } = require('path');
 
 module.exports = {
-  mode: 'jit',
+  mode: process.env.NODE_ENV === 'production' ? undefined : 'jit',
   purge: {
     enabled: true,
     content: [join(__dirname, './src/**/*.{tsx,html}')],
