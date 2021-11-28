@@ -13,7 +13,10 @@ export default function CreateWorkflowComponent() {
   const httpClient = useHttpClientOld();
 
   const sendRequest = async (data: Omit<IWorkflow, 'id'>) => {
-    const response = await httpClient.post<IWorkflow>('/api/workflow', data);
+    const response = await httpClient.post<IWorkflow>(
+      '/api/rest/system/workflow',
+      data,
+    );
 
     return response.data.id;
   };

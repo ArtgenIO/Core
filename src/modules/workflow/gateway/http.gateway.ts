@@ -116,6 +116,15 @@ export class WorkflowHttpGateway implements IHttpGateway {
             );
             try {
               const response = await session.trigger(trigger.id, {
+                meta: {
+                  id: request.id,
+                  ip: request.ip,
+                  ips: request.ips,
+                  cookie: request.cookies,
+                  method: request.method,
+                  hostname: request.hostname,
+                  protocol: request.protocol,
+                },
                 headers: request.headers,
                 params: request.params ?? {},
                 query: request.query ?? {},

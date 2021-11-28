@@ -1,3 +1,9 @@
+### Version 0.0.11
+
+- Scheduler with CRON like task timing
+- Upgrade detector module initialized
+- Fixed the bad EP on workflow creation UI
+
 ### Version 0.0.10
 
 - REST functionality tested and fixed

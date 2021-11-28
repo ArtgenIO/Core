@@ -33,3 +33,8 @@ Currently the project in the **alpha preview** phase, nothing is finalized and w
 - Chart / Analytics builder (under development)
 - GraphQL API generator (coming soon)
 - Customizable dashboard
+- Scheduled jobs (with workflow support soon)
+
+### Changelog
+
+[Read At](./changelog.md)

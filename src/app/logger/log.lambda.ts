@@ -11,11 +11,7 @@ import { ILogger, Logger, Service } from '../container';
   type: 'log',
   icon: 'log.png',
   description: 'Log with debug level',
-  handles: [
-    new InputHandleDTO('message', {
-      type: 'object',
-    }),
-  ],
+  handles: [new InputHandleDTO('message')],
   config: {
     type: 'string',
     enum: ['debug', 'info', 'warn', 'error'],

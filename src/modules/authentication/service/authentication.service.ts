@@ -123,17 +123,19 @@ export class AuthenticationService {
       'Demo account is ready under the [demo@artgen.io] email address',
     );
 
-    // Remove demo account after half an hour.
-    this.deleteTimeout = setTimeout(() => {
-      account.set(
-        'password',
-        hashSync((Date.now() * Math.random()).toString(), 3),
-      );
+    if (process.env.NODE_ENV !== 'production') {
+      // Remove demo account after half an hour.
+      this.deleteTimeout = setTimeout(() => {
+        account.set(
+          'password',
+          hashSync((Date.now() * Math.random()).toString(), 3),
+        );
 
-      account.save();
+        account.save();
 
-      this.logger.warn('Demo account is disabled');
-    }, 1_800_000);
+        this.logger.warn('Demo account is disabled');
+      }, 1_800_000);
+    }
   }
 
   clearDeleteTimeout() {

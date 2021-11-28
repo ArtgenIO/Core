@@ -9,9 +9,11 @@ import { ODataModule } from '../modules/odata/odata.module';
 import { PageModule } from '../modules/page/page.module';
 import { RestModule } from '../modules/rest/rest.module';
 import { RpcModule } from '../modules/rpc/rpc.module';
+import { SchedulerModule } from '../modules/scheduler';
 import { SchemaModule } from '../modules/schema/schema.module';
 import { SecurityModule } from '../modules/security/security.module';
 import { TransformerModule } from '../modules/transformer/transformer.module';
+import { UpgradeModule } from '../modules/upgrade/upgrade.module';
 import { ValidatorModule } from '../modules/validator/validator.module';
 import { WorkflowModule } from '../modules/workflow/workflow.module';
 import { Module } from './container';
@@ -30,9 +32,11 @@ import { LogLambda } from './logger/log.lambda';
     PageModule,
     RestModule,
     RpcModule,
+    SchedulerModule,
     SchemaModule,
     SecurityModule,
     TransformerModule,
+    UpgradeModule,
     ValidatorModule,
     WorkflowModule,
   ],
