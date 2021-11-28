@@ -1,11 +1,11 @@
-import { graphlib, layout } from 'dagre';
+import dagre from 'dagre/dist/dagre.js';
 import { Elements, isNode, Position } from 'react-flow-renderer';
 
 export const createLayouOrganizer = (
   nodeWidth: number = 120,
   nodeHeight: number = 164,
 ) => {
-  const planner = new graphlib.Graph();
+  const planner = new dagre.graphlib.Graph();
   planner.setDefaultEdgeLabel(() => ({}));
 
   return (elements: Elements, direction = 'RL'): Elements => {
@@ -20,7 +20,7 @@ export const createLayouOrganizer = (
       }
     });
 
-    layout(planner);
+    dagre.layout(planner);
 
     return elements.map(el => {
       if (isNode(el)) {

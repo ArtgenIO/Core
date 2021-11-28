@@ -2,6 +2,7 @@
 
 - REST functionality tested and fixed
 - Authentication with header and access key query param tested
+- Fixed the dagre import in the live build
 
 ### Version 0.0.9
 

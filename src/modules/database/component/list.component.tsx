@@ -79,7 +79,7 @@ export default function DatabaseListComponent() {
                 <Tooltip title="Edit Connection Details" placement="leftBottom">
                   <Button
                     icon={<EditOutlined />}
-                    className="rounded-md mr-1 hover:text-green-500 hover:border-green-500"
+                    className="rounded-md mr-1 hover:text-green-500 hover:border-green-500 hidden"
                   ></Button>
                 </Tooltip>
               </Link>

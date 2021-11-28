@@ -4,7 +4,6 @@ import {
   HomeOutlined,
   LayoutOutlined,
   PartitionOutlined,
-  PieChartOutlined,
   UnorderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -42,11 +41,11 @@ const menuItems: IMenuItem[] = [
     to: ADMIN_BASE_URL + '/content',
     label: 'Content',
   },
-  {
-    icon: <PieChartOutlined />,
-    to: '/analytics',
-    label: 'Analytics',
-  },
+  // {
+  // icon: <PieChartOutlined />,
+  // to: ADMIN_BASE_URL + '/analytics',
+  // label: 'Analytics',
+  // },
   {
     icon: <LayoutOutlined />,
     to: ADMIN_BASE_URL + '/page',
