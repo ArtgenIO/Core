@@ -22,6 +22,7 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
       },
       disableRequestLogging: true,
       genReqId: v4 as () => string,
+      trustProxy: true,
     });
     this.logger.debug('Initiated');
 
