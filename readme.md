@@ -34,6 +34,7 @@ Currently the project in the **alpha preview** phase, nothing is finalized and w
 - GraphQL API generator (coming soon)
 - Customizable dashboard
 - Scheduled jobs (with workflow support soon)
+- Cloud supported extension support
 
 ### Changelog
 

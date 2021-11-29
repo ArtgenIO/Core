@@ -1,3 +1,9 @@
+### Version 0.0.13
+
+- Offline extension support
+- Observe and handle schema changes
+- Allow trusted proxies
+
 ### Version 0.0.11
 
 - Scheduler with CRON like task timing
