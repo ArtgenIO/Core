@@ -16,7 +16,7 @@ describe('Application (e2e)', () => {
     app.bootstrap([AppModule]);
 
     await app.start();
-  });
+  }, 10_000);
 
   afterAll(async () => await app.stop());
 
