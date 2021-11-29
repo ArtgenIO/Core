@@ -1,6 +1,8 @@
 import { Button, Form, Input, message, Select } from 'antd';
+import axios from 'axios';
 import { startCase } from 'lodash';
-import { useHistory } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router';
 import PageHeader from '../../admin/layout/PageHeader';
 import PageWithHeader from '../../admin/layout/PageWithHeader';
 import { useHttpClientOld } from '../../admin/library/http-client';
@@ -14,9 +16,12 @@ type FormData = {
 };
 
 export default function ImportExtensionComponent() {
+  const params = useParams<{ id?: string }>();
   const history = useHistory();
   const client = useHttpClientOld();
 
+  const [waitForSource, setWaitForSource] = useState(true);
+  const [source, setSource] = useState('');
   const [{ data: databases, loading }] = useHttpClient<IDatabase[]>(
     routeCrudAPI({
       database: 'system',
@@ -24,18 +29,35 @@ export default function ImportExtensionComponent() {
     }),
   );
 
-  if (loading) {
+  useEffect(() => {
+    if (params?.id) {
+      axios
+        .get(`https://artgen.cloud/api/extension-store/${params.id}`)
+        .then(resp => {
+          setSource({
+            ...resp.data,
+            source: 'cloud',
+            database: 'system',
+            installedAt: resp.data.createdAt,
+          });
+          setWaitForSource(false);
+        });
+    } else {
+      setWaitForSource(false);
+    }
+  }, [params]);
+
+  if (loading || waitForSource) {
     return <h1>Loading...</h1>;
   }
 
   return (
-    <PageWithHeader header={<PageHeader title="Import Offline Extension" />}>
+    <PageWithHeader header={<PageHeader title="Import Extension" />}>
       <div className="content-box px-8 py-8 w-2/3">
         <Form
           layout="vertical"
-          initialValues={{}}
+          initialValues={{ source }}
           onFinish={(values: FormData) => {
-            console.log('Finish?', values);
             client
               .post('/api/workflow/import-extension', {
                 database: values.database,

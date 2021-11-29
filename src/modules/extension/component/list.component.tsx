@@ -30,6 +30,7 @@ import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { routeCrudAPI } from '../../content/util/schema-url';
 import { IExtension } from '../interface/extension.interface';
+import ExtensionStoreComponent from './store.component';
 
 export default function ListExtensionComponent() {
   const baseURL = '/admin/extension';
@@ -75,6 +76,7 @@ export default function ListExtensionComponent() {
         />
       }
     >
+      <ExtensionStoreComponent />
       <Skeleton loading={loading}>
         <Typography.Title>Installed Extensions</Typography.Title>
         <List

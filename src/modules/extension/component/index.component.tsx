@@ -19,6 +19,11 @@ export default function ExtensionsIndexComponent() {
       ></Route>
       <Route
         exact
+        path={`${baseURL}/:id/install`}
+        component={ImportExtensionComponent}
+      ></Route>
+      <Route
+        exact
         path={`${baseURL}/import`}
         component={ImportExtensionComponent}
       ></Route>
