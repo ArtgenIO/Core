@@ -3,6 +3,7 @@ import { AuthenticationModule } from '../modules/authentication/authentication.m
 import { ContentModule } from '../modules/content/content.module';
 import { DatabaseModule } from '../modules/database/database.module';
 import { EventModule } from '../modules/event';
+import { ExtensionModule } from '../modules/extension/extension.module';
 import { HttpModule } from '../modules/http/http.module';
 import { LambdaModule } from '../modules/lambda/lambda.module';
 import { ODataModule } from '../modules/odata/odata.module';
@@ -26,6 +27,7 @@ import { LogLambda } from './logger/log.lambda';
     ContentModule,
     DatabaseModule,
     EventModule,
+    ExtensionModule,
     HttpModule,
     LambdaModule,
     ODataModule,

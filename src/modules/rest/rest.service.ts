@@ -4,6 +4,7 @@ import { JSONSchema7Definition, JSONSchema7Object } from 'json-schema';
 import { kebabCase } from 'lodash';
 import { ILogger, Inject, Logger } from '../../app/container';
 import { Exception } from '../../app/exceptions/exception';
+import { getErrorMessage } from '../../app/kernel';
 import { ContentAction } from '../content/interface/content-action.enum';
 import { schemaToJsonSchema } from '../content/util/schema-to-jsonschema';
 import { ISchema } from '../schema';
@@ -45,6 +46,7 @@ export class RestService {
 
       return object;
     } catch (error) {
+      this.logger.warn(getErrorMessage(error));
       throw new Exception('Invalid input'); // 400
     }
   }
@@ -138,6 +140,7 @@ export class RestService {
 
       return object;
     } catch (error) {
+      this.logger.warn(getErrorMessage(error));
       throw new Exception('Invalid input');
     }
   }
@@ -173,6 +176,7 @@ export class RestService {
 
       return object;
     } catch (error) {
+      this.logger.warn(getErrorMessage(error));
       throw new Exception('Invalid record');
     }
   }

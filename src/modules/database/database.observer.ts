@@ -44,6 +44,19 @@ export class DatabaseObserver {
     }
   }
 
+  @On('crud.system.Schema.deleted')
+  async handleSchemaDelete(schema: ISchema) {
+    this.logger.warn('Schema delete! [%s]', schema.reference);
+
+    try {
+      const link = this.linkService.findByName(schema.database);
+      // Delete the table
+      await link.connection.getQueryInterface().dropTable(schema.tableName);
+    } catch (error) {
+      this.logger.error(getErrorMessage(error));
+    }
+  }
+
   @On('crud.system.Database.created')
   async handleDatabaseCreate(database: IDatabase) {
     this.logger.warn('New database created! [%s]', database.name);

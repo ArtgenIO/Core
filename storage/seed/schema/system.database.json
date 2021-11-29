@@ -126,7 +126,8 @@
     "uniques": [],
     "relations": [],
     "tags": [
-      "active"
+      "active",
+      "system"
     ],
     "artboard": {
       "position": {
@@ -188,7 +189,8 @@
       }
     ],
     "tags": [
-      "active"
+      "active",
+      "system"
     ],
     "artboard": {
       "position": {
@@ -608,12 +610,151 @@
     "uniques": [],
     "relations": [],
     "tags": [
-      "active"
+      "active",
+      "system"
     ],
     "permission": "rw",
     "artboard": {
       "position": {
         "x": 370.00027415118717,
+        "y": 1130
+      }
+    }
+  },
+  {
+    "icon": "table",
+    "version": 2,
+    "database": "system",
+    "label": "Extensions",
+    "reference": "Extension",
+    "tableName": "__artgen_extensions",
+    "fields": [
+      {
+        "label": "Identifier",
+        "reference": "id",
+        "columnName": "id",
+        "type": "uuid",
+        "typeParams": {
+          "values": []
+        },
+        "tags": [
+          "primary"
+        ]
+      },
+      {
+        "reference": "label",
+        "label": "Label",
+        "columnName": "label",
+        "defaultValue": null,
+        "type": "text",
+        "typeParams": {
+          "values": []
+        },
+        "tags": []
+      },
+      {
+        "reference": "version",
+        "label": "Version",
+        "columnName": "version",
+        "defaultValue": "0.0.1",
+        "type": "text",
+        "typeParams": {
+          "values": []
+        },
+        "tags": []
+      },
+      {
+        "reference": "config",
+        "label": "Config",
+        "columnName": "config",
+        "defaultValue": {},
+        "type": "json",
+        "typeParams": {
+          "values": []
+        },
+        "tags": []
+      },
+      {
+        "reference": "schemas",
+        "label": "Schemas",
+        "columnName": "schemas",
+        "defaultValue": [],
+        "type": "json",
+        "typeParams": {
+          "values": []
+        },
+        "tags": []
+      },
+      {
+        "reference": "workflows",
+        "label": "Workflows",
+        "columnName": "workflows",
+        "defaultValue": [],
+        "type": "json",
+        "typeParams": {
+          "values": []
+        },
+        "tags": []
+      },
+      {
+        "reference": "installedAt",
+        "label": "Installed At",
+        "columnName": "installed_at",
+        "type": "timestamp",
+        "typeParams": {
+          "values": []
+        },
+        "tags": [
+          "created"
+        ]
+      },
+      {
+        "reference": "database",
+        "label": "Database",
+        "columnName": "database",
+        "defaultValue": null,
+        "type": "text",
+        "typeParams": {
+          "values": []
+        },
+        "tags": [
+          "indexed"
+        ]
+      },
+      {
+        "reference": "source",
+        "label": "Source",
+        "columnName": "source",
+        "defaultValue": "offline",
+        "type": "enum",
+        "typeParams": {
+          "values": [
+            "cloud",
+            "offline"
+          ]
+        },
+        "tags": []
+      }
+    ],
+    "indices": [],
+    "uniques": [],
+    "relations": [
+      {
+        "kind": "belongs-to-one",
+        "name": "ofDatabase",
+        "target": "Database",
+        "localField": "database",
+        "remoteField": "name"
+      }
+    ],
+    "tags": [
+      "active",
+      "system"
+    ],
+    "permission": "rw",
+    "artboard": {
+      "position": {
+        "x": 540.0007144897936,
         "y": 1130
       }
     }

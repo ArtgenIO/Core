@@ -51,6 +51,12 @@ export default function PageContent() {
                 () => import('../../analytics/component/index.component'),
               )}
             />
+            <Route
+              path="/admin/extension"
+              component={lazy(
+                () => import('../../extension/component/index.component'),
+              )}
+            />
 
             {/* Hygen insert routes above */}
             <Route path="*" component={Route404} />

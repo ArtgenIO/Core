@@ -69,7 +69,7 @@ const menuItems: IMenuItem[] = [
   {
     icon: <AppstoreOutlined />,
     label: 'Extensions',
-    to: ADMIN_BASE_URL + '/tba',
+    to: ADMIN_BASE_URL + '/extension',
   },
 ];
 

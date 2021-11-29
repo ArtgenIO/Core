@@ -1,0 +1,84 @@
+{
+  "id": "30d9c6a9-3d0d-424d-ab5e-7ffe0ff7c840",
+  "name": "Import Extension",
+  "nodes": [
+    {
+      "id": "trigger.http.1",
+      "type": "trigger.http",
+      "config": {
+        "path": "/api/workflow/import-extension",
+        "method": "POST",
+        "statusCode": "201",
+        "authentication": "protected",
+        "responseFormat": "application/json",
+        "response": "{\"ack\":true}",
+        "waitForLastNode": "true"
+      },
+      "label": "Import EP",
+      "position": [
+        311.3333333333333,
+        146
+      ]
+    },
+    {
+      "id": "terminate.http.1",
+      "type": "terminate.http",
+      "config": {
+        "statusCode": "401"
+      },
+      "label": "Http ERR",
+      "position": [
+        764.6666666666666,
+        214
+      ]
+    },
+    {
+      "id": "terminate.http.2",
+      "type": "terminate.http",
+      "config": {
+        "statusCode": "201"
+      },
+      "label": "Terminate Http 2",
+      "position": [
+        757.5,
+        62.5
+      ]
+    },
+    {
+      "id": "extension.import.1",
+      "type": "extension.import",
+      "config": null,
+      "label": "Do Import",
+      "position": [
+        546,
+        201
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "24d01f7f-6427-489e-9ff5-374a44ed0eda",
+      "sourceNodeId": "trigger.http.1",
+      "targetNodeId": "extension.import.1",
+      "sourceHandle": "request",
+      "targetHandle": "import",
+      "transform": "{{ $data.body | toJson }}"
+    },
+    {
+      "id": "890c2a09-3494-4011-913a-45fe78f6d38d",
+      "sourceNodeId": "extension.import.1",
+      "targetNodeId": "terminate.http.1",
+      "sourceHandle": "error",
+      "targetHandle": "response",
+      "transform": ""
+    },
+    {
+      "id": "6865fcce-3f1c-4242-8231-54bc7960786a",
+      "sourceNodeId": "extension.import.1",
+      "targetNodeId": "terminate.http.2",
+      "sourceHandle": "extension",
+      "targetHandle": "response",
+      "transform": ""
+    }
+  ]
+}
