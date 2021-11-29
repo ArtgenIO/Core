@@ -1,3 +1,9 @@
+### Version 0.0.14
+
+- Lamdas for CRUD read / list action
+- CRUD list action service
+- Base line for the Cloud Extension store
+
 ### Version 0.0.13
 
 - Offline extension support
