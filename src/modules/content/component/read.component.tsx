@@ -58,9 +58,13 @@ export default function CrudReadComponent() {
   // Load content
   const [{ data: content, loading: isContentLoading }, refetch] = useHttpClient<
     object[]
-  >(routeCrudAPI(route), {
-    useCache: false,
-  });
+  >(
+    routeCrudAPI(route) +
+      new QueryBuilder().top(10_000).toQuery(),
+    {
+      useCache: false,
+    },
+  );
 
   // Local state
   const [columns, setColumns] = useState<TableColumnsType>([]);

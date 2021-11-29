@@ -1,3 +1,7 @@
+### Version 0.0.16
+
+- Cloud Extension store working!
+
 ### Version 0.0.14
 
 - Lamdas for CRUD read / list action
