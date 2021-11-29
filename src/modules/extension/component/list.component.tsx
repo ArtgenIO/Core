@@ -78,7 +78,9 @@ export default function ListExtensionComponent() {
     >
       <ExtensionStoreComponent />
       <Skeleton loading={loading}>
-        <Typography.Title>Installed Extensions</Typography.Title>
+        <Typography.Title className="text-right">
+          Installed Extensions
+        </Typography.Title>
         <List
           bordered
           size="large"
@@ -90,7 +92,7 @@ export default function ListExtensionComponent() {
                   <Avatar
                     shape="square"
                     size="large"
-                    className="bg-dark"
+                    className="bg-dark text-green-400"
                     icon={<AppstoreOutlined />}
                   />
                 }

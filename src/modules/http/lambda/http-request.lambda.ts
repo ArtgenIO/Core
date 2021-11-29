@@ -4,10 +4,6 @@ import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import {
-  JSCHEMA_BINARY,
-  JSCHEMA_MAP,
-} from '../../lambda/utility/json-schema.helpers';
 import { WorkflowSession } from '../../workflow/library/workflow.session';
 
 type Input = {
@@ -27,18 +23,13 @@ type Input = {
       properties: {
         url: {
           type: 'string',
-          examples: ['https://hisorange.me'],
+          examples: ['https://artgen.io'],
         },
       },
       required: ['url'],
     }),
     new OutputHandleDTO('result', {
       type: 'object',
-      properties: {
-        headers: JSCHEMA_MAP,
-        body: JSCHEMA_BINARY,
-      },
-      required: ['headers', 'body'],
     }),
     new OutputHandleDTO('error', {
       type: 'object',

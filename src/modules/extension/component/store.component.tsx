@@ -1,4 +1,4 @@
-import { AppstoreOutlined, CloudDownloadOutlined } from '@ant-design/icons';
+import { AppstoreAddOutlined, CloudDownloadOutlined } from '@ant-design/icons';
 import {
   Avatar,
   Button,
@@ -8,16 +8,16 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import useAxios from 'axios-hooks';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useHttpClient } from '../../admin/library/use-http-client';
 import { IExtension } from '../interface/extension.interface';
 
 export default function ExtensionStoreComponent() {
   const baseURL = '/admin/extension';
 
-  const [{ data: extensions, loading, error }] = useAxios<IExtension[]>(
-    'https://artgen.cloud/api/extension-store',
+  const [{ data: extensions, loading, error }] = useHttpClient<IExtension[]>(
+    '/api/extension-store/proxy',
   );
 
   if (error) {
@@ -28,8 +28,11 @@ export default function ExtensionStoreComponent() {
 
   return (
     <Skeleton loading={loading}>
-      <Typography.Title>Available Extensions</Typography.Title>
+      <Typography.Title className="text-right">
+        Available Extensions
+      </Typography.Title>
       <List
+        className="mb-12"
         bordered
         size="large"
         dataSource={extensions}
@@ -40,8 +43,8 @@ export default function ExtensionStoreComponent() {
                 <Avatar
                   shape="square"
                   size="large"
-                  className="bg-dark"
-                  icon={<AppstoreOutlined />}
+                  className="bg-dark text-blue-400"
+                  icon={<AppstoreAddOutlined />}
                 />
               }
               title={<span className="text-xl font-thin">{ext.label}</span>}

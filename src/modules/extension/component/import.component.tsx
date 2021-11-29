@@ -1,5 +1,4 @@
 import { Button, Form, Input, message, Select } from 'antd';
-import axios from 'axios';
 import { startCase } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -31,17 +30,21 @@ export default function ImportExtensionComponent() {
 
   useEffect(() => {
     if (params?.id) {
-      axios
-        .get(`https://artgen.cloud/api/extension-store/${params.id}`)
-        .then(resp => {
-          setSource({
-            ...resp.data,
-            source: 'cloud',
-            database: 'system',
-            installedAt: resp.data.createdAt,
-          });
-          setWaitForSource(false);
-        });
+      client.get(`/api/extension-store/${params.id}/install`).then(resp => {
+        setSource(
+          JSON.stringify(
+            {
+              ...resp.data,
+              source: 'cloud',
+              database: 'system',
+              installedAt: resp.data.createdAt,
+            },
+            null,
+            2,
+          ),
+        );
+        setWaitForSource(false);
+      });
     } else {
       setWaitForSource(false);
     }
@@ -59,7 +62,7 @@ export default function ImportExtensionComponent() {
           initialValues={{ source }}
           onFinish={(values: FormData) => {
             client
-              .post('/api/workflow/import-extension', {
+              .post('/api/extension-store/local/import-extension', {
                 database: values.database,
                 extension: JSON.parse(values.source),
               })
