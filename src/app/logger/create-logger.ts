@@ -9,7 +9,7 @@ export const createLogger = (): ILogger => {
   const isSilent = process.env.NODE_ENV === 'test';
 
   if (!isSilent) {
-    console.clear();
+    //console.clear();
     const s = ' '.repeat(16);
 
     console.log(

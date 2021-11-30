@@ -76,7 +76,12 @@ export default function SignInComponent() {
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-          <Button type="primary" htmlType="submit" block>
+          <Button
+            className="js--sign-in"
+            type="primary"
+            htmlType="submit"
+            block
+          >
             Sign In
           </Button>
         </Form.Item>

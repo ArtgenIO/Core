@@ -33,6 +33,7 @@
     "start": "NODE_ENV=production node build/main.js",
     "test:types": "tsc -p tsconfig.prod.json --noEmit",
     "test:cov": "jest -i",
+    "test:cy": "start-test 'ts-node src/main.ts' http-get://localhost:7200/admin/index.html 'cypress run'",
     "test:watch": "jest --watch --collectCoverage=0",
     "test": "jest -i --collectCoverage=0"
   },
@@ -132,6 +133,7 @@
     "antd": "^4.16.13",
     "autoprefixer": "^10.3.7",
     "axios-hooks": "^3.0.0",
+    "cypress": "^9.1.0",
     "grapesjs": "^0.17.29",
     "grapesjs-blocks-basic": "^0.1.8",
     "grapesjs-preset-webpage": "^0.1.11",
@@ -153,6 +155,7 @@
     "react-transition-group": "^4.4.2",
     "recoil": "^0.4.0",
     "recoil-persist": "^3.0.0",
+    "start-server-and-test": "^1.14.0",
     "tailwindcss": "^2.2.7",
     "tailwindcss-scrollbar": "^0.1.0",
     "ts-jest": "^27.0.4",

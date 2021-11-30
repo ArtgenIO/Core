@@ -172,6 +172,7 @@ const NavSide = () => {
               resetJwt();
               message.info('Bye bye! Come back soon <3');
             }}
+            className="js--sign-out"
           >
             Sign Out
           </Menu.Item>

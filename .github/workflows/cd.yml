@@ -57,6 +57,9 @@ jobs:
       - name: Run tests
         run: yarn test:cov
 
+      - name: Run browser tests
+        run: yarn test:cy
+
       - name: Run build
         run: yarn build
 
