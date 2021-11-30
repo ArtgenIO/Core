@@ -14,17 +14,16 @@ body {
 }
 
 body {
-  overflow: hidden; /* Always show the scroll, we can avoid the flickering with this */
-  color: var(--white);
+  overflow-x: hidden;
   font-weight: 100;
-}
 
-.wave-bg {
+  color: var(--white);
+
   background-color: var(--dark);
-  background-image: url('../assets/img/waves.svg');
+  background-image: url('../assets/img/squares.svg');
   background-repeat: no-repeat;
   background-position: bottom;
-  background-size: 100%;
+  background-size: 100% 180px;
 }
 
 .ant-page-header {

@@ -2,8 +2,9 @@ import {
   AppstoreAddOutlined,
   EllipsisOutlined,
   ReloadOutlined,
+  SmileOutlined,
 } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Alert, Button } from 'antd';
 import { useEffect } from 'react';
 import GridLayout from 'react-grid-layout';
 import { useRecoilState } from 'recoil';
@@ -30,7 +31,6 @@ export default function DashboardPage() {
       header={
         <PageHeader
           title="Dashboard"
-          subTitle="Welcome Artisan!"
           actions={
             <>
               <Button key="add" icon={<AppstoreAddOutlined />}>
@@ -49,25 +49,44 @@ export default function DashboardPage() {
         />
       }
     >
+      <Alert
+        type="info"
+        className="mx-2 mb-4"
+        icon={<SmileOutlined className="text-xl mr-4" />}
+        closable
+        showIcon
+        message={
+          <>
+            Artgen Core is in{' '}
+            <strong className="font-bold">alpha preview</strong> status, You can
+            go around and test the current state, but please don't try to deploy
+            it in production environment. If You have any feedback, don't be shy
+            to share with us on our GitHub page.
+            <br />
+            <span className="italic">Have a nice day!</span>
+          </>
+        }
+      />
+
       <GridLayout
         className="text-center"
         layout={gridState}
         cols={16}
         rowHeight={80}
-        width={1800}
+        width={window.innerWidth - 80}
         onLayoutChange={onLayoutChange}
       >
         <div key="a" className="bg-lightest-dark">
-          Custom
+          Placeholder
         </div>
         <div key="b" className="bg-lightest-dark">
-          Widgets
+          Placeholder
         </div>
         <div key="c" className="bg-lightest-dark">
           Placeholder
         </div>
         <div className="bg-lightest-dark" key="d">
-          Coming Soon
+          Placeholder
         </div>
       </GridLayout>
     </PageWithHeader>
