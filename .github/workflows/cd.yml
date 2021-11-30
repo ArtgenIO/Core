@@ -54,10 +54,10 @@ jobs:
       - name: Run type checking
         run: yarn test:types
 
-      - name: Run tests
+      - name: Run API tests
         run: yarn test:cov
 
-      - name: Run browser tests
+      - name: Run UI tests
         run: yarn test:cy
 
       - name: Run build

@@ -6,7 +6,7 @@ import {
   MehOutlined,
   UnlockOutlined,
 } from '@ant-design/icons';
-import { Button, Form, Input, notification } from 'antd';
+import { Alert, Button, Divider, Form, Input, notification } from 'antd';
 import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -33,7 +33,7 @@ export default function SignInComponent() {
 
         setJwt(response.data.accessToken);
       })
-      .catch(error => {
+      .catch(() => {
         notification.error({
           icon: <MehOutlined className="text-red-400" />,
           message: 'Authentication Failed!',
@@ -44,37 +44,49 @@ export default function SignInComponent() {
 
   return (
     <>
-      <h1 className="my-6 w-100 content-center" id="js-hexa">
+      <h1 className="w-full content-center" id="js-hexa">
         <div className="hexa"></div>
       </h1>
-      <h1
-        className="my-6 w-100 content-center text-5xl"
-        style={{ fontWeight: 100 }}
-        id="js-logo"
-      >
-        Artgen
+      <h1 className="mb-8 w-full content-center text-5xl brand" id="js-logo">
+        Artgen Core
       </h1>
-      <div className="py-6 space-x-2 social">
+      <div className="py-6 space-x-2 social hidden">
         <FacebookOutlined />
         <GoogleOutlined />
         <LinkedinOutlined />
         <GithubOutlined />
       </div>
-      <p className="misc-text">or use your email account</p>
+      <Alert
+        type="info"
+        className="text-left"
+        message={
+          <>
+            Use <strong className="font-bold">demo@artgen.io</strong> with the
+            password <strong className="font-bold">demo</strong>
+          </>
+        }
+        closable
+        showIcon
+      ></Alert>
+      <p className="misc-text hidden">or use your email account</p>
       <Form
         name="sign-in"
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 16 }}
-        initialValues={{ email: 'demo@artgen.io', password: 'demo' }}
+        size="large"
         autoComplete="on"
         onFinish={doSignIn.bind(doSignIn)}
+        layout="vertical"
       >
         <Form.Item
           label="Email Address"
           name="email"
-          rules={[{ required: true, message: 'Please input your email!' }]}
+          rules={[
+            { required: true, message: 'Please input your email address!' },
+          ]}
         >
-          <Input />
+          <Input
+            className="test--email-address bg-dark"
+            placeholder="example@artgen.io"
+          />
         </Form.Item>
 
         <Form.Item
@@ -82,21 +94,27 @@ export default function SignInComponent() {
           name="password"
           rules={[{ required: true, message: 'Please input your password!' }]}
         >
-          <Input.Password />
+          <Input.Password
+            className="test--password bg-dark"
+            placeholder="********"
+          />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
+        <Divider />
+
+        <Form.Item>
           <Button
-            className="js--sign-in"
+            className="test--sign-in"
             type="primary"
             htmlType="submit"
             block
+            icon={<UnlockOutlined />}
           >
             Sign In
           </Button>
         </Form.Item>
 
-        <div className="mb-5 text-right mr-10">
+        <div className="mb-5 text-right">
           Don't have an account? <Link to={'/admin/auth/signup'}>Sign Up</Link>{' '}
           now!
         </div>

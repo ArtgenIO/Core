@@ -1,6 +1,7 @@
 /* Tailwind and other custom styles */
 @import url('tailwindcss/components');
 @import url('tailwindcss/utilities');
+@import url('https://fonts.googleapis.com/css2?family=Gruppo&display=swap');
 
 html,
 body {

@@ -6,19 +6,25 @@ describe('admin authentication', () => {
   });
 
   it('display the default landing', () => {
-    cy.get('#sign-in_email').should('exist');
+    cy.get('.test--email-address').should('exist');
   });
 
-  it('process the login', () => {
-    cy.get('#sign-in_email').clear().type('demo@artgen.io');
-    cy.get('#sign-in_password').clear().type('demo');
+  it('fail the sign in', () => {
+    cy.get('.test--email-address').type('demo@artgen.io');
+    cy.get('.test--password').type('demoX');
+    cy.get('.test--sign-in').click();
 
-    cy.get('.js--sign-in').click();
+    // Stays on the sign in page
+    cy.get('.test--sign-in').should('exist');
+  });
 
-    cy.get('.brand-logo').should('exist');
+  it('pass the sign in', () => {
+    cy.get('.test--email-address').type('demo@artgen.io');
+    cy.get('.test--password').type('demo');
+    cy.get('.test--sign-in').click();
 
-    cy.get('.js--sign-out').should('exist');
-    cy.get('.js--sign-out').click();
-    cy.get('#sign-in_email').should('exist');
+    // Sign out
+    cy.get('.test--sign-out').should('exist').click();
+    cy.get('.test--email-address').should('exist');
   });
 });

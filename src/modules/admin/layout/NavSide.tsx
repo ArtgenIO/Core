@@ -7,7 +7,7 @@ import {
   UnorderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, message } from 'antd';
+import { Layout, Menu, notification } from 'antd';
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useRecoilState, useResetRecoilState } from 'recoil';
@@ -170,9 +170,13 @@ const NavSide = () => {
             }
             onClick={() => {
               resetJwt();
-              message.info('Bye bye! Come back soon <3');
+
+              notification.success({
+                message: 'Bye bye! Come back soon <3',
+                duration: 5,
+              });
             }}
-            className="js--sign-out"
+            className="test--sign-out"
           >
             Sign Out
           </Menu.Item>

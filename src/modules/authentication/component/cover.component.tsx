@@ -1,4 +1,4 @@
-import './cover.component.less';
+import './cover.component.css';
 import SignInComponent from './sign-in.component';
 
 export default function AuthLayoutComponent() {
@@ -7,10 +7,10 @@ export default function AuthLayoutComponent() {
       <div className="left-panel hero-bg">
         <div className="cover" />
         <div className="w-full px-24 z-10">
-          <h1 className="text-5xl font-thin text-left tracking-wide">
+          <h1 className="text-5xl moto font-thin text-left tracking-wide">
             Welcome back!
           </h1>
-          <p className="text-3xl font-thin my-4 italic text-gray-400">
+          <p className="text-2xl font-thin my-4 italic text-gray-400">
             Opportunities don't happen. You create them.
           </p>
         </div>
