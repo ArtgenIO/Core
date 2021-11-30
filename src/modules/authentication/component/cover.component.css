@@ -1,10 +1,5 @@
-.auth-layout .hero-bg {
-  background-color: #1a212a;
-  background-image: url('../../admin/assets/img/hero-gate.jpg');
-}
-
 .auth-layout .cover {
-  @apply absolute bg-black opacity-70 inset-0 z-0;
+  @apply absolute  inset-0 z-0;
 }
 
 .auth-layout .misc-text {
@@ -12,7 +7,7 @@
 }
 
 .auth-layout .mobile-panel {
-  @apply fixed lg:hidden z-10 inset-0 bg-no-repeat bg-cover bg-scroll items-center;
+  @apply fixed lg:hidden z-10 inset-0  items-center;
 }
 
 .auth-layout .subtext {

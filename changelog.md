@@ -1,3 +1,10 @@
+### Version 0.0.17
+
+- New sign in page design
+- Cypress testing
+- Authentication is more informative
+- Release flow changes
+
 ### Version 0.0.16
 
 - Cloud Extension store working!

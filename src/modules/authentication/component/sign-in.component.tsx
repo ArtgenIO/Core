@@ -6,14 +6,21 @@ import {
   MehOutlined,
   UnlockOutlined,
 } from '@ant-design/icons';
-import { Alert, Button, Divider, Form, Input, notification } from 'antd';
+import {
+  Alert,
+  Button,
+  Divider,
+  Form,
+  Input,
+  notification,
+  Tooltip,
+} from 'antd';
 import axios from 'axios';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { jwtAtom } from '../../admin/admin.atoms';
 
-type FormValues = {
+type Credentials = {
   email: string;
   password: string;
 };
@@ -21,7 +28,7 @@ type FormValues = {
 export default function SignInComponent() {
   const setJwt = useSetRecoilState(jwtAtom);
 
-  const doSignIn = (values: FormValues) => {
+  const doSignIn = (values: Credentials) => {
     axios
       .post<{ accessToken: string }>('/api/authentication/jwt/sign-in', values)
       .then(response => {
@@ -47,7 +54,7 @@ export default function SignInComponent() {
       <h1 className="w-full content-center" id="js-hexa">
         <div className="hexa"></div>
       </h1>
-      <h1 className="mb-8 w-full content-center text-5xl brand" id="js-logo">
+      <h1 className="mb-4 w-full content-center text-5xl brand" id="js-logo">
         Artgen Core
       </h1>
       <div className="py-6 space-x-2 social hidden">
@@ -58,14 +65,13 @@ export default function SignInComponent() {
       </div>
       <Alert
         type="info"
-        className="text-left"
+        className="text-left mb-4"
         message={
           <>
             Use <strong className="font-bold">demo@artgen.io</strong> with the
             password <strong className="font-bold">demo</strong>
           </>
         }
-        closable
         showIcon
       ></Alert>
       <p className="misc-text hidden">or use your email account</p>
@@ -73,11 +79,12 @@ export default function SignInComponent() {
         name="sign-in"
         size="large"
         autoComplete="on"
-        onFinish={doSignIn.bind(doSignIn)}
+        onFinish={doSignIn}
         layout="vertical"
+        requiredMark={false}
       >
         <Form.Item
-          label="Email Address"
+          label="Email Address:"
           name="email"
           rules={[
             { required: true, message: 'Please input your email address!' },
@@ -86,11 +93,13 @@ export default function SignInComponent() {
           <Input
             className="test--email-address bg-dark"
             placeholder="example@artgen.io"
+            type="email"
+            autoFocus
           />
         </Form.Item>
 
         <Form.Item
-          label="Password"
+          label="Password:"
           name="password"
           rules={[{ required: true, message: 'Please input your password!' }]}
         >
@@ -115,8 +124,11 @@ export default function SignInComponent() {
         </Form.Item>
 
         <div className="mb-5 text-right">
-          Don't have an account? <Link to={'/admin/auth/signup'}>Sign Up</Link>{' '}
-          now!
+          Don't have an account?&nbsp;
+          <Tooltip title="Not yet implemented">
+            <a className="line-through">Sign Up</a>
+          </Tooltip>
+          &nbsp;now!
         </div>
       </Form>
     </>

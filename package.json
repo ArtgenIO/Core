@@ -1,6 +1,6 @@
 {
   "name": "@artgen/core",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Versatily headless CMS",
   "main": "build/main.js",
   "homepage": "https://artgen.io",
@@ -128,6 +128,7 @@
     "@types/react-router-dom": "^5.3.1",
     "@types/react-transition-group": "^4.4.2",
     "@types/sequelize": "^4.28.10",
+    "@types/three": "^0.134.0",
     "@types/uuid": "^8.3.1",
     "@types/validator": "^13.6.5",
     "antd": "^4.16.13",
@@ -158,6 +159,7 @@
     "start-server-and-test": "^1.14.0",
     "tailwindcss": "^2.2.7",
     "tailwindcss-scrollbar": "^0.1.0",
+    "three": "^0.135.0",
     "ts-jest": "^27.0.4",
     "ts-node": "^10.3.0",
     "ts-node-dev": "^1.1.8",
