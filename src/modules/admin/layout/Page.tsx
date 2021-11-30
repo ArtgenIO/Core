@@ -1,7 +1,5 @@
 import { Layout } from 'antd';
 import AuthenticationWrapperComponent from '../../authentication/component/wrapper.component';
-import '../assets/antd.less';
-import '../assets/main.css';
 import NavSide from './NavSide';
 import PageContent from './PageContent';
 import PageDrawer from './PageDrawer';

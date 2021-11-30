@@ -1,7 +1,12 @@
-/* Tailwind and other custom styles */
-@import url('tailwindcss/components');
-@import url('tailwindcss/utilities');
-@import url('https://fonts.googleapis.com/css2?family=Gruppo&display=swap');
+@import './antd.less';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --white: #cfd2d9;
+  --dark: #151719;
+  --border: #37393f;
+}
 
 html,
 body {
@@ -10,13 +15,12 @@ body {
 
 body {
   overflow: hidden; /* Always show the scroll, we can avoid the flickering with this */
-  color: #cfd2d9;
-
+  color: var(--white);
   font-weight: 100;
 }
 
 .wave-bg {
-  background-color: #151719;
+  background-color: var(--dark);
   background-image: url('../assets/img/waves.svg');
   background-repeat: no-repeat;
   background-position: bottom;
@@ -34,5 +38,5 @@ body {
 }
 
 .right-sider {
-  border-left: 1px solid #37393f;
+  border-left: 1px solid var(--border);
 }

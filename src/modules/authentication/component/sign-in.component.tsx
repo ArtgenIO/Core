@@ -1,11 +1,4 @@
-import {
-  FacebookOutlined,
-  GithubOutlined,
-  GoogleOutlined,
-  LinkedinOutlined,
-  MehOutlined,
-  UnlockOutlined,
-} from '@ant-design/icons';
+import { MehOutlined, UnlockOutlined } from '@ant-design/icons';
 import {
   Alert,
   Button,
@@ -51,18 +44,11 @@ export default function SignInComponent() {
 
   return (
     <>
-      <h1 className="w-full content-center" id="js-hexa">
-        <div className="hexa"></div>
+      <h1 className="w-full content-center">
+        <div className="logo"></div>
       </h1>
-      <h1 className="mb-4 w-full content-center text-5xl brand" id="js-logo">
-        Artgen Core
-      </h1>
-      <div className="py-6 space-x-2 social hidden">
-        <FacebookOutlined />
-        <GoogleOutlined />
-        <LinkedinOutlined />
-        <GithubOutlined />
-      </div>
+      <h1 className="mb-4 w-full content-center text-5xl brand">Artgen Core</h1>
+
       <Alert
         type="info"
         className="text-left mb-4"
@@ -73,8 +59,7 @@ export default function SignInComponent() {
           </>
         }
         showIcon
-      ></Alert>
-      <p className="misc-text hidden">or use your email account</p>
+      />
       <Form
         name="sign-in"
         size="large"
@@ -116,10 +101,11 @@ export default function SignInComponent() {
             className="test--sign-in"
             type="primary"
             htmlType="submit"
+            size="middle"
             block
             icon={<UnlockOutlined />}
           >
-            Sign In
+            Sign In!
           </Button>
         </Form.Item>
 
