@@ -32,7 +32,7 @@ export default function RelationsComponent({
     routeCrudAPI({ database: 'system', reference: 'Schema' }) +
       new QueryBuilder()
         .top(1000)
-        .filter(f => f.filterExpression('database', '=', schema.database))
+        .filter(f => f.filterExpression('database', 'eq', schema.database))
         .toQuery(),
     {
       useCache: true,
