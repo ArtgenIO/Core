@@ -62,7 +62,9 @@ export default function CustomEdge({
           type="primary"
           shape="circle"
           size="small"
-          className="artboard-edit-button"
+          className={`artboard-edit-button ${
+            data?.transform ? 'has-transform' : ''
+          }`}
           icon={<SettingOutlined className="opacity-80 hover:opacity-100" />}
         />
       </foreignObject>

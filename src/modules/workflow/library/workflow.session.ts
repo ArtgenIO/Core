@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 import * as jsonSchemaInst from 'json-schema-instantiator';
+import isArray from 'lodash.isarray';
 import merge from 'lodash.merge';
 import nunjucks, { Environment } from 'nunjucks';
 import { ILambdaRecord } from '../../lambda/interface/record.interface';
@@ -150,6 +151,7 @@ export class WorkflowSession {
       } else {
         console.error('Schema', schema);
         console.error('Data', data);
+        console.trace();
         console.error('Errors', validator.errors);
       }
     } else {
@@ -214,8 +216,8 @@ export class WorkflowSession {
   /**
    * Read the input for the given handle
    */
-  getInput(handleId: string) {
-    return this.ctx.$input[handleId];
+  getInput<T = unknown>(handleId: string): T {
+    return this.ctx.$input[handleId] as T;
   }
 
   /**
@@ -235,8 +237,8 @@ export class WorkflowSession {
   /**
    * Access to the node's config from the lambda's execution context
    */
-  getConfig() {
-    return this.ctx.$nodes[this.activeNodeId].config;
+  getConfig<T = unknown>(): T {
+    return this.ctx.$nodes[this.activeNodeId].config as T;
   }
 
   /**
@@ -251,13 +253,21 @@ export class WorkflowSession {
     const config = this.ctx.$nodes[triggerId].config as ITriggerConfig;
 
     if (config.waitForLastNode) {
-      await this.invokeNode(triggerId);
+      try {
+        await this.invokeNode(triggerId);
+      } catch (error) {
+        console.error('Uncaught trigger error!');
+        console.error('Workflow', this.workflow.name);
+        console.error('Stack Trace', this.stackTrace);
+        console.error('Input', this.ctx.$input);
+        console.error('Error', error);
+      }
     }
     let response = config.response;
 
     // Render the response is not a direct response
     if (this.isTemplateSyntax(response)) {
-      response = this.renderer.renderString(config.response, this.ctx);
+      response = this.renderSyntax(config.response);
     }
 
     // Response is an object
@@ -284,7 +294,7 @@ export class WorkflowSession {
   /**
    * Check if the config is a template syntax
    */
-  protected isTemplateSyntax(syntax: string): boolean {
+  isTemplateSyntax(syntax: string): boolean {
     if (typeof syntax === 'string') {
       return !!syntax.match('{{') && !!syntax.match('}}');
     }
@@ -292,11 +302,16 @@ export class WorkflowSession {
     return false;
   }
 
+  renderSyntax(syntax: string) {
+    return this.renderer.renderString(syntax, this.ctx);
+  }
+
   /**
    * Invoke the node in the workflow
    */
   protected async invokeNode(nodeId: string): Promise<void> {
     this.stackTrace.push(nodeId);
+    console.log(this.workflow.name, '->', nodeId);
 
     // Resolve the lambda to the node type
     const lambda = this.getLambda(nodeId);
@@ -307,9 +322,21 @@ export class WorkflowSession {
     // Reset the output context
     this.ctx.$output = {};
 
+    let outputs: void | { [handeId: string]: unknown };
+
     // Get the output edges from the returned object
     // { content: 'a' } populates the content handle
-    const outputs = await lambda.handler.invoke(this);
+    try {
+      outputs = await lambda.handler.invoke(this);
+    } catch (error) {
+      console.error('Uncaught lambda error!');
+      console.error('Workflow', this.workflow.name);
+      console.error('Stack Trace', this.stackTrace);
+      console.error('Input', this.ctx.$input);
+      console.error('Error', error);
+
+      throw error;
+    }
 
     // Reset the input context
     this.ctx.$input = {};
@@ -351,18 +378,24 @@ export class WorkflowSession {
             h => h.id === edge.targetHandle,
           );
 
-          let targetInput: string = output as string;
+          let targetInput = output as string | [];
 
           // Init a default config for the node
-          if (targetHandle.schema && targetHandle.schema != {}) {
-            const handleDefaults = jsonSchemaInst.instantiate(
-              targetHandle.schema,
-            );
-            targetInput = merge(handleDefaults, output);
+          if (typeof targetInput === 'object') {
+            if (targetHandle.schema && targetHandle.schema != {}) {
+              const handleDefaults = jsonSchemaInst.instantiate(
+                targetHandle.schema,
+              );
+
+              if (!isArray(targetInput)) {
+                // Merge when the type is a POJO
+                targetInput = merge(handleDefaults, output);
+              }
+            }
           }
 
           // Value transformation
-          if (edge.transform) {
+          if (edge?.transform) {
             targetInput = this.renderer.renderString(edge.transform, {
               ...this.ctx,
               $data: output,

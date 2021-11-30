@@ -98,6 +98,26 @@ export class RestService {
   }
 
   /**
+   * Find multiple record.
+   */
+  async find(
+    database: string,
+    reference: string,
+    conditions: Record<string, unknown>,
+    attributes?: string[],
+  ): Promise<SchemaInput[]> {
+    // Load the model
+    const model = this.schema.model(database, reference);
+
+    const records = await model.findAll({
+      attributes,
+      where: conditions,
+    });
+
+    return records.map(r => r.get({ plain: true }));
+  }
+
+  /**
    * Update multiple record based on their primary keys.
    */
   async update(

@@ -8,6 +8,7 @@ import { HttpTriggerConfig } from './http-trigger.lambda';
 
 type IConfig = {
   statusCode: string;
+  transform: string;
 };
 
 @Service({
@@ -25,7 +26,14 @@ type IConfig = {
         title: 'Status Code',
         enum: ['200', '201', '400', '401', '404', '500'],
       },
+      transform: {
+        title: 'Response Transformer',
+        type: 'string',
+        default: '{{ $input.response }}',
+        description: 'Template or fixed value',
+      },
     },
+    required: ['statusCode'],
   },
 })
 export class HttpTerminateLambda implements ILambda {
@@ -35,16 +43,23 @@ export class HttpTerminateLambda implements ILambda {
   ) {}
 
   async invoke(session: WorkflowSession) {
-    const config = session.getConfig() as IConfig;
+    const config = session.getConfig<IConfig>();
     const triggerId = session.initialTriggerId;
+    const triggerNode = session.getContext().$nodes[triggerId]
+      .config as HttpTriggerConfig;
+    let response = session.getInput<string>('response');
+
+    if (config?.transform) {
+      if (session.isTemplateSyntax(config.transform)) {
+        response = session.renderSyntax(config.transform);
+      } else {
+        response = config.transform;
+      }
+    }
 
     // Change the
-    (
-      session.getContext().$nodes[triggerId].config as HttpTriggerConfig
-    ).response = session.getInput('response') as string;
+    triggerNode.response = response;
 
-    (
-      session.getContext().$nodes[triggerId].config as HttpTriggerConfig
-    ).statusCode = parseInt(config.statusCode, 10);
+    triggerNode.statusCode = parseInt(config.statusCode, 10);
   }
 }

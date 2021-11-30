@@ -61,16 +61,12 @@ export class NodeFactory {
           {handles}
           <div className="node-label">{props.data.label}</div>
           <div className="text-center node-content relative">
-            {node.icon ? (
-              <img
-                src={`/assets/icons/${node.icon}`}
-                width="48"
-                height="48"
-                draggable={false}
-              />
-            ) : (
-              props.data.label
-            )}
+            <img
+              src={`/assets/icons/${node.icon ?? 'lambda.png'}`}
+              width="48"
+              height="48"
+              draggable={false}
+            />
           </div>
         </div>
       );
