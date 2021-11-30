@@ -13,6 +13,7 @@ import { AuthenticationService } from '../service/authentication.service';
 })
 @Lambda({
   type: 'token.sign',
+  icon: 'sign.png',
   description: 'Sign a Json Web Token for the given account',
   handles: [
     new InputHandleDTO('accountId', {

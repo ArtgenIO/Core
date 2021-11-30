@@ -16,6 +16,7 @@ type Input = {
 })
 @Lambda({
   type: 'hash.compare',
+  icon: 'hash.png',
   description: 'BCrypt hash comparison against plain text part',
   handles: [
     new InputHandleDTO('elements', {

@@ -16,6 +16,7 @@ type Config = {
 })
 @Lambda({
   type: 'if',
+  icon: 'if.png',
   description: 'IF compare subject against a defined value',
   handles: [
     new InputHandleDTO('subject', {

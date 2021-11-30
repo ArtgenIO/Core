@@ -18,6 +18,7 @@ type Config = {
 })
 @Lambda({
   type: 'rest.find',
+  icon: 'rest.find.png',
   description: 'Find records',
   handles: [
     new InputHandleDTO('conditions', {

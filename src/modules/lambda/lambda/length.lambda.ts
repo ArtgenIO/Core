@@ -10,6 +10,7 @@ import { ILambda } from '../interface/lambda.interface';
 })
 @Lambda({
   type: 'length',
+  icon: 'length.png',
   description: 'Get the length of an array or string',
   handles: [
     new InputHandleDTO('subject', {
