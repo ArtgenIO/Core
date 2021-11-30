@@ -1,11 +1,6 @@
 import './cover.component.less';
 import SignInComponent from './sign-in.component';
 
-interface Prop {
-  callout: string;
-  moto: string;
-}
-
 export default function AuthLayoutComponent() {
   return (
     <section className="min-h-screen flex items-stretch text-white auth-layout absolute top-0 left-0 right-0 bottom-0 z-50">

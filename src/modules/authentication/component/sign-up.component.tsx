@@ -7,12 +7,8 @@ import {
 import { Button, Form, Input } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import { jwtAtom } from '../../admin/admin.atoms';
 
 export default function SignInComponent() {
-  const [jwt, setJwt] = useRecoilState(jwtAtom);
-
   return (
     <>
       <h1 className="my-4 w-100 content-center" id="js-hexa">

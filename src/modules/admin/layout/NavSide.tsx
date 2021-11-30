@@ -47,11 +47,6 @@ const menuItems: IMenuItem[] = [
   // label: 'Analytics',
   // },
   {
-    icon: <LayoutOutlined />,
-    to: ADMIN_BASE_URL + '/page',
-    label: 'Pages',
-  },
-  {
     icon: <PartitionOutlined />,
     to: ADMIN_BASE_URL + '/workflow',
     label: 'Workflows',
@@ -60,6 +55,11 @@ const menuItems: IMenuItem[] = [
     icon: <DatabaseOutlined />,
     to: ADMIN_BASE_URL + '/database',
     label: 'Databases',
+  },
+  {
+    icon: <LayoutOutlined />,
+    to: ADMIN_BASE_URL + '/page',
+    label: 'Pages',
   },
   {
     icon: <UserOutlined />,

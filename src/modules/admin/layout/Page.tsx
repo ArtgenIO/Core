@@ -1,7 +1,5 @@
 import { Layout } from 'antd';
-import { useRecoilValue } from 'recoil';
-import AuthenticationCoverComponent from '../../authentication/component/cover.component';
-import { jwtAtom } from '../admin.atoms';
+import AuthenticationWrapperComponent from '../../authentication/component/wrapper.component';
 import '../assets/antd.less';
 import '../assets/main.css';
 import NavSide from './NavSide';
@@ -9,21 +7,15 @@ import PageContent from './PageContent';
 import PageDrawer from './PageDrawer';
 
 export default function PageComponent() {
-  const jwt = useRecoilValue(jwtAtom);
-
   return (
-    <>
-      {jwt ? (
+    <AuthenticationWrapperComponent>
+      <Layout className="h-screen">
+        <NavSide />
         <Layout className="h-screen">
-          <NavSide />
-          <Layout className="h-screen">
-            <PageContent />
-          </Layout>
-          <PageDrawer />
+          <PageContent />
         </Layout>
-      ) : (
-        <AuthenticationCoverComponent />
-      )}
-    </>
+        <PageDrawer />
+      </Layout>
+    </AuthenticationWrapperComponent>
   );
 }

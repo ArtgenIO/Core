@@ -3,8 +3,10 @@ import {
   GithubOutlined,
   GoogleOutlined,
   LinkedinOutlined,
+  MehOutlined,
+  UnlockOutlined,
 } from '@ant-design/icons';
-import { Button, Form, Input, message } from 'antd';
+import { Button, Form, Input, notification } from 'antd';
 import axios from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -23,12 +25,20 @@ export default function SignInComponent() {
     axios
       .post<{ accessToken: string }>('/api/authentication/jwt/sign-in', values)
       .then(response => {
-        message.success('Welcome back!');
+        notification.success({
+          icon: <UnlockOutlined className="text-green-400" />,
+          message: 'Authentication Successful!',
+          description: 'Welcome, Artisan!, have a wondeful day <3',
+        });
 
         setJwt(response.data.accessToken);
       })
       .catch(error => {
-        message.error('Sign In failed!');
+        notification.error({
+          icon: <MehOutlined className="text-red-400" />,
+          message: 'Authentication Failed!',
+          description: 'Please check your credentials',
+        });
       });
   };
 

@@ -61,7 +61,7 @@ export class AuthenticationService {
         };
 
         return sign(payload, await this.getJwtSecret(), {
-          expiresIn: '1h',
+          expiresIn: '8h',
         });
       }
     }
