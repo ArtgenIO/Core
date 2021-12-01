@@ -33,8 +33,4 @@ export class AuthenticationModule implements IModule {
   async onStart() {
     await this.service.seed();
   }
-
-  async onStop() {
-    this.service.clearDeleteTimeout();
-  }
 }

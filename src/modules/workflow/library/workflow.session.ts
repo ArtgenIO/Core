@@ -311,7 +311,6 @@ export class WorkflowSession {
    */
   protected async invokeNode(nodeId: string): Promise<void> {
     this.stackTrace.push(nodeId);
-    console.log(this.workflow.name, '->', nodeId);
 
     // Resolve the lambda to the node type
     const lambda = this.getLambda(nodeId);

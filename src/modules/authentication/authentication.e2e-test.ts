@@ -65,9 +65,6 @@ describe('Authentication (e2e)', () => {
 
       expect(response.statusCode).toBe(400);
       expect(response.json()).toHaveProperty('message');
-      expect(response.json().message).toBe(
-        'Request does not match the expected input data',
-      );
     });
 
     test('should fail with bad password', async () => {

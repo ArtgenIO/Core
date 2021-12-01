@@ -1,6 +1,6 @@
 {
   "id": "ced473f0-522c-47db-a88c-f0f981d93f9e",
-  "name": "Authentication",
+  "name": "Authentication - Sign Up",
   "nodes": [
     {
       "id": "auth.sign.in.44",
@@ -37,40 +37,6 @@
       ]
     },
     {
-      "id": "auth.sign.in.147",
-      "type": "auth.sign.in",
-      "config": {},
-      "label": "Verify Credentials",
-      "position": [
-        432.66666666666663,
-        407.3333333333333
-      ]
-    },
-    {
-      "id": "terminate.http.207",
-      "type": "terminate.http",
-      "config": {
-        "statusCode": "200"
-      },
-      "label": "Http Ok",
-      "position": [
-        665.4103037798419,
-        348.67968306957897
-      ]
-    },
-    {
-      "id": "terminate.http.100",
-      "type": "terminate.http",
-      "config": {
-        "statusCode": "400"
-      },
-      "label": "Http Err",
-      "position": [
-        667.3617757483908,
-        473.3917170007015
-      ]
-    },
-    {
       "id": "content.create.1",
       "type": "content.create",
       "config": {
@@ -99,43 +65,9 @@
         263.5,
         5.583333333333311
       ]
-    },
-    {
-      "id": "trigger.http.143",
-      "type": "trigger.http",
-      "config": {
-        "path": "/api/authentication/jwt/sign-in",
-        "method": "POST",
-        "statusCode": "200",
-        "authentication": "public",
-        "responseFormat": "application/json",
-        "response": "{\"ack\": true}",
-        "waitForLastNode": "true"
-      },
-      "label": "Login EP",
-      "position": [
-        211.33333333333331,
-        434.33333333333337
-      ]
     }
   ],
   "edges": [
-    {
-      "id": "97aeff0e-2894-4b4f-b8e7-390c26866081",
-      "sourceNodeId": "trigger.http.143",
-      "targetNodeId": "auth.sign.in.147",
-      "sourceHandle": "request",
-      "targetHandle": "credentials",
-      "transform": "{{ $data.body | toJson }}"
-    },
-    {
-      "id": "1b4572fe-89b5-4d0c-9b38-d6045553a447",
-      "sourceNodeId": "auth.sign.in.147",
-      "targetNodeId": "terminate.http.100",
-      "sourceHandle": "error",
-      "targetHandle": "response",
-      "transform": ""
-    },
     {
       "id": "ccd1444c-5a31-4666-bd08-9d3fcc3bcfd1",
       "sourceNodeId": "trigger.http.26",
@@ -175,14 +107,6 @@
       "sourceHandle": "jwt",
       "targetHandle": "response",
       "transform": "{{ $data| toJson }}"
-    },
-    {
-      "id": "3eead7fc-64bc-489d-9aa1-8e0ce51281ec",
-      "sourceNodeId": "auth.sign.in.147",
-      "targetNodeId": "terminate.http.207",
-      "sourceHandle": "jwt",
-      "targetHandle": "response",
-      "transform": "{\"accessToken\": {{ $data | toJson }}}"
     }
   ]
 }

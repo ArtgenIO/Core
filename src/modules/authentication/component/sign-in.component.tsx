@@ -18,12 +18,16 @@ type Credentials = {
   password: string;
 };
 
+type Response = {
+  accessToken: string;
+};
+
 export default function SignInComponent() {
   const setJwt = useSetRecoilState(jwtAtom);
 
   const doSignIn = (values: Credentials) => {
     axios
-      .post<{ accessToken: string }>('/api/authentication/jwt/sign-in', values)
+      .post<Response>('/api/authentication/jwt/sign-in', values)
       .then(response => {
         notification.success({
           icon: <UnlockOutlined className="text-green-400" />,
