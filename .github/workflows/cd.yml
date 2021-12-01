@@ -134,10 +134,11 @@ jobs:
       url: ${{ steps.release.outputs.url }}
 
 
-  deploy-demo:
-    name: Heroku demo
+  # On heroku we always run the bleeding edge version
+  deploy-staging:
+    name: Deploy staging to Heroku
     runs-on: ubuntu-latest
-    needs: [check, testing]
+    needs: [testing]
     if: ${{ success() && needs.check.outputs.is_release == 'true' }}
 
     steps:
@@ -149,3 +150,17 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
+
+  # The demo is the latest released version
+  deploy-demo:
+    name: Deploy Demo
+    runs-on: ubuntu-latest
+    needs: [check, release-docker]
+    if: ${{ success() }}
+
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Deploy the build
+        run: npx caprover deploy --appToken ${{ secrets.DEMO_APP_TOKEN }} --caproverUrl ${{ secrets.DEMO_APP_URL }} --imageName artgenio/core:${{ needs.check.outputs.version }} --appName ${{ secrets.DEMO_APP_NAME }}
