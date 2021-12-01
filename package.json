@@ -46,6 +46,7 @@
     "chalk": "^4.1.2",
     "dagre": "^0.8.5",
     "dayjs": "^1.10.7",
+    "debounce": "^1.2.1",
     "dependency-graph": "^0.11.0",
     "dotenv-defaults": "^3.0.0",
     "eventemitter2": "^6.4.5",

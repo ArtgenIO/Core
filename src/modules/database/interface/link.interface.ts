@@ -8,5 +8,6 @@ export interface ILink {
 
   model<T = unknown>(schema: string): ModelCtor<Model<T, T>>;
   setSchemas(schemas: ISchema[]): Promise<void>;
+  addSchemas(schemas: ISchema[]): Promise<void>;
   getSchemas(): ISchema[];
 }

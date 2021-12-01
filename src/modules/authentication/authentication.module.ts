@@ -1,4 +1,5 @@
 import { ILogger, IModule, Inject, Logger, Module } from '../../app/container';
+import { ExtensionModule } from '../extension/extension.module';
 import { SchemaModule } from '../schema/schema.module';
 import { AuthenticationGateway } from './gateway/authentication.gateway';
 import { HashCompareLambda } from './lambda/hash-compare.lambda';
@@ -20,7 +21,7 @@ import { AuthenticationService } from './service/authentication.service';
     HashCompareLambda,
     TokenSignLambda,
   ],
-  dependsOn: [SchemaModule],
+  dependsOn: [SchemaModule, ExtensionModule],
 })
 export class AuthenticationModule implements IModule {
   constructor(

@@ -11,7 +11,7 @@ export class HttpObserver {
     readonly service: HttpService,
   ) {}
 
-  @On('crud.system.Schema.*')
+  @On('crud.system.Schema.*', { debounce: 1_000 })
   async handleSchemaCreate() {
     this.service.startServer();
   }

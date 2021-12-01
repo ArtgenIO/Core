@@ -1,7 +1,14 @@
+import { inject, instantiateClass } from '@loopback/context';
 import { startCase } from 'lodash';
 import { Sequelize } from 'sequelize';
 import SequelizeAuto from 'sequelize-auto';
-import { ILogger, Inject, Logger, Service } from '../../../app/container';
+import {
+  IContext,
+  ILogger,
+  Inject,
+  Logger,
+  Service,
+} from '../../../app/container';
 import { FieldTag, FieldType, IField, ISchema } from '../../schema';
 import { getFieldTypeFromString } from '../../schema/util/field-mapper';
 import { ILink } from '../interface';
@@ -29,6 +36,8 @@ export class LinkService {
     protected logger: ILogger,
     @Inject(DatabaseConnectionFactory)
     readonly connectionFactory: DatabaseConnectionFactory,
+    @inject.context()
+    readonly ctx: IContext,
   ) {}
 
   /**
@@ -52,7 +61,10 @@ export class LinkService {
       throw error;
     }
 
-    const link = new Link(connection, database);
+    const link = await instantiateClass(Link, this.ctx, undefined, [
+      connection,
+      database,
+    ]);
     await link.setSchemas(schemas);
 
     this.registry.set(database.name, link);

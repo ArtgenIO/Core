@@ -1,0 +1,441 @@
+{
+  "id": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
+  "label": "Identity",
+  "version": "0.0.1",
+  "icon": "people",
+  "source": "offline",
+  "database": "system",
+  "config": {},
+  "schemas": [
+    {
+      "extensionId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
+      "database": "system",
+      "reference": "Account",
+      "label": "Accounts",
+      "tableName": "__identity_accounts",
+      "fields": [
+        {
+          "reference": "id",
+          "columnName": "id",
+          "label": "Identifier",
+          "tags": [
+            "primary"
+          ],
+          "type": "uuid",
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "email",
+          "columnName": "email",
+          "label": "Email Address",
+          "tags": [
+            "unique"
+          ],
+          "type": "text",
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "password",
+          "columnName": "password",
+          "label": "Password Hash",
+          "tags": [],
+          "type": "text",
+          "typeParams": {
+            "values": []
+          }
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [
+        {
+          "kind": "has-many",
+          "name": "accessKeys",
+          "target": "AccessKey",
+          "localField": "id",
+          "remoteField": "accountId"
+        }
+      ],
+      "tags": [
+        "system",
+        "active"
+      ],
+      "artboard": {
+        "position": {
+          "x": 200.00024520539853,
+          "y": 488
+        }
+      }
+    },
+    {
+      "extensionId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
+      "database": "system",
+      "reference": "AccessKey",
+      "label": "Access Keys",
+      "tableName": "__identity_access_keys",
+      "fields": [
+        {
+          "label": "Key",
+          "reference": "key",
+          "columnName": "key",
+          "type": "uuid",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "primary"
+          ]
+        },
+        {
+          "reference": "issuedAt",
+          "label": "Issued At",
+          "columnName": "issued_at",
+          "type": "timestamp",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "created"
+          ]
+        },
+        {
+          "reference": "accountId",
+          "label": "Accound ID",
+          "columnName": "accound_id",
+          "type": "uuid",
+          "typeParams": {
+            "values": []
+          },
+          "tags": []
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [
+        {
+          "kind": "belongs-to-one",
+          "name": "account",
+          "target": "Account",
+          "localField": "accountId",
+          "remoteField": "id"
+        }
+      ],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "artboard": {
+        "position": {
+          "x": 370.0006810298832,
+          "y": 488
+        }
+      }
+    }
+  ],
+  "workflows": [
+    {
+      "id": "51c0abf2-5924-4fdf-a920-a1b3487f6710",
+      "extensionId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
+      "name": "Authentication - Sign In",
+      "nodes": [
+        {
+          "id": "trigger.http.1",
+          "type": "trigger.http",
+          "config": {
+            "path": "/api/authentication/jwt/sign-in",
+            "method": "POST",
+            "statusCode": "200",
+            "authentication": "public",
+            "responseFormat": "application/json",
+            "response": "{\"ack\":true}",
+            "waitForLastNode": "true"
+          },
+          "label": "HTTP Endpoint",
+          "position": [
+            88.66666666666666,
+            203.33333333333334
+          ]
+        },
+        {
+          "id": "rest.find.1",
+          "type": "rest.find",
+          "config": {
+            "database": "system",
+            "fields": [
+              "id",
+              "password"
+            ],
+            "schema": "Account"
+          },
+          "label": "Find Account",
+          "position": [
+            250.66666666666663,
+            203.08333333333337
+          ]
+        },
+        {
+          "id": "if.1",
+          "type": "if",
+          "config": {
+            "operator": "==",
+            "against": true,
+            "negate": false
+          },
+          "label": "If Found",
+          "position": [
+            547.4166666666666,
+            88.89583333333337
+          ]
+        },
+        {
+          "id": "length.1",
+          "type": "length",
+          "config": null,
+          "label": "Count",
+          "position": [
+            394.91666666666663,
+            92.95833333333337
+          ]
+        },
+        {
+          "id": "terminate.http.2",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "200"
+          },
+          "label": "Success",
+          "position": [
+            1071.4166666666665,
+            -71.64358877512277
+          ]
+        },
+        {
+          "id": "terminate.http.1",
+          "type": "terminate.http",
+          "config": {
+            "transform": "{\"success\": false, \"message\": \"Authentication failed\"}",
+            "statusCode": "400"
+          },
+          "label": "Fail",
+          "position": [
+            885.1666666666666,
+            328.08333333333337
+          ]
+        },
+        {
+          "id": "hash.compare.1",
+          "type": "hash.compare",
+          "config": null,
+          "label": "CHK Passwd",
+          "position": [
+            722.2326274056248,
+            17.129489116421098
+          ]
+        },
+        {
+          "id": "token.sign.1",
+          "type": "token.sign",
+          "config": {
+            "expiresIn": "8h"
+          },
+          "label": "Sign JWT",
+          "position": [
+            897.1467175777061,
+            -71.80098784951204
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "id": "0d418dc4-8339-4d54-9dab-6911ca84c164",
+          "sourceNodeId": "trigger.http.1",
+          "targetNodeId": "rest.find.1",
+          "sourceHandle": "request",
+          "targetHandle": "conditions",
+          "transform": "{\"email\": \"{{ $data.body.email }}\"}"
+        },
+        {
+          "id": "4086f863-9be2-40ed-a3ae-5054581d278b",
+          "sourceNodeId": "rest.find.1",
+          "targetNodeId": "length.1",
+          "sourceHandle": "records",
+          "targetHandle": "subject",
+          "transform": ""
+        },
+        {
+          "id": "33c08b27-fc56-4e1d-9c78-9ccffb629dfc",
+          "sourceNodeId": "length.1",
+          "targetNodeId": "if.1",
+          "sourceHandle": "length",
+          "targetHandle": "subject",
+          "transform": ""
+        },
+        {
+          "id": "2a9a88d7-d876-4e53-82ed-c6c54cd0a79f",
+          "sourceNodeId": "rest.find.1",
+          "targetNodeId": "terminate.http.1",
+          "sourceHandle": "error",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "12690074-0cac-4f33-ba78-a84b5a12c2a5",
+          "sourceNodeId": "if.1",
+          "targetNodeId": "terminate.http.1",
+          "sourceHandle": "no",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "6c369397-bf96-4ee4-8b81-7966823f0fb0",
+          "sourceNodeId": "if.1",
+          "targetNodeId": "hash.compare.1",
+          "sourceHandle": "yes",
+          "targetHandle": "elements",
+          "transform": "{\"hash\": \"{{ $nodes['rest.find.1'].output.records[0].password  }}\", \"plain\": \"{{ $trigger.body.password }}\"}"
+        },
+        {
+          "id": "27d6ee54-058e-4549-b7b9-41d9285e4dd1",
+          "sourceNodeId": "hash.compare.1",
+          "targetNodeId": "terminate.http.1",
+          "sourceHandle": "no",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "82ba84f4-5f2c-4c53-b358-53ebfc37ac35",
+          "sourceNodeId": "hash.compare.1",
+          "targetNodeId": "token.sign.1",
+          "sourceHandle": "yes",
+          "targetHandle": "accountId",
+          "transform": "{{ $nodes['rest.find.1'].output.records[0].id }}"
+        },
+        {
+          "id": "3729c621-6181-4ee8-9962-afd890d9cf2a",
+          "sourceNodeId": "token.sign.1",
+          "targetNodeId": "terminate.http.2",
+          "sourceHandle": "token",
+          "targetHandle": "response",
+          "transform": "{\"accessToken\": \"{{ $output.token }}\"}"
+        }
+      ]
+    },
+    {
+      "id": "ced473f0-522c-47db-a88c-f0f981d93f9e",
+      "extensionId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
+      "name": "Authentication - Sign Up",
+      "nodes": [
+        {
+          "id": "auth.sign.in.44",
+          "type": "auth.sign.in",
+          "config": {},
+          "label": "Sign JWT",
+          "position": [
+            662.5574827119007,
+            -76.18026377771865
+          ]
+        },
+        {
+          "id": "terminate.http.182",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "400"
+          },
+          "label": "HTTP Error",
+          "position": [
+            845,
+            22.20833333333337
+          ]
+        },
+        {
+          "id": "terminate.http.127",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "200"
+          },
+          "label": "HTTP Created",
+          "position": [
+            850,
+            -132.29166666666663
+          ]
+        },
+        {
+          "id": "content.create.1",
+          "type": "content.create",
+          "config": {
+            "database": "system",
+            "schema": "Account"
+          },
+          "label": "Create Account",
+          "position": [
+            487.98025579572163,
+            6.281453640181695
+          ]
+        },
+        {
+          "id": "trigger.http.26",
+          "type": "trigger.http",
+          "config": {
+            "path": "/api/$auth/signup",
+            "method": "POST",
+            "authentication": "public",
+            "responseFormat": "application/json",
+            "response": "{\"ack\": true}",
+            "waitForLastNode": "true"
+          },
+          "label": "SignUp EP",
+          "position": [
+            263.5,
+            5.583333333333311
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "id": "ccd1444c-5a31-4666-bd08-9d3fcc3bcfd1",
+          "sourceNodeId": "trigger.http.26",
+          "targetNodeId": "content.create.1",
+          "sourceHandle": "request",
+          "targetHandle": "record",
+          "transform": "{{ $data.body | toJson }}"
+        },
+        {
+          "id": "99cb86e8-524f-4cfd-b896-930277803ea2",
+          "sourceNodeId": "content.create.1",
+          "targetNodeId": "terminate.http.182",
+          "sourceHandle": "error",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "b490c0b8-d92a-4a38-8f13-3e38259f43af",
+          "sourceNodeId": "auth.sign.in.44",
+          "targetNodeId": "terminate.http.182",
+          "sourceHandle": "error",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "e85f0ddc-ce06-479b-9cd0-1bbaceaca2ae",
+          "sourceNodeId": "content.create.1",
+          "targetNodeId": "auth.sign.in.44",
+          "sourceHandle": "result",
+          "targetHandle": "credentials",
+          "transform": "{{ $nodes['trigger.http.26'].output.request.body | toJson }}"
+        },
+        {
+          "id": "06bd0979-1f8d-44a7-ad69-4b9b4713ead5",
+          "sourceNodeId": "auth.sign.in.44",
+          "targetNodeId": "terminate.http.127",
+          "sourceHandle": "jwt",
+          "targetHandle": "response",
+          "transform": "{{ $data| toJson }}"
+        }
+      ]
+    }
+  ]
+}

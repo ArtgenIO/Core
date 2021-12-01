@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { ROOT_DIR } from '../../../app/globals';
+import { SEED_DIR } from '../../../app/globals';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IPage } from '../interface/page.interface';
 
@@ -53,9 +53,7 @@ export class PageService {
       return;
     }
 
-    const landing = await readFile(
-      join(ROOT_DIR, 'storage/seed/page/landing.page.json'),
-    );
+    const landing = await readFile(join(SEED_DIR, 'landing.page.json'));
 
     await model.create(JSON.parse(landing.toString()));
     this.logger.info('Pages seeded');

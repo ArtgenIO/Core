@@ -1,4 +1,5 @@
 import { Constructor, MetadataInspector } from '@loopback/context';
+import { debounce } from 'debounce';
 import { EventEmitter2 } from 'eventemitter2';
 import { v4 } from 'uuid';
 import { OnParams, ON_META_KEY } from '.';
@@ -36,11 +37,15 @@ export class EventModule {
 
       for (const method in metadatas) {
         if (Object.prototype.hasOwnProperty.call(metadatas, method)) {
-          event['on'](
-            metadatas[method].event,
-            observer[method].bind(observer),
-            metadatas[method].options,
-          );
+          let handler = observer[method].bind(observer);
+          const mdata = metadatas[method];
+
+          // Debounce support
+          if (mdata.options?.debounce) {
+            handler = debounce(handler, mdata.options.debounce);
+          }
+
+          event['on'](mdata.event, handler, mdata.options);
         }
       }
     }

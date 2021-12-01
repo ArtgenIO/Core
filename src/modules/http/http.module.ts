@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { ILogger, IModule, Inject, Logger, Module } from '../../app/container';
 import { IKernel } from '../../app/kernel';
 import { DatabaseModule } from '../database/database.module';
+import { ExtensionModule } from '../extension/extension.module';
 import { WorkflowModule } from '../workflow/workflow.module';
 import { HttpObserver } from './http.observer';
 import { HttpRequestLambda } from './lambda/http-request.lambda';
@@ -11,7 +12,7 @@ import { HttpServerProvider } from './provider/http.server';
 import { HttpService } from './service/http.service';
 
 @Module({
-  dependsOn: [DatabaseModule, WorkflowModule],
+  dependsOn: [DatabaseModule, WorkflowModule, ExtensionModule],
   providers: [
     HttpObserver,
     HttpService,
@@ -29,12 +30,12 @@ export class HttpModule implements IModule {
     protected service: HttpService,
   ) {}
 
-  async onStart(application: IKernel): Promise<void> {
+  async onStart(): Promise<void> {
     await Promise.all([this.service.startServer()]);
   }
 
-  async onStop(app: IKernel) {
-    const http = await app.context.get<FastifyInstance>(
+  async onStop(kernel: IKernel) {
+    const http = await kernel.context.get<FastifyInstance>(
       'providers.HttpServerProvider',
     );
 

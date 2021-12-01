@@ -222,6 +222,7 @@ export class Kernel implements IKernel {
     } catch (error) {
       this.logger.error('Startup sequence failed!');
       this.logger.error(getErrorMessage(error));
+      console.error(error);
 
       // Initiate a graceful shutdown so the modules
       // can still close their handles.
