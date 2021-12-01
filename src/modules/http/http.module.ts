@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { ILogger, IModule, Inject, Logger, Module } from '../../app/container';
 import { IKernel } from '../../app/kernel';
 import { DatabaseModule } from '../database/database.module';
+import { WorkflowModule } from '../workflow/workflow.module';
 import { HttpObserver } from './http.observer';
 import { HttpRequestLambda } from './lambda/http-request.lambda';
 import { HttpTerminateLambda } from './lambda/http-terminate.lambda';
@@ -10,7 +11,7 @@ import { HttpServerProvider } from './provider/http.server';
 import { HttpService } from './service/http.service';
 
 @Module({
-  dependsOn: [DatabaseModule],
+  dependsOn: [DatabaseModule, WorkflowModule],
   providers: [
     HttpObserver,
     HttpService,

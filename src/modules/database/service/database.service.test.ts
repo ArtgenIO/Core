@@ -1,5 +1,6 @@
 import { IKernel, Kernel } from '../../../app/kernel';
 import { EventModule } from '../../event/event.module';
+import { ExtensionModule } from '../../extension/extension.module';
 import { SchemaModule } from '../../schema/schema.module';
 import { DatabaseModule } from '../database.module';
 import { DatabaseService } from './database.service';
@@ -9,7 +10,7 @@ describe(DatabaseService.name, () => {
 
   beforeEach(() => {
     app = new Kernel();
-    app.bootstrap([DatabaseModule, SchemaModule, EventModule]);
+    app.bootstrap([DatabaseModule, SchemaModule, EventModule, ExtensionModule]);
   });
 
   describe('Database Type Parser', () => {

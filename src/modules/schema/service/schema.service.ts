@@ -1,11 +1,10 @@
 import { EventEmitter2 } from 'eventemitter2';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { ModelDefined } from 'sequelize';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { ROOT_DIR } from '../../../app/globals';
 import { ILink } from '../../database/interface';
 import { LinkService } from '../../database/service/link.service';
+import { IExtension } from '../../extension/interface/extension.interface';
+import { SystemExtensionProvider } from '../../extension/provider/system-extension.provider';
 import { ISchema } from '../interface/schema.interface';
 import { SchemaMigrationService } from './schema-migration.service';
 
@@ -25,6 +24,8 @@ export class SchemaService {
     readonly event: EventEmitter2,
     @Inject(SchemaMigrationService)
     readonly migrator: SchemaMigrationService,
+    @Inject(SystemExtensionProvider)
+    readonly sysExt: IExtension,
   ) {}
 
   /**
@@ -62,13 +63,7 @@ export class SchemaService {
    * schemas from local disk.
    */
   getSystem(): ISchema[] {
-    return (
-      JSON.parse(
-        readFileSync(
-          join(ROOT_DIR, 'storage/seed/schema/system.database.json'),
-        ).toString(),
-      ) as ISchema[]
-    ).map(s => this.migrator.migrate(s));
+    return this.sysExt.schemas.map(s => this.migrator.migrate(s));
   }
 
   /**

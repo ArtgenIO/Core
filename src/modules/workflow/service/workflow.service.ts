@@ -1,11 +1,9 @@
-import { readFile } from 'fs/promises';
 import { ServiceBroker } from 'moleculer';
-import { basename, join } from 'path';
 import { ModelDefined } from 'sequelize';
 import { v4 } from 'uuid';
-import walkdir from 'walkdir';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { ROOT_DIR } from '../../../app/globals';
+import { IExtension } from '../../extension/interface/extension.interface';
+import { SystemExtensionProvider } from '../../extension/provider/system-extension.provider';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IWorkflow } from '../interface/workflow.interface';
@@ -14,7 +12,6 @@ import { WorkflowSession } from '../library/workflow.session';
 // Hook everything here, we can emit new and removed events so the http, and other triggers can be updated
 @Service()
 export class WorkflowService {
-  protected isSeedFinished: Promise<boolean> | true;
   protected model: ModelDefined<IWorkflow, IWorkflow>;
 
   constructor(
@@ -26,36 +23,27 @@ export class WorkflowService {
     readonly lambda: LambdaService,
     @Inject(SchemaService)
     readonly schemas: SchemaService,
+    @Inject(SystemExtensionProvider)
+    readonly sysExt: IExtension,
   ) {
     this.model = this.schemas.model<IWorkflow>('system', 'Workflow');
-    this.loadSystemWorkflows();
   }
 
-  async loadSystemWorkflows(): Promise<void> {
-    this.isSeedFinished = new Promise<boolean>(async ok => {
-      const path = join(ROOT_DIR, 'storage/seed/workflow');
+  async seed(): Promise<void> {
+    for (const wf of this.sysExt.workflows) {
+      const exists = await this.model.count({
+        where: {
+          id: wf.id,
+        },
+      });
 
-      for (const workflow of await walkdir.async(path)) {
-        this.logger.info('Seeding [%s] workflow', basename(workflow));
-        const seed = JSON.parse((await readFile(workflow)).toString());
-        const exists = await this.model.count({
-          where: {
-            id: seed.id,
-          },
-        });
-
-        if (!exists) {
-          await this.createWorkflow(seed);
-        }
+      if (!exists) {
+        await this.createWorkflow(wf);
       }
-
-      ok(true);
-    });
+    }
   }
 
   async findAll(): Promise<IWorkflow[]> {
-    await this.isSeedFinished;
-
     return (await this.model.findAll()).map(wf => wf.get({ plain: true }));
   }
 

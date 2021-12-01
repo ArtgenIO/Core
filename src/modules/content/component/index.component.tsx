@@ -2,11 +2,9 @@ import { SearchOutlined } from '@ant-design/icons';
 import { Divider, Input, Layout, Menu } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import { QueryBuilder } from 'odata-query-builder';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Route, Switch, useHistory, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
-import { pageNavCollapseAtom } from '../../admin/admin.atoms';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
 import { routeCrudAPI, routeCrudUI } from '../util/schema-url';
@@ -18,7 +16,6 @@ export default function CrudIndexComponent() {
   const location = useLocation();
   const history = useHistory();
   const [search, setSearch] = useState<string>(null);
-  const setPageNavCollapse = useSetRecoilState(pageNavCollapseAtom);
 
   const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
     routeCrudAPI({ database: 'system', reference: 'Schema' }) +
@@ -56,12 +53,6 @@ export default function CrudIndexComponent() {
       schema.tags.some(t => t.toLowerCase().match(search))
     );
   };
-
-  useEffect(() => {
-    setPageNavCollapse(true);
-
-    return () => {};
-  }, [location]);
 
   return (
     <Layout hasSider>

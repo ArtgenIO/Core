@@ -4,9 +4,8 @@ import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import Search from 'antd/lib/input/Search';
 import Sider from 'antd/lib/layout/Sider';
 import startCase from 'lodash.startcase';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { pageNavCollapseAtom } from '../../../admin/admin.atoms';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
 import {
   catalogCollapsedAtom,
@@ -46,7 +45,6 @@ const onDragStart = (event, nodeType: string) => {
 };
 
 export default function ArtboardCatalogComponent() {
-  const setMenuCollapse = useSetRecoilState(pageNavCollapseAtom);
   const lambdaMetas = useRecoilValue(lambdaMetasAtom);
   const setElements = useSetRecoilState(elementsAtom);
   const flowInstance = useRecoilValue(flowInstanceAtom);
@@ -64,11 +62,6 @@ export default function ArtboardCatalogComponent() {
     // Too fast, idk
     setTimeout(() => flowInstance.fitView(), 100);
   };
-
-  useEffect(() => {
-    // Save screen space by closing the side nav
-    setMenuCollapse(true);
-  }, []);
 
   return (
     <div>

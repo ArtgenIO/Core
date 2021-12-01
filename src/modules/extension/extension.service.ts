@@ -2,6 +2,7 @@ import { ILogger, Inject, Logger, Service } from '../../app/container';
 import { getErrorMessage } from '../../app/kernel';
 import { RestService } from '../rest/rest.service';
 import { IExtension } from './interface/extension.interface';
+import { SystemExtensionProvider } from './provider/system-extension.provider';
 
 @Service()
 export class ExtensionService {
@@ -10,7 +11,19 @@ export class ExtensionService {
     readonly logger: ILogger,
     @Inject(RestService)
     readonly rest: RestService,
+    @Inject(SystemExtensionProvider)
+    readonly sysExt: IExtension,
   ) {}
+
+  async seed() {
+    const exists = await this.rest.read('system', 'Extension', {
+      id: this.sysExt.id,
+    });
+
+    if (!exists) {
+      await this.rest.create('system', 'Extension', this.sysExt as any);
+    }
+  }
 
   async importFromSource(database: string, extension: IExtension) {
     // Global db reference

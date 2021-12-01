@@ -3,31 +3,29 @@ import {
   DatabaseOutlined,
   HomeOutlined,
   LayoutOutlined,
+  LogoutOutlined,
+  MenuUnfoldOutlined,
   PartitionOutlined,
   UnorderedListOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, notification } from 'antd';
-import React from 'react';
+import { QueryBuilder } from 'odata-query-builder';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useRecoilState, useResetRecoilState } from 'recoil';
-import { jwtAtom, pageNavCollapseAtom } from '../admin.atoms';
+import { useResetRecoilState } from 'recoil';
+import { routeCrudAPI } from '../../content/util/schema-url';
+import { IExtension } from '../../extension/interface/extension.interface';
+import { jwtAtom } from '../admin.atoms';
+import { useHttpClient } from '../library/use-http-client';
 import './NavSide.css';
 
 const ADMIN_BASE_URL = '/admin';
 const { Sider } = Layout;
 
-type ISubMenuItem = {
-  icon: React.ReactNode;
-  label: string;
-  to: string;
-};
-
 type IMenuItem = {
   icon: React.ReactNode;
   label: string;
-  children?: ISubMenuItem[];
-  to?: string;
+  to: string;
 };
 
 const menuItems: IMenuItem[] = [
@@ -41,11 +39,6 @@ const menuItems: IMenuItem[] = [
     to: ADMIN_BASE_URL + '/content',
     label: 'Content',
   },
-  // {
-  // icon: <PieChartOutlined />,
-  // to: ADMIN_BASE_URL + '/analytics',
-  // label: 'Analytics',
-  // },
   {
     icon: <PartitionOutlined />,
     to: ADMIN_BASE_URL + '/workflow',
@@ -62,11 +55,6 @@ const menuItems: IMenuItem[] = [
     label: 'Pages',
   },
   {
-    icon: <UserOutlined />,
-    label: 'Users',
-    to: ADMIN_BASE_URL + '/content/system/Account',
-  },
-  {
     icon: <AppstoreOutlined />,
     label: 'Extensions',
     to: ADMIN_BASE_URL + '/extension',
@@ -74,106 +62,84 @@ const menuItems: IMenuItem[] = [
 ];
 
 const NavSide = () => {
-  const [menuCollapse, setMenuCollapse] = useRecoilState(pageNavCollapseAtom);
   const location = useLocation();
   const resetJwt = useResetRecoilState(jwtAtom);
-  let selected = 'm0';
-  let opened = '';
-  let longestMatch = 0;
+  const [selected, setSelected] = useState('');
+  const [menus, setMenus] = useState<IMenuItem[]>([]);
 
-  for (const [k1, menu1] of menuItems.entries()) {
-    if (location.pathname.match(menu1.to)) {
-      if (menu1.to) {
-        if (longestMatch < menu1.to.length) {
-          longestMatch = menu1.to.length;
-          selected = `m${k1}`;
+  const [{ data: extensions, loading, error }] = useHttpClient<IExtension[]>(
+    routeCrudAPI({
+      database: 'system',
+      reference: 'Extension',
+    }) +
+      new QueryBuilder().select('id,label').top(100).orderBy('label').toQuery(),
+  );
+
+  useEffect(() => {
+    if (extensions) {
+      setMenus([
+        ...menuItems,
+        ...extensions.map(
+          ext =>
+            ({
+              icon: <MenuUnfoldOutlined />,
+              label: ext.label,
+              to: `${ADMIN_BASE_URL}/ext/${ext.id}`,
+            } as IMenuItem),
+        ),
+      ]);
+    }
+  }, [extensions]);
+
+  useEffect(() => {
+    let longestMatch = 0;
+    let tempSelected = '';
+
+    for (const menu of menus) {
+      if (location.pathname.match(menu.to)) {
+        if (longestMatch < menu.to.length) {
+          longestMatch = menu.to.length;
+          tempSelected = `k-${menu.to}`;
         }
       }
     }
 
-    if (menu1.children) {
-      for (const [k2, menu2] of menu1.children.entries()) {
-        if (location.pathname.match(menu2.to)) {
-          if (longestMatch < menu2.to.length) {
-            longestMatch = menu2.to.length;
-            selected = `m${k1}.${k2}`;
-            opened = `s${k1}`;
-          }
-        }
-      }
-    }
-  }
-
-  if (menuCollapse) {
-    opened = '';
-  }
+    setSelected(tempSelected);
+  }, [menus, location]);
 
   return (
-    <Sider
-      collapsible={false}
-      collapsed={true}
-      onCollapse={() => setMenuCollapse(!menuCollapse)}
-      width={240}
-      className="left-nav relative"
-      collapsedWidth={54}
-    >
-      <div className="flex flex-row brand-block">
-        <div>
-          <Link to={ADMIN_BASE_URL}>
-            <div className="brand-logo"></div>
-          </Link>
-        </div>
-        <div className={'brand-name ' + (menuCollapse ? 'hidden' : 'block')}>
-          artgen
-        </div>
+    <Sider collapsed className="left-nav relative" collapsedWidth={54}>
+      <div className="brand-block">
+        <Link to={ADMIN_BASE_URL}>
+          <div className="brand-logo"></div>
+        </Link>
       </div>
-      <Menu
-        key="menus"
-        className="menu"
-        theme="dark"
-        defaultSelectedKeys={[selected]}
-        defaultOpenKeys={[opened]}
-        mode="inline"
-        triggerSubMenuAction="hover"
-      >
-        {menuItems.map((menu1, key1) => {
-          return menu1?.to ? (
-            <Menu.Item key={`m${key1}`} icon={menu1.icon}>
-              <Link to={menu1.to}>{menu1.label}</Link>{' '}
-            </Menu.Item>
-          ) : menu1.children ? (
-            <Menu.SubMenu
-              key={`s${key1}`}
-              icon={menu1.icon}
-              title={menu1.label}
-            >
-              {menu1.children.map((menu2, key2) => (
-                <Menu.Item key={`m${key1}.${key2}`} icon={menu2.icon}>
-                  <Link to={menu2.to}>{menu2.label}</Link>
-                </Menu.Item>
-              ))}
-            </Menu.SubMenu>
-          ) : undefined;
-        })}
-      </Menu>
 
-      <div
-        key="bottom-menus"
-        className="w-full absolute bottom-0"
-        style={{ bottom: 4 }}
-      >
-        <Menu key="user-menu" theme="dark" mode="inline">
+      {loading ? undefined : (
+        <Menu
+          className="menu"
+          theme="dark"
+          defaultSelectedKeys={[selected]}
+          mode="inline"
+        >
+          {menus.map(menu => (
+            <Menu.Item key={`k-${menu.to}`} icon={menu.icon}>
+              <Link to={menu.to}>{menu.label}</Link>
+            </Menu.Item>
+          ))}
+        </Menu>
+      )}
+
+      <div className="w-full absolute bottom-0" style={{ bottom: 4 }}>
+        <Menu theme="dark" mode="inline">
           <Menu.Item
-            key={`profile`}
-            icon={
-              <span className="material-icons-outlined ">account_circle</span>
-            }
+            key="profile"
+            icon={<LogoutOutlined />}
             onClick={() => {
               resetJwt();
 
               notification.success({
                 message: 'Bye bye! Come back soon <3',
-                duration: 5,
               });
             }}
             className="test--sign-out"

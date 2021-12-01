@@ -1,0 +1,1347 @@
+{
+  "id": "cdd1a824-5bae-431e-8acb-a392bf639f48",
+  "label": "System",
+  "version": "0.0.1",
+  "source": "offline",
+  "database": "system",
+  "config": {},
+  "schemas": [
+    {
+      "database": "system",
+      "reference": "Workflow",
+      "label": "Workflows",
+      "tableName": "__artgen_workflows",
+      "fields": [
+        {
+          "reference": "id",
+          "columnName": "id",
+          "label": "Identifier",
+          "type": "uuid",
+          "tags": [
+            "primary"
+          ],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "name",
+          "columnName": "name",
+          "label": "Name",
+          "type": "text",
+          "tags": [
+            "unique"
+          ],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "nodes",
+          "columnName": "nodes",
+          "label": "Nodes",
+          "type": "json",
+          "tags": [],
+          "defaultValue": [],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "edges",
+          "columnName": "edges",
+          "label": "Edges",
+          "type": "json",
+          "tags": [],
+          "defaultValue": [],
+          "typeParams": {
+            "values": []
+          }
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "artboard": {
+        "position": {
+          "x": 370.00044138667477,
+          "y": 60
+        }
+      }
+    },
+    {
+      "database": "system",
+      "reference": "Dashboard",
+      "label": "Dashboard",
+      "tableName": "__artgen_dashboards",
+      "fields": [
+        {
+          "label": "Identifier",
+          "reference": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "primary"
+          ]
+        },
+        {
+          "reference": "label",
+          "label": "Label",
+          "columnName": "label",
+          "defaultValue": null,
+          "type": "text",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "unique"
+          ]
+        },
+        {
+          "reference": "widgets",
+          "label": "Widgets",
+          "columnName": "widgets",
+          "defaultValue": "[]",
+          "type": "json",
+          "typeParams": {
+            "values": []
+          },
+          "tags": []
+        },
+        {
+          "label": "Tags",
+          "reference": "tags",
+          "columnName": "__artgen_tags",
+          "type": "json",
+          "tags": [
+            "tags"
+          ],
+          "typeParams": {
+            "values": []
+          },
+          "defaultValue": []
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "artboard": {
+        "position": {
+          "x": 370.00040358751863,
+          "y": 274
+        }
+      }
+    },
+    {
+      "database": "system",
+      "reference": "AccessKey",
+      "label": "Access Keys",
+      "tableName": "__artgen_access_keys",
+      "fields": [
+        {
+          "label": "Key",
+          "reference": "key",
+          "columnName": "key",
+          "type": "uuid",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "primary"
+          ]
+        },
+        {
+          "reference": "issuedAt",
+          "label": "Issued At",
+          "columnName": "issued_at",
+          "type": "timestamp",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "created"
+          ]
+        },
+        {
+          "reference": "accountId",
+          "label": "Accound ID",
+          "columnName": "accound_id",
+          "type": "uuid",
+          "typeParams": {
+            "values": []
+          },
+          "tags": []
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [
+        {
+          "kind": "belongs-to-one",
+          "name": "account",
+          "target": "Account",
+          "localField": "accountId",
+          "remoteField": "id"
+        }
+      ],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "artboard": {
+        "position": {
+          "x": 370.0006810298832,
+          "y": 488
+        }
+      }
+    },
+    {
+      "database": "system",
+      "reference": "Account",
+      "label": "Accounts",
+      "tableName": "__artgen_accounts",
+      "fields": [
+        {
+          "reference": "id",
+          "columnName": "id",
+          "label": "Identifier",
+          "tags": [
+            "primary"
+          ],
+          "type": "uuid",
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "email",
+          "columnName": "email",
+          "label": "Email Address",
+          "tags": [
+            "unique"
+          ],
+          "type": "text",
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "password",
+          "columnName": "password",
+          "label": "Password Hash",
+          "tags": [],
+          "type": "text",
+          "typeParams": {
+            "values": []
+          }
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [
+        {
+          "kind": "has-many",
+          "name": "accessKeys",
+          "target": "AccessKey",
+          "localField": "id",
+          "remoteField": "accountId"
+        }
+      ],
+      "tags": [
+        "system",
+        "active"
+      ],
+      "artboard": {
+        "position": {
+          "x": 200.00024520539853,
+          "y": 488
+        }
+      }
+    },
+    {
+      "database": "system",
+      "reference": "Database",
+      "label": "Databases",
+      "tableName": "__artgen_databases",
+      "fields": [
+        {
+          "reference": "name",
+          "columnName": "name",
+          "label": "Name",
+          "type": "text",
+          "tags": [
+            "primary"
+          ],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "dsn",
+          "columnName": "dsn",
+          "label": "Data Source Name (DSN)",
+          "type": "text",
+          "tags": [
+            "unique"
+          ],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "type",
+          "columnName": "type",
+          "label": "Database Type",
+          "type": "enum",
+          "typeParams": {
+            "values": [
+              "postgres",
+              "mysql",
+              "sqlite"
+            ]
+          },
+          "tags": []
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [
+        {
+          "kind": "has-many",
+          "name": "schemas",
+          "target": "Schema",
+          "localField": "name",
+          "remoteField": "database"
+        }
+      ],
+      "tags": [
+        "system",
+        "active"
+      ],
+      "artboard": {
+        "position": {
+          "x": 370.00032306906684,
+          "y": 702
+        }
+      }
+    },
+    {
+      "database": "system",
+      "reference": "Page",
+      "label": "Pages",
+      "tableName": "__artgen_pages",
+      "fields": [
+        {
+          "reference": "id",
+          "columnName": "id",
+          "label": "Identifier",
+          "type": "uuid",
+          "tags": [
+            "primary"
+          ],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "label",
+          "columnName": "label",
+          "label": "Label",
+          "type": "text",
+          "tags": [],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "domain",
+          "columnName": "domain",
+          "label": "Domain",
+          "type": "text",
+          "tags": [],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "path",
+          "columnName": "path",
+          "label": "path",
+          "type": "text",
+          "tags": [],
+          "defaultValue": "/page/x",
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "content",
+          "columnName": "content",
+          "label": "Content",
+          "type": "json",
+          "tags": [],
+          "defaultValue": {},
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "tags",
+          "columnName": "__artgen_tags",
+          "label": "Tags",
+          "type": "json",
+          "tags": [],
+          "defaultValue": [
+            "active"
+          ],
+          "typeParams": {
+            "values": []
+          }
+        }
+      ],
+      "indices": [],
+      "uniques": [
+        {
+          "name": "domain_path_unq",
+          "fields": [
+            "domain",
+            "path"
+          ]
+        }
+      ],
+      "relations": [],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "artboard": {
+        "position": {
+          "x": 370.00003013389363,
+          "y": 916
+        }
+      }
+    },
+    {
+      "database": "system",
+      "reference": "Schema",
+      "label": "Schemas",
+      "tableName": "__artgen_schemas",
+      "fields": [
+        {
+          "reference": "database",
+          "columnName": "database",
+          "label": "Database",
+          "type": "text",
+          "tags": [
+            "primary"
+          ],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "reference",
+          "columnName": "reference",
+          "label": "Rerefence",
+          "type": "text",
+          "tags": [
+            "primary"
+          ],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "label",
+          "columnName": "label",
+          "label": "Label",
+          "type": "text",
+          "tags": [],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "tableName",
+          "columnName": "tableName",
+          "label": "Table Name",
+          "type": "text",
+          "tags": [],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "fields",
+          "columnName": "fields",
+          "label": "Fields",
+          "type": "json",
+          "tags": [],
+          "defaultValue": [],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "indices",
+          "columnName": "indices",
+          "label": "Indices",
+          "type": "json",
+          "tags": [],
+          "defaultValue": [],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "uniques",
+          "columnName": "uniques",
+          "label": "Uniques",
+          "type": "json",
+          "tags": [],
+          "defaultValue": [],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "relations",
+          "columnName": "relations",
+          "label": "Relations",
+          "type": "json",
+          "tags": [],
+          "defaultValue": [],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "tags",
+          "columnName": "__artgen_tags",
+          "label": "Tags",
+          "type": "json",
+          "tags": [],
+          "defaultValue": [
+            "active"
+          ],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
+          "reference": "artboard",
+          "columnName": "artboard",
+          "label": "Artboard",
+          "type": "json",
+          "tags": [],
+          "defaultValue": {
+            "position": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "typeParams": {
+            "values": []
+          }
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [
+        {
+          "kind": "belongs-to-one",
+          "name": "db",
+          "target": "Database",
+          "localField": "database",
+          "remoteField": "name"
+        }
+      ],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "artboard": {
+        "position": {
+          "x": 200.00058638224152,
+          "y": 702
+        }
+      }
+    },
+    {
+      "icon": "table",
+      "version": 2,
+      "database": "system",
+      "label": "Key-Value Storage",
+      "reference": "KeyValueStorage",
+      "tableName": "__artgen_key_value_storage",
+      "fields": [
+        {
+          "reference": "key",
+          "label": "Key",
+          "columnName": "key",
+          "defaultValue": null,
+          "type": "text",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "primary"
+          ]
+        },
+        {
+          "reference": "value",
+          "label": "Value",
+          "columnName": "value",
+          "defaultValue": null,
+          "type": "json",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "nullable"
+          ]
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "permission": "rw",
+      "artboard": {
+        "position": {
+          "x": 370.00027415118717,
+          "y": 1130
+        }
+      }
+    },
+    {
+      "icon": "table",
+      "version": 2,
+      "database": "system",
+      "label": "Extensions",
+      "reference": "Extension",
+      "tableName": "__artgen_extensions",
+      "fields": [
+        {
+          "label": "Identifier",
+          "reference": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "primary"
+          ]
+        },
+        {
+          "reference": "label",
+          "label": "Label",
+          "columnName": "label",
+          "defaultValue": null,
+          "type": "text",
+          "typeParams": {
+            "values": []
+          },
+          "tags": []
+        },
+        {
+          "reference": "version",
+          "label": "Version",
+          "columnName": "version",
+          "defaultValue": "0.0.1",
+          "type": "text",
+          "typeParams": {
+            "values": []
+          },
+          "tags": []
+        },
+        {
+          "reference": "config",
+          "label": "Config",
+          "columnName": "config",
+          "defaultValue": {},
+          "type": "json",
+          "typeParams": {
+            "values": []
+          },
+          "tags": []
+        },
+        {
+          "reference": "schemas",
+          "label": "Schemas",
+          "columnName": "schemas",
+          "defaultValue": [],
+          "type": "json",
+          "typeParams": {
+            "values": []
+          },
+          "tags": []
+        },
+        {
+          "reference": "workflows",
+          "label": "Workflows",
+          "columnName": "workflows",
+          "defaultValue": [],
+          "type": "json",
+          "typeParams": {
+            "values": []
+          },
+          "tags": []
+        },
+        {
+          "reference": "installedAt",
+          "label": "Installed At",
+          "columnName": "installed_at",
+          "type": "timestamp",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "created"
+          ]
+        },
+        {
+          "reference": "database",
+          "label": "Database",
+          "columnName": "database",
+          "defaultValue": null,
+          "type": "text",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "indexed"
+          ]
+        },
+        {
+          "reference": "source",
+          "label": "Source",
+          "columnName": "source",
+          "defaultValue": "offline",
+          "type": "enum",
+          "typeParams": {
+            "values": [
+              "cloud",
+              "offline"
+            ]
+          },
+          "tags": []
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [
+        {
+          "kind": "belongs-to-one",
+          "name": "ofDatabase",
+          "target": "Database",
+          "localField": "database",
+          "remoteField": "name"
+        }
+      ],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "permission": "rw",
+      "artboard": {
+        "position": {
+          "x": 540.0007144897936,
+          "y": 1130
+        }
+      }
+    }
+  ],
+  "workflows": [
+    {
+      "id": "30d9c6a9-3d0d-424d-ab5e-7ffe0ff7c840",
+      "name": "Extension Store - Manager",
+      "nodes": [
+        {
+          "id": "trigger.http.1",
+          "type": "trigger.http",
+          "config": {
+            "path": "/api/extension-store/local/import-extension",
+            "method": "POST",
+            "statusCode": "201",
+            "authentication": "protected",
+            "responseFormat": "application/json",
+            "response": "{\"ack\":true}",
+            "waitForLastNode": "true"
+          },
+          "label": "Import EP",
+          "position": [
+            359.3333333333333,
+            198
+          ]
+        },
+        {
+          "id": "terminate.http.1",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "401"
+          },
+          "label": "Http ERR",
+          "position": [
+            739.6666666666666,
+            248
+          ]
+        },
+        {
+          "id": "terminate.http.2",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "200"
+          },
+          "label": "Http Ok",
+          "position": [
+            717.5,
+            118.5
+          ]
+        },
+        {
+          "id": "extension.import.1",
+          "type": "extension.import",
+          "config": null,
+          "label": "Call SVC",
+          "position": [
+            546,
+            201
+          ]
+        },
+        {
+          "id": "trigger.http.2",
+          "type": "trigger.http",
+          "config": {
+            "path": "/api/extension-store/proxy",
+            "method": "GET",
+            "statusCode": "200",
+            "authentication": "protected",
+            "responseFormat": "application/json",
+            "response": "{\"ack\":true}",
+            "waitForLastNode": "true"
+          },
+          "label": "Store Proxy",
+          "position": [
+            364.46908503480597,
+            496.6939407485281
+          ]
+        },
+        {
+          "id": "http.request.1",
+          "type": "http.request",
+          "config": null,
+          "label": "Read Store",
+          "position": [
+            548.4153862197652,
+            496.3652549344316
+          ]
+        },
+        {
+          "id": "terminate.http.3",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "200"
+          },
+          "label": "Store OK",
+          "position": [
+            746.7670572862287,
+            401.05051167804555
+          ]
+        },
+        {
+          "id": "terminate.http.4",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "200"
+          },
+          "label": "Store Err",
+          "position": [
+            745.6704950901559,
+            553.7427397005147
+          ]
+        },
+        {
+          "id": "trigger.http.3",
+          "type": "trigger.http",
+          "config": {
+            "path": "/api/extension-store/:id/install",
+            "method": "GET",
+            "statusCode": "200",
+            "authentication": "public",
+            "responseFormat": "application/json",
+            "response": "{\"ack\":true}",
+            "waitForLastNode": "true"
+          },
+          "label": "Install PX",
+          "position": [
+            361.90379601315806,
+            721.6811040582255
+          ]
+        },
+        {
+          "id": "http.request.2",
+          "type": "http.request",
+          "config": null,
+          "label": "Read Extension",
+          "position": [
+            547.7431997043435,
+            721.4520508288837
+          ]
+        },
+        {
+          "id": "terminate.http.5",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "200"
+          },
+          "label": "Install OK",
+          "position": [
+            742.5295294423252,
+            668.3891973156046
+          ]
+        },
+        {
+          "id": "terminate.http.6",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "200"
+          },
+          "label": "Install Err",
+          "position": [
+            743.2138874267264,
+            808.7104427384514
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "id": "24d01f7f-6427-489e-9ff5-374a44ed0eda",
+          "sourceNodeId": "trigger.http.1",
+          "targetNodeId": "extension.import.1",
+          "sourceHandle": "request",
+          "targetHandle": "import",
+          "transform": "{{ $data.body | toJson }}"
+        },
+        {
+          "id": "890c2a09-3494-4011-913a-45fe78f6d38d",
+          "sourceNodeId": "extension.import.1",
+          "targetNodeId": "terminate.http.1",
+          "sourceHandle": "error",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "6865fcce-3f1c-4242-8231-54bc7960786a",
+          "sourceNodeId": "extension.import.1",
+          "targetNodeId": "terminate.http.2",
+          "sourceHandle": "extension",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "a97791c7-a521-48f1-8ea4-292061c85618",
+          "sourceNodeId": "http.request.1",
+          "targetNodeId": "terminate.http.4",
+          "sourceHandle": "error",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "82a496f9-1017-4ecf-a3a4-f5f00215b569",
+          "sourceNodeId": "trigger.http.2",
+          "targetNodeId": "http.request.1",
+          "sourceHandle": "request",
+          "targetHandle": "target",
+          "transform": "{\"url\": \"https://artgen.cloud/api/extension-store\" }"
+        },
+        {
+          "id": "14354737-e6ef-4e12-affc-14b75cd8cdd6",
+          "sourceNodeId": "http.request.1",
+          "targetNodeId": "terminate.http.3",
+          "sourceHandle": "result",
+          "targetHandle": "response",
+          "transform": "{{ $data.body | toJson }}"
+        },
+        {
+          "id": "d4c59dff-b1f5-4cdd-acd9-e5c06918e54c",
+          "sourceNodeId": "trigger.http.3",
+          "targetNodeId": "http.request.2",
+          "sourceHandle": "request",
+          "targetHandle": "target",
+          "transform": "{\"url\": \"https://artgen.cloud/api/extension-store/{{ $data.params.id }}\" }"
+        },
+        {
+          "id": "dced225f-9ccc-406a-93af-ad6add5028ba",
+          "sourceNodeId": "http.request.2",
+          "targetNodeId": "terminate.http.6",
+          "sourceHandle": "error",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "b5e4bc2a-b057-4ad0-8830-161cfc2d22b6",
+          "sourceNodeId": "http.request.2",
+          "targetNodeId": "terminate.http.5",
+          "sourceHandle": "result",
+          "targetHandle": "response",
+          "transform": "{{ $data.body | toJson }}"
+        }
+      ]
+    },
+    {
+      "id": "2ecfd7bd-d051-46d4-9e8e-a1229dd1857f",
+      "name": "Lambda Index",
+      "nodes": [
+        {
+          "id": "lambda.read.184",
+          "type": "lambda.read",
+          "position": [
+            853.3333333333334,
+            190.66666666666669
+          ],
+          "config": {}
+        },
+        {
+          "id": "trigger.http.146",
+          "type": "trigger.http",
+          "position": [
+            657.8333333333334,
+            157.91666666666669
+          ],
+          "config": {
+            "path": "/api/lambda",
+            "method": "GET",
+            "authentication": "protected",
+            "responseFormat": "application/json",
+            "response": "{{ $nodes['lambda.read.184'].output.result | toJson }}",
+            "waitForLastNode": "true"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "de3aa052-5708-4320-aea0-3c72277be1ed",
+          "sourceNodeId": "trigger.http.146",
+          "targetNodeId": "lambda.read.184",
+          "sourceHandle": "request",
+          "targetHandle": "query",
+          "transform": ""
+        }
+      ]
+    },
+    {
+      "id": "51c0abf2-5924-4fdf-a920-a1b3487f6710",
+      "name": "Authentication - Sign In",
+      "nodes": [
+        {
+          "id": "trigger.http.1",
+          "type": "trigger.http",
+          "config": {
+            "path": "/api/authentication/jwt/sign-in",
+            "method": "POST",
+            "statusCode": "200",
+            "authentication": "public",
+            "responseFormat": "application/json",
+            "response": "{\"ack\":true}",
+            "waitForLastNode": "true"
+          },
+          "label": "HTTP Endpoint",
+          "position": [
+            88.66666666666666,
+            203.33333333333334
+          ]
+        },
+        {
+          "id": "rest.find.1",
+          "type": "rest.find",
+          "config": {
+            "database": "system",
+            "fields": [
+              "id",
+              "password"
+            ],
+            "schema": "Account"
+          },
+          "label": "Find Account",
+          "position": [
+            250.66666666666663,
+            203.08333333333337
+          ]
+        },
+        {
+          "id": "if.1",
+          "type": "if",
+          "config": {
+            "operator": "==",
+            "against": true,
+            "negate": false
+          },
+          "label": "If Found",
+          "position": [
+            547.4166666666666,
+            88.89583333333337
+          ]
+        },
+        {
+          "id": "length.1",
+          "type": "length",
+          "config": null,
+          "label": "Count",
+          "position": [
+            394.91666666666663,
+            92.95833333333337
+          ]
+        },
+        {
+          "id": "terminate.http.2",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "200"
+          },
+          "label": "Success",
+          "position": [
+            1071.4166666666665,
+            -71.64358877512277
+          ]
+        },
+        {
+          "id": "terminate.http.1",
+          "type": "terminate.http",
+          "config": {
+            "transform": "{\"success\": false, \"message\": \"Authentication failed\"}",
+            "statusCode": "400"
+          },
+          "label": "Fail",
+          "position": [
+            885.1666666666666,
+            328.08333333333337
+          ]
+        },
+        {
+          "id": "hash.compare.1",
+          "type": "hash.compare",
+          "config": null,
+          "label": "CHK Passwd",
+          "position": [
+            722.2326274056248,
+            17.129489116421098
+          ]
+        },
+        {
+          "id": "token.sign.1",
+          "type": "token.sign",
+          "config": {
+            "expiresIn": "8h"
+          },
+          "label": "Sign JWT",
+          "position": [
+            897.1467175777061,
+            -71.80098784951204
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "id": "0d418dc4-8339-4d54-9dab-6911ca84c164",
+          "sourceNodeId": "trigger.http.1",
+          "targetNodeId": "rest.find.1",
+          "sourceHandle": "request",
+          "targetHandle": "conditions",
+          "transform": "{\"email\": \"{{ $data.body.email }}\"}"
+        },
+        {
+          "id": "4086f863-9be2-40ed-a3ae-5054581d278b",
+          "sourceNodeId": "rest.find.1",
+          "targetNodeId": "length.1",
+          "sourceHandle": "records",
+          "targetHandle": "subject",
+          "transform": ""
+        },
+        {
+          "id": "33c08b27-fc56-4e1d-9c78-9ccffb629dfc",
+          "sourceNodeId": "length.1",
+          "targetNodeId": "if.1",
+          "sourceHandle": "length",
+          "targetHandle": "subject",
+          "transform": ""
+        },
+        {
+          "id": "2a9a88d7-d876-4e53-82ed-c6c54cd0a79f",
+          "sourceNodeId": "rest.find.1",
+          "targetNodeId": "terminate.http.1",
+          "sourceHandle": "error",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "12690074-0cac-4f33-ba78-a84b5a12c2a5",
+          "sourceNodeId": "if.1",
+          "targetNodeId": "terminate.http.1",
+          "sourceHandle": "no",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "6c369397-bf96-4ee4-8b81-7966823f0fb0",
+          "sourceNodeId": "if.1",
+          "targetNodeId": "hash.compare.1",
+          "sourceHandle": "yes",
+          "targetHandle": "elements",
+          "transform": "{\"hash\": \"{{ $nodes['rest.find.1'].output.records[0].password  }}\", \"plain\": \"{{ $trigger.body.password }}\"}"
+        },
+        {
+          "id": "27d6ee54-058e-4549-b7b9-41d9285e4dd1",
+          "sourceNodeId": "hash.compare.1",
+          "targetNodeId": "terminate.http.1",
+          "sourceHandle": "no",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "82ba84f4-5f2c-4c53-b358-53ebfc37ac35",
+          "sourceNodeId": "hash.compare.1",
+          "targetNodeId": "token.sign.1",
+          "sourceHandle": "yes",
+          "targetHandle": "accountId",
+          "transform": "{{ $nodes['rest.find.1'].output.records[0].id }}"
+        },
+        {
+          "id": "3729c621-6181-4ee8-9962-afd890d9cf2a",
+          "sourceNodeId": "token.sign.1",
+          "targetNodeId": "terminate.http.2",
+          "sourceHandle": "token",
+          "targetHandle": "response",
+          "transform": "{\"accessToken\": \"{{ $output.token }}\"}"
+        }
+      ]
+    },
+    {
+      "id": "ced473f0-522c-47db-a88c-f0f981d93f9e",
+      "name": "Authentication - Sign Up",
+      "nodes": [
+        {
+          "id": "auth.sign.in.44",
+          "type": "auth.sign.in",
+          "config": {},
+          "label": "Sign JWT",
+          "position": [
+            662.5574827119007,
+            -76.18026377771865
+          ]
+        },
+        {
+          "id": "terminate.http.182",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "400"
+          },
+          "label": "HTTP Error",
+          "position": [
+            845,
+            22.20833333333337
+          ]
+        },
+        {
+          "id": "terminate.http.127",
+          "type": "terminate.http",
+          "config": {
+            "statusCode": "200"
+          },
+          "label": "HTTP Created",
+          "position": [
+            850,
+            -132.29166666666663
+          ]
+        },
+        {
+          "id": "content.create.1",
+          "type": "content.create",
+          "config": {
+            "database": "system",
+            "schema": "Account"
+          },
+          "label": "Create Account",
+          "position": [
+            487.98025579572163,
+            6.281453640181695
+          ]
+        },
+        {
+          "id": "trigger.http.26",
+          "type": "trigger.http",
+          "config": {
+            "path": "/api/$auth/signup",
+            "method": "POST",
+            "authentication": "public",
+            "responseFormat": "application/json",
+            "response": "{\"ack\": true}",
+            "waitForLastNode": "true"
+          },
+          "label": "SignUp EP",
+          "position": [
+            263.5,
+            5.583333333333311
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "id": "ccd1444c-5a31-4666-bd08-9d3fcc3bcfd1",
+          "sourceNodeId": "trigger.http.26",
+          "targetNodeId": "content.create.1",
+          "sourceHandle": "request",
+          "targetHandle": "record",
+          "transform": "{{ $data.body | toJson }}"
+        },
+        {
+          "id": "99cb86e8-524f-4cfd-b896-930277803ea2",
+          "sourceNodeId": "content.create.1",
+          "targetNodeId": "terminate.http.182",
+          "sourceHandle": "error",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "b490c0b8-d92a-4a38-8f13-3e38259f43af",
+          "sourceNodeId": "auth.sign.in.44",
+          "targetNodeId": "terminate.http.182",
+          "sourceHandle": "error",
+          "targetHandle": "response",
+          "transform": ""
+        },
+        {
+          "id": "e85f0ddc-ce06-479b-9cd0-1bbaceaca2ae",
+          "sourceNodeId": "content.create.1",
+          "targetNodeId": "auth.sign.in.44",
+          "sourceHandle": "result",
+          "targetHandle": "credentials",
+          "transform": "{{ $nodes['trigger.http.26'].output.request.body | toJson }}"
+        },
+        {
+          "id": "06bd0979-1f8d-44a7-ad69-4b9b4713ead5",
+          "sourceNodeId": "auth.sign.in.44",
+          "targetNodeId": "terminate.http.127",
+          "sourceHandle": "jwt",
+          "targetHandle": "response",
+          "transform": "{{ $data| toJson }}"
+        }
+      ]
+    }
+  ]
+}

@@ -10,12 +10,6 @@ export const jwtAtom = atom<string>({
   effects_UNSTABLE: [persistAtom],
 });
 
-export const pageNavCollapseAtom = atom<boolean>({
-  key: 'pageNavCollpase',
-  default: true,
-  effects_UNSTABLE: [persistAtom],
-});
-
 export const pageDrawerAtom = atom<ReactChild>({
   key: 'pageDrawer',
   default: undefined,
