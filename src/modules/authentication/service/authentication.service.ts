@@ -100,9 +100,6 @@ export class AuthenticationService {
   }
 
   async seed() {
-    // Seed the demo account
-    this.logger.debug('Seeding [demo] account');
-
     const model = this.schema.model('system', 'Account');
     const check = await model.count();
 
@@ -110,7 +107,10 @@ export class AuthenticationService {
       return;
     }
 
-    const account = await model.create({
+    // Seed the demo account
+    this.logger.debug('Seeding [demo] account');
+
+    await model.create({
       email: 'demo@artgen.io',
       password: hashSync('demo', 3),
     });
