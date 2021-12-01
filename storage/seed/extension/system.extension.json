@@ -2,6 +2,7 @@
   "id": "cdd1a824-5bae-431e-8acb-a392bf639f48",
   "label": "System",
   "version": "0.0.1",
+  "icon": "settings",
   "source": "offline",
   "database": "system",
   "config": {},
@@ -669,6 +670,19 @@
             "values": []
           },
           "tags": []
+        },
+        {
+          "reference": "icon",
+          "label": "Icon",
+          "columnName": "icon",
+          "defaultValue": "widgets",
+          "type": "text",
+          "typeParams": {
+            "values": []
+          },
+          "tags": [
+            "nullable"
+          ]
         },
         {
           "reference": "config",

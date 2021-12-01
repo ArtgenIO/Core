@@ -2,19 +2,19 @@ import { Button, Form, Input, message, Select } from 'antd';
 import { startCase } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
-import PageHeader from '../../admin/layout/PageHeader';
-import PageWithHeader from '../../admin/layout/PageWithHeader';
-import { useHttpClientOld } from '../../admin/library/http-client';
-import { useHttpClient } from '../../admin/library/use-http-client';
-import { routeCrudAPI } from '../../content/util/schema-url';
-import { IDatabase } from '../../database/interface';
+import PageHeader from '../../../admin/layout/PageHeader';
+import PageWithHeader from '../../../admin/layout/PageWithHeader';
+import { useHttpClientOld } from '../../../admin/library/http-client';
+import { useHttpClient } from '../../../admin/library/use-http-client';
+import { routeCrudAPI } from '../../../content/util/schema-url';
+import { IDatabase } from '../../../database/interface';
 
 type FormData = {
   database: string;
   source: string;
 };
 
-export default function ImportExtensionComponent() {
+export default function ImportExtension() {
   const params = useParams<{ id?: string }>();
   const history = useHistory();
   const client = useHttpClientOld();
@@ -68,7 +68,7 @@ export default function ImportExtensionComponent() {
               })
               .then(() => {
                 message.success('Extension imported');
-                history.push('/admin/extension');
+                history.push('/admin/ext/store');
               })
               .catch(() => {
                 message.error('Could not import extension');

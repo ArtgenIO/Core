@@ -2,13 +2,13 @@ import { message } from 'antd';
 import { useState } from 'react';
 import { useHistory } from 'react-router';
 import { v4 } from 'uuid';
-import PageHeader from '../../admin/layout/PageHeader';
-import PageWithHeader from '../../admin/layout/PageWithHeader';
-import { useHttpClientOld } from '../../admin/library/http-client';
-import { IExtension } from '../interface/extension.interface';
+import PageHeader from '../../../admin/layout/PageHeader';
+import PageWithHeader from '../../../admin/layout/PageWithHeader';
+import { useHttpClientOld } from '../../../admin/library/http-client';
+import { IExtension } from '../../interface/extension.interface';
 import ExtensionEdiorComponent from './_editor.component';
 
-export default function CreateExtensionComponent() {
+export default function CreateExtension() {
   const history = useHistory();
   const client = useHttpClientOld();
 
@@ -33,7 +33,7 @@ export default function CreateExtensionComponent() {
             client
               .post('/api/rest/system/extension', extension)
               .then(() => message.success('Extension saved!'))
-              .then(() => history.push('/admin/extension'));
+              .then(() => history.push('/admin/ext/store'));
           }}
         />
       </div>

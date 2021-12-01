@@ -10,11 +10,11 @@ import {
 } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useHttpClient } from '../../admin/library/use-http-client';
-import { IExtension } from '../interface/extension.interface';
+import { useHttpClient } from '../../../../admin/library/use-http-client';
+import { IExtension } from '../../../interface/extension.interface';
 
-export default function ExtensionStoreComponent() {
-  const baseURL = '/admin/extension';
+export default function CloudExtensions() {
+  const base = '/admin/ext/store';
 
   const [{ data: extensions, loading, error }] = useHttpClient<IExtension[]>(
     '/api/extension-store/proxy',
@@ -29,8 +29,9 @@ export default function ExtensionStoreComponent() {
   return (
     <Skeleton loading={loading}>
       <Typography.Title className="text-right">
-        Available Extensions
+        Cloud Extensions
       </Typography.Title>
+
       <List
         className="mb-12"
         bordered
@@ -50,7 +51,7 @@ export default function ExtensionStoreComponent() {
               title={<span className="text-xl font-thin">{ext.label}</span>}
             />
 
-            <Link to={baseURL + `/${ext.id}/install`}>
+            <Link to={base + `/${ext.id}/install`}>
               <Tooltip title="Online Extensions" placement="leftBottom">
                 <Button
                   icon={<CloudDownloadOutlined />}

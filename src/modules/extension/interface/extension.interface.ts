@@ -8,6 +8,11 @@ export interface IExtension {
   id: string;
 
   /**
+   * Custom icon
+   */
+  icon?: string;
+
+  /**
    * Display name
    */
   label: string;

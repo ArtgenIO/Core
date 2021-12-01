@@ -1,11 +1,11 @@
 import { Button, Divider, Form, Input, Select, Transfer } from 'antd';
 import { startCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { useHttpClient } from '../../admin/library/use-http-client';
-import { routeCrudAPI } from '../../content/util/schema-url';
-import { ISchema } from '../../schema';
-import { IWorkflow } from '../../workflow/interface';
-import { IExtension } from '../interface/extension.interface';
+import { useHttpClient } from '../../../admin/library/use-http-client';
+import { routeCrudAPI } from '../../../content/util/schema-url';
+import { ISchema } from '../../../schema';
+import { IWorkflow } from '../../../workflow/interface';
+import { IExtension } from '../../interface/extension.interface';
 
 type TransferItem = {
   key: string;

@@ -52,9 +52,9 @@ export default function PageContent() {
               )}
             />
             <Route
-              path="/admin/extension"
+              path="/admin/ext"
               component={lazy(
-                () => import('../../extension/component/index.component'),
+                () => import('../../extension/component/_router.component'),
               )}
             />
 

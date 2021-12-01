@@ -2,11 +2,7 @@ import {
   AppstoreOutlined,
   DatabaseOutlined,
   HomeOutlined,
-  LayoutOutlined,
   LogoutOutlined,
-  MenuUnfoldOutlined,
-  PartitionOutlined,
-  UnorderedListOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, notification } from 'antd';
 import { QueryBuilder } from 'odata-query-builder';
@@ -35,29 +31,14 @@ const menuItems: IMenuItem[] = [
     label: 'Dashboard',
   },
   {
-    icon: <UnorderedListOutlined />,
-    to: ADMIN_BASE_URL + '/content',
-    label: 'Content',
-  },
-  {
-    icon: <PartitionOutlined />,
-    to: ADMIN_BASE_URL + '/workflow',
-    label: 'Workflows',
-  },
-  {
     icon: <DatabaseOutlined />,
     to: ADMIN_BASE_URL + '/database',
     label: 'Databases',
   },
   {
-    icon: <LayoutOutlined />,
-    to: ADMIN_BASE_URL + '/page',
-    label: 'Pages',
-  },
-  {
     icon: <AppstoreOutlined />,
-    label: 'Extensions',
-    to: ADMIN_BASE_URL + '/extension',
+    label: 'Extension Store',
+    to: ADMIN_BASE_URL + '/ext/store',
   },
 ];
 
@@ -72,21 +53,30 @@ const NavSide = () => {
       database: 'system',
       reference: 'Extension',
     }) +
-      new QueryBuilder().select('id,label').top(100).orderBy('label').toQuery(),
+      new QueryBuilder()
+        .select('id,label,icon')
+        .top(100)
+        .orderBy('label')
+        .toQuery(),
   );
 
   useEffect(() => {
     if (extensions) {
       setMenus([
-        ...menuItems,
+        menuItems[0],
         ...extensions.map(
           ext =>
             ({
-              icon: <MenuUnfoldOutlined />,
+              icon: (
+                <span key="primary" className="material-icons-outlined">
+                  {ext.icon ?? 'widgets'}
+                </span>
+              ),
               label: ext.label,
               to: `${ADMIN_BASE_URL}/ext/${ext.id}`,
             } as IMenuItem),
         ),
+        ...menuItems.slice(1),
       ]);
     }
   }, [extensions]);
