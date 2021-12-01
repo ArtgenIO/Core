@@ -1,3 +1,8 @@
+### Version 0.0.19
+
+- Lotsa new lambda
+- New sign in workflow
+
 ### Version 0.0.17
 
 - New sign in page design

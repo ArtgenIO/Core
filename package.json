@@ -1,6 +1,6 @@
 {
   "name": "@artgen/core",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Versatily headless CMS",
   "main": "build/main.js",
   "homepage": "https://artgen.io",
