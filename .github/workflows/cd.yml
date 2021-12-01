@@ -139,7 +139,7 @@ jobs:
     name: Deploy staging to Heroku
     runs-on: ubuntu-latest
     needs: [testing]
-    if: ${{ success() && needs.check.outputs.is_release == 'true' }}
+    if: ${{ success() }}
 
     steps:
       - name: Checkout
