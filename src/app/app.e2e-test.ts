@@ -110,7 +110,6 @@ describe('Application (e2e)', () => {
       expect(response.json()).toHaveProperty('name');
       expect(response.json()).toHaveProperty('dsn');
       expect(response.json().name).toBe('system');
-      expect(response.json().dsn).toBe('sqlite::memory:');
     });
 
     test('should be able to create array KV', async () => {

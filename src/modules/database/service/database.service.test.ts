@@ -18,7 +18,11 @@ describe(DatabaseService.name, () => {
       const svc = await app.context.get<DatabaseService>(DatabaseService.name);
 
       expect(svc.getTypeFromDSN('mysql://localhost:555')).toBe('mysql');
-      expect(svc.getTypeFromDSN('mariadb://localhost:5555')).toBe('mysql');
+    });
+    test('should be able to find mariadb type', async () => {
+      const svc = await app.context.get<DatabaseService>(DatabaseService.name);
+
+      expect(svc.getTypeFromDSN('mariadb://localhost:5555')).toBe('mariadb');
     });
 
     test('should be able to find postgres type', async () => {
@@ -34,6 +38,12 @@ describe(DatabaseService.name, () => {
       const svc = await app.context.get<DatabaseService>(DatabaseService.name);
 
       expect(svc.getTypeFromDSN('sqlite::memory:')).toBe('sqlite');
+    });
+
+    test('should be to find postgres type', async () => {
+      const svc = await app.context.get<DatabaseService>(DatabaseService.name);
+
+      expect(svc.getTypeFromDSN('sqlite:./test.db')).toBe('sqlite');
     });
 
     test('should fail on unknow type', async () => {

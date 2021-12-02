@@ -93,11 +93,9 @@ export class DatabaseService {
       protocol = 'postgres';
     }
 
-    if (protocol === 'mariadb') {
-      protocol = 'mysql';
-    }
-
-    if (['mongodb', 'postgres', 'mysql'].includes(protocol)) {
+    if (
+      ['mongodb', 'postgres', 'mysql', 'mariadb', 'sqlite'].includes(protocol)
+    ) {
       return protocol as Dialect;
     } else {
       throw new Exception(`Unsupported database type [${protocol}]`);

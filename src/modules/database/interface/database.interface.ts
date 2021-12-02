@@ -11,7 +11,7 @@ export interface IDatabase {
    *
    * @example postgres://user:pass@host.tld:5432/dbname
    * @example mysql://user:pass@host.tld:3306/dbname
-   * @example :memory:
+   * @example sqlite::memory:
    */
   dsn: string;
 
