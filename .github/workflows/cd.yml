@@ -132,12 +132,12 @@ jobs:
       - name: Install development dependencies
         run: yarn install
 
-      - name: Run API tests (MySQL)
+      - name: Run API tests (SQLite)
         run: yarn test
         env:
           ARTGEN_DATABASE_DSN: sqlite:./test-api.db
 
-      - name: Run UI tests (MySQL)
+      - name: Run UI tests (SQLite)
         run: yarn test:cy
         env:
           ARTGEN_DATABASE_DSN: sqlite:./test-ui.db

@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize';
 import { ILogger, Logger, Service } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { IDatabase } from '../interface';
+import { describeTablePatch } from './patch/describe-table.patch';
 
 @Service()
 export class DatabaseConnectionFactory {
@@ -28,12 +29,17 @@ export class DatabaseConnectionFactory {
   }
 
   protected createSQLiteConnection(connection: IDatabase): Sequelize {
-    return new Sequelize(connection.dsn, {
+    const instance = new Sequelize(connection.dsn, {
       dialect: 'sqlite',
       storage: connection.dsn.substr(7), // cut the "sqlite:" 7 char
       logging: process.env.NODE_ENV !== 'test',
       logQueryParameters: true,
     });
+
+    // Patch to solve the compositive key unique problem, has to be fixed some other way @@
+    instance.getQueryInterface().describeTable = describeTablePatch;
+
+    return instance;
   }
 
   protected createPostgresConnection(connection: IDatabase): Sequelize {

@@ -275,6 +275,8 @@ export class DatabaseLink implements IDatabaseLink {
       return;
     }
 
+    const dialect = this.connection.getDialect() as Dialect;
+
     // Register the models on the ORM
     changes.forEach(this.addModel.bind(this));
 
@@ -309,7 +311,7 @@ export class DatabaseLink implements IDatabaseLink {
       // And then manually call the column chanage.
       const patches: EnumPatch[] = [];
 
-      if (this.connection.getDialect() === 'postgres') {
+      if (dialect === 'postgres') {
         for (const field of schema.fields) {
           if (field.type === FieldType.ENUM) {
             patches.push({
@@ -323,10 +325,22 @@ export class DatabaseLink implements IDatabaseLink {
         }
       }
 
+      if (dialect === 'sqlite') {
+        await this.connection.query('PRAGMA ignore_check_constraints = 1');
+        await this.connection.query('PRAGMA foreign_keys = 0');
+      }
+
+      const shouldAlter = existingTables.includes(schema.tableName);
+
       await model.sync({
-        alter: existingTables.includes(schema.tableName),
+        alter: shouldAlter,
         force: false,
       });
+
+      if (dialect === 'sqlite') {
+        await this.connection.query('PRAGMA ignore_check_constraints = 0');
+        await this.connection.query('PRAGMA foreign_keys = 1');
+      }
 
       for (const patch of patches) {
         const field = schema.fields.find(f => f.reference === patch.reference);
