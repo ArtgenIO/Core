@@ -22,6 +22,8 @@ const config = {
       branches: 10,
     },
   },
+
+  globalSetup: './tests/global.setup.js',
 };
 
 module.exports = config;

@@ -16,12 +16,12 @@ services:
     volumes:
       - ag_postgresql:/var/lib/postgresql/data/pgdata
 
-  ag-mysql:
+  ag-mariadb:
     image: mariadb:latest
-    hostname: ag-mysql
+    hostname: ag-mariadb
     restart: unless-stopped
     ports:
-      - 3306:3306
+      - 3307:3306
     environment:
       MARIADB_DATABASE: artgen
       MARIADB_USER: artgen
@@ -29,9 +29,24 @@ services:
       MARIADB_ROOT_PASSWORD: artgen
       TZ: UTC
     volumes:
-      - ag_mysql:/var/lib/mysql
+      - ag_mariadb:/var/lib/mysql
+
+  ag-mysql:
+    image: mysql:latest
+    hostname: ag-mysql
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: artgen
+      MYSQL_USER: artgen
+      MYSQL_PASSWORD: artgen
+      MYSQL_ROOT_PASSWORD: artgen
+      TZ: UTC
+    volumes:
+      - ag_mysqldb:/var/lib/mysql
 
 volumes:
   ag_postgresql:
-
-  ag_mysql:
+  ag_mysqldb:
+  ag_mariadb:

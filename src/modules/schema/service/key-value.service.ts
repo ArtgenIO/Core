@@ -17,7 +17,7 @@ export class KeyValueService {
     const record = await model.findByPk(key);
 
     if (record !== null) {
-      return record.get('value' as any);
+      return JSON.parse(record.get('value' as any));
     }
 
     return defaultValue;
@@ -40,11 +40,11 @@ export class KeyValueService {
 
     record.setAttributes({
       key,
-      value,
+      value: JSON.stringify(value),
     });
 
     await record.save();
 
-    return record.get('value') as T;
+    return value;
   }
 }

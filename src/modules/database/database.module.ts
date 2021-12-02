@@ -3,7 +3,7 @@ import { getErrorMessage } from '../../app/kernel';
 import { ContentService } from '../content/service/content.service';
 import { SchemaService } from '../schema/service/schema.service';
 import { DatabaseObserver } from './database.observer';
-import { ILink } from './interface';
+import { IDatabaseLink } from './interface';
 import { DatabaseImportLambda } from './lambda/import.lambda';
 import { DatabaseConnectionFactory } from './library/database-connection.factory';
 import { DatabaseService } from './service/database.service';
@@ -51,7 +51,7 @@ export class DatabaseModule implements IModule {
       this.databaseService.findAll(),
     ]);
 
-    const links: Promise<ILink | unknown>[] = [];
+    const updates: Promise<IDatabaseLink | unknown>[] = [];
 
     // Map schemas to databases.
     for (const database of databases) {
@@ -60,7 +60,7 @@ export class DatabaseModule implements IModule {
 
       // Connection does not exists yet, load up with the scheams.
       if (!link) {
-        links.push(
+        updates.push(
           this.linkService
             .create(database, dbSchemas)
             .catch(e =>
@@ -72,11 +72,11 @@ export class DatabaseModule implements IModule {
       }
       // Existing connection (system)
       else {
-        links.push(link.setSchemas(dbSchemas));
+        updates.push(link.associate(dbSchemas));
       }
     }
 
-    await Promise.all(links);
+    await Promise.all(updates);
   }
 
   async onStop() {

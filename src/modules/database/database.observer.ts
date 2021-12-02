@@ -23,10 +23,9 @@ export class DatabaseObserver {
 
     try {
       const link = this.linkService.findByName(schema.database);
-      const schemas = link.getSchemas();
 
-      this.schemaService.registry.push(schema);
-      await link.setSchemas([...schemas, schema]);
+      this.schemaService.registry.push(schema); // TODO remove this, and move it to a centralized way, we can't have side effects here
+      await link.associate([schema]);
     } catch (error) {
       this.logger.error(getErrorMessage(error));
     }
@@ -37,8 +36,7 @@ export class DatabaseObserver {
     this.logger.warn('Schema changed! [%s]', schema.reference);
 
     try {
-      const link = this.linkService.findByName(schema.database);
-      await link.setSchemas(link.getSchemas());
+      await this.linkService.findByName(schema.database).associate([schema]);
     } catch (error) {
       this.logger.error(getErrorMessage(error));
     }

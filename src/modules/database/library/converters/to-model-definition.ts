@@ -6,11 +6,16 @@ import {
   ModelAttributes,
   ModelOptions,
 } from 'sequelize';
-import { ISchema } from '../../schema';
-import { FieldTag } from '../../schema/interface/field-tags.enum';
-import { FieldType } from '../../schema/interface/field-type.enum';
-import { getDataTypeFromField } from '../../schema/util/field-mapper';
-import { isManagedField, isPrimary } from '../../schema/util/is-primary';
+import { ISchema } from '../../../schema';
+import { FieldTag } from '../../../schema/interface/field-tags.enum';
+import { FieldType } from '../../../schema/interface/field-type.enum';
+import { getDataTypeFromField } from '../../../schema/util/field-mapper';
+import {
+  isIndexed,
+  isManagedField,
+  isPrimary,
+  isText,
+} from '../../../schema/util/is-primary';
 
 type ModelDefinition = {
   modelName: string;
@@ -18,7 +23,10 @@ type ModelDefinition = {
   options: ModelOptions;
 };
 
-export const schemaToModel = (
+/**
+ * Convert a schema into a model definition adjusted to the database's dialect.
+ */
+export const toModelDefinition = (
   schema: ISchema,
   dialect: Dialect = 'postgres',
 ): ModelDefinition => {
@@ -65,6 +73,14 @@ export const schemaToModel = (
           const rawValue = this.getDataValue(field.reference);
           return rawValue ? JSON.parse(rawValue) : rawValue;
         };
+      }
+    }
+
+    // Text requires a varchar with length in MySQL / MariaDB when the field is indexed
+    // https://techjourney.net/mysql-error-1170-42000-blobtext-column-used-in-key-specification-without-a-key-length/
+    if (dialect === 'mariadb' || dialect === 'mysql') {
+      if (isIndexed(field) && isText(field)) {
+        column.type = DataTypes.STRING(255);
       }
     }
 

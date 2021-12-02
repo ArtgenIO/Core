@@ -5,7 +5,7 @@ import { SchemaModule } from '../../schema/schema.module';
 import { DatabaseModule } from '../database.module';
 import { IDatabase } from '../interface/database.interface';
 import { DatabaseConnectionFactory } from '../library/database-connection.factory';
-import { Link } from '../library/link';
+import { DatabaseLink } from '../library/database-link';
 import { LinkService } from './link.service';
 
 describe(LinkService.name, () => {
@@ -43,7 +43,7 @@ describe(LinkService.name, () => {
       const service = await app.context.get<LinkService>(LinkService.name);
       const link = await service.create(db, []);
 
-      expect(link).toBeInstanceOf(Link);
+      expect(link).toBeInstanceOf(DatabaseLink);
       expect(validateMock).toHaveBeenCalled();
       expect(service.findByName('test')).toStrictEqual(link);
     });
@@ -70,7 +70,7 @@ describe(LinkService.name, () => {
       const service = await app.context.get<LinkService>(LinkService.name);
       const link = await service.create(db, []);
 
-      expect(link).toBeInstanceOf(Link);
+      expect(link).toBeInstanceOf(DatabaseLink);
       expect(validateMock).toHaveBeenCalled();
     });
 
@@ -96,7 +96,7 @@ describe(LinkService.name, () => {
       const service = await app.context.get<LinkService>(LinkService.name);
       const link = await service.create(db, []);
 
-      expect(link).toBeInstanceOf(Link);
+      expect(link).toBeInstanceOf(DatabaseLink);
       expect(validateMock).toHaveBeenCalled();
     });
   });

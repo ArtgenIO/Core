@@ -50,7 +50,7 @@ export class ExtensionService {
     const link = this.linkService.findByName(database);
 
     // Preload the schemas before they are injected one by one.
-    await link.setSchemas([...link.getSchemas(), ...extension.schemas]);
+    await link.associate(extension.schemas);
 
     // Replace the schema databases to the local db
     for (const schema of extension.schemas) {

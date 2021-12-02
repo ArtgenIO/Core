@@ -450,7 +450,7 @@
           "label": "Value",
           "columnName": "value",
           "defaultValue": null,
-          "type": "json",
+          "type": "text",
           "typeParams": {
             "values": []
           },

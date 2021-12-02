@@ -13,6 +13,6 @@ export class HttpObserver {
 
   @On('crud.system.Schema.*', { debounce: 1_000 })
   async handleSchemaCreate() {
-    this.service.startServer();
+    this.service.updateServer();
   }
 }

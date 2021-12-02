@@ -23,6 +23,12 @@ export class HttpService {
     readonly ctx: IContext,
   ) {}
 
+  updateServer() {
+    if (this.isHttpStarted) {
+      this.startServer();
+    }
+  }
+
   async startServer(): Promise<void> {
     let stopPromise: any = null;
 

@@ -1,7 +1,7 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { ModelDefined } from 'sequelize';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { ILink } from '../../database/interface';
+import { IDatabaseLink } from '../../database/interface';
 import { LinkService } from '../../database/service/link.service';
 import { IExtension } from '../../extension/interface/extension.interface';
 import { SystemExtensionProvider } from '../../extension/provider/system-extension.provider';
@@ -33,15 +33,21 @@ export class SchemaService {
    * to extend on the system's behavior, the synchronizer will only ensure the
    * existence of the schema and does not overide it if its present.
    */
-  async synchronize(link: ILink) {
+  async synchronize(link: IDatabaseLink) {
     // Get the schema repository.
     const model = this.model<ISchema>('system', 'Schema');
 
     for (const schema of link.getSchemas()) {
-      // Upsert the schema based on the database and reference unique.
-      await model.upsert(schema, {
-        fields: ['database', 'reference'],
+      const exists = await model.findOne({
+        where: {
+          database: schema.database,
+          reference: schema.reference,
+        },
       });
+
+      if (!exists) {
+        await model.create(schema);
+      }
 
       // Check if it exists in the local cache.
       const idx = this.registry.findIndex(
@@ -92,7 +98,7 @@ export class SchemaService {
     database: string,
     schema: string,
   ): ModelDefined<T, T> {
-    return this.linkService.findByName(database).model(schema);
+    return this.linkService.findByName(database).getModel(schema);
   }
 
   findByDatabase(database: string) {

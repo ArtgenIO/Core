@@ -45,14 +45,14 @@ export class DatabaseConnectionFactory {
   protected createMySQLConnection(connection: IDatabase): Sequelize {
     return new Sequelize(connection.dsn, {
       dialect: 'mysql',
-      logging: false,
+      //logging: false,
     });
   }
 
   protected createMariaDBConnection(connection: IDatabase): Sequelize {
     return new Sequelize(connection.dsn, {
       dialect: 'mariadb',
-      logging: false,
+      //logging: false,
     });
   }
 }

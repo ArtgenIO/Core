@@ -11,10 +11,10 @@ import {
 } from '../../../app/container';
 import { FieldTag, FieldType, IField, ISchema } from '../../schema';
 import { getFieldTypeFromString } from '../../schema/util/field-mapper';
-import { ILink } from '../interface';
+import { IDatabaseLink } from '../interface';
 import { IDatabase } from '../interface/database.interface';
 import { DatabaseConnectionFactory } from '../library/database-connection.factory';
-import { Link } from '../library/link';
+import { DatabaseLink } from '../library/database-link';
 
 /**
  * Responsible to create links to databases, currently only supports the ORM connections,
@@ -29,7 +29,7 @@ export class LinkService {
   /**
    * In memory registry for links, mapped to the database name.
    */
-  protected registry = new Map<string, Link>();
+  protected registry = new Map<string, DatabaseLink>();
 
   constructor(
     @Logger()
@@ -43,7 +43,7 @@ export class LinkService {
   /**
    * Create a connection to the given database.
    */
-  async create(database: IDatabase, schemas: ISchema[]): Promise<Link> {
+  async create(database: IDatabase, schemas: ISchema[]): Promise<DatabaseLink> {
     this.logger.debug('Connection [%s] creating', database.name);
 
     const connection: Sequelize = this.connectionFactory.create(database);
@@ -61,29 +61,30 @@ export class LinkService {
       throw error;
     }
 
-    const link = await instantiateClass(Link, this.ctx, undefined, [
+    const link = await instantiateClass(DatabaseLink, this.ctx, undefined, [
       connection,
       database,
     ]);
-    await link.setSchemas(schemas);
+    // Initial setup
+    await link.associate(schemas);
 
     this.registry.set(database.name, link);
 
     return link;
   }
 
-  findByName(name: string): Link {
+  findByName(name: string): DatabaseLink {
     return this.registry.get(name);
   }
 
-  findAll(): Link[] {
+  findAll(): DatabaseLink[] {
     return Array.from(this.registry.values());
   }
 
   /**
    * Discover and import the schemas to an existing link.
    */
-  async discover(link: ILink): Promise<ISchema[]> {
+  async discover(link: IDatabaseLink): Promise<ISchema[]> {
     const newSchemas = [];
 
     const reader = new SequelizeAuto(link.connection, null, null, {
@@ -158,13 +159,11 @@ export class LinkService {
         }
 
         // Skip if we alread have this.
-        if (!link.getSchemas().find(s => s.tableName === newSchema.tableName)) {
-          newSchemas.push(newSchema);
-        }
+        newSchemas.push(newSchema);
       }
     }
 
-    await link.setSchemas([...link.getSchemas(), ...newSchemas]);
+    await link.associate(newSchemas);
 
     return newSchemas;
   }

@@ -21,6 +21,17 @@ prompt
     const semver = parse(current);
 
     semver[answer] = parseInt(semver[answer], 10) + 1;
+
+    switch (answer) {
+      case 'minor':
+        semver.patch = 0;
+        break;
+      case 'major':
+        semver.minor = 0;
+        semver.patch = 0;
+        break;
+    }
+
     const bumped = stringify(semver);
     console.log('New version:', bumped);
 
