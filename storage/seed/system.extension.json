@@ -127,6 +127,7 @@
             "values": [
               "postgres",
               "mysql",
+              "mariadb",
               "sqlite"
             ]
           },

@@ -29,13 +29,13 @@ Not just one, or two, but 4 database provider is supported out of the box. By de
 
 On boot the system will check if the system database has the necessary tables in place, if not then simply installs them, You have no work with the setup.
 
-| Provider                | Example DSN                                       | Tested | Note                        |
-| :---------------------- | ------------------------------------------------- | -----: | --------------------------- |
-| **MySQL**               | mysql://username:password@host.tld:3306/dbname    |    8.x | -                           |
-| **MariaDB**             | mariadb://username:password@host.tld:3306/dbname  |   10.x | Please mind the protocol!   |
-| **PostgreSQL**          | postgres://username:password@host.tld:5432/dbname |   14.x | -                           |
-| **SQLite (InMemory)**   | sqlite::memory:                                   |    3.x | Ephemeral mode              |
-| **SQLite (Persistent)** | sqlite:./path/to/db.sql                           |    3.x | Will create it if not found |
+| Provider                | DSN Pattern                                         | Tested |
+| :---------------------- | --------------------------------------------------- | -----: |
+| **MySQL**               | `mysql://username:password@host.tld:3306/dbname`    |    8.x |
+| **MariaDB**             | `mariadb://username:password@host.tld:3306/dbname`  |   10.x |
+| **PostgreSQL**          | `postgres://username:password@host.tld:5432/dbname` |   14.x |
+| **SQLite (InMemory)**   | `sqlite::memory:`                                   |    3.x |
+| **SQLite (Persistent)** | `sqlite:./path/to/db.sql`                           |    3.x |
 
 It is prefered to run the Artgen's system database in a standalone database, but don't worry, it will not modify any other table just those which You configure to do so.
 
