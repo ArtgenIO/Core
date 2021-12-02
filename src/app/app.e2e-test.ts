@@ -9,13 +9,12 @@ describe('Application (e2e)', () => {
     app.context.get('providers.HttpServerProvider');
 
   beforeAll(async () => {
-    process.env.NODE_ENV = 'test';
-    process.env.ARTGEN_DATABASE_DSN = 'sqlite::memory:';
-
     app = new Kernel();
     app.bootstrap([AppModule]);
 
     await app.start();
+
+    // Wait until it the HttpServer is ready
   }, 30_000);
 
   afterAll(async () => await app.stop());
@@ -118,7 +117,7 @@ describe('Application (e2e)', () => {
       const srv = await getServer();
       const payload = {
         key: 'testarr',
-        value: ['a', 'b', 'c'],
+        value: JSON.stringify(['a', 'b', 'c']),
       };
 
       const response = await srv.inject({

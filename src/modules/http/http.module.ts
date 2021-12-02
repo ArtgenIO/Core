@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { ILogger, IModule, Inject, Logger, Module } from '../../app/container';
 import { IKernel } from '../../app/kernel';
-import { DatabaseModule } from '../database/database.module';
 import { ExtensionModule } from '../extension/extension.module';
+import { PageModule } from '../page/page.module';
 import { WorkflowModule } from '../workflow/workflow.module';
 import { HttpObserver } from './http.observer';
 import { HttpRequestLambda } from './lambda/http-request.lambda';
@@ -12,7 +12,7 @@ import { HttpServerProvider } from './provider/http.server';
 import { HttpService } from './service/http.service';
 
 @Module({
-  dependsOn: [DatabaseModule, WorkflowModule, ExtensionModule],
+  dependsOn: [WorkflowModule, ExtensionModule, PageModule],
   providers: [
     HttpObserver,
     HttpService,

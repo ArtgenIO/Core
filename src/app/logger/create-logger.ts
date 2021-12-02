@@ -48,7 +48,7 @@ export const createLogger = (): ILogger => {
     transports: [
       new Console({
         silent: isSilent,
-        level: 'debug',
+        level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
         stderrLevels: ['warn', 'error'],
         consoleWarnLevels: ['warn', 'error'],
         handleExceptions: false,

@@ -34,8 +34,129 @@ jobs:
       commit_message: ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}
       commit_body: ${{ env.GIT_COMMIT_MESSAGE_BODY }}
 
+  test-mariadb:
+    name: Testing (MariaDB)
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:latest
+        env:
+          MARIADB_DATABASE: artgen
+          MARIADB_USER: artgen
+          MARIADB_PASSWORD: artgen
+          MARIADB_ROOT_PASSWORD: artgen
+          TZ: UTC
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install the interpreter
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run API tests (MariaDB)
+        run:  yarn test
+        env:
+          ARTGEN_DATABASE_DSN: mariadb://artgen:artgen@localhost:3306/artgen
+
+      - name: Run UI tests (MariaDB)
+        run: yarn test:cy
+        env:
+          ARTGEN_DATABASE_DSN: mariadb://artgen:artgen@localhost:3306/artgen
+
+  test-mysql:
+    name: Testing (MySQL)
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_DATABASE: artgen
+          MYSQL_USER: artgen
+          MYSQL_PASSWORD: artgen
+          MYSQL_ROOT_PASSWORD: artgen
+          TZ: UTC
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install the interpreter
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
+      - name: Install development dependencies
+        run: yarn install
+
+      - name: Run API tests (MySQL)
+        run: yarn test
+        env:
+          ARTGEN_DATABASE_DSN: mysql://artgen:artgen@localhost:3306/artgen
+
+      - name: Run UI tests (MySQL)
+        run: yarn test:cy
+        env:
+          ARTGEN_DATABASE_DSN: mysql://artgen:artgen@localhost:3306/artgen
+
+  test-postgres:
+    name: Testing (Postgres)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_DB: artgen
+          POSTGRES_USER: artgen
+          POSTGRES_PASSWORD: artgen
+          TZ: UTC
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install the interpreter
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
+      - name: Install development dependencies
+        run: yarn install
+
+      - name: Run API tests (PostgreSQL)
+        run: yarn test
+        env:
+          ARTGEN_DATABASE_DSN: postgres://artgen:artgen@localhost:5432/artgen
+
+      - name: Run UI tests (PostgreSQL)
+        run: yarn test:cy
+        env:
+          ARTGEN_DATABASE_DSN: postgres://artgen:artgen@localhost:5432/artgen
+
   testing:
-    name: Testing
+    name: All test (SQLite)
+    needs:
+      - test-mariadb
+      - test-mysql
+      - test-postgres
     runs-on: ubuntu-latest
 
     steps:
@@ -54,10 +175,10 @@ jobs:
       - name: Run type checking
         run: yarn test:types
 
-      - name: Run API tests
+      - name: Run API tests (SQLite)
         run: yarn test:cov
 
-      - name: Run UI tests
+      - name: Run UI tests (SQLite)
         run: yarn test:cy
 
       - name: Run build
@@ -68,14 +189,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    outputs:
-      commit_message: ${{ env.GIT_COMMIT_MESSAGE_SUBJECT }}
-
 
   release-docker:
     name: Docker release
     runs-on: ubuntu-latest
-    needs: [check, testing]
+    needs:
+      - check
+      - testing
     if: ${{ success() && needs.check.outputs.is_release == 'true' }}
 
     steps:
@@ -99,7 +219,9 @@ jobs:
   release-gh:
     name: GitHub release
     runs-on: ubuntu-latest
-    needs: [check, testing]
+    needs:
+      - check
+      - testing
     if: ${{ success() && needs.check.outputs.is_release == 'true' }}
 
     steps:
@@ -138,7 +260,8 @@ jobs:
   deploy-staging:
     name: Deploy staging to Heroku
     runs-on: ubuntu-latest
-    needs: [testing]
+    needs:
+      - testing
     if: ${{ success() }}
 
     steps:
@@ -155,7 +278,9 @@ jobs:
   deploy-demo:
     name: Deploy Demo
     runs-on: ubuntu-latest
-    needs: [check, release-docker]
+    needs:
+      - check
+      - release-docker
     if: ${{ success() }}
 
     steps:

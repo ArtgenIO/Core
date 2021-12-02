@@ -11,9 +11,6 @@ describe('Authentication (e2e)', () => {
     app.context.get('providers.HttpServerProvider');
 
   beforeAll(async () => {
-    process.env.NODE_ENV = 'test';
-    process.env.ARTGEN_DATABASE_DSN = 'sqlite::memory:';
-
     app = new Kernel();
     app.bootstrap([AppModule]);
 
