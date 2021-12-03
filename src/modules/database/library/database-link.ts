@@ -1,5 +1,3 @@
-import Inspector from '@directus/schema';
-import { SchemaInspector } from '@directus/schema/dist/types/schema';
 import { EventEmitter2 } from 'eventemitter2';
 import { Knex } from 'knex';
 import { isEqual } from 'lodash';
@@ -18,7 +16,6 @@ export class DatabaseLink implements IDatabaseLink {
    * Inner registry to track the schema associations and their synchronized structures
    */
   protected associations = new Map<string, IAssociation>();
-  protected inspector: SchemaInspector;
 
   constructor(
     @Logger()
@@ -29,9 +26,6 @@ export class DatabaseLink implements IDatabaseLink {
     readonly database: IDatabase,
   ) {
     this.logger = this.logger.child({ scope: `Link:${this.getName()}` });
-
-    // Create the inspector instance.
-    this.inspector = Inspector(this.connection);
   }
 
   getName(): string {

@@ -1,20 +1,28 @@
+import { Column } from 'knex-schema-inspector/dist/types/column';
 import { FieldType, IField } from '..';
+import { Exception } from '../../../app/exceptions/exception';
 
 const VCHAR_PATTERN = /CHARACTER VARYING\((\d+)\)/;
 const CHAR_PATTERN = /CHARACTER\((\d+)\)/;
 
 export const getFieldTypeFromString = (
-  text: string,
-  special: string[],
-): { type: FieldType; params: IField['typeParams'] } => {
+  column: Column,
+): { type: FieldType; typeParams: IField['typeParams'] } => {
   let type: FieldType;
   let params: IField['typeParams'] = {
     values: [],
+    precision:
+      column.numeric_precision === null ? undefined : column.numeric_precision,
+    scale: column.numeric_scale === null ? undefined : column.numeric_scale,
+    length: column.max_length === null ? undefined : column.max_length,
   };
+
+  const text = column.data_type.toUpperCase();
 
   // Simple types
   switch (text) {
     case 'CHARACTER VARYING':
+    case 'VARCHAR':
       type = FieldType.STRING;
       break;
     case 'BIGINT':
@@ -75,7 +83,6 @@ export const getFieldTypeFromString = (
       break;
     case 'ENUM':
       type = FieldType.ENUM;
-      params.values = special;
       break;
   }
 
@@ -93,5 +100,9 @@ export const getFieldTypeFromString = (
     }
   }
 
-  return { type, params };
+  if (!type) {
+    throw new Exception(`Unknown type [${text}]`);
+  }
+
+  return { type, typeParams: params };
 };

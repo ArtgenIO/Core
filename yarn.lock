@@ -433,14 +433,6 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@directus/schema@^9.1.2":
-  version "9.1.2"
-  resolved "https://registry.yarnpkg.com/@directus/schema/-/schema-9.1.2.tgz#1bd1bcb29f331139dccd2271c746fb6d1edcd136"
-  integrity sha512-Igke2iEKw0I8ouXY3ibgiiEIU6gLlE5FiPFYHrpHp0cF7W8ZSlklv6O/oZOXBBHkS7H3ZVBr0BsQljUCrwSS3A==
-  dependencies:
-    knex-schema-inspector "1.6.4"
-    lodash "^4.17.21"
-
 "@emotion/cache@^11.6.0":
   version "11.6.0"
   resolved "https://registry.yarnpkg.com/@emotion/cache/-/cache-11.6.0.tgz#65fbdbbe4382f1991d8b20853c38e63ecccec9a1"
@@ -5224,10 +5216,10 @@ kleur@^4.1.4:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-4.1.4.tgz#8c202987d7e577766d039a8cd461934c01cda04d"
   integrity sha512-8QADVssbrFjivHWQU7KkMgptGTl6WAcSdlbBPY4uNF+mWr6DGcKrvY2w4FQJoXch7+fKMjj0dRrL75vk3k23OA==
 
-knex-schema-inspector@1.6.4:
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/knex-schema-inspector/-/knex-schema-inspector-1.6.4.tgz#eac7bd2aef28d8a2ddf42a3cb107f7a22c8e9d1a"
-  integrity sha512-OCmicnMAaC109heNx79S3aYzTK4B9n+8uQ8z4ZBdqr8DN2E+xP9hLMpxfZFZkHMjilSQy13PgzfgvbgFgRNGSg==
+knex-schema-inspector@^1.6.6:
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/knex-schema-inspector/-/knex-schema-inspector-1.6.6.tgz#6e8aab2766ec138a51abe9dd689e1fd3beaa8618"
+  integrity sha512-tiG35ttP0g/EwXTb2+vSRYK3++7eetaaojauIHjXwocdQqsRNNhEfouCMdmE+WcaMmM7dm+sJhYD5QHh2lVmxA==
   dependencies:
     lodash.flatten "^4.4.0"
     lodash.isnil "^4.0.0"
