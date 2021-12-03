@@ -1,6 +1,9 @@
+import { Model } from 'objection';
 import { Inject, Service } from '../../../app/container';
 import { IKeyValueRecord } from '../../content/interface/key-value.interface';
 import { SchemaService } from './schema.service';
+
+type KVModel = IKeyValueRecord<any> & Model;
 
 @Service()
 export class KeyValueService {
@@ -9,41 +12,28 @@ export class KeyValueService {
     readonly schema: SchemaService,
   ) {}
 
-  async get<T = string>(key: string, defaultValue: any = null): Promise<T> {
-    const model = this.schema.model<IKeyValueRecord<T>>(
-      'system',
-      'KeyValueStorage',
-    );
-    const record = await model.findByPk(key);
+  async get<T = string>(key: string, defaultValue: T = null): Promise<T> {
+    const model = this.schema.model<KVModel>('system', 'KeyValueStorage');
+    const record = await model.query().findById(key);
 
-    if (record !== null) {
-      return JSON.parse(record.get('value' as any));
+    if (record) {
+      return record.value;
     }
 
     return defaultValue;
   }
 
   async set<T = string>(key: string, value: T): Promise<T> {
-    const model = this.schema.model<IKeyValueRecord<T>>(
-      'system',
-      'KeyValueStorage',
-    );
-    let record = await model.findOne({
-      where: {
-        key,
-      },
-    });
+    const model = this.schema.model<KVModel>('system', 'KeyValueStorage');
+    let record = await model.query().findById(key);
 
     if (!record) {
-      record = model.build();
+      record = await model.query().insertAndFetch({ key, value });
+    } else {
+      record.$set({ key, value });
+
+      await record.$query().update();
     }
-
-    record.setAttributes({
-      key,
-      value: JSON.stringify(value),
-    });
-
-    await record.save();
 
     return value;
   }

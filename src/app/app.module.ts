@@ -39,8 +39,8 @@ import { LogLambda } from './logger/log.lambda';
     SecurityModule,
     TransformerModule,
     UpgradeModule,
-    ValidatorModule,
     WorkflowModule,
+    ValidatorModule,
   ],
   providers: [LogLambda],
 })

@@ -1,8 +1,7 @@
-import { Sequelize } from 'sequelize';
+import knex, { Knex } from 'knex';
 import { ILogger, Logger, Service } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { IDatabase } from '../interface';
-import { describeTablePatch } from './patch/describe-table.patch';
 
 @Service()
 export class DatabaseConnectionFactory {
@@ -11,7 +10,7 @@ export class DatabaseConnectionFactory {
     readonly logger: ILogger,
   ) {}
 
-  create(database: IDatabase): Sequelize {
+  create(database: IDatabase): Knex {
     switch (database.type) {
       case 'sqlite':
         return this.createSQLiteConnection(database);
@@ -28,38 +27,41 @@ export class DatabaseConnectionFactory {
     }
   }
 
-  protected createSQLiteConnection(connection: IDatabase): Sequelize {
-    const instance = new Sequelize(connection.dsn, {
-      dialect: 'sqlite',
-      storage: connection.dsn.substr(7), // cut the "sqlite:" 7 char
-      logging: process.env.NODE_ENV !== 'test',
-      logQueryParameters: true,
-    });
-
-    // Patch to solve the compositive key unique problem, has to be fixed some other way @@
-    instance.getQueryInterface().describeTable = describeTablePatch;
-
-    return instance;
-  }
-
-  protected createPostgresConnection(connection: IDatabase): Sequelize {
-    return new Sequelize(connection.dsn, {
-      dialect: 'postgres',
-      logging: false,
+  protected createSQLiteConnection(connection: IDatabase): Knex {
+    return knex({
+      client: 'sqlite',
+      connection: {
+        filename: connection.dsn.substr(7),
+      },
+      asyncStackTraces: true,
+      log: this.logger.child({ scope: `DB:${connection.name}` }),
     });
   }
 
-  protected createMySQLConnection(connection: IDatabase): Sequelize {
-    return new Sequelize(connection.dsn, {
-      dialect: 'mysql',
-      //logging: false,
+  protected createPostgresConnection(connection: IDatabase): Knex {
+    return knex({
+      client: 'pg',
+      connection: connection.dsn,
+      asyncStackTraces: true,
+      log: this.logger.child({ scope: `DB:${connection.name}` }),
     });
   }
 
-  protected createMariaDBConnection(connection: IDatabase): Sequelize {
-    return new Sequelize(connection.dsn, {
-      dialect: 'mariadb',
-      //logging: false,
+  protected createMySQLConnection(connection: IDatabase): Knex {
+    return knex({
+      client: 'mysql',
+      connection: connection.dsn,
+      asyncStackTraces: true,
+      log: this.logger.child({ scope: `DB:${connection.name}` }),
+    });
+  }
+
+  protected createMariaDBConnection(connection: IDatabase): Knex {
+    return knex({
+      client: 'mysql',
+      connection: connection.dsn,
+      asyncStackTraces: true,
+      log: this.logger.child({ scope: `DB:${connection.name}` }),
     });
   }
 }

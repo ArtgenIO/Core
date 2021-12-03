@@ -1,9 +1,12 @@
-import { Dialect } from 'sequelize';
+import { Model } from 'objection';
 import { Inject, Service } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IDatabaseLink } from '../interface';
 import { IDatabase } from '../interface/database.interface';
+import { Dialect } from '../interface/dialect.type';
+
+type DatabaseModel = IDatabase & Model;
 
 @Service()
 export class DatabaseService {
@@ -21,29 +24,25 @@ export class DatabaseService {
    * Synchronize a link's database into the database which stores the connections.
    */
   async synchronize(link: IDatabaseLink) {
-    const model = this.schemaService.model<IDatabase>('system', 'Database');
+    const model = this.schemaService.model<DatabaseModel>('system', 'Database');
 
-    let record = await model.findOne({
-      where: {
-        name: link.database.name,
-      },
-    });
+    let record = await model.query().findById(link.database.name);
 
     if (!record) {
-      record = await model.create(link.database);
+      record = await model.query().insertAndFetch(link.database);
     } else {
-      record = record.set(link.database);
+      record = record.$set(link.database);
 
-      await record.save();
+      await record.$query().update();
     }
 
     // Check if it exists in the local cache.
     const idx = this.registry.findIndex(s => s.name === link.database.name);
 
     if (idx !== -1) {
-      this.registry.splice(idx, 1, record.get({ plain: true }));
+      this.registry.splice(idx, 1, record.$toJson());
     } else {
-      this.registry.push(record.get({ plain: true }));
+      this.registry.push(record.$toJson());
     }
   }
 
@@ -53,11 +52,11 @@ export class DatabaseService {
    */
   async findAll(): Promise<IDatabase[]> {
     const databases = await this.schemaService
-      .model<IDatabase>('system', 'Database')
-      .findAll();
+      .model<DatabaseModel>('system', 'Database')
+      .query();
 
     // Update the schemas, in case the database schema is not migrated.
-    this.registry = databases.map(db => db.get({ plain: true }));
+    this.registry = databases.map(db => db.$toJson());
 
     return this.registry;
   }

@@ -4,7 +4,7 @@ import { join } from 'path';
 import { ILogger, Inject, Logger, Service } from '../../app/container';
 import { SEED_DIR } from '../../app/globals';
 import { getErrorMessage } from '../../app/kernel';
-import { LinkService } from '../database/service/link.service';
+import { DatabaseLinkService } from '../database/service/database-link.service';
 import { RestService } from '../rest/rest.service';
 import { IExtension } from './interface/extension.interface';
 import { SystemExtensionProvider } from './provider/system-extension.provider';
@@ -20,8 +20,8 @@ export class ExtensionService {
     readonly sysExt: IExtension,
     @Inject(EventEmitter2)
     readonly events: EventEmitter2,
-    @Inject(LinkService)
-    readonly linkService: LinkService,
+    @Inject(DatabaseLinkService)
+    readonly linkService: DatabaseLinkService,
   ) {}
 
   async seed() {

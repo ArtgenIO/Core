@@ -1,12 +1,15 @@
 import { compare, hashSync } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
+import { Model } from 'objection';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { KeyValueService } from '../../schema/service/key-value.service';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IAccessKey } from '../interface/access-key.interface';
 import { IAccount } from '../interface/account.interface';
 import { IJwtPayload } from '../interface/jwt-payload.interface';
+
+type AccountModel = IAccount & Model;
 
 export class AuthenticationService {
   protected deleteTimeout: NodeJS.Timeout;
@@ -40,23 +43,21 @@ export class AuthenticationService {
     email: string;
     password: string;
   }): Promise<string | false> {
-    const model = this.schema.model<IAccount>('system', 'Account');
+    const model = this.schema.model<AccountModel>('system', 'Account');
 
-    const account = await model.findOne({
-      where: {
-        email: credentials.email,
-      },
+    const account = await model.query().findOne({
+      email: credentials.email,
     });
 
     if (account) {
       const isPasswordValid = await compare(
         credentials.password,
-        account.get('password') as string,
+        account.password,
       );
 
       if (isPasswordValid) {
         const payload: IJwtPayload = {
-          aid: account.get('id') as string,
+          aid: account.id,
           roles: [],
         };
 
@@ -70,24 +71,19 @@ export class AuthenticationService {
   }
 
   async getAccountByID(id: string): Promise<IAccount | false> {
-    const model = this.schema.model<IAccount>('system', 'Account');
-    const record = await model.findByPk(id);
+    const model = this.schema.model<AccountModel>('system', 'Account');
+    const record = await model.query().findById(id);
 
     if (record) {
-      return record.get({ plain: true });
+      return record.$toJson();
     }
 
     return false;
   }
 
   async getAccessKeyAccount(key: string): Promise<IAccount | false> {
-    const model = this.schema.model<IAccessKey>('system', 'AccessKey');
-    const record = await model.findOne({
-      where: {
-        key: key,
-      },
-      include: ['account'],
-    });
+    const model = this.schema.model<AccountModel>('system', 'AccessKey');
+    const record = await model.query().findById(key).joinRelated('account');
 
     if (record) {
       return {
@@ -100,8 +96,8 @@ export class AuthenticationService {
   }
 
   async seed() {
-    const model = this.schema.model('system', 'Account');
-    const check = await model.count();
+    const model = this.schema.model<AccountModel>('system', 'Account');
+    const check = await model.query().limit(1).resultSize();
 
     if (check) {
       return;
@@ -110,7 +106,7 @@ export class AuthenticationService {
     // Seed the demo account
     this.logger.debug('Seeding [demo] account');
 
-    await model.create({
+    await model.query().insert({
       email: 'demo@artgen.io',
       password: hashSync('demo', 3),
     });

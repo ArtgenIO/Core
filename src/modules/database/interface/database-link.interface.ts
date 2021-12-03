@@ -1,4 +1,5 @@
-import { Model, ModelCtor, Sequelize } from 'sequelize';
+import { Knex } from 'knex';
+import { Model, ModelClass } from 'objection';
 import { IDatabase } from '.';
 import { ISchema } from '../../schema';
 
@@ -11,7 +12,7 @@ export interface IDatabaseLink {
   /**
    * ORM connection
    */
-  readonly connection: Sequelize;
+  readonly connection: Knex;
 
   /**
    * Get the unique name for the database link.
@@ -21,7 +22,7 @@ export interface IDatabaseLink {
   /**
    * Get the model by reference
    */
-  getModel<T = unknown>(reference: string): ModelCtor<Model<T, T>>;
+  getModel(reference: string): ModelClass<Model>;
 
   /**
    * Add schema to the existing set, this function builds diff to the existing

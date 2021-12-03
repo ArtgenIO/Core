@@ -1,4 +1,4 @@
-export interface IKeyValueRecord<T> {
+export interface IKeyValueRecord<T = string> {
   key: string;
-  value: string;
+  value: T;
 }

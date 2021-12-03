@@ -1,12 +1,14 @@
 import { EventEmitter2 } from 'eventemitter2';
-import { ModelDefined } from 'sequelize';
+import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { IDatabaseLink } from '../../database/interface';
-import { LinkService } from '../../database/service/link.service';
+import { DatabaseLinkService } from '../../database/service/database-link.service';
 import { IExtension } from '../../extension/interface/extension.interface';
 import { SystemExtensionProvider } from '../../extension/provider/system-extension.provider';
 import { ISchema } from '../interface/schema.interface';
 import { SchemaMigrationService } from './schema-migration.service';
+
+type SchemaModel = ISchema & Model;
 
 @Service()
 export class SchemaService {
@@ -18,8 +20,8 @@ export class SchemaService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(LinkService)
-    readonly linkService: LinkService,
+    @Inject(DatabaseLinkService)
+    readonly linkService: DatabaseLinkService,
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
     @Inject(SchemaMigrationService)
@@ -35,18 +37,16 @@ export class SchemaService {
    */
   async synchronize(link: IDatabaseLink) {
     // Get the schema repository.
-    const model = this.model<ISchema>('system', 'Schema');
+    const model = this.model<SchemaModel>('system', 'Schema');
 
     for (const schema of link.getSchemas()) {
-      const exists = await model.findOne({
-        where: {
-          database: schema.database,
-          reference: schema.reference,
-        },
+      const exists = await model.query().findOne({
+        database: schema.database,
+        reference: schema.reference,
       });
 
       if (!exists) {
-        await model.create(schema);
+        await model.query().insert(schema);
       }
 
       // Check if it exists in the local cache.
@@ -77,16 +77,10 @@ export class SchemaService {
    * ensure the local cache is up to date.
    */
   async findAll(): Promise<ISchema[]> {
-    const schemas = await this.model<ISchema>('system', 'Schema').findAll();
+    const schemas = await this.model<SchemaModel>('system', 'Schema').query();
 
     // Update the schemas, in case the database schema is not migrated.
-    this.registry = schemas.map(s =>
-      this.migrator.migrate(
-        s.get({
-          plain: true,
-        }),
-      ),
-    );
+    this.registry = schemas.map(s => this.migrator.migrate(s.$toJson()));
 
     return this.registry;
   }
@@ -94,11 +88,11 @@ export class SchemaService {
   /**
    * Get the repository for the given database and schema.
    */
-  model<T = Record<string, unknown>>(
+  model<T extends Model = Model>(
     database: string,
     schema: string,
-  ): ModelDefined<T, T> {
-    return this.linkService.findByName(database).getModel(schema);
+  ): ModelClass<T> {
+    return this.linkService.findByName(database).getModel<T>(schema);
   }
 
   findByDatabase(database: string) {
@@ -112,8 +106,8 @@ export class SchemaService {
   }
 
   async create(schema: ISchema) {
-    const model = this.model<ISchema>('system', 'Schema');
-    await model.create(schema);
+    const model = this.model<SchemaModel>('system', 'Schema');
+    await model.query().insert(schema);
 
     this.registry.push(schema);
     this.event.emit('schema.created', schema);
@@ -122,23 +116,22 @@ export class SchemaService {
   }
 
   async update(update: ISchema) {
-    const model = this.model<ISchema>('system', 'Schema');
-    const record = await model.findOne({
-      where: {
-        database: update.database,
-        reference: update.reference,
-      },
+    const model = this.model<SchemaModel>('system', 'Schema');
+    const record = await model.query().findOne({
+      database: update.database,
+      reference: update.reference,
     });
 
-    record.setAttributes(update);
-    await record.save();
+    record.$set(update);
+
+    await model.query().patch(record);
 
     this.registry.splice(
       this.registry.findIndex(
         s => s.database === update.database && s.reference === update.reference,
       ),
       1,
-      record.get({ plain: true }),
+      record.$toJson(),
     );
 
     this.event.emit('schema.updated', record);

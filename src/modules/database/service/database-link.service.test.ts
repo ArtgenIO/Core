@@ -6,9 +6,9 @@ import { DatabaseModule } from '../database.module';
 import { IDatabase } from '../interface/database.interface';
 import { DatabaseConnectionFactory } from '../library/database-connection.factory';
 import { DatabaseLink } from '../library/database-link';
-import { LinkService } from './link.service';
+import { DatabaseLinkService } from './database-link.service';
 
-describe(LinkService.name, () => {
+describe(DatabaseLinkService.name, () => {
   let app: IKernel;
 
   beforeEach(() => {
@@ -17,7 +17,9 @@ describe(LinkService.name, () => {
   });
 
   test('should be able to resolve the link service', async () => {
-    expect(await app.context.get(LinkService.name)).toBeInstanceOf(LinkService);
+    expect(await app.context.get(DatabaseLinkService.name)).toBeInstanceOf(
+      DatabaseLinkService,
+    );
   });
 
   describe('Creating Links', () => {
@@ -40,7 +42,9 @@ describe(LinkService.name, () => {
         type: 'sqlite',
         dsn,
       };
-      const service = await app.context.get<LinkService>(LinkService.name);
+      const service = await app.context.get<DatabaseLinkService>(
+        DatabaseLinkService.name,
+      );
       const link = await service.create(db, []);
 
       expect(link).toBeInstanceOf(DatabaseLink);
@@ -67,7 +71,9 @@ describe(LinkService.name, () => {
         type: 'mysql',
         dsn: url,
       };
-      const service = await app.context.get<LinkService>(LinkService.name);
+      const service = await app.context.get<DatabaseLinkService>(
+        DatabaseLinkService.name,
+      );
       const link = await service.create(db, []);
 
       expect(link).toBeInstanceOf(DatabaseLink);
@@ -93,7 +99,9 @@ describe(LinkService.name, () => {
         type: 'postgres',
         dsn: url,
       };
-      const service = await app.context.get<LinkService>(LinkService.name);
+      const service = await app.context.get<DatabaseLinkService>(
+        DatabaseLinkService.name,
+      );
       const link = await service.create(db, []);
 
       expect(link).toBeInstanceOf(DatabaseLink);

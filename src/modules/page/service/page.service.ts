@@ -1,9 +1,12 @@
 import { readFile } from 'fs/promises';
+import { Model } from 'objection';
 import { join } from 'path';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { SEED_DIR } from '../../../app/globals';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IPage } from '../interface/page.interface';
+
+type PageModel = IPage & Model;
 
 @Service()
 export class PageService {
@@ -23,17 +26,17 @@ export class PageService {
       this.isSeeded = true;
     }
 
-    const model = this.schema.model<IPage>('system', 'Page');
-    const pages = await model.findAll({
-      attributes: ['id', 'label', 'domain', 'path', 'tags'],
-    });
+    const model = this.schema.model<PageModel>('system', 'Page');
+    const pages = await model
+      .query()
+      .select(['id', 'label', 'domain', 'path', '__artgen_tags']);
 
-    return pages.map(p => p.get({ plain: true }));
+    return pages.map(p => p.$toJson());
   }
 
   async getHtml(id: string): Promise<string> {
-    const model = this.schema.model<IPage>('system', 'Page');
-    const page: IPage = (await model.findByPk(id)).get({ plain: true });
+    const model = this.schema.model<PageModel>('system', 'Page');
+    const page: IPage = (await model.query().findById(id)).$toJson();
     const html = `<html>
       <head>
         <title>${page.label}</title>
@@ -49,13 +52,13 @@ export class PageService {
     const model = this.schema.model('system', 'Page');
 
     // ALready exists
-    if (await model.findByPk('1e1b9598-f8b8-4487-9b7b-166a363e8ce8')) {
+    if (await model.query().findById('1e1b9598-f8b8-4487-9b7b-166a363e8ce8')) {
       return;
     }
 
     const landing = await readFile(join(SEED_DIR, 'landing.page.json'));
 
-    await model.create(JSON.parse(landing.toString()));
+    await model.query().insert(JSON.parse(landing.toString()));
     this.logger.info('Pages seeded');
   }
 }

@@ -4,17 +4,15 @@ import { ContentService } from '../content/service/content.service';
 import { SchemaService } from '../schema/service/schema.service';
 import { DatabaseObserver } from './database.observer';
 import { IDatabaseLink } from './interface';
-import { DatabaseImportLambda } from './lambda/import.lambda';
 import { DatabaseConnectionFactory } from './library/database-connection.factory';
+import { DatabaseLinkService } from './service/database-link.service';
 import { DatabaseService } from './service/database.service';
-import { LinkService } from './service/link.service';
 
 @Module({
   providers: [
-    LinkService,
+    DatabaseLinkService,
     DatabaseService,
     DatabaseConnectionFactory,
-    DatabaseImportLambda,
     DatabaseObserver,
   ],
 })
@@ -26,8 +24,8 @@ export class DatabaseModule implements IModule {
     protected crudService: ContentService,
     @Inject(DatabaseService)
     protected databaseService: DatabaseService,
-    @Inject(LinkService)
-    protected linkService: LinkService,
+    @Inject(DatabaseLinkService)
+    protected linkService: DatabaseLinkService,
     @Inject(SchemaService)
     protected schemaService: SchemaService,
   ) {}

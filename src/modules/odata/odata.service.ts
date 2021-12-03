@@ -1,8 +1,6 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { merge } from 'lodash';
-import parseOData from 'odata-sequelize';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
-import { Op, WhereOptions } from 'sequelize';
 import { ILogger, Inject, Logger } from '../../app/container';
 import { getErrorMessage } from '../../app/kernel';
 import { SchemaService } from '../schema/service/schema.service';
@@ -41,8 +39,8 @@ export class ODataService {
       const startedAt = Date.now();
 
       try {
-        const record = await model.create(input);
-        const object = record.get({ plain: true });
+        const record = await model.query().insertAndFetch(input);
+        const object = record.$toJson();
 
         this.event.emit(event, object);
 
@@ -95,10 +93,10 @@ export class ODataService {
     const quertString = decodeURIComponent(stringify(options));
 
     // Create query configuration from the OData filters.
-    const queryConfig = parseOData(quertString, model.sequelize);
-    const records = await model.findAll(queryConfig);
+    // const queryConfig = parseOData(quertString, model.sequelize);
+    const records = await model.query();
 
-    return records.map(record => record.get({ plain: true }));
+    return records.map(record => record.$toJson());
   }
 
   /**
@@ -117,12 +115,12 @@ export class ODataService {
     const schema = this.schema.findOne(database, reference);
     const primaryKeys = schema.fields.filter(isPrimary).map(f => f.reference);
     const result: IODataResult[] = [];
-    const queryFilters: WhereOptions = {};
+    const queryFilters = {};
     const validInputs = [];
 
     // Prebuidl the query filter with empty arrays
     for (const pk of primaryKeys) {
-      queryFilters[pk] = { [Op.in]: [] };
+      queryFilters[pk] = [];
     }
 
     for (const input of inputs) {
@@ -148,17 +146,17 @@ export class ODataService {
       }
 
       for (const pk of primaryKeys) {
-        queryFilters[pk][Op.in].push(input[pk]);
+        queryFilters[pk].push(input[pk]);
       }
 
       validInputs.push(input);
     }
 
     // Fetch the records subjected for the update
-    const records = await model.findAll({
-      where: queryFilters,
-      limit: validInputs.length,
-    });
+    const records = await model
+      .query()
+      .where(queryFilters)
+      .limit(validInputs.length);
 
     for (const input of validInputs) {
       const startedAt = Date.now();
@@ -211,14 +209,14 @@ export class ODataService {
             continue;
           }
 
-          record.set(key, value);
+          record[key] = value;
         }
       }
 
       try {
         // Commit the changes
-        await record.save();
-        const object = record.get({ plain: true });
+        await record.$query().update();
+        const object = record.$toJson();
 
         result.push({
           meta: {
@@ -265,13 +263,13 @@ export class ODataService {
       $skip: 0,
     });
     const queryString = decodeURIComponent(stringify(options as any));
-    const queryFilter = parseOData(queryString.toString(), model.sequelize);
-    const records = await model.findAll(queryFilter);
+    //const queryFilter = parseOData(queryString.toString(), model.sequelize);
+    const records = await model.query();
 
     for (const record of records) {
-      await record.destroy();
+      await record.$query().delete();
 
-      this.event.emit(event, record.get({ plain: true }));
+      this.event.emit(event, record.$toJson());
     }
 
     return {

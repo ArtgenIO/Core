@@ -1,4 +1,4 @@
-import { Dialect } from 'sequelize';
+import { Dialect } from './dialect.type';
 
 export interface IDatabase {
   /**

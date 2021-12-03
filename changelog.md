@@ -1,3 +1,8 @@
+### Version 0.1.0
+
+- Use homebrew table sync for better control
+- Replaced the Sequelize with Knex for stability
+
 ### Version 0.0.19
 
 - Lotsa new lambda

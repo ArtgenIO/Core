@@ -4,15 +4,15 @@ import { Observer, On } from '../event';
 import { ISchema } from '../schema';
 import { SchemaService } from '../schema/service/schema.service';
 import { IDatabase } from './interface';
-import { LinkService } from './service/link.service';
+import { DatabaseLinkService } from './service/database-link.service';
 
 @Observer()
 export class DatabaseObserver {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(LinkService)
-    readonly linkService: LinkService,
+    @Inject(DatabaseLinkService)
+    readonly linkService: DatabaseLinkService,
     @Inject(SchemaService)
     readonly schemaService: SchemaService,
   ) {}
@@ -49,25 +49,7 @@ export class DatabaseObserver {
     try {
       const link = this.linkService.findByName(schema.database);
       // Delete the table
-      await link.connection.getQueryInterface().dropTable(schema.tableName);
-    } catch (error) {
-      this.logger.error(getErrorMessage(error));
-    }
-  }
-
-  @On('crud.system.Database.created')
-  async handleDatabaseCreate(database: IDatabase) {
-    this.logger.warn('New database created! [%s]', database.name);
-
-    try {
-      const link = await this.linkService.create(database, []);
-      const schemas = await this.linkService.discover(link);
-
-      for (const schema of schemas) {
-        await this.schemaService
-          .create(schema)
-          .catch(e => this.logger.error(getErrorMessage(e)));
-      }
+      await link.connection.schema.dropTable(schema.tableName);
     } catch (error) {
       this.logger.error(getErrorMessage(error));
     }

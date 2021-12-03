@@ -1,5 +1,4 @@
-import { ServiceBroker } from 'moleculer';
-import { ModelDefined } from 'sequelize';
+import { Model } from 'objection';
 import { v4 } from 'uuid';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { IExtension } from '../../extension/interface/extension.interface';
@@ -9,33 +8,27 @@ import { SchemaService } from '../../schema/service/schema.service';
 import { IWorkflow } from '../interface/workflow.interface';
 import { WorkflowSession } from '../library/workflow.session';
 
-// Hook everything here, we can emit new and removed events so the http, and other triggers can be updated
+type WorkflowModel = IWorkflow & Model;
+
 @Service()
 export class WorkflowService {
-  protected model: ModelDefined<IWorkflow, IWorkflow>;
-
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(ServiceBroker)
-    readonly rpcServer: ServiceBroker,
     @Inject(LambdaService)
     readonly lambda: LambdaService,
     @Inject(SchemaService)
-    readonly schemas: SchemaService,
+    readonly schema: SchemaService,
     @Inject(SystemExtensionProvider)
     readonly sysExt: IExtension,
-  ) {
-    this.model = this.schemas.model<IWorkflow>('system', 'Workflow');
-  }
+  ) {}
 
   async seed(): Promise<void> {
     for (const wf of this.sysExt.workflows) {
-      const exists = await this.model.count({
-        where: {
-          id: wf.id,
-        },
-      });
+      const exists = await this.schema
+        .model('system', 'Workflow')
+        .query()
+        .findById(wf.id);
 
       if (!exists) {
         await this.createWorkflow(wf);
@@ -44,11 +37,16 @@ export class WorkflowService {
   }
 
   async findAll(): Promise<IWorkflow[]> {
-    return (await this.model.findAll()).map(wf => wf.get({ plain: true }));
+    return (
+      await this.schema.model<WorkflowModel>('system', 'Workflow').query()
+    ).map(wf => wf.$toJson());
   }
 
   async createWorkflowSession(workflowId: string, actionId?: string) {
-    const workflow = await this.model.findByPk(workflowId);
+    const workflow = await this.schema
+      .model<WorkflowModel>('system', 'Workflow')
+      .query()
+      .findById(workflowId);
 
     if (!workflow) {
       throw new Error(`Workflow does not exists [${workflowId}]`);
@@ -58,42 +56,38 @@ export class WorkflowService {
       actionId = v4();
     }
 
-    return new WorkflowSession(
-      this.lambda,
-      workflow.get({ plain: true }),
-      actionId,
-    );
+    return new WorkflowSession(this.lambda, workflow.$toJson(), actionId);
   }
 
   async createWorkflow(workflow: Omit<IWorkflow, 'id'>): Promise<IWorkflow> {
-    const record = await this.model.create({
-      id: v4(),
-      ...workflow,
-    });
+    const record = await this.schema
+      .model<WorkflowModel>('system', 'Workflow')
+      .query()
+      .insertAndFetch(workflow);
 
     // Save to the database.
-    this.logger.info(
-      'New workflow [%s] has been created',
-      record.getDataValue('id'),
-    );
+    this.logger.info('New workflow [%s] has been created', record.id);
 
-    return record.get({ plain: true });
+    return record.$toJson();
   }
 
   async updateWorkflow(workflow: IWorkflow): Promise<IWorkflow> {
-    const record = await this.model.findByPk(workflow.id);
+    const record = await this.schema
+      .model<WorkflowModel>('system', 'Workflow')
+      .query()
+      .findById(workflow.id);
 
-    record.setAttributes({
+    record.$set({
       name: workflow.name,
       nodes: workflow.nodes,
       edges: workflow.edges,
     });
 
     // Update to the database.
-    await record.save();
+    await record.$query().update();
 
     this.logger.info('Workflow [%s] updated', workflow.id);
 
-    return record.get({ plain: true });
+    return record.$toJson();
   }
 }

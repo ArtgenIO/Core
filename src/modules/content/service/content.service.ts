@@ -1,6 +1,5 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { merge } from 'lodash';
-import parseOData from 'odata-sequelize';
 import { stringify } from 'querystring';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { FieldTag } from '../../schema';
@@ -23,17 +22,14 @@ export class ContentService {
     data: Record<string, unknown>,
   ): Promise<Record<string, unknown>> {
     const model = this.schema.model(database, reference);
-    const record = await model.create(data);
+    const record = await model.query().insertAndFetch(data);
 
-    this.event.emit(
-      `crud.${database}.${reference}.created`,
-      record.get({ plain: true }),
-    );
+    this.event.emit(`crud.${database}.${reference}.created`, record.$toJson());
 
-    return record.get({ plain: true });
+    return record.$toJson();
   }
 
-  async readOData<T = Record<string, unknown>>(
+  async readOData(
     database: string,
     reference: string,
     odata: Record<string, unknown>,
@@ -47,14 +43,10 @@ export class ContentService {
       odata,
     );
 
-    const q = decodeURIComponent(stringify(options as any));
+    //const q = decodeURIComponent(stringify(options as any));
+    // TODO parse odata to knex query const query = parseOData(q, model.sequelize);
 
-    this.logger.info('Got [%s]', q);
-
-    const query = parseOData(q, model.sequelize);
-    const rows = await model.findAll(query);
-
-    return rows.map(r => r.get({ plain: true }));
+    return (await model.query()).map(r => r.$toJson());
   }
 
   async update(
@@ -72,8 +64,8 @@ export class ContentService {
 
     const q = decodeURIComponent(stringify(options as any));
 
-    const query = parseOData(q.toString(), model.sequelize);
-    const rows = await model.findAll(query);
+    // const query = parseOData(q.toString(), model.sequelize);
+    const rows = await model.query().where({});
 
     if (!rows.length) {
       throw new Error('Not a found');
@@ -107,17 +99,14 @@ export class ContentService {
           continue;
         }
 
-        record.set(key, value);
+        record[key] = value;
       }
     }
 
     // Save changes
-    await record.save();
+    await record.$query().update();
 
-    this.event.emit(
-      `crud.${database}.${reference}.updated`,
-      record.get({ plain: true }),
-    );
+    this.event.emit(`crud.${database}.${reference}.updated`, record.$toJson());
 
     return record;
   }
@@ -134,8 +123,8 @@ export class ContentService {
     });
     const q = decodeURIComponent(stringify(options as any));
 
-    const query = parseOData(q.toString(), model.sequelize);
-    const rows = await model.findAll(query);
+    //const query = parseOData(q.toString(), model.sequelize);
+    const rows = await model.query();
 
     if (!rows.length) {
       throw new Error('Not a found');
@@ -143,12 +132,9 @@ export class ContentService {
 
     const record = rows[0];
 
-    await record.destroy();
+    await record.$query().delete();
 
-    this.event.emit(
-      `crud.${database}.${reference}.deleted`,
-      record.get({ plain: true }),
-    );
+    this.event.emit(`crud.${database}.${reference}.deleted`, record.$toJson());
 
     return record;
   }

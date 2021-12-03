@@ -39,8 +39,8 @@ export class RestService {
     const event = `crud.${database}.${reference}.created`;
 
     try {
-      const record = await model.create(input);
-      const object = record.get({ plain: true });
+      const record = await model.query().insert(input);
+      const object = record.$toJson();
 
       this.event.emit(event, object);
 
@@ -71,12 +71,10 @@ export class RestService {
       queryConfig[pk] = filterKeys[pk];
     }
 
-    const record = await model.findOne({
-      where: queryConfig,
-    });
+    const record = await model.query().findOne(queryConfig);
 
     if (record) {
-      return record.get({ plain: true });
+      return record.$toJson();
     }
 
     return null;
@@ -88,10 +86,10 @@ export class RestService {
   async list(database: string, reference: string): Promise<SchemaInput[]> {
     // Load the model
     const model = this.schema.model(database, reference);
-    const records = await model.findAll();
+    const records = await model.query();
 
     if (records) {
-      return records.map(r => r.get({ plain: true }));
+      return records.map(r => r.$toJson());
     }
 
     return null;
@@ -109,12 +107,9 @@ export class RestService {
     // Load the model
     const model = this.schema.model(database, reference);
 
-    const records = await model.findAll({
-      attributes,
-      where: conditions,
-    });
+    const records = await model.query().where(conditions).select(attributes);
 
-    return records.map(r => r.get({ plain: true }));
+    return records.map(r => r.$toJson());
   }
 
   /**
@@ -134,9 +129,7 @@ export class RestService {
     const schema = this.schema.findOne(database, reference);
 
     // Fetch the record
-    const record = await model.findOne({
-      where: idValues,
-    });
+    const record = await model.query().findById(Object.values(idValues));
 
     if (!record) {
       return null;
@@ -162,14 +155,14 @@ export class RestService {
           continue;
         }
 
-        record.set(key, value);
+        record[key] = value;
       }
     }
 
     try {
       // Commit the changes
-      await record.save();
-      const object = record.get({ plain: true });
+      await record.$query().update();
+      const object = record.$toJson();
 
       this.event.emit(event, object);
 
@@ -194,9 +187,7 @@ export class RestService {
     const model = this.schema.model(database, reference);
 
     // Fetch the record
-    const record = await model.findOne({
-      where: idValues,
-    });
+    const record = await model.query().findById(Object.values(idValues));
 
     if (!record) {
       return null;
@@ -204,8 +195,8 @@ export class RestService {
 
     try {
       // Delete record
-      const object = record.get({ plain: true });
-      await record.destroy();
+      const object = record.$toJson();
+      await record.$query().delete();
 
       this.event.emit(event, object);
 

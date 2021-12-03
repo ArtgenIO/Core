@@ -1,10 +1,9 @@
-import { TextLength } from 'sequelize/types';
 import { FieldTag } from './field-tags.enum';
 import { FieldType } from './field-type.enum';
 
 type TypeParams = {
   binary?: boolean;
-  length?: number | TextLength;
+  length?: number | 'tiny' | 'medium' | 'long';
   zerofill?: boolean;
   unsigned?: boolean;
   decimals?: number;
