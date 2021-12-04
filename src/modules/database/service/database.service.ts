@@ -49,7 +49,7 @@ export class DatabaseService {
    * Generates a database record based on the environment variables.
    * Database type is auto extracted from the DSN.
    */
-  makeSystemRecord(): IDatabase {
+  getSystem(): IDatabase {
     return {
       name: 'system',
       dsn: process.env.ARTGEN_DATABASE_DSN,

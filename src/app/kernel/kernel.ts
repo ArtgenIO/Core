@@ -1,10 +1,14 @@
 import {
   Binding,
+  BindingAddress,
   BindingScope,
+  BindingType,
   Constructor,
   Context,
   createBindingFromClass,
+  instantiateClass,
   Reflector,
+  ValueOrPromise,
 } from '@loopback/context';
 import { DepGraph } from 'dependency-graph';
 import { default as timeout } from 'p-timeout';
@@ -73,9 +77,9 @@ export class Kernel implements IKernel {
         // Register for dependency loading
         if (!this.moduleGraph.hasNode(key)) {
           this.moduleGraph.addNode(key);
-        }
 
-        this.logger.debug('Discovered [%s] module', name);
+          this.logger.debug('Discovered [%s] module', name);
+        }
 
         // Bind the instance for hook executions
         this.context
@@ -125,7 +129,6 @@ export class Kernel implements IKernel {
           if (meta.providers) {
             for (const provider of meta.providers) {
               const binding = createBindingFromClass(provider);
-              binding.lock();
 
               this.context.add(binding);
 
@@ -286,5 +289,68 @@ export class Kernel implements IKernel {
 
       return false;
     }
+  }
+
+  /**
+   * @inheritdoc
+   */
+  replace(key: BindingAddress | Constructor<object>, value: any): void {
+    // Binding key can be a class and we use the class's name to resolve it.
+    if (typeof key === 'function') {
+      if (key?.name) {
+        key = key.name;
+      }
+    }
+
+    key = key as BindingAddress;
+
+    if (!this.context.contains(key)) {
+      throw new Exception(`Binding [${key}] is not registered`);
+    }
+
+    const binding = this.context.getBinding(key);
+
+    // Clear the cached resolution.
+    binding.refresh(this.context);
+
+    switch (binding.type) {
+      case BindingType.CONSTANT:
+        binding.to(value);
+        break;
+      case BindingType.DYNAMIC_VALUE:
+        binding.toDynamicValue(value);
+        break;
+      case BindingType.CLASS:
+        binding.toClass(value);
+        break;
+      case BindingType.PROVIDER:
+        binding.toProvider(value);
+        break;
+      case BindingType.ALIAS:
+        return this.replace(binding.source.value as string, value);
+    }
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async get<T>(key: BindingAddress<T> | Constructor<object>): Promise<T> {
+    // Binding key can be a class and we use the class's name to resolve it.
+    if (typeof key === 'function') {
+      if (key?.name) {
+        key = key.name;
+      }
+    }
+
+    key = key as BindingAddress;
+
+    return this.context.get<T>(key);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  create<T>(concrete: Constructor<T>, params?: any[]): ValueOrPromise<T> {
+    return instantiateClass(concrete, this.context, undefined, params);
   }
 }

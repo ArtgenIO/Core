@@ -47,7 +47,7 @@ export class ExtensionService {
     // Global db reference
     extension.database = database;
 
-    const link = this.linkService.findByName(database);
+    const link = this.linkService.findOne(database);
 
     // Preload the schemas before they are injected one by one.
     await link.associate(extension.schemas);

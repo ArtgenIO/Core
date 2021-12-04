@@ -35,7 +35,8 @@
     "test:cov": "jest -i",
     "test:cy": "start-test 'ts-node src/main.ts' http-get://localhost:7200/admin/index.html 'cypress run'",
     "test:watch": "jest --watch --collectCoverage=0",
-    "test": "jest -i --collectCoverage=0"
+    "test": "jest -i --collectCoverage=0",
+    "test:debug": "node --inspect --inspect-brk node_modules/.bin/jest -i --collectCoverage=0"
   },
   "dependencies": {
     "@loopback/context": "^3.17.1",

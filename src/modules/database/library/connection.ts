@@ -62,7 +62,7 @@ export class Connection implements IConnection {
     return Array.from(this.associations.values()).map(r => r.schema);
   }
 
-  async associate(schemas: ISchema[]): Promise<void> {
+  async associate(schemas: ISchema[]): Promise<IConnection> {
     for (const schema of schemas) {
       const key = schema.reference;
       const structure = toStructure(schema);
@@ -94,6 +94,8 @@ export class Connection implements IConnection {
     }
 
     await this.synchronize();
+
+    return this;
   }
 
   /**

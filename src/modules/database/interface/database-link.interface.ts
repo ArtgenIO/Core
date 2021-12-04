@@ -28,7 +28,7 @@ export interface IConnection {
   /**
    * Get the model by reference
    */
-  getModel(reference: string): ModelClass<Model>;
+  getModel<T extends Model = Model>(reference: string): ModelClass<T>;
 
   /**
    * Add schema to the existing set, this function builds diff to the existing
@@ -36,7 +36,7 @@ export interface IConnection {
    *
    * It may strip invalid relations until the referenced schema is added.
    */
-  associate(schemas: ISchema[]): Promise<void>;
+  associate(schemas: ISchema[]): Promise<IConnection>;
 
   /**
    * Get the associated schemas.

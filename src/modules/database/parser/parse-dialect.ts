@@ -1,4 +1,4 @@
-import { Exception } from '../../../app/exceptions/exception';
+import { UnsupportedDialect } from '../exception/unsupported-dialect.exception';
 import { Dialect } from '../interface/dialect.type';
 
 export const parseDialect = (dsn: string): Dialect => {
@@ -8,11 +8,9 @@ export const parseDialect = (dsn: string): Dialect => {
     protocol = 'postgres';
   }
 
-  if (
-    ['mongodb', 'postgres', 'mysql', 'mariadb', 'sqlite'].includes(protocol)
-  ) {
+  if (['postgres', 'mysql', 'mariadb', 'sqlite'].includes(protocol)) {
     return protocol as Dialect;
   } else {
-    throw new Exception(`Unknown dialect [${protocol}]`);
+    throw new UnsupportedDialect(`Unknown dialect [${protocol}]`);
   }
 };

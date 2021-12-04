@@ -3,93 +3,52 @@ import { Kernel } from '../../../app/kernel/kernel';
 import { EventModule } from '../../event/event.module';
 import { SchemaModule } from '../../schema/schema.module';
 import { DatabaseModule } from '../database.module';
-import { IDatabase } from '../interface/database.interface';
 import { Connection } from '../library/connection';
+import { ConnectionConcrete } from '../provider/connection-concrete.provider';
 import { ConnectionService } from './connection.service';
 
 describe(ConnectionService.name, () => {
-  let app: IKernel;
+  let kernel: IKernel;
 
   beforeEach(() => {
-    app = new Kernel();
-    app.bootstrap([DatabaseModule, SchemaModule, EventModule]);
+    kernel = new Kernel();
+    kernel.bootstrap([DatabaseModule, SchemaModule, EventModule]);
   });
 
-  test('should be able to resolve the link service', async () => {
-    expect(await app.context.get(ConnectionService.name)).toBeInstanceOf(
+  test('should register the connection service', async () => {
+    expect(await kernel.get(ConnectionService)).toBeInstanceOf(
       ConnectionService,
     );
   });
 
-  describe('Creating Links', () => {
-    test('should create an sqlite link', async () => {
-      const dsn = 'sqlite::memory:';
+  describe('Create', () => {
+    test.each([
+      'sqlite::memory:',
+      'mysql://localhost:1234',
+      'mariadb://localhost:1234',
+      'postgresql://localhost:1234',
+      'postgres://localhost:1234',
+    ])('should create the connection with the [%s] dsn', async dsn => {
+      const associateMock = jest.fn(function () {
+        return this;
+      });
+      class MockConnection extends Connection {}
 
-      const validateMock = jest.fn();
-      const connectionFactoryMock = {
-        create: () => ({
-          validate: validateMock,
-        }),
-      };
+      ConnectionConcrete.prototype.value = () => MockConnection;
+      MockConnection.prototype.associate = associateMock;
 
-      const db: IDatabase = {
-        name: 'test',
-        dsn,
-      };
-      const service = await app.context.get<ConnectionService>(
-        ConnectionService.name,
+      const service = await kernel.get(ConnectionService);
+      const connection = await service.create(
+        {
+          name: 'test',
+          dsn,
+        },
+        [],
       );
-      const link = await service.create(db, []);
 
-      expect(link).toBeInstanceOf(Connection);
-      expect(validateMock).toHaveBeenCalled();
-      expect(service.findByName('test')).toStrictEqual(link);
-    });
-
-    test('should create a mysql connection', async () => {
-      const url = 'mysql://localhost:1234';
-
-      const validateMock = jest.fn();
-      const connectionFactoryMock = {
-        create: () => ({
-          validate: validateMock,
-        }),
-      };
-
-      const db: IDatabase = {
-        name: 'test',
-        dsn: url,
-      };
-      const service = await app.context.get<ConnectionService>(
-        ConnectionService.name,
-      );
-      const link = await service.create(db, []);
-
-      expect(link).toBeInstanceOf(Connection);
-      expect(validateMock).toHaveBeenCalled();
-    });
-
-    test('should create a postgresql connection', async () => {
-      const url = 'postgresql://localhost:1234';
-
-      const validateMock = jest.fn();
-      const connectionFactoryMock = {
-        create: () => ({
-          validate: validateMock,
-        }),
-      };
-
-      const db: IDatabase = {
-        name: 'test',
-        dsn: url,
-      };
-      const service = await app.context.get<ConnectionService>(
-        ConnectionService.name,
-      );
-      const link = await service.create(db, []);
-
-      expect(link).toBeInstanceOf(Connection);
-      expect(validateMock).toHaveBeenCalled();
+      expect(connection).toBeInstanceOf(MockConnection);
+      expect(associateMock).toHaveBeenCalled();
+      expect(service.findOne('test').getName()).toBe('test');
     });
   });
 });

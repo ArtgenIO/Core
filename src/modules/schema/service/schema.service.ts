@@ -95,7 +95,7 @@ export class SchemaService {
     database: string,
     schema: string,
   ): ModelClass<T> {
-    return this.linkService.findByName(database).getModel<T>(schema);
+    return this.linkService.findOne(database).getModel<T>(schema);
   }
 
   findByDatabase(database: string) {
