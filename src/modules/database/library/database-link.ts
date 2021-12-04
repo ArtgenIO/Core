@@ -88,6 +88,8 @@ export class DatabaseLink implements IDatabaseLink {
         const model = toModel(schema).bindKnex(this.connection);
 
         this.associations.set(key, { schema, structure, inSync: false, model });
+
+        this.logger.info('Schema [%s] registered', schema.reference);
       }
     }
 

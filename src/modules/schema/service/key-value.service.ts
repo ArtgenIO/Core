@@ -17,7 +17,7 @@ export class KeyValueService {
     const record = await model.query().findById(key);
 
     if (record) {
-      return record.value;
+      return record.value.v;
     }
 
     return defaultValue;
@@ -28,7 +28,7 @@ export class KeyValueService {
     let record = await model.query().findById(key);
 
     if (!record) {
-      record = await model.query().insertAndFetch({ key, value });
+      record = await model.query().insertAndFetch({ key, value: { v: value } });
     } else {
       record.$set({ key, value });
 

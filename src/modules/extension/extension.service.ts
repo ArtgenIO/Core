@@ -25,11 +25,11 @@ export class ExtensionService {
   ) {}
 
   async seed() {
-    const exists = await this.rest.read('system', 'Extension', {
+    const sysExists = await this.rest.read('system', 'Extension', {
       id: this.sysExt.id,
     });
 
-    if (!exists) {
+    if (!sysExists) {
       await this.rest.create('system', 'Extension', this.sysExt as any);
       this.logger.info('Extension [system] installed');
 
