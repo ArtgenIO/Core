@@ -16,6 +16,8 @@ export const doAlterTable = async (
 
   const columns = await inspector.columnInfo(schema.tableName);
   const foreignKeys = await inspector.foreignKeys(schema.tableName);
+
+  // TODO need to read the unique sets from the table
   const revSchema = toSchema(
     schema.database,
     schema.tableName,

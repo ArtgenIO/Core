@@ -5,6 +5,8 @@ import { ISchemaStructure } from '../../interface/schema-structure.interface';
 const sortByName = (a: { name: string }, b: { name: string }) =>
   a.name > b.name ? 1 : -1;
 
+const sortByValue = (a: string, b: string) => (a > b ? 1 : -1);
+
 export const toStructure = (schema: ISchema): ISchemaStructure => {
   // Ensure no spaces are messing up the table name.
   const tableName = schema.tableName.trim();
@@ -22,7 +24,11 @@ export const toStructure = (schema: ISchema): ISchemaStructure => {
       remoteField: r.remoteField,
     }));
   // Sort the uniques
-  const uniques = Array.from(schema.uniques).sort(sortByName);
+  const uniques = Array.from(schema.uniques)
+    .sort(sortByName)
+    .map(unq => ({
+      fields: unq.fields.sort(sortByValue),
+    }));
   // Sort the indices
   const indices = Array.from(schema.indices).sort(sortByName);
   // Strip fields

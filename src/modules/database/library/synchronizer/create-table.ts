@@ -154,6 +154,10 @@ export const createTable = (
       });
 
       table.primary(getPKCols(schema));
+
+      schema.uniques.forEach(unq => {
+        table.unique(unq.fields);
+      });
     }),
   });
 

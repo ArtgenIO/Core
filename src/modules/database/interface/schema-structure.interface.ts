@@ -11,6 +11,6 @@ export interface ISchemaStructure {
   tableName: ISchema['tableName'];
   fields: IFieldStructure[];
   relations: Pick<IRelation, 'target' | 'localField' | 'remoteField'>[];
-  uniques: ISchema['uniques'];
+  uniques: { fields: string[] }[];
   indices: ISchema['indices'];
 }
