@@ -3,19 +3,17 @@ import { getErrorMessage } from '../../app/kernel';
 import { ContentService } from '../content/service/content.service';
 import { SchemaService } from '../schema/service/schema.service';
 import { DatabaseObserver } from './database.observer';
-import { IDatabaseLink } from './interface';
-import { DatabaseConnectionFactory } from './library/database-connection.factory';
-import { DatabaseSynchronizer } from './library/database-synchronizer';
-import { DatabaseLinkService } from './service/database-link.service';
+import { IConnection } from './interface';
+import { Synchronizer } from './library/synchronizer';
+import { ConnectionService } from './service/connection.service';
 import { DatabaseService } from './service/database.service';
 
 @Module({
   providers: [
-    DatabaseLinkService,
+    ConnectionService,
     DatabaseService,
-    DatabaseConnectionFactory,
     DatabaseObserver,
-    DatabaseSynchronizer,
+    Synchronizer,
   ],
 })
 export class DatabaseModule implements IModule {
@@ -26,8 +24,8 @@ export class DatabaseModule implements IModule {
     protected crudService: ContentService,
     @Inject(DatabaseService)
     protected databaseService: DatabaseService,
-    @Inject(DatabaseLinkService)
-    protected linkService: DatabaseLinkService,
+    @Inject(ConnectionService)
+    protected linkService: ConnectionService,
     @Inject(SchemaService)
     protected schemaService: SchemaService,
   ) {}
@@ -38,7 +36,7 @@ export class DatabaseModule implements IModule {
   async onStart(): Promise<void> {
     // Create the system database link.
     const system = await this.linkService.create(
-      this.databaseService.getSystem(),
+      this.databaseService.makeSystemRecord(),
       this.schemaService.getSystem(),
     );
 
@@ -51,7 +49,7 @@ export class DatabaseModule implements IModule {
       this.databaseService.findAll(),
     ]);
 
-    const updates: Promise<IDatabaseLink | unknown>[] = [];
+    const updates: Promise<IConnection | unknown>[] = [];
 
     // Map schemas to databases.
     for (const database of databases) {

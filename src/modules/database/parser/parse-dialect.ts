@@ -1,5 +1,5 @@
-import { Exception } from '../../../../app/exceptions/exception';
-import { Dialect } from '../../interface/dialect.type';
+import { Exception } from '../../../app/exceptions/exception';
+import { Dialect } from '../interface/dialect.type';
 
 export const parseDialect = (dsn: string): Dialect => {
   let protocol: string = new URL(dsn).protocol.replace(':', '').toLowerCase();

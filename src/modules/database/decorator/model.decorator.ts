@@ -15,7 +15,7 @@ export function InjectModel(
       decorator: '@InjectModel',
     },
     async (ctx: Context, injection): Promise<ModelClass<Model>> =>
-      (await ctx.get<SchemaService>(SchemaService.name)).model(
+      (await ctx.get<SchemaService>(SchemaService.name)).getModel(
         'system',
         reference,
       ),

@@ -26,7 +26,7 @@ export class WorkflowService {
   async seed(): Promise<void> {
     for (const wf of this.sysExt.workflows) {
       const exists = await this.schema
-        .model('system', 'Workflow')
+        .getModel('system', 'Workflow')
         .query()
         .findById(wf.id);
 
@@ -38,13 +38,13 @@ export class WorkflowService {
 
   async findAll(): Promise<IWorkflow[]> {
     return (
-      await this.schema.model<WorkflowModel>('system', 'Workflow').query()
+      await this.schema.getModel<WorkflowModel>('system', 'Workflow').query()
     ).map(wf => wf.$toJson());
   }
 
   async createWorkflowSession(workflowId: string, actionId?: string) {
     const workflow = await this.schema
-      .model<WorkflowModel>('system', 'Workflow')
+      .getModel<WorkflowModel>('system', 'Workflow')
       .query()
       .findById(workflowId);
 
@@ -61,7 +61,7 @@ export class WorkflowService {
 
   async createWorkflow(workflow: Omit<IWorkflow, 'id'>): Promise<IWorkflow> {
     const record = await this.schema
-      .model<WorkflowModel>('system', 'Workflow')
+      .getModel<WorkflowModel>('system', 'Workflow')
       .query()
       .insertAndFetch(workflow);
 
@@ -73,7 +73,7 @@ export class WorkflowService {
 
   async updateWorkflow(workflow: IWorkflow): Promise<IWorkflow> {
     const record = await this.schema
-      .model<WorkflowModel>('system', 'Workflow')
+      .getModel<WorkflowModel>('system', 'Workflow')
       .query()
       .findById(workflow.id);
 

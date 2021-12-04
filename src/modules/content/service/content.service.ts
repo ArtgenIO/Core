@@ -21,7 +21,7 @@ export class ContentService {
     reference: string,
     data: Record<string, unknown>,
   ): Promise<Record<string, unknown>> {
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     const record = await model.query().insertAndFetch(data);
 
     this.event.emit(`crud.${database}.${reference}.created`, record.$toJson());
@@ -34,7 +34,7 @@ export class ContentService {
     reference: string,
     odata: Record<string, unknown>,
   ): Promise<any[]> {
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     const options = merge(
       {
         $top: 10,
@@ -56,7 +56,7 @@ export class ContentService {
     data: object,
   ): Promise<unknown> {
     const schema = this.schema.findOne(database, reference);
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     const options = merge(odata, {
       $top: 1,
       $skip: 0,
@@ -116,7 +116,7 @@ export class ContentService {
     reference: string,
     odata: Record<string, unknown>,
   ): Promise<unknown> {
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     const options = merge(odata, {
       $top: 1,
       $skip: 0,

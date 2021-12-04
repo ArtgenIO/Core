@@ -1,21 +1,21 @@
 import { Column } from 'knex-schema-inspector/dist/types/column';
 import { ForeignKey } from 'knex-schema-inspector/dist/types/foreign-key';
 import { snakeCase, startCase, upperFirst } from 'lodash';
-import { FieldTag, IField, ISchema } from '../../../schema';
+import { FieldTag, IField, ISchema } from '../../schema';
 import {
   IRelation,
   RelationKind,
-} from '../../../schema/interface/relation.interface';
-import { getFieldTypeFromString } from '../../../schema/util/field-mapper';
-import { isPrimary } from '../../../schema/util/field-tools';
-import { IDatabaseLink } from '../../interface';
+} from '../../schema/interface/relation.interface';
+import { getFieldTypeFromString } from '../../schema/util/field-mapper';
+import { isPrimary } from '../../schema/util/field-tools';
+import { IConnection } from '../interface';
 
 export const toSchema = (
   database: string,
   tableName: string,
   columns: Column[],
   foreignKeys: ForeignKey[],
-  link: IDatabaseLink,
+  link: IConnection,
 ): ISchema => {
   const schema: ISchema = {
     database,

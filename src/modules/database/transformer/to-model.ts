@@ -1,7 +1,7 @@
 import { Model, ModelClass, Pojo } from 'objection';
 import { v4 } from 'uuid';
-import { FieldTag, FieldType, ISchema } from '../../../schema/interface';
-import { isPrimary } from '../../../schema/util/field-tools';
+import { FieldTag, FieldType, ISchema } from '../../schema/interface';
+import { isPrimary } from '../../schema/util/field-tools';
 
 // Map database columns to code level references
 const toProperty = (schema: ISchema) => {

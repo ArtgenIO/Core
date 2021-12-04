@@ -5,13 +5,13 @@ import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { ISchema } from '../../schema';
-import { IDatabase, IDatabaseLink } from '../interface';
+import { IConnection, IDatabase } from '../interface';
 import { IAssociation } from '../interface/association.interface';
-import { toModel } from './converters/to-model';
-import { toStructure } from './converters/to-structure';
-import { DatabaseSynchronizer } from './database-synchronizer';
+import { toModel } from '../transformer/to-model';
+import { toStructure } from '../transformer/to-structure';
+import { Synchronizer } from './synchronizer';
 
-export class DatabaseLink implements IDatabaseLink {
+export class Connection implements IConnection {
   /**
    * Inner registry to track the schema associations and their synchronized structures
    */
@@ -22,9 +22,9 @@ export class DatabaseLink implements IDatabaseLink {
     readonly logger: ILogger,
     @Inject(EventEmitter2)
     readonly eventBus: EventEmitter2,
-    @Inject(DatabaseSynchronizer)
-    readonly synchornizer: DatabaseSynchronizer,
-    readonly connection: Knex,
+    @Inject(Synchronizer)
+    readonly synchornizer: Synchronizer,
+    readonly knex: Knex,
     readonly database: IDatabase,
   ) {
     this.logger = this.logger.child({ scope: `Link:${this.getName()}` });
@@ -85,7 +85,7 @@ export class DatabaseLink implements IDatabaseLink {
           association.inSync = false;
         }
       } else {
-        const model = toModel(schema).bindKnex(this.connection);
+        const model = toModel(schema).bindKnex(this.knex);
 
         this.associations.set(key, { schema, structure, inSync: false, model });
 
@@ -106,6 +106,6 @@ export class DatabaseLink implements IDatabaseLink {
   }
 
   close(): Promise<void> {
-    return this.connection.destroy();
+    return this.knex.destroy();
   }
 }

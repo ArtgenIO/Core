@@ -43,7 +43,7 @@ export class AuthenticationService {
     email: string;
     password: string;
   }): Promise<string | false> {
-    const model = this.schema.model<AccountModel>('system', 'Account');
+    const model = this.schema.getModel<AccountModel>('system', 'Account');
 
     const account = await model.query().findOne({
       email: credentials.email,
@@ -71,7 +71,7 @@ export class AuthenticationService {
   }
 
   async getAccountByID(id: string): Promise<IAccount | false> {
-    const model = this.schema.model<AccountModel>('system', 'Account');
+    const model = this.schema.getModel<AccountModel>('system', 'Account');
     const record = await model.query().findById(id);
 
     if (record) {
@@ -82,7 +82,7 @@ export class AuthenticationService {
   }
 
   async getAccessKeyAccount(key: string): Promise<IAccount | false> {
-    const model = this.schema.model<AccountModel>('system', 'AccessKey');
+    const model = this.schema.getModel<AccountModel>('system', 'AccessKey');
     const record = await model.query().findById(key).joinRelated('account');
 
     if (record) {
@@ -96,7 +96,7 @@ export class AuthenticationService {
   }
 
   async seed() {
-    const model = this.schema.model<AccountModel>('system', 'Account');
+    const model = this.schema.getModel<AccountModel>('system', 'Account');
     const check = await model.query().limit(1).resultSize();
 
     if (check) {

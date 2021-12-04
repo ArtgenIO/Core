@@ -1,8 +1,8 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { IDatabaseLink } from '../../database/interface';
-import { DatabaseLinkService } from '../../database/service/database-link.service';
+import { IConnection } from '../../database/interface';
+import { ConnectionService } from '../../database/service/connection.service';
 import { IExtension } from '../../extension/interface/extension.interface';
 import { SystemExtensionProvider } from '../../extension/provider/system-extension.provider';
 import { ISchema } from '../interface/schema.interface';
@@ -20,8 +20,8 @@ export class SchemaService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(DatabaseLinkService)
-    readonly linkService: DatabaseLinkService,
+    @Inject(ConnectionService)
+    readonly linkService: ConnectionService,
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
     @Inject(SchemaMigrationService)
@@ -35,9 +35,9 @@ export class SchemaService {
    * to extend on the system's behavior, the synchronizer will only ensure the
    * existence of the schema and does not overide it if its present.
    */
-  async synchronize(link: IDatabaseLink) {
+  async synchronize(link: IConnection) {
     // Get the schema repository.
-    const model = this.model<SchemaModel>('system', 'Schema');
+    const model = this.getModel<SchemaModel>('system', 'Schema');
 
     for (const schema of link.getSchemas()) {
       const exists = await model.query().findOne({
@@ -77,7 +77,10 @@ export class SchemaService {
    * ensure the local cache is up to date.
    */
   async findAll(): Promise<ISchema[]> {
-    const schemas = await this.model<SchemaModel>('system', 'Schema').query();
+    const schemas = await this.getModel<SchemaModel>(
+      'system',
+      'Schema',
+    ).query();
 
     // Update the schemas, in case the database schema is not migrated.
     this.registry = schemas.map(s => this.migrator.migrate(s.$toJson()));
@@ -88,7 +91,7 @@ export class SchemaService {
   /**
    * Get the repository for the given database and schema.
    */
-  model<T extends Model = Model>(
+  getModel<T extends Model = Model>(
     database: string,
     schema: string,
   ): ModelClass<T> {
@@ -106,7 +109,7 @@ export class SchemaService {
   }
 
   async create(schema: ISchema) {
-    const model = this.model<SchemaModel>('system', 'Schema');
+    const model = this.getModel<SchemaModel>('system', 'Schema');
     await model.query().insert(schema);
 
     this.registry.push(schema);
@@ -116,7 +119,7 @@ export class SchemaService {
   }
 
   async update(update: ISchema) {
-    const model = this.model<SchemaModel>('system', 'Schema');
+    const model = this.getModel<SchemaModel>('system', 'Schema');
     const record = await model.query().findOne({
       database: update.database,
       reference: update.reference,

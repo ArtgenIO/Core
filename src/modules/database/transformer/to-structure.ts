@@ -1,6 +1,6 @@
-import { ISchema } from '../../../schema';
-import { RelationKind } from '../../../schema/interface/relation.interface';
-import { ISchemaStructure } from '../../interface/schema-structure.interface';
+import { ISchema } from '../../schema';
+import { RelationKind } from '../../schema/interface/relation.interface';
+import { ISchemaStructure } from '../interface/schema-structure.interface';
 
 const sortByName = (a: { name: string }, b: { name: string }) =>
   a.name > b.name ? 1 : -1;

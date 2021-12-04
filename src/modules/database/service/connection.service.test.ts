@@ -4,11 +4,10 @@ import { EventModule } from '../../event/event.module';
 import { SchemaModule } from '../../schema/schema.module';
 import { DatabaseModule } from '../database.module';
 import { IDatabase } from '../interface/database.interface';
-import { DatabaseConnectionFactory } from '../library/database-connection.factory';
-import { DatabaseLink } from '../library/database-link';
-import { DatabaseLinkService } from './database-link.service';
+import { Connection } from '../library/connection';
+import { ConnectionService } from './connection.service';
 
-describe(DatabaseLinkService.name, () => {
+describe(ConnectionService.name, () => {
   let app: IKernel;
 
   beforeEach(() => {
@@ -17,8 +16,8 @@ describe(DatabaseLinkService.name, () => {
   });
 
   test('should be able to resolve the link service', async () => {
-    expect(await app.context.get(DatabaseLinkService.name)).toBeInstanceOf(
-      DatabaseLinkService,
+    expect(await app.context.get(ConnectionService.name)).toBeInstanceOf(
+      ConnectionService,
     );
   });
 
@@ -33,21 +32,16 @@ describe(DatabaseLinkService.name, () => {
         }),
       };
 
-      app.context
-        .bind(DatabaseConnectionFactory.name)
-        .to(connectionFactoryMock);
-
       const db: IDatabase = {
         name: 'test',
-        type: 'sqlite',
         dsn,
       };
-      const service = await app.context.get<DatabaseLinkService>(
-        DatabaseLinkService.name,
+      const service = await app.context.get<ConnectionService>(
+        ConnectionService.name,
       );
       const link = await service.create(db, []);
 
-      expect(link).toBeInstanceOf(DatabaseLink);
+      expect(link).toBeInstanceOf(Connection);
       expect(validateMock).toHaveBeenCalled();
       expect(service.findByName('test')).toStrictEqual(link);
     });
@@ -62,21 +56,16 @@ describe(DatabaseLinkService.name, () => {
         }),
       };
 
-      app.context
-        .bind(DatabaseConnectionFactory.name)
-        .to(connectionFactoryMock);
-
       const db: IDatabase = {
         name: 'test',
-        type: 'mysql',
         dsn: url,
       };
-      const service = await app.context.get<DatabaseLinkService>(
-        DatabaseLinkService.name,
+      const service = await app.context.get<ConnectionService>(
+        ConnectionService.name,
       );
       const link = await service.create(db, []);
 
-      expect(link).toBeInstanceOf(DatabaseLink);
+      expect(link).toBeInstanceOf(Connection);
       expect(validateMock).toHaveBeenCalled();
     });
 
@@ -90,21 +79,16 @@ describe(DatabaseLinkService.name, () => {
         }),
       };
 
-      app.context
-        .bind(DatabaseConnectionFactory.name)
-        .to(connectionFactoryMock);
-
       const db: IDatabase = {
         name: 'test',
-        type: 'postgres',
         dsn: url,
       };
-      const service = await app.context.get<DatabaseLinkService>(
-        DatabaseLinkService.name,
+      const service = await app.context.get<ConnectionService>(
+        ConnectionService.name,
       );
       const link = await service.create(db, []);
 
-      expect(link).toBeInstanceOf(DatabaseLink);
+      expect(link).toBeInstanceOf(Connection);
       expect(validateMock).toHaveBeenCalled();
     });
   });

@@ -4,7 +4,7 @@ import { IDatabase } from '.';
 import { ISchema } from '../../schema';
 import { IAssociation } from './association.interface';
 
-export interface IDatabaseLink {
+export interface IConnection {
   /**
    * Reference to the database record
    */
@@ -13,7 +13,7 @@ export interface IDatabaseLink {
   /**
    * ORM connection
    */
-  readonly connection: Knex;
+  readonly knex: Knex;
 
   /**
    *

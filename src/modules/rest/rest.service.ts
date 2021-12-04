@@ -35,7 +35,7 @@ export class RestService {
     input: SchemaInput,
   ): Promise<unknown> {
     // Load the model
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     const event = `crud.${database}.${reference}.created`;
 
     try {
@@ -60,7 +60,7 @@ export class RestService {
     filterKeys: object,
   ): Promise<unknown> {
     // Load the model
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     const schema = this.schema.findOne(database, reference);
     const pks = schema.fields.filter(isPrimary).map(f => f.reference);
 
@@ -85,7 +85,7 @@ export class RestService {
    */
   async list(database: string, reference: string): Promise<SchemaInput[]> {
     // Load the model
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     const records = await model.query();
 
     if (records) {
@@ -105,7 +105,7 @@ export class RestService {
     attributes?: string[],
   ): Promise<SchemaInput[]> {
     // Load the model
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
 
     const records = await model.query().where(conditions).select(attributes);
 
@@ -124,7 +124,7 @@ export class RestService {
     // Define the event key.
     const event = `crud.${database}.${reference}.updated`;
     // Load the model
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     // Load the data schema
     const schema = this.schema.findOne(database, reference);
 
@@ -184,7 +184,7 @@ export class RestService {
     // Define the event key.
     const event = `crud.${database}.${reference}.deleted`;
     // Get the model
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
 
     // Fetch the record
     const record = await model.query().findById(Object.values(idValues));

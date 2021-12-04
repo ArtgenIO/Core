@@ -5,7 +5,7 @@ import { EventModule } from '../../event';
 import { ExtensionModule } from '../../extension/extension.module';
 import { SchemaModule } from '../../schema/schema.module';
 import { DatabaseModule } from '../database.module';
-import { DatabaseLink } from './database-link';
+import { Connection } from './connection';
 
 describe('DatabaseLink', () => {
   let app: IKernel;
@@ -16,7 +16,7 @@ describe('DatabaseLink', () => {
   });
 
   const createLink = (connection = {}) => {
-    return new DatabaseLink(
+    return new Connection(
       createLogger(),
       new EventEmitter2(),
       connection as any,

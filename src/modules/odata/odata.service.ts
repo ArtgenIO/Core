@@ -31,7 +31,7 @@ export class ODataService {
     records: SchemaInput[],
   ): Promise<IODataResult[]> {
     // Load the model
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     const result: IODataResult[] = [];
     const event = `crud.${database}.${reference}.created`;
 
@@ -78,7 +78,7 @@ export class ODataService {
     filters: SchemaInput,
   ): Promise<SchemaInput[]> {
     // Load the model
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
 
     // Merge with the defualts
     const options = merge(
@@ -110,7 +110,7 @@ export class ODataService {
     // Define the event key.
     const event = `crud.${database}.${reference}.updated`;
     // Load the model
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     // Load the data schema
     const schema = this.schema.findOne(database, reference);
     const primaryKeys = schema.fields.filter(isPrimary).map(f => f.reference);
@@ -257,7 +257,7 @@ export class ODataService {
     // Define the event key.
     const event = `crud.${database}.${reference}.deleted`;
     // Get the model
-    const model = this.schema.model(database, reference);
+    const model = this.schema.getModel(database, reference);
     // Merge with a safer skip 0 option
     const options = merge(filters, {
       $skip: 0,

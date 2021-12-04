@@ -26,7 +26,7 @@ export class PageService {
       this.isSeeded = true;
     }
 
-    const model = this.schema.model<PageModel>('system', 'Page');
+    const model = this.schema.getModel<PageModel>('system', 'Page');
     const pages = await model
       .query()
       .select(['id', 'label', 'domain', 'path', '__artgen_tags']);
@@ -35,7 +35,7 @@ export class PageService {
   }
 
   async getHtml(id: string): Promise<string> {
-    const model = this.schema.model<PageModel>('system', 'Page');
+    const model = this.schema.getModel<PageModel>('system', 'Page');
     const page: IPage = (await model.query().findById(id)).$toJson();
     const html = `<html>
       <head>
@@ -49,7 +49,7 @@ export class PageService {
   }
 
   async seed() {
-    const model = this.schema.model('system', 'Page');
+    const model = this.schema.getModel('system', 'Page');
 
     // ALready exists
     if (await model.query().findById('1e1b9598-f8b8-4487-9b7b-166a363e8ce8')) {

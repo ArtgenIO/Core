@@ -4,15 +4,15 @@ import { Observer, On } from '../event';
 import { ISchema } from '../schema';
 import { SchemaService } from '../schema/service/schema.service';
 import { IDatabase } from './interface';
-import { DatabaseLinkService } from './service/database-link.service';
+import { ConnectionService } from './service/connection.service';
 
 @Observer()
 export class DatabaseObserver {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(DatabaseLinkService)
-    readonly linkService: DatabaseLinkService,
+    @Inject(ConnectionService)
+    readonly linkService: ConnectionService,
     @Inject(SchemaService)
     readonly schemaService: SchemaService,
   ) {}
@@ -49,7 +49,7 @@ export class DatabaseObserver {
     try {
       const link = this.linkService.findByName(schema.database);
       // Delete the table
-      await link.connection.schema.dropTable(schema.tableName);
+      await link.knex.schema.dropTable(schema.tableName);
     } catch (error) {
       this.logger.error(getErrorMessage(error));
     }
