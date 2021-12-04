@@ -13,7 +13,6 @@ import {
   Popconfirm,
   Result,
   Skeleton,
-  Tag,
   Tooltip,
 } from 'antd';
 import { QueryBuilder } from 'odata-query-builder';
@@ -72,8 +71,6 @@ export default function DatabaseListComponent() {
                 }
                 title={<span className="text-xl font-thin">{db.name}</span>}
               />
-
-              <Tag>{db.type}</Tag>
 
               <Link to={`/admin/database/${db.name}/edit`}>
                 <Tooltip title="Edit Connection Details" placement="leftBottom">

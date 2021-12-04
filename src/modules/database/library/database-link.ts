@@ -9,7 +9,7 @@ import { IDatabase, IDatabaseLink } from '../interface';
 import { IAssociation } from '../interface/association.interface';
 import { toModel } from './converters/to-model';
 import { toStructure } from './converters/to-structure';
-import { DatabaseSynchronizer } from './synchronizer/database-synchronizer';
+import { DatabaseSynchronizer } from './database-synchronizer';
 
 export class DatabaseLink implements IDatabaseLink {
   /**

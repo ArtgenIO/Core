@@ -1,5 +1,3 @@
-import { Dialect } from './dialect.type';
-
 export interface IDatabase {
   /**
    * Readonly unique name, used as an identifier.
@@ -14,9 +12,4 @@ export interface IDatabase {
    * @example sqlite::memory:
    */
   dsn: string;
-
-  /**
-   * Database type, used by the ORM to identify which driver to load for the connection.
-   */
-  type: Dialect;
 }

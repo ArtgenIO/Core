@@ -5,7 +5,7 @@ import { SchemaService } from '../schema/service/schema.service';
 import { DatabaseObserver } from './database.observer';
 import { IDatabaseLink } from './interface';
 import { DatabaseConnectionFactory } from './library/database-connection.factory';
-import { DatabaseSynchronizer } from './library/synchronizer/database-synchronizer';
+import { DatabaseSynchronizer } from './library/database-synchronizer';
 import { DatabaseLinkService } from './service/database-link.service';
 import { DatabaseService } from './service/database.service';
 

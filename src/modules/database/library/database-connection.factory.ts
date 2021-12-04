@@ -2,6 +2,7 @@ import knex, { Knex } from 'knex';
 import { ILogger, Logger, Service } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { IDatabase } from '../interface';
+import { parseDialect } from './parser/parse-dialect';
 
 @Service()
 export class DatabaseConnectionFactory {
@@ -11,7 +12,9 @@ export class DatabaseConnectionFactory {
   ) {}
 
   create(database: IDatabase): Knex {
-    switch (database.type) {
+    const dialect = parseDialect(database.dsn);
+
+    switch (dialect) {
       case 'sqlite':
         return this.createSQLiteConnection(database);
       case 'postgres':
@@ -20,11 +23,9 @@ export class DatabaseConnectionFactory {
         return this.createMySQLConnection(database);
       case 'mariadb':
         return this.createMariaDBConnection(database);
-      default:
-        throw new Exception(
-          `Database type [${database.type}] is not supported`,
-        );
     }
+
+    throw new Exception(`Dialect [${dialect}] is not supported`);
   }
 
   protected createSQLiteConnection(connection: IDatabase): Knex {
@@ -33,8 +34,6 @@ export class DatabaseConnectionFactory {
       connection: {
         filename: connection.dsn.substr(7),
       },
-      asyncStackTraces: true,
-      log: this.logger.child({ scope: `DB:${connection.name}` }),
     });
   }
 
@@ -42,8 +41,6 @@ export class DatabaseConnectionFactory {
     return knex({
       client: 'pg',
       connection: connection.dsn,
-      asyncStackTraces: true,
-      log: this.logger.child({ scope: `DB:${connection.name}` }),
     });
   }
 
@@ -51,8 +48,6 @@ export class DatabaseConnectionFactory {
     return knex({
       client: 'mysql',
       connection: connection.dsn,
-      asyncStackTraces: true,
-      log: this.logger.child({ scope: `DB:${connection.name}` }),
     });
   }
 
@@ -60,8 +55,6 @@ export class DatabaseConnectionFactory {
     return knex({
       client: 'mysql',
       connection: connection.dsn,
-      asyncStackTraces: true,
-      log: this.logger.child({ scope: `DB:${connection.name}` }),
     });
   }
 }

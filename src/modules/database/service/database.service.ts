@@ -1,10 +1,8 @@
 import { Model } from 'objection';
 import { Inject, Service } from '../../../app/container';
-import { Exception } from '../../../app/exceptions/exception';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IDatabaseLink } from '../interface';
 import { IDatabase } from '../interface/database.interface';
-import { Dialect } from '../interface/dialect.type';
 
 type DatabaseModel = IDatabase & Model;
 
@@ -66,38 +64,9 @@ export class DatabaseService {
    * Database type is auto extracted from the DSN.
    */
   getSystem(): IDatabase {
-    const dsn = process.env.ARTGEN_DATABASE_DSN;
-
     return {
       name: 'system',
-      dsn,
-      type: this.getTypeFromDSN(dsn),
+      dsn: process.env.ARTGEN_DATABASE_DSN,
     };
-  }
-
-  /**
-   * Get the database type from the given DSN
-   *
-   * @throws {Exception} When the DSN protocol is a not supported type.
-   * @throws {Error} When the DSN is not a valid URL and not :memory:
-   */
-  getTypeFromDSN(dsn: string): Dialect {
-    if (dsn === 'sqlite::memory:') {
-      return 'sqlite';
-    }
-
-    let protocol: string = new URL(dsn).protocol.replace(':', '').toLowerCase();
-
-    if (protocol === 'postgresql') {
-      protocol = 'postgres';
-    }
-
-    if (
-      ['mongodb', 'postgres', 'mysql', 'mariadb', 'sqlite'].includes(protocol)
-    ) {
-      return protocol as Dialect;
-    } else {
-      throw new Exception(`Unsupported database type [${protocol}]`);
-    }
   }
 }

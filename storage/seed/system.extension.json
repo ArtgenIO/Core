@@ -117,21 +117,6 @@
           "typeParams": {
             "values": []
           }
-        },
-        {
-          "reference": "type",
-          "columnName": "type",
-          "label": "Database Type",
-          "type": "enum",
-          "typeParams": {
-            "values": [
-              "postgres",
-              "mysql",
-              "mariadb",
-              "sqlite"
-            ]
-          },
-          "tags": []
         }
       ],
       "indices": [],

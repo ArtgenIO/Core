@@ -1,4 +1,5 @@
 import { ISchema } from '../../../schema';
+import { RelationKind } from '../../../schema/interface/relation.interface';
 import { ISchemaStructure } from '../../interface/schema-structure.interface';
 
 const sortByName = (a: { name: string }, b: { name: string }) =>
@@ -10,6 +11,11 @@ export const toStructure = (schema: ISchema): ISchemaStructure => {
   // Sort the relations by name.
   const relations = Array.from(schema.relations)
     .sort(sortByName)
+    .filter(
+      r =>
+        r.kind === RelationKind.BELONGS_TO_ONE ||
+        r.kind === RelationKind.BELONGS_TO_MANY,
+    )
     .map(r => ({
       target: r.target,
       localField: r.localField,

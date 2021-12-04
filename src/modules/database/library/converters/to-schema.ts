@@ -58,13 +58,13 @@ export const toSchema = (
     const remoteField = target.fields.find(
       f => f.columnName === foreign.foreign_key_column,
     );
-    const kind = isPrimary(localField)
-      ? isPrimary(remoteField)
-        ? RelationKind.HAS_ONE
-        : RelationKind.HAS_MANY
-      : isPrimary(remoteField)
-      ? RelationKind.BELONGS_TO_ONE
-      : RelationKind.BELONGS_TO_MANY;
+    const remotePKs = target.fields.filter(isPrimary);
+    // When the remote has multiple PKs then it must be a connection table
+    // TODO do reverse checks to see which other table has FK on the target table to determin who is the real target in M:M
+    const kind =
+      remotePKs.length === 1
+        ? RelationKind.BELONGS_TO_ONE
+        : RelationKind.BELONGS_TO_MANY;
 
     const relation: IRelation = {
       name: foreign.constraint_name,

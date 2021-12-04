@@ -1,12 +1,13 @@
 import { DepGraph } from 'dependency-graph';
 import createInspector from 'knex-schema-inspector';
-import { ILogger, Logger } from '../../../../app/container';
-import { ISchema } from '../../../schema';
-import { RelationKind } from '../../../schema/interface/relation.interface';
-import { IDatabaseLink } from '../../interface';
-import { createRelations } from './create-relations';
-import { createTable } from './create-table';
-import { QueryInstruction } from './query-plan';
+import { ILogger, Logger } from '../../../app/container';
+import { ISchema } from '../../schema';
+import { RelationKind } from '../../schema/interface/relation.interface';
+import { IDatabaseLink } from '../interface';
+import { doAlterTable } from './synchronizer/alter-table';
+import { createRelations } from './synchronizer/create-relations';
+import { createTable } from './synchronizer/create-table';
+import { QueryInstruction } from './synchronizer/query-plan';
 
 export class DatabaseSynchronizer {
   constructor(
@@ -83,7 +84,7 @@ export class DatabaseSynchronizer {
         instructions.push(...createTable(schema, link));
         instructions.push(...createRelations(schema, link));
       } else {
-        //await doAlterTable(schema, link, inspector);
+        instructions.push(...(await doAlterTable(schema, link, inspector)));
       }
 
       link.getAssications().get(schema.reference).inSync = true;
