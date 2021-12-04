@@ -54,10 +54,6 @@ export class SchemaSerializer {
             sourceHandle = 'belongs-to-many';
             targetHandle = 'has-many';
             break;
-          case RelationKind.MANY_TO_MANY:
-            sourceHandle = 'belongs-to-many';
-            targetHandle = 'has-many';
-            break;
         }
 
         const edge: Edge = {

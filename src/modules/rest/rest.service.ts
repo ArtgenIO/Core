@@ -9,7 +9,7 @@ import { ContentAction } from '../content/interface/content-action.enum';
 import { schemaToJsonSchema } from '../content/util/schema-to-jsonschema';
 import { ISchema } from '../schema';
 import { SchemaService } from '../schema/service/schema.service';
-import { isManagedField, isPrimary } from '../schema/util/is-primary';
+import { isManagedField, isPrimary } from '../schema/util/field-tools';
 
 type SchemaInput = Record<string, unknown>;
 

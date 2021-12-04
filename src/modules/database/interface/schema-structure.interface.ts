@@ -1,4 +1,5 @@
 import { IField, ISchema } from '../../schema';
+import { IRelation } from '../../schema/interface/relation.interface';
 
 type IFieldStructure = Pick<IField, 'columnName' | 'type' | 'typeParams'>;
 
@@ -9,7 +10,7 @@ type IFieldStructure = Pick<IField, 'columnName' | 'type' | 'typeParams'>;
 export interface ISchemaStructure {
   tableName: ISchema['tableName'];
   fields: IFieldStructure[];
-  relations: ISchema['relations'];
+  relations: Pick<IRelation, 'target' | 'localField' | 'remoteField'>[];
   uniques: ISchema['uniques'];
   indices: ISchema['indices'];
 }

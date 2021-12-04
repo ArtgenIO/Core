@@ -9,7 +9,7 @@ import { IDatabase, IDatabaseLink } from '../interface';
 import { IAssociation } from '../interface/association.interface';
 import { toModel } from './converters/to-model';
 import { toStructure } from './converters/to-structure';
-import { synchronize } from './synchronizer';
+import { DatabaseSynchronizer } from './synchronizer/database-synchronizer';
 
 export class DatabaseLink implements IDatabaseLink {
   /**
@@ -22,10 +22,16 @@ export class DatabaseLink implements IDatabaseLink {
     readonly logger: ILogger,
     @Inject(EventEmitter2)
     readonly eventBus: EventEmitter2,
+    @Inject(DatabaseSynchronizer)
+    readonly synchornizer: DatabaseSynchronizer,
     readonly connection: Knex,
     readonly database: IDatabase,
   ) {
     this.logger = this.logger.child({ scope: `Link:${this.getName()}` });
+  }
+
+  getAssications() {
+    return this.associations;
   }
 
   getName(): string {
@@ -92,29 +98,8 @@ export class DatabaseLink implements IDatabaseLink {
    * Synchronize the schemas with the database and the ORM.
    */
   protected async synchronize(): Promise<void> {
-    // Reduce the associations to only the changed schemas.
-    const changes: ISchema[] = Array.from(this.associations.values())
-      .filter(association => !association.inSync)
-      .map(association => association.schema);
+    await this.synchornizer.sync(this);
 
-    // Nothing has changed, skip early.
-    if (!changes.length) {
-      return;
-    }
-
-    for (const schema of changes) {
-      // Imported / protected schemas are not synchronized.
-      if (!schema || schema.tags.includes('readonly')) {
-        continue;
-      }
-      this.logger.debug('Synchornizing [%s] schema', schema.reference);
-
-      await synchronize(schema, this.connection);
-
-      this.associations.get(schema.reference).inSync = true;
-    }
-
-    this.logger.info('Associations has been synchronized');
     this.eventBus.emit(`link.${this.database.name}.updated`, this);
   }
 

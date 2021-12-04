@@ -8,7 +8,13 @@ export const toStructure = (schema: ISchema): ISchemaStructure => {
   // Ensure no spaces are messing up the table name.
   const tableName = schema.tableName.trim();
   // Sort the relations by name.
-  const relations = Array.from(schema.relations).sort(sortByName);
+  const relations = Array.from(schema.relations)
+    .sort(sortByName)
+    .map(r => ({
+      target: r.target,
+      localField: r.localField,
+      remoteField: r.remoteField,
+    }));
   // Sort the uniques
   const uniques = Array.from(schema.uniques).sort(sortByName);
   // Sort the indices

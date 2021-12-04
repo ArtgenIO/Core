@@ -4,7 +4,7 @@ import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { ILogger, Inject, Logger } from '../../app/container';
 import { getErrorMessage } from '../../app/kernel';
 import { SchemaService } from '../schema/service/schema.service';
-import { isManagedField, isPrimary } from '../schema/util/is-primary';
+import { isManagedField, isPrimary } from '../schema/util/field-tools';
 import { IODataResult } from './interface/odata-result.interface';
 
 type SchemaInput = Record<string, unknown>;

@@ -6,18 +6,18 @@ const VCHAR_PATTERN = /CHARACTER VARYING\((\d+)\)/;
 const CHAR_PATTERN = /CHARACTER\((\d+)\)/;
 
 export const getFieldTypeFromString = (
-  column: Column,
+  col: Column,
 ): { type: FieldType; typeParams: IField['typeParams'] } => {
   let type: FieldType;
   let params: IField['typeParams'] = {
     values: [],
-    precision:
-      column.numeric_precision === null ? undefined : column.numeric_precision,
-    scale: column.numeric_scale === null ? undefined : column.numeric_scale,
-    length: column.max_length === null ? undefined : column.max_length,
   };
 
-  const text = column.data_type.toUpperCase();
+  if (col.numeric_precision !== null) params.precision = col.numeric_precision;
+  if (col.numeric_scale !== null) params.scale = col.numeric_scale;
+  if (col.max_length !== null) params.length = col.max_length;
+
+  const text = col.data_type.toUpperCase();
 
   // Simple types
   switch (text) {

@@ -25,7 +25,7 @@ import PageWithHeader from '../../admin/layout/PageWithHeader';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { FieldType, ISchema } from '../../schema';
-import { isPrimary } from '../../schema/util/is-primary';
+import { isPrimary } from '../../schema/util/field-tools';
 import { ContentAction } from '../interface/content-action.enum';
 import {
   routeCrudAPI,
@@ -58,13 +58,9 @@ export default function CrudReadComponent() {
   // Load content
   const [{ data: content, loading: isContentLoading }, refetch] = useHttpClient<
     object[]
-  >(
-    routeCrudAPI(route) +
-      new QueryBuilder().top(10_000).toQuery(),
-    {
-      useCache: false,
-    },
-  );
+  >(routeCrudAPI(route) + new QueryBuilder().top(10_000).toQuery(), {
+    useCache: false,
+  });
 
   // Local state
   const [columns, setColumns] = useState<TableColumnsType>([]);

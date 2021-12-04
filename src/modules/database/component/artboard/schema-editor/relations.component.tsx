@@ -9,12 +9,11 @@ import { useHttpClient } from '../../../../admin/library/use-http-client';
 import { routeCrudAPI } from '../../../../content/util/schema-url';
 import { ISchema } from '../../../../schema';
 import { RelationKind } from '../../../../schema/interface/relation.interface';
-import { isPrimary } from '../../../../schema/util/is-primary';
+import { isPrimary } from '../../../../schema/util/field-tools';
 import RelationBelongsToMany from './relation/belongs-many.component';
 import RelationBelongsToOne from './relation/belongs-one.component';
 import RelationHasMany from './relation/has-many.component';
 import RelationHasOne from './relation/has-one.component';
-import RelationManyToMany from './relation/many-to-many.component';
 
 export default function RelationsComponent({
   schema,
@@ -61,15 +60,6 @@ export default function RelationsComponent({
           newState.relations.push({
             kind,
             name: 'newBelongsToManyRelation',
-            target: null,
-            localField: s.fields.find(isPrimary).reference,
-            remoteField: null,
-          });
-          break;
-        case RelationKind.MANY_TO_MANY:
-          newState.relations.push({
-            kind,
-            name: 'newManyToManyRelation',
             target: null,
             localField: s.fields.find(isPrimary).reference,
             remoteField: null,
@@ -161,16 +151,6 @@ export default function RelationsComponent({
                 setSchema={setSchema}
               />
             );
-          } else if (relation.kind === RelationKind.MANY_TO_MANY) {
-            return (
-              <RelationManyToMany
-                schemas={schemas}
-                schema={schema}
-                relation={relation}
-                idx={k}
-                setSchema={setSchema}
-              />
-            );
           } else if (relation.kind === RelationKind.HAS_MANY) {
             return (
               <RelationHasMany
@@ -219,17 +199,6 @@ export default function RelationsComponent({
             className="hover:text-green-400 mr-2"
           >
             Add Belongs To Many Relation
-          </Button>
-          <Button
-            ghost
-            block
-            key="many-to-many"
-            size="middle"
-            type="dashed"
-            onClick={() => addNewRelation(RelationKind.MANY_TO_MANY)}
-            className="hover:text-blue-400"
-          >
-            Add Has Many To Many Relation
           </Button>
         </div>
         <div className="mt-4 flex">

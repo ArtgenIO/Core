@@ -2,6 +2,7 @@ import { Knex } from 'knex';
 import { Model, ModelClass } from 'objection';
 import { IDatabase } from '.';
 import { ISchema } from '../../schema';
+import { IAssociation } from './association.interface';
 
 export interface IDatabaseLink {
   /**
@@ -13,6 +14,11 @@ export interface IDatabaseLink {
    * ORM connection
    */
   readonly connection: Knex;
+
+  /**
+   *
+   */
+  getAssications(): Map<string, IAssociation>;
 
   /**
    * Get the unique name for the database link.
@@ -36,6 +42,11 @@ export interface IDatabaseLink {
    * Get the associated schemas.
    */
   getSchemas(): ISchema[];
+
+  /**
+   * Get the associated schema.
+   */
+  getSchema(reference: string): ISchema;
 
   /**
    * Close the connection to the database.

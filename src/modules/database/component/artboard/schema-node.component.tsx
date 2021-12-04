@@ -2,7 +2,7 @@ import { Tooltip } from 'antd';
 import React, { Dispatch, SetStateAction } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import { FieldTag, ISchema } from '../../../schema';
-import { isPrimary } from '../../../schema/util/is-primary';
+import { isPrimary } from '../../../schema/util/field-tools';
 
 export const createSchemaNode =
   (dblClickHandler: Dispatch<SetStateAction<unknown>>) =>

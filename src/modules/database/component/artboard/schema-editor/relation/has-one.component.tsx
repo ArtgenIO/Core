@@ -7,7 +7,7 @@ import { IRelation } from '../../../../../schema/interface/relation.interface';
 import {
   getTakenColumNames,
   isPrimary,
-} from '../../../../../schema/util/is-primary';
+} from '../../../../../schema/util/field-tools';
 
 export default function RelationHasOne({
   relation,

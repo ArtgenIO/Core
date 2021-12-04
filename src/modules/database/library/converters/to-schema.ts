@@ -1,12 +1,21 @@
 import { Column } from 'knex-schema-inspector/dist/types/column';
+import { ForeignKey } from 'knex-schema-inspector/dist/types/foreign-key';
 import { snakeCase, startCase, upperFirst } from 'lodash';
 import { FieldTag, IField, ISchema } from '../../../schema';
+import {
+  IRelation,
+  RelationKind,
+} from '../../../schema/interface/relation.interface';
 import { getFieldTypeFromString } from '../../../schema/util/field-mapper';
+import { isPrimary } from '../../../schema/util/field-tools';
+import { IDatabaseLink } from '../../interface';
 
 export const toSchema = (
   database: string,
   tableName: string,
   columns: Column[],
+  foreignKeys: ForeignKey[],
+  link: IDatabaseLink,
 ): ISchema => {
   const schema: ISchema = {
     database,
@@ -41,6 +50,32 @@ export const toSchema = (
     if (col.is_unique) field.tags.push(FieldTag.UNIQUE);
 
     schema.fields.push(field);
+  });
+
+  foreignKeys.forEach(foreign => {
+    const target = link.getSchemas().find(s => s.tableName);
+    const localField = schema.fields.find(f => f.columnName == foreign.column);
+    const remoteField = target.fields.find(
+      f => f.columnName === foreign.foreign_key_column,
+    );
+    const kind = isPrimary(localField)
+      ? isPrimary(remoteField)
+        ? RelationKind.HAS_ONE
+        : RelationKind.HAS_MANY
+      : isPrimary(remoteField)
+      ? RelationKind.BELONGS_TO_ONE
+      : RelationKind.BELONGS_TO_MANY;
+
+    const relation: IRelation = {
+      name: foreign.constraint_name,
+      kind,
+      target: target.reference,
+      localField: localField.reference,
+      remoteField: remoteField.reference,
+      through: undefined,
+    };
+
+    schema.relations.push(relation);
   });
 
   return schema;
