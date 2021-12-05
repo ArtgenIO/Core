@@ -1,7 +1,7 @@
 import { Column } from 'knex-schema-inspector/dist/types/column';
 import { ForeignKey } from 'knex-schema-inspector/dist/types/foreign-key';
-import { snakeCase, startCase, upperFirst } from 'lodash';
-import { FieldTag, IField, ISchema } from '../../schema';
+import { camelCase, snakeCase, startCase, upperFirst } from 'lodash';
+import { FieldTag, FieldType, IField, ISchema } from '../../schema';
 import {
   IRelation,
   RelationKind,
@@ -10,15 +10,17 @@ import { getFieldTypeFromString } from '../../schema/util/field-mapper';
 import { isPrimary } from '../../schema/util/field-tools';
 import { IConnection } from '../interface';
 import { Unique } from '../interface/inspector.interface';
+import { Inspector } from '../library/inspector';
 
-export const toSchema = (
+export const toSchema = async (
   database: string,
   tableName: string,
   columns: Column[],
   foreignKeys: ForeignKey[],
   uniques: Unique[],
   link: IConnection,
-): ISchema => {
+  inspector: Inspector,
+): Promise<ISchema> => {
   const schema: ISchema = {
     database,
     reference: upperFirst(snakeCase(tableName)),
@@ -42,15 +44,29 @@ export const toSchema = (
     .filter(unq => unq.columns.length === 1)
     .map(unq => unq.columns[0]);
 
-  columns.forEach(col => {
+  for (const col of columns) {
     const field: IField = {
       label: upperFirst(startCase(col.name)),
-      reference: snakeCase(col.name),
+      reference: camelCase(col.name),
       columnName: col.name,
       defaultValue: col.default_value,
-      ...getFieldTypeFromString(col),
+      type: FieldType.STRING,
+      typeParams: {
+        values: [],
+      },
       tags: [],
     };
+
+    // Need to reverse the type
+    if (col.data_type === 'USER-DEFINED') {
+      const sType = await inspector.getType(tableName, col.name);
+      field.type = sType.type;
+      field.typeParams = sType.typeParams;
+    } else {
+      const revType = getFieldTypeFromString(col);
+      field.type = revType.type;
+      field.typeParams = revType.typeParams;
+    }
 
     if (col.is_primary_key) field.tags.push(FieldTag.PRIMARY);
     if (col.is_nullable) field.tags.push(FieldTag.NULLABLE);
@@ -58,7 +74,7 @@ export const toSchema = (
       field.tags.push(FieldTag.UNIQUE);
 
     schema.fields.push(field);
-  });
+  }
 
   foreignKeys.forEach(foreign => {
     const target = link

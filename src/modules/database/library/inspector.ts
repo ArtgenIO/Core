@@ -31,4 +31,12 @@ export class Inspector {
   uniques(tableName: string) {
     return this.dialectInspector.getUniques(tableName);
   }
+
+  getType(tableName: string, columnName: string) {
+    return this.dialectInspector.getSpecialType(tableName, columnName);
+  }
+
+  isTypeExists(typeName: string) {
+    return this.dialectInspector.isTypeExists(typeName);
+  }
 }

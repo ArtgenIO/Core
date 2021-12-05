@@ -1,7 +1,7 @@
 import { DepGraph } from 'dependency-graph';
 import { diff } from 'just-diff';
 import { Knex } from 'knex';
-import { isEqual } from 'lodash';
+import { isEqual, snakeCase } from 'lodash';
 import { ILogger, Logger } from '../../../app/container';
 import { FieldTag, FieldType, ISchema } from '../../schema';
 import { RelationKind } from '../../schema/interface/relation.interface';
@@ -40,13 +40,14 @@ export class Synchronizer {
     const uniques = await inspector.uniques(schema.tableName);
 
     // TODO need to read the unique sets from the table
-    const revSchema = toSchema(
+    const revSchema = await toSchema(
       schema.database,
       schema.tableName,
       columns,
       foreignKeys,
       uniques,
       link,
+      inspector,
     );
 
     const revStruct = toStructure(revSchema);
@@ -78,13 +79,27 @@ export class Synchronizer {
     return instructions;
   }
 
-  protected createTable(schema: ISchema, link: IConnection): ChangeStep[] {
+  protected async createTable(
+    schema: ISchema,
+    link: IConnection,
+    inspector: Inspector,
+  ): Promise<ChangeStep[]> {
     const instructions: ChangeStep[] = [];
+    const typeChecks = new Map<string, boolean>();
+
+    for (const f of schema.fields) {
+      if (f.type === FieldType.ENUM) {
+        const typeName = snakeCase(`enum_${schema.reference}_${f.reference}`);
+        const enumExists = await inspector.isTypeExists(typeName);
+
+        typeChecks.set(typeName, enumExists);
+      }
+    }
 
     instructions.push({
       type: 'create',
       query: link.knex.schema.createTable(schema.tableName, table => {
-        schema.fields.forEach(f => {
+        for (const f of schema.fields) {
           let col: Knex.ColumnBuilder;
 
           switch (f.type) {
@@ -157,7 +172,16 @@ export class Synchronizer {
               col = table.binary(f.columnName);
               break;
             case FieldType.ENUM:
-              col = table.enum(f.columnName, f.typeParams.values);
+              const typeName = snakeCase(
+                `enum_${schema.reference}_${f.reference}`,
+              );
+
+              col = table.enum(f.columnName, f.typeParams.values, {
+                useNative: true,
+                enumName: typeName,
+                existingType: typeChecks.get(typeName),
+              });
+
               break;
             case FieldType.JSONB:
               col = table.jsonb(f.columnName);
@@ -202,7 +226,7 @@ export class Synchronizer {
                 break;
             }
           }
-        });
+        }
       }),
     });
 
@@ -330,7 +354,7 @@ export class Synchronizer {
       this.logger.debug('Synchornizing [%s] schema', schema.reference);
 
       if (!isSchemaExits(schema)) {
-        instructions.push(...this.createTable(schema, link));
+        instructions.push(...(await this.createTable(schema, link, inspector)));
         instructions.push(...this.createRelations(schema, link));
       } else {
         instructions.push(

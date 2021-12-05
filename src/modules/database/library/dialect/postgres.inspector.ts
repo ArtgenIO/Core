@@ -1,8 +1,59 @@
 import { Knex } from 'knex';
+import { FieldType, IField } from '../../../schema';
 import { IDialectInspector, Unique } from '../../interface/inspector.interface';
 
 export class PostgresInspector implements IDialectInspector {
   constructor(protected knex: Knex) {}
+
+  async isTypeExists(typeName: string): Promise<boolean> {
+    const query = this.knex('pg_type').where({ typname: typeName }).count();
+    const result = await query;
+
+    return result[0].count == 1;
+  }
+
+  async getSpecialType(
+    tableName: string,
+    columnName: string,
+  ): Promise<Pick<IField, 'type' | 'typeParams'>> {
+    const query = this.knex({
+      e: 'pg_enum',
+    })
+      .select({
+        type: 't.typname',
+        value: 'e.enumlabel',
+      })
+      .join(
+        {
+          t: 'pg_type',
+        },
+        {
+          't.oid': 'e.enumtypid',
+        },
+      )
+      .join(
+        {
+          c: 'information_schema.columns',
+        },
+        {
+          't.typname': 'c.udt_name',
+        },
+      )
+      .where({
+        'c.table_name': tableName,
+        'c.column_name': columnName,
+      })
+      .groupBy(['e.enumlabel', 't.typname']);
+
+    const rows = await query;
+
+    return {
+      type: FieldType.ENUM,
+      typeParams: {
+        values: rows.map(r => r.value),
+      },
+    };
+  }
 
   async getUniques(tableName: string): Promise<Unique[]> {
     const query = this.knex({

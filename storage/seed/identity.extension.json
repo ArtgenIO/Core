@@ -105,7 +105,7 @@
         {
           "reference": "accountId",
           "label": "Accound ID",
-          "columnName": "accound_id",
+          "columnName": "account_id",
           "type": "uuid",
           "typeParams": {
             "values": []
