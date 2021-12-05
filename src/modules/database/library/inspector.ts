@@ -39,4 +39,10 @@ export class Inspector {
   isTypeExists(typeName: string) {
     return this.dialectInspector.isTypeExists(typeName);
   }
+
+  getTablesForType(
+    typeName: string,
+  ): Promise<{ tableName: string; columName: string }[]> {
+    return this.dialectInspector.getTablesForType(typeName);
+  }
 }

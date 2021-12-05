@@ -2,6 +2,7 @@ import { DepGraph } from 'dependency-graph';
 import { diff } from 'just-diff';
 import { Knex } from 'knex';
 import { isEqual, snakeCase } from 'lodash';
+import hash from 'object-hash';
 import { ILogger, Logger } from '../../../app/container';
 import { FieldTag, FieldType, ISchema } from '../../schema';
 import { RelationKind } from '../../schema/interface/relation.interface';
@@ -85,14 +86,24 @@ export class Synchronizer {
     inspector: Inspector,
   ): Promise<ChangeStep[]> {
     const instructions: ChangeStep[] = [];
-    const typeChecks = new Map<string, boolean>();
+    const typeChecks = new Map<string, { exists: boolean; name: string }>();
 
     for (const f of schema.fields) {
       if (f.type === FieldType.ENUM) {
-        const typeName = snakeCase(`enum_${schema.reference}_${f.reference}`);
+        const curValues = f.typeParams.values.sort((a, b) => (a > b ? 1 : -1));
+        const typeHash = hash(curValues, {
+          algorithm: 'md5',
+          encoding: 'hex',
+        });
+        const typeName = `__artgen_enum_${snakeCase(
+          schema.reference,
+        )}_${typeHash}`;
         const enumExists = await inspector.isTypeExists(typeName);
 
-        typeChecks.set(typeName, enumExists);
+        typeChecks.set(f.reference, {
+          exists: enumExists,
+          name: typeName,
+        });
       }
     }
 
@@ -172,14 +183,12 @@ export class Synchronizer {
               col = table.binary(f.columnName);
               break;
             case FieldType.ENUM:
-              const typeName = snakeCase(
-                `enum_${schema.reference}_${f.reference}`,
-              );
+              const typeFor = typeChecks.get(f.reference);
 
               col = table.enum(f.columnName, f.typeParams.values, {
                 useNative: true,
-                enumName: typeName,
-                existingType: typeChecks.get(typeName),
+                enumName: typeFor.name,
+                existingType: typeFor.exists,
               });
 
               break;

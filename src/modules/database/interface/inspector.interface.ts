@@ -14,4 +14,8 @@ export interface IDialectInspector {
   ): Promise<Pick<IField, 'type' | 'typeParams'>>;
 
   isTypeExists(typeName: string): Promise<boolean>;
+
+  getTablesForType(
+    typeName: string,
+  ): Promise<{ tableName: string; columName: string }[]>;
 }

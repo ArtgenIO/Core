@@ -55,6 +55,42 @@ export class PostgresInspector implements IDialectInspector {
     };
   }
 
+  async getTablesForType(
+    typeName: string,
+  ): Promise<{ tableName: string; columName: string }[]> {
+    const query = this.knex({
+      e: 'pg_enum',
+    })
+      .select({
+        tableName: 'c.table_name',
+        columnName: 'c.column_name',
+      })
+      .join(
+        {
+          t: 'pg_type',
+        },
+        {
+          't.oid': 'e.enumtypid',
+        },
+      )
+      .join(
+        {
+          c: 'information_schema.columns',
+        },
+        {
+          't.typname': 'c.udt_name',
+        },
+      )
+      .where({
+        't.typname': typeName,
+      })
+      .groupBy(['e.table_name', 'c.column_name']);
+
+    const rows = await query;
+
+    return rows;
+  }
+
   async getUniques(tableName: string): Promise<Unique[]> {
     const query = this.knex({
       tc: 'information_schema.table_constraints',
