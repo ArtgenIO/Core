@@ -1,58 +1,66 @@
 import { Knex } from 'knex';
-import createInspector from 'knex-schema-inspector';
+import MySQLKnexInspector from 'knex-schema-inspector/dist/dialects/mysql';
+import PostgreSQLKnexInspector from 'knex-schema-inspector/dist/dialects/postgres';
+import SQLiteKnexInspector from 'knex-schema-inspector/dist/dialects/sqlite';
 import { Column } from 'knex-schema-inspector/dist/types/column';
 import { ForeignKey } from 'knex-schema-inspector/dist/types/foreign-key';
 import { SchemaInspector } from 'knex-schema-inspector/dist/types/schema-inspector';
 import { Dialect } from '../interface/dialect.type';
 import { IDialectInspector } from '../interface/inspector.interface';
+import { MySQLInspector } from './dialect/mysql.inspector';
 import { PostgresInspector } from './dialect/postgres.inspector';
 import { SQLiteInspector } from './dialect/sqlite.inspector';
 
 export class Inspector {
-  protected knexInspector: SchemaInspector;
-  protected dialectInspector: IDialectInspector;
+  protected schemaInspector: SchemaInspector;
+  protected customInspector: IDialectInspector;
 
   constructor(knex: Knex, readonly dialect: Dialect) {
-    this.knexInspector = createInspector(knex);
-
     switch (dialect) {
       case 'postgres':
-        this.dialectInspector = new PostgresInspector(knex);
+        this.customInspector = new PostgresInspector(knex);
+        this.schemaInspector = new PostgreSQLKnexInspector(knex);
         break;
       case 'sqlite':
-        this.dialectInspector = new SQLiteInspector(knex);
+        this.customInspector = new SQLiteInspector(knex);
+        this.schemaInspector = new SQLiteKnexInspector(knex);
+        break;
+      case 'mysql':
+      case 'mariadb':
+        this.customInspector = new MySQLInspector(knex);
+        this.schemaInspector = new MySQLKnexInspector(knex);
         break;
     }
   }
 
   tables(): Promise<string[]> {
-    return this.knexInspector.tables();
+    return this.schemaInspector.tables();
   }
 
   columns(tableName: string): Promise<Column[]> {
-    return this.knexInspector.columnInfo(tableName);
+    return this.schemaInspector.columnInfo(tableName);
   }
 
   foreignKeys(tableName: string): Promise<ForeignKey[]> {
-    return this.knexInspector.foreignKeys(tableName);
+    return this.schemaInspector.foreignKeys(tableName);
   }
 
   // Get unique keys/
   uniques(tableName: string) {
-    return this.dialectInspector.getUniques(tableName);
+    return this.customInspector.getUniques(tableName);
   }
 
   getType(tableName: string, columnName: string) {
-    return this.dialectInspector.getSpecialType(tableName, columnName);
+    return this.customInspector.getSpecialType(tableName, columnName);
   }
 
   isTypeExists(typeName: string) {
-    return this.dialectInspector.isTypeExists(typeName);
+    return this.customInspector.isTypeExists(typeName);
   }
 
   getTablesForType(
     typeName: string,
   ): Promise<{ tableName: string; columName: string }[]> {
-    return this.dialectInspector.getTablesForType(typeName);
+    return this.customInspector.getTablesForType(typeName);
   }
 }
