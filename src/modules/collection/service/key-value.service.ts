@@ -30,7 +30,7 @@ export class KeyValueService {
     if (!record) {
       record = await model.query().insertAndFetch({ key, value: { v: value } });
     } else {
-      record.$set({ key, value });
+      record.$set({ key, value: { v: value } });
 
       await record.$query().update();
     }

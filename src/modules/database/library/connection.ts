@@ -7,7 +7,7 @@ import { Exception } from '../../../app/exceptions/exception';
 import { ICollection } from '../../collection';
 import { IConnection, IDatabase } from '../interface';
 import { IAssociation } from '../interface/association.interface';
-import { toModel } from '../transformer/to-model';
+import { addRelations, toModel } from '../transformer/to-model';
 import { toStructure } from '../transformer/to-structure';
 import { Synchronizer } from './synchronizer';
 
@@ -91,6 +91,11 @@ export class Connection implements IConnection {
 
         this.logger.info('Schema [%s] registered', schema.reference);
       }
+    }
+
+    // Map relations after the models are defined.
+    for (const schema of schemas) {
+      addRelations(this.getModel(schema.reference), schema, this);
     }
 
     await this.synchronize();

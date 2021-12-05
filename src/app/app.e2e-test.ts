@@ -116,7 +116,7 @@ describe('Application (e2e)', () => {
       const srv = await getServer();
       const payload = {
         key: 'testarr',
-        value: JSON.stringify(['a', 'b', 'c']),
+        value: ['a', 'b', 'c'],
       };
 
       const response = await srv.inject({

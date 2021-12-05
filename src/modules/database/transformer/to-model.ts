@@ -1,7 +1,15 @@
-import { Model, ModelClass, Pojo } from 'objection';
+import {
+  Model,
+  ModelClass,
+  Pojo,
+  RelationMappings,
+  RelationType,
+} from 'objection';
 import { v4 } from 'uuid';
 import { FieldTag, FieldType, ICollection } from '../../collection/interface';
+import { RelationKind } from '../../collection/interface/relation.interface';
 import { isPrimary } from '../../collection/util/field-tools';
+import { IConnection } from '../interface';
 
 // Map database columns to code level references
 const toProperty = (schema: ICollection) => {
@@ -91,21 +99,21 @@ const onUpdate = (schema: ICollection) => {
 /**
  * Convert a schema into a model definition adjusted to the database's dialect.
  */
-export const toModel = (schema: ICollection): ModelClass<Model> => {
+export const toModel = (collection: ICollection): ModelClass<Model> => {
   const model = class extends Model {};
 
-  model.tableName = schema.tableName;
-  model.idColumn = schema.fields.filter(isPrimary).map(f => f.reference);
+  model.tableName = collection.tableName;
+  model.idColumn = collection.fields.filter(isPrimary).map(f => f.reference);
 
   model.columnNameMappers = {
-    parse: toProperty(schema),
-    format: toColumn(schema),
+    parse: toProperty(collection),
+    format: toColumn(collection),
   };
 
-  model.prototype.$beforeInsert = onCreate(schema);
-  model.prototype.$beforeUpdate = onUpdate(schema);
+  model.prototype.$beforeInsert = onCreate(collection);
+  model.prototype.$beforeUpdate = onUpdate(collection);
 
-  const jsonFields = schema.fields.filter(
+  const jsonFields = collection.fields.filter(
     f => f.type === FieldType.JSON || f.type === FieldType.JSONB,
   );
 
@@ -114,4 +122,50 @@ export const toModel = (schema: ICollection): ModelClass<Model> => {
   }
 
   return model;
+};
+
+export const addRelations = (
+  model: ModelClass<Model>,
+  collection: ICollection,
+  connection: IConnection,
+) => {
+  const relationMappings: RelationMappings = {};
+
+  for (const rel of collection.relations) {
+    let type: RelationType;
+
+    switch (rel.kind) {
+      case RelationKind.BELONGS_TO_ONE:
+        type = Model.BelongsToOneRelation;
+        break;
+      case RelationKind.HAS_ONE:
+        type = Model.HasOneRelation;
+        break;
+      case RelationKind.HAS_MANY:
+        type = Model.HasManyRelation;
+        break;
+      case RelationKind.BELONGS_TO_MANY:
+        type = Model.ManyToManyRelation;
+        break;
+    }
+
+    const targetModel = connection.getModel(rel.target);
+    const targetSchema = connection.getSchema(rel.target);
+
+    relationMappings[rel.name] = {
+      relation: type,
+      modelClass: targetModel,
+      join: {
+        from: `${collection.tableName}.${
+          collection.fields.find(f => f.reference == rel.localField).columnName
+        }`,
+        to: `${targetSchema.tableName}.${
+          targetSchema.fields.find(f => f.reference == rel.remoteField)
+            .columnName
+        }`,
+      },
+    };
+  }
+
+  model.relationMappings = relationMappings;
 };

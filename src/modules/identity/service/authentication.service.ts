@@ -83,7 +83,10 @@ export class AuthenticationService {
 
   async getAccessKeyAccount(key: string): Promise<IAccount | false> {
     const model = this.schema.getModel<AccountModel>('system', 'AccessKey');
-    const record = await model.query().findById(key).joinRelated('account');
+    const record = await model
+      .query()
+      .findById(key)
+      .withGraphFetched('account');
 
     if (record) {
       return {
