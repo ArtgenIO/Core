@@ -1,12 +1,12 @@
 import { Tooltip } from 'antd';
 import React, { Dispatch, SetStateAction } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
-import { FieldTag, ISchema } from '../../../schema';
-import { isPrimary } from '../../../schema/util/field-tools';
+import { FieldTag, ICollection } from '../../../collection';
+import { isPrimary } from '../../../collection/util/field-tools';
 
 export const createSchemaNode =
   (dblClickHandler: Dispatch<SetStateAction<unknown>>) =>
-  (props: NodeProps<{ schema: ISchema }>) => {
+  (props: NodeProps<{ schema: ICollection }>) => {
     return (
       <div
         className="node-component"

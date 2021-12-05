@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import AuthenticationWrapperComponent from '../../authentication/component/wrapper.component';
+import AuthenticationWrapperComponent from '../../identity/component/wrapper.component';
 import NavSide from './NavSide';
 import PageContent from './PageContent';
 import PageDrawer from './PageDrawer';

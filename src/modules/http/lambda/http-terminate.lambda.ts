@@ -3,7 +3,7 @@ import { IContext, Service } from '../../../app/container';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import { WorkflowSession } from '../../workflow/library/workflow.session';
+import { WorkflowSession } from '../../logic/library/workflow.session';
 import { HttpTriggerConfig } from './http-trigger.lambda';
 
 type IConfig = {

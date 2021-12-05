@@ -1,10 +1,10 @@
 import { Model, ModelClass, Pojo } from 'objection';
 import { v4 } from 'uuid';
-import { FieldTag, FieldType, ISchema } from '../../schema/interface';
-import { isPrimary } from '../../schema/util/field-tools';
+import { FieldTag, FieldType, ICollection } from '../../collection/interface';
+import { isPrimary } from '../../collection/util/field-tools';
 
 // Map database columns to code level references
-const toProperty = (schema: ISchema) => {
+const toProperty = (schema: ICollection) => {
   const columnMap = new Map<string, string>(
     schema.fields.map(f => [f.columnName, f.reference]),
   );
@@ -25,7 +25,7 @@ const toProperty = (schema: ISchema) => {
 };
 
 // Map code level references to database columns
-const toColumn = (schema: ISchema) => {
+const toColumn = (schema: ICollection) => {
   const referenceMap = new Map<string, string>(
     schema.fields.map(f => [f.reference, f.columnName]),
   );
@@ -46,7 +46,7 @@ const toColumn = (schema: ISchema) => {
 };
 
 // Hook before the model is created
-const onCreate = (schema: ISchema) => {
+const onCreate = (schema: ICollection) => {
   const primaryKeys = schema.fields.filter(isPrimary);
   const hasUUIDPK =
     primaryKeys.length === 1 && primaryKeys[0].type === FieldType.UUID;
@@ -73,7 +73,7 @@ const onCreate = (schema: ISchema) => {
 };
 
 // Hook before the model is updated
-const onUpdate = (schema: ISchema) => {
+const onUpdate = (schema: ICollection) => {
   const updatedAt = schema.fields.find(f => f.tags.includes(FieldTag.UPDATED));
   const versioned = schema.fields.find(f => f.tags.includes(FieldTag.VERSION));
 
@@ -91,7 +91,7 @@ const onUpdate = (schema: ISchema) => {
 /**
  * Convert a schema into a model definition adjusted to the database's dialect.
  */
-export const toModel = (schema: ISchema): ModelClass<Model> => {
+export const toModel = (schema: ICollection): ModelClass<Model> => {
   const model = class extends Model {};
 
   model.tableName = schema.tableName;

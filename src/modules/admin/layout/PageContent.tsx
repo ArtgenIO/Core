@@ -24,7 +24,7 @@ export default function PageContent() {
             <Route
               path="/admin/workflow"
               component={lazy(
-                () => import('../../workflow/components/index.component'),
+                () => import('../../logic/components/index.component'),
               )}
             />
             <Route
@@ -48,13 +48,13 @@ export default function PageContent() {
             <Route
               path="/admin/analytics"
               component={lazy(
-                () => import('../../analytics/component/index.component'),
+                () => import('../../insight/component/index.component'),
               )}
             />
             <Route
               path="/admin/ext"
               component={lazy(
-                () => import('../../extension/component/_router.component'),
+                () => import('../../blueprint/component/_router.component'),
               )}
             />
 

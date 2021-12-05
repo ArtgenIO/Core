@@ -1,6 +1,6 @@
 import { Model } from 'objection';
 import { Inject, Service } from '../../../app/container';
-import { SchemaService } from '../../schema/service/schema.service';
+import { CollectionService } from '../../collection/service/collection.service';
 import { IConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
 
@@ -9,8 +9,8 @@ type DatabaseModel = IDatabase & Model;
 @Service()
 export class DatabaseService {
   constructor(
-    @Inject(SchemaService)
-    readonly schemaService: SchemaService,
+    @Inject(CollectionService)
+    readonly schemaService: CollectionService,
   ) {}
 
   /**

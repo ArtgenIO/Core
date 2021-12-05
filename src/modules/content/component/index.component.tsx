@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Route, Switch, useHistory, useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { ISchema } from '../../schema';
+import { ICollection } from '../../collection';
 import { routeCrudAPI, routeCrudUI } from '../util/schema-url';
 import CrudCreateComponent from './create.component';
 import CrudReadComponent from './read.component';
@@ -17,7 +17,7 @@ export default function CrudIndexComponent() {
   const history = useHistory();
   const [search, setSearch] = useState<string>(null);
 
-  const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
+  const [{ data: schemas, loading, error }] = useHttpClient<ICollection[]>(
     routeCrudAPI({ database: 'system', reference: 'Schema' }) +
       new QueryBuilder()
         .select('database,reference,label,tableName,tags')
@@ -41,7 +41,7 @@ export default function CrudIndexComponent() {
     return <h1>Error while loading the page</h1>;
   }
 
-  const menuFilter = (schema: ISchema): boolean => {
+  const menuFilter = (schema: ICollection): boolean => {
     if (!search) {
       return true;
     }

@@ -1,7 +1,7 @@
 import { IKernel } from '../../../app/kernel/interface/kernel.interface';
 import { Kernel } from '../../../app/kernel/kernel';
+import { CollectionModule } from '../../collection/collection.module';
 import { EventModule } from '../../event/event.module';
-import { SchemaModule } from '../../schema/schema.module';
 import { DatabaseModule } from '../database.module';
 import { Connection } from '../library/connection';
 import { ConnectionConcrete } from '../provider/connection-concrete.provider';
@@ -12,7 +12,7 @@ describe(ConnectionService.name, () => {
 
   beforeEach(() => {
     kernel = new Kernel();
-    kernel.bootstrap([DatabaseModule, SchemaModule, EventModule]);
+    kernel.bootstrap([DatabaseModule, CollectionModule, EventModule]);
   });
 
   test('should register the connection service', async () => {

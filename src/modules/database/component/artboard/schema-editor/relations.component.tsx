@@ -6,10 +6,10 @@ import { useResetRecoilState } from 'recoil';
 import { Exception } from '../../../../../app/exceptions/exception';
 import { pageDrawerAtom } from '../../../../admin/admin.atoms';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
+import { ICollection } from '../../../../collection';
+import { RelationKind } from '../../../../collection/interface/relation.interface';
+import { isPrimary } from '../../../../collection/util/field-tools';
 import { routeCrudAPI } from '../../../../content/util/schema-url';
-import { ISchema } from '../../../../schema';
-import { RelationKind } from '../../../../schema/interface/relation.interface';
-import { isPrimary } from '../../../../schema/util/field-tools';
 import RelationBelongsToMany from './relation/belongs-many.component';
 import RelationBelongsToOne from './relation/belongs-one.component';
 import RelationHasMany from './relation/has-many.component';
@@ -19,15 +19,15 @@ export default function RelationsComponent({
   schema,
   setSchema,
 }: {
-  schema: ISchema;
-  setSchema: Dispatch<SetStateAction<ISchema>>;
+  schema: ICollection;
+  setSchema: Dispatch<SetStateAction<ICollection>>;
 }) {
   const resetPageDrawler = useResetRecoilState(pageDrawerAtom);
   const [primaries, setPrimaries] = useState(
     schema.fields.filter(isPrimary).length,
   );
 
-  const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
+  const [{ data: schemas, loading, error }] = useHttpClient<ICollection[]>(
     routeCrudAPI({ database: 'system', reference: 'Schema' }) +
       new QueryBuilder()
         .top(1000)

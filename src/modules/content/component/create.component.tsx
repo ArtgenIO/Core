@@ -9,7 +9,7 @@ import PageHeader from '../../admin/layout/PageHeader';
 import PageWithHeader from '../../admin/layout/PageWithHeader';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { ISchema } from '../../schema';
+import { ICollection } from '../../collection';
 import { ContentAction } from '../interface/content-action.enum';
 import { schemaToJsonSchema } from '../util/schema-to-jsonschema';
 import { routeCrudAPI, routeCrudUI } from '../util/schema-url';
@@ -27,7 +27,9 @@ export default function CrudCreateComponent() {
   const [formSchema, setFormSchema] = useState({});
 
   // Load schema
-  const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<ISchema[]>(
+  const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<
+    ICollection[]
+  >(
     routeCrudAPI({ database: 'system', reference: 'Schema' }) +
       new QueryBuilder()
         .filter(f =>

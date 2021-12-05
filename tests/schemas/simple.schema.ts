@@ -1,6 +1,6 @@
-import { FieldTag, FieldType, ISchema } from '../../src/modules/schema';
+import { FieldTag, FieldType, ICollection } from '../../src/modules/collection';
 
-export const simpleSchema: ISchema = {
+export const simpleSchema: ICollection = {
   database: 'system',
   reference: 'simple',
   tableName: 'simple',

@@ -1,10 +1,10 @@
 import { Model, ModelClass } from 'objection';
-import { ISchema } from '../../schema';
-import { ISchemaStructure } from './schema-structure.interface';
+import { ICollection } from '../../collection';
+import { IDatabaseSchema } from './table-structure.interface';
 
 export interface IAssociation<T extends Model = Model> {
-  schema: ISchema;
-  structure: ISchemaStructure;
+  schema: ICollection;
+  structure: IDatabaseSchema;
   model: ModelClass<T>;
   inSync: boolean;
 }

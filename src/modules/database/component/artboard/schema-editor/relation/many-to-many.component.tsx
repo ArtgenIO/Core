@@ -3,15 +3,15 @@ import { Avatar, Button, Input, List, Popconfirm, Select, Tooltip } from 'antd';
 import { pluralize } from 'inflection';
 import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ISchema } from '../../../../../schema';
+import { ICollection } from '../../../../../collection';
 import {
   IRelation,
   IRelationManyToMany,
-} from '../../../../../schema/interface/relation.interface';
+} from '../../../../../collection/interface/relation.interface';
 import {
   getTakenColumNames,
   isPrimary,
-} from '../../../../../schema/util/field-tools';
+} from '../../../../../collection/util/field-tools';
 
 export default function RelationManyToMany({
   relation,
@@ -21,10 +21,10 @@ export default function RelationManyToMany({
   schemas,
 }: {
   relation: IRelation;
-  schema: ISchema;
-  setSchema: Dispatch<SetStateAction<ISchema>>;
+  schema: ICollection;
+  setSchema: Dispatch<SetStateAction<ICollection>>;
   idx: number;
-  schemas: ISchema[];
+  schemas: ICollection[];
 }) {
   const primary = schema.fields.find(isPrimary);
   const [name, setName] = useState(relation.name);

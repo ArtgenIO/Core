@@ -5,7 +5,7 @@ import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import { WorkflowSession } from '../../workflow/library/workflow.session';
+import { WorkflowSession } from '../../logic/library/workflow.session';
 import { ContentService } from '../service/content.service';
 
 type Config = {

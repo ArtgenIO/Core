@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 import { Model, ModelClass } from 'objection';
 import { IDatabase } from '.';
-import { ISchema } from '../../schema';
+import { ICollection } from '../../collection';
 import { IAssociation } from './association.interface';
 
 export interface IConnection {
@@ -36,17 +36,17 @@ export interface IConnection {
    *
    * It may strip invalid relations until the referenced schema is added.
    */
-  associate(schemas: ISchema[]): Promise<IConnection>;
+  associate(schemas: ICollection[]): Promise<IConnection>;
 
   /**
    * Get the associated schemas.
    */
-  getSchemas(): ISchema[];
+  getSchemas(): ICollection[];
 
   /**
    * Get the associated schema.
    */
-  getSchema(reference: string): ISchema;
+  getSchema(reference: string): ICollection;
 
   /**
    * Close the connection to the database.

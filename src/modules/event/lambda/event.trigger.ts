@@ -4,7 +4,7 @@ import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { ITriggerConfig } from '../../lambda/interface/trigger-config.interface';
 import { JSCHEMA_TRIGGER } from '../../lambda/utility/json-schema.helpers';
-import { WorkflowSession } from '../../workflow/library/workflow.session';
+import { WorkflowSession } from '../../logic/library/workflow.session';
 
 export type EventTriggerConfig = {
   eventName: string;

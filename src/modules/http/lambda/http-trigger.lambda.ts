@@ -7,7 +7,7 @@ import {
   JSCHEMA_MAP,
   JSCHEMA_TRIGGER,
 } from '../../lambda/utility/json-schema.helpers';
-import { WorkflowSession } from '../../workflow/library/workflow.session';
+import { WorkflowSession } from '../../logic/library/workflow.session';
 
 type IncomingRequest = {
   headers: Record<string, unknown>;

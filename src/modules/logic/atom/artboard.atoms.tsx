@@ -1,0 +1,49 @@
+import { Elements, OnLoadParams } from 'react-flow-renderer';
+import { atom } from 'recoil';
+import { ILambdaMeta } from '../../lambda/interface/meta.interface';
+import { ILogic } from '../interface/workflow.interface';
+
+export const lambdaMetasAtom = atom<ILambdaMeta[]>({
+  key: 'lambdaMetas',
+  default: [],
+});
+
+export const workflowAtom = atom<ILogic>({
+  key: 'workflow',
+  default: null,
+});
+
+export const flowInstanceAtom = atom<OnLoadParams>({
+  key: 'flowInstance',
+  default: null,
+});
+
+export const elementsAtom = atom<Elements>({
+  key: 'elements',
+  default: [],
+});
+
+export const selectedNodeIdAtom = atom<string>({
+  key: 'selectedNodeId',
+  default: null,
+});
+
+export const selectedEdgeIdAtom = atom<string>({
+  key: 'selectedEdgeId',
+  default: null,
+});
+
+export const selectedElementIdAtom = atom<string>({
+  key: 'selectedElementId',
+  default: null,
+});
+
+export const catalogCollapsedAtom = atom<boolean>({
+  key: 'catalogCollapsed',
+  default: true,
+});
+
+export const workflowChangedAtom = atom<boolean>({
+  key: 'workflowChanged',
+  default: false,
+});

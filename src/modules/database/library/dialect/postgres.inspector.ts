@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { FieldType, IField } from '../../../schema';
+import { FieldType, IField } from '../../../collection';
 import { IDialectInspector, Unique } from '../../interface/inspector.interface';
 
 export class PostgresInspector implements IDialectInspector {

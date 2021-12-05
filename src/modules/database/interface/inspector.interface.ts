@@ -1,4 +1,4 @@
-import { IField } from '../../schema';
+import { IField } from '../../collection';
 
 export type Unique = {
   name: string;

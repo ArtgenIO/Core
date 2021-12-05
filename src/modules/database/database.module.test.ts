@@ -1,5 +1,5 @@
 import { IKernel, Kernel } from '../../app/kernel';
-import { SchemaModule } from '../schema/schema.module';
+import { CollectionModule } from '../collection/collection.module';
 import { DatabaseModule } from './database.module';
 
 describe(DatabaseModule.name, () => {
@@ -7,7 +7,7 @@ describe(DatabaseModule.name, () => {
 
   beforeAll(() => {
     kernel = new Kernel();
-    kernel.bootstrap([DatabaseModule, SchemaModule]);
+    kernel.bootstrap([DatabaseModule, CollectionModule]);
   });
 
   test('should create the system connection', async () => {

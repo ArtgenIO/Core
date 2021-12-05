@@ -2,16 +2,16 @@ import { EventEmitter2 } from 'eventemitter2';
 import { merge } from 'lodash';
 import { stringify } from 'querystring';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { FieldTag } from '../../schema';
-import { SchemaService } from '../../schema/service/schema.service';
+import { FieldTag } from '../../collection';
+import { CollectionService } from '../../collection/service/collection.service';
 
 @Service()
 export class ContentService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(SchemaService)
-    readonly schema: SchemaService,
+    @Inject(CollectionService)
+    readonly schema: CollectionService,
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
   ) {}

@@ -1,5 +1,5 @@
-import { IWorkflow } from '../../workflow/interface/workflow.interface';
-import { WorkflowSession } from '../../workflow/library/workflow.session';
+import { ILogic } from '../../logic/interface/workflow.interface';
+import { WorkflowSession } from '../../logic/library/workflow.session';
 
 /**
  * Request executor, must be stateless so each invoking can be called without reinitialization
@@ -8,7 +8,7 @@ export interface ILambda {
   /**
    * Lambda is being loaded with a serialized workflow.
    */
-  onInit?(workflow: IWorkflow): Promise<void>;
+  onInit?(workflow: ILogic): Promise<void>;
 
   /**
    * Lambda is executed in a workflow session.

@@ -1,8 +1,8 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Authenticator } from 'fastify-passport';
 import { Inject, Service } from '../../../app/container';
-import { STRATEGY_CONFIG } from '../../authentication/util/strategy.config';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
+import { STRATEGY_CONFIG } from '../../identity/util/strategy.config';
 import { ContentService } from '../service/content.service';
 
 type SchemaParams = {

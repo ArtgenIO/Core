@@ -5,9 +5,9 @@ import { isEqual, snakeCase } from 'lodash';
 import hash from 'object-hash';
 import { inspect } from 'util';
 import { ILogger, Logger } from '../../../app/container';
-import { FieldTag, FieldType, ISchema } from '../../schema';
-import { RelationKind } from '../../schema/interface/relation.interface';
-import { isPrimary } from '../../schema/util/field-tools';
+import { FieldTag, FieldType, ICollection } from '../../collection';
+import { RelationKind } from '../../collection/interface/relation.interface';
+import { isPrimary } from '../../collection/util/field-tools';
 import { IConnection } from '../interface';
 import { parseDialect } from '../parser/parse-dialect';
 import { toSchema } from '../transformer/to-schema';
@@ -19,10 +19,10 @@ interface ChangeStep {
   query: Knex.SchemaBuilder;
 }
 
-const fColumns = (s: ISchema) => (ref: string[]) =>
+const fColumns = (s: ICollection) => (ref: string[]) =>
   s.fields.filter(f => ref.includes(f.reference)).map(f => f.columnName);
 
-const getPKCols = (schema: ISchema) =>
+const getPKCols = (schema: ICollection) =>
   schema.fields.filter(isPrimary).map(f => f.columnName);
 
 export class Synchronizer {
@@ -31,8 +31,90 @@ export class Synchronizer {
     readonly logger: ILogger,
   ) {}
 
+  async sync(link: IConnection) {
+    const instructions: ChangeStep[] = [];
+
+    // Reduce the associations to only the changed schemas.
+    const changes: ICollection[] = Array.from(link.getAssications().values())
+      .filter(association => !association.inSync)
+      .map(association => association.schema);
+
+    // Nothing has changed, skip early.
+    if (!changes.length) {
+      return;
+    }
+
+    // Dependency tree is used to remove foreign keys
+    // when we drop a table we need to know if the any other table
+    // is dependent on it. If so, then the user has to remove the dependency first.
+    //
+    // Or when we change a column and we plan to drop it, because the type will not match???
+    // Or when the column is removed from the schema but still on the db!
+    const dependencies = this.getDependencyGraph(changes);
+
+    // TODO validate the schema for sanity,
+    // - types match their foreign keys
+    // - remote tables exits
+    // - changed fields require conversion
+    // - has unique
+    // - index for foreign key in local
+    // - unique for foreign key targe
+
+    const inspector = new Inspector(link.knex, parseDialect(link.database.dsn));
+    const currentTables = await inspector.tables();
+    const isSchemaExits = (s: ICollection) =>
+      currentTables.includes(s.tableName);
+
+    for (const schema of changes) {
+      // Imported / protected schemas are not synchronized.
+      if (!schema || schema.tags.includes('readonly')) {
+        continue;
+      }
+      this.logger.debug('Synchornizing [%s] schema', schema.reference);
+
+      if (!isSchemaExits(schema)) {
+        instructions.push(...(await this.createTable(schema, link, inspector)));
+        instructions.push(...this.createRelations(schema, link));
+      } else {
+        instructions.push(
+          ...(await this.doAlterTable(schema, link, inspector)),
+        );
+      }
+
+      link.getAssications().get(schema.reference).inSync = true;
+    }
+
+    const order: ChangeStep['type'][] = [
+      'backup',
+      'copy',
+      'create',
+      'constraint',
+      'foreign',
+      'drop',
+    ];
+
+    for (const phase of order) {
+      const queries = instructions
+        .filter(i => i.type === phase)
+        .map(i => i.query)
+        .filter(q => !!q.toQuery());
+
+      this.logger.info(
+        'Phase [%s] with [%d] instruction',
+        phase,
+        queries.length,
+      );
+
+      queries.forEach(q => console.log('--SQL:\t', q.toQuery()));
+
+      await Promise.all(queries);
+    }
+
+    this.logger.info('Synchronized');
+  }
+
   protected async doAlterTable(
-    schema: ISchema,
+    schema: ICollection,
     link: IConnection,
     inspector: Inspector,
   ): Promise<ChangeStep[]> {
@@ -66,7 +148,7 @@ export class Synchronizer {
           instructions.push({
             type: 'drop',
             query: link.knex.schema.alterTable(schema.tableName, t =>
-              t.dropColumn(revStruct.fields[change.path[1]].columnName),
+              t.dropColumn(revStruct.columns[change.path[1]].columnName),
             ),
           });
         }
@@ -83,7 +165,7 @@ export class Synchronizer {
   }
 
   protected async createTable(
-    schema: ISchema,
+    schema: ICollection,
     link: IConnection,
     inspector: Inspector,
   ): Promise<ChangeStep[]> {
@@ -275,7 +357,10 @@ export class Synchronizer {
     return instructions;
   }
 
-  protected createRelations(schema: ISchema, link: IConnection): ChangeStep[] {
+  protected createRelations(
+    schema: ICollection,
+    link: IConnection,
+  ): ChangeStep[] {
     return [
       {
         type: 'foreign',
@@ -307,7 +392,7 @@ export class Synchronizer {
     ];
   }
 
-  protected getDependencyGraph(schemas: ISchema[]): DepGraph<void> {
+  protected getDependencyGraph(schemas: ICollection[]): DepGraph<void> {
     const dependencies: DepGraph<void> = new DepGraph({
       circular: true,
     });
@@ -330,86 +415,5 @@ export class Synchronizer {
     }
 
     return dependencies;
-  }
-
-  async sync(link: IConnection) {
-    const instructions: ChangeStep[] = [];
-
-    // Reduce the associations to only the changed schemas.
-    const changes: ISchema[] = Array.from(link.getAssications().values())
-      .filter(association => !association.inSync)
-      .map(association => association.schema);
-
-    // Nothing has changed, skip early.
-    if (!changes.length) {
-      return;
-    }
-
-    // Dependency tree is used to remove foreign keys
-    // when we drop a table we need to know if the any other table
-    // is dependent on it. If so, then the user has to remove the dependency first.
-    //
-    // Or when we change a column and we plan to drop it, because the type will not match???
-    // Or when the column is removed from the schema but still on the db!
-    const dependencies = this.getDependencyGraph(changes);
-
-    // TODO validate the schema for sanity,
-    // - types match their foreign keys
-    // - remote tables exits
-    // - changed fields require conversion
-    // - has unique
-    // - index for foreign key in local
-    // - unique for foreign key targe
-
-    const inspector = new Inspector(link.knex, parseDialect(link.database.dsn));
-    const currentTables = await inspector.tables();
-    const isSchemaExits = (s: ISchema) => currentTables.includes(s.tableName);
-
-    for (const schema of changes) {
-      // Imported / protected schemas are not synchronized.
-      if (!schema || schema.tags.includes('readonly')) {
-        continue;
-      }
-      this.logger.debug('Synchornizing [%s] schema', schema.reference);
-
-      if (!isSchemaExits(schema)) {
-        instructions.push(...(await this.createTable(schema, link, inspector)));
-        instructions.push(...this.createRelations(schema, link));
-      } else {
-        instructions.push(
-          ...(await this.doAlterTable(schema, link, inspector)),
-        );
-      }
-
-      link.getAssications().get(schema.reference).inSync = true;
-    }
-
-    const order: ChangeStep['type'][] = [
-      'backup',
-      'copy',
-      'create',
-      'constraint',
-      'foreign',
-      'drop',
-    ];
-
-    for (const phase of order) {
-      const queries = instructions
-        .filter(i => i.type === phase)
-        .map(i => i.query)
-        .filter(q => !!q.toQuery());
-
-      this.logger.info(
-        'Phase [%s] with [%d] instruction',
-        phase,
-        queries.length,
-      );
-
-      queries.forEach(q => console.log('--SQL:\t', q.toQuery()));
-
-      await Promise.all(queries);
-    }
-
-    this.logger.info('Synchronized');
   }
 }

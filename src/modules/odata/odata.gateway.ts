@@ -1,10 +1,10 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
 import { kebabCase } from 'lodash';
 import { Inject, Service } from '../../app/container';
+import { CollectionService } from '../collection/service/collection.service';
 import { ContentAction } from '../content/interface/content-action.enum';
 import { schemaToJsonSchema } from '../content/util/schema-to-jsonschema';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
-import { SchemaService } from '../schema/service/schema.service';
 import { IODataResult } from './interface/odata-result.interface';
 import { ODataService } from './odata.service';
 
@@ -15,8 +15,8 @@ export class ODataGateway implements IHttpGateway {
   constructor(
     @Inject(ODataService)
     readonly service: ODataService,
-    @Inject(SchemaService)
-    readonly schema: SchemaService,
+    @Inject(CollectionService)
+    readonly schema: CollectionService,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {

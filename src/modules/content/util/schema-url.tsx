@@ -1,9 +1,9 @@
 import { QueryBuilder } from 'odata-query-builder';
-import { FieldTag, ISchema } from '../../schema';
+import { FieldTag, ICollection } from '../../collection';
 import { ContentAction } from '../interface/content-action.enum';
 
 const routeFilterOne = (
-  schema: Partial<ISchema>,
+  schema: Partial<ICollection>,
   record: Record<string, unknown>,
 ) => {
   const primaryKeys = schema.fields
@@ -22,17 +22,19 @@ const routeFilterOne = (
     .toQuery();
 };
 
-export const routeCrudUI = (schema: Pick<ISchema, 'database' | 'reference'>) =>
-  `/admin/content/${schema.database}/${schema.reference}`;
+export const routeCrudUI = (
+  schema: Pick<ICollection, 'database' | 'reference'>,
+) => `/admin/content/${schema.database}/${schema.reference}`;
 
-export const routeCrudAPI = (schema: Pick<ISchema, 'database' | 'reference'>) =>
-  `/api/content/${schema.database}/${schema.reference}`;
+export const routeCrudAPI = (
+  schema: Pick<ICollection, 'database' | 'reference'>,
+) => `/api/content/${schema.database}/${schema.reference}`;
 
 /**
  * Build route to a specific record on the UI
  */
 export const routeCrudRecordUI = (
-  schema: Partial<ISchema>,
+  schema: Partial<ICollection>,
   record: Record<string, unknown>,
   action: ContentAction,
 ) => {
@@ -45,7 +47,7 @@ export const routeCrudRecordUI = (
  * Build route to a specific record on the API
  */
 export const routeCrudRecordAPI = (
-  schema: Partial<ISchema>,
+  schema: Partial<ICollection>,
   record: Record<string, unknown>,
 ) => {
   return `/api/content/${schema.database}/${schema.reference}${routeFilterOne(

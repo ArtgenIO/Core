@@ -3,8 +3,8 @@ import { merge } from 'lodash';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { ILogger, Inject, Logger } from '../../app/container';
 import { getErrorMessage } from '../../app/kernel';
-import { SchemaService } from '../schema/service/schema.service';
-import { isManagedField, isPrimary } from '../schema/util/field-tools';
+import { CollectionService } from '../collection/service/collection.service';
+import { isManagedField, isPrimary } from '../collection/util/field-tools';
 import { IODataResult } from './interface/odata-result.interface';
 
 type SchemaInput = Record<string, unknown>;
@@ -16,8 +16,8 @@ export class ODataService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(SchemaService)
-    readonly schema: SchemaService,
+    @Inject(CollectionService)
+    readonly schema: CollectionService,
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
   ) {}

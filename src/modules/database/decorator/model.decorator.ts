@@ -1,6 +1,6 @@
 import { Context, inject } from '@loopback/context';
 import { Model, ModelClass } from 'objection';
-import { SchemaService } from '../../schema/service/schema.service';
+import { CollectionService } from '../../collection/service/collection.service';
 
 export function InjectModel(
   reference: string,
@@ -10,12 +10,12 @@ export function InjectModel(
   methodDescriptorOrParameterIndex?: number | TypedPropertyDescriptor<unknown>,
 ) => void {
   return inject(
-    SchemaService.name,
+    CollectionService.name,
     {
       decorator: '@InjectModel',
     },
     async (ctx: Context, injection): Promise<ModelClass<Model>> =>
-      (await ctx.get<SchemaService>(SchemaService.name)).getModel(
+      (await ctx.get<CollectionService>(CollectionService.name)).getModel(
         'system',
         reference,
       ),

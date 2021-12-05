@@ -1,9 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { ILogger, IModule, Inject, Logger, Module } from '../../app/container';
 import { IKernel } from '../../app/kernel';
-import { ExtensionModule } from '../extension/extension.module';
+import { ExtensionModule } from '../blueprint/extension.module';
+import { WorkflowModule } from '../logic/workflow.module';
 import { PageModule } from '../page/page.module';
-import { WorkflowModule } from '../workflow/workflow.module';
 import { HttpObserver } from './http.observer';
 import { HttpRequestLambda } from './lambda/http-request.lambda';
 import { HttpTerminateLambda } from './lambda/http-terminate.lambda';

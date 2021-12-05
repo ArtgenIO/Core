@@ -1,8 +1,8 @@
 import { Modal, Typography } from 'antd';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Elements, isNode, Node, OnLoadParams } from 'react-flow-renderer';
-import { ISchema } from '../../../schema';
-import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
+import { ICollection } from '../../../collection';
+import { CollectionSerializer } from '../../../collection/serializer/schema.serializer';
 import SchemaEditorFrameComponent from './schema-editor/_frame.component';
 
 type Props = {
@@ -18,12 +18,12 @@ export default function DatabaseSchemaEditorComponent({
   setOpenedNode,
   setElements,
 }: Props) {
-  const [schema, setSchema] = useState<ISchema>(null);
+  const [schema, setSchema] = useState<ICollection>(null);
   const [originalRef, setOriginalRef] = useState<string>(null);
 
   useEffect(() => {
     if (openedNode) {
-      const node: Node<{ schema: ISchema }> = flowInstance
+      const node: Node<{ schema: ICollection }> = flowInstance
         .getElements()
         .filter(isNode)
         .find(n => n.id === openedNode);
@@ -59,14 +59,14 @@ export default function DatabaseSchemaEditorComponent({
         setOpenedNode(null);
 
         setElements(() => {
-          const update = SchemaSerializer.fromElements(
+          const update = CollectionSerializer.fromElements(
             flowInstance.getElements(),
           );
           const idx = update.findIndex(s => s.reference === originalRef);
 
           update.splice(idx, 1, schema);
 
-          return SchemaSerializer.toElements(update);
+          return CollectionSerializer.toElements(update);
         });
       }}
     >

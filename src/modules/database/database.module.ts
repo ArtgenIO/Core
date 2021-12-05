@@ -1,6 +1,6 @@
 import { ILogger, IModule, Inject, Logger, Module } from '../../app/container';
 import { getErrorMessage } from '../../app/kernel';
-import { SchemaService } from '../schema/service/schema.service';
+import { CollectionService } from '../collection/service/collection.service';
 import { DatabaseObserver } from './database.observer';
 import { IConnection } from './interface';
 import { Synchronizer } from './library/synchronizer';
@@ -25,8 +25,8 @@ export class DatabaseModule implements IModule {
     protected databaseSvc: DatabaseService,
     @Inject(ConnectionService)
     protected connectionSvc: ConnectionService,
-    @Inject(SchemaService)
-    protected schemaSvc: SchemaService,
+    @Inject(CollectionService)
+    protected schemaSvc: CollectionService,
   ) {}
 
   /**

@@ -4,7 +4,7 @@ import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useResetRecoilState } from 'recoil';
 import { pageDrawerAtom } from '../../../../admin/admin.atoms';
-import { FieldType, IField, ISchema } from '../../../../schema';
+import { FieldType, ICollection, IField } from '../../../../collection';
 
 type InputLinkedProps = {
   isLinked: boolean;
@@ -37,8 +37,8 @@ export default function SchemaEditorFieldTunerComponent({
   setSchema,
 }: {
   fieldKey: number;
-  schema: ISchema;
-  setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
+  schema: ICollection;
+  setSchema: Dispatch<SetStateAction<Partial<ICollection>>>;
 }) {
   const resetPageDrawler = useResetRecoilState(pageDrawerAtom);
   const [form] = Form.useForm<IField>();

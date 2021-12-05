@@ -1,0 +1,70 @@
+import { ICollection } from '..';
+import { Service } from '../../../app/container';
+
+/**
+ * Responsible to ensure that the loaded schemas are always on system
+ * expected version, will not persist the changes until the user
+ * makes some update on them, but this way we can always
+ * use the newest features without worrying about
+ * compatibility issues.
+ */
+@Service()
+export class MigrationService {
+  /**
+   * Ensure that the schema is up to date, this function migrates between versions
+   * so the user does not have to worry about compability.
+   */
+  migrate(schema: ICollection): ICollection {
+    return this.toVersion2(schema);
+  }
+
+  /**
+   * Execute the migration from V1 to V2
+   */
+  protected toVersion2(schema: ICollection): ICollection {
+    // Add missing version key.
+    if (!schema?.version || schema.version < 2) {
+      schema.version = 2;
+    }
+
+    // Add the default icon.
+    if (!schema?.icon || !schema.icon.length) {
+      schema.icon = 'table_chart';
+    }
+
+    // Add the permission.
+    if (!schema?.permission || !schema.permission.length) {
+      schema.permission = 'rw';
+    }
+
+    // Add the relations.
+    if (!schema?.relations) {
+      schema.relations = [];
+    }
+
+    // Add the field typeParams.
+    for (const field of schema.fields) {
+      if (!field?.typeParams) {
+        field.typeParams = {
+          values: [],
+        };
+      }
+
+      if (!field.typeParams?.values) {
+        field.typeParams.values = [];
+      }
+    }
+
+    // Add the artboard meta.
+    if (!schema?.artboard) {
+      schema.artboard = {
+        position: {
+          x: 0,
+          y: 0,
+        },
+      };
+    }
+
+    return schema;
+  }
+}

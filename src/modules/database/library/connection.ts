@@ -4,7 +4,7 @@ import { isEqual } from 'lodash';
 import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
-import { ISchema } from '../../schema';
+import { ICollection } from '../../collection';
 import { IConnection, IDatabase } from '../interface';
 import { IAssociation } from '../interface/association.interface';
 import { toModel } from '../transformer/to-model';
@@ -48,7 +48,7 @@ export class Connection implements IConnection {
     );
   }
 
-  getSchema(reference: string): ISchema {
+  getSchema(reference: string): ICollection {
     if (this.associations.has(reference)) {
       return this.associations.get(reference).schema;
     }
@@ -58,11 +58,11 @@ export class Connection implements IConnection {
     );
   }
 
-  getSchemas(): ISchema[] {
+  getSchemas(): ICollection[] {
     return Array.from(this.associations.values()).map(r => r.schema);
   }
 
-  async associate(schemas: ISchema[]): Promise<IConnection> {
+  async associate(schemas: ICollection[]): Promise<IConnection> {
     for (const schema of schemas) {
       const key = schema.reference;
       const structure = toStructure(schema);

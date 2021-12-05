@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { OnParams, ON_META_KEY } from '.';
 import { ILogger, Inject, Logger, Module } from '../../app/container';
 import { IKernel } from '../../app/kernel';
-import { WorkflowService } from '../workflow/service/workflow.service';
+import { WorkflowService } from '../logic/service/workflow.service';
 import { EventTrigger, EventTriggerConfig } from './lambda/event.trigger';
 import { EventHandlerProvider } from './provider/event-handler.provider';
 
