@@ -9,12 +9,14 @@ import {
 import { getFieldTypeFromString } from '../../schema/util/field-mapper';
 import { isPrimary } from '../../schema/util/field-tools';
 import { IConnection } from '../interface';
+import { Unique } from '../interface/inspector.interface';
 
 export const toSchema = (
   database: string,
   tableName: string,
   columns: Column[],
   foreignKeys: ForeignKey[],
+  uniques: Unique[],
   link: IConnection,
 ): ISchema => {
   const schema: ISchema = {
@@ -35,6 +37,11 @@ export const toSchema = (
     tags: ['readonly'],
   };
 
+  const compositUniques = uniques.filter(unq => unq.columns.length > 1);
+  const columnUniques = uniques
+    .filter(unq => unq.columns.length === 1)
+    .map(unq => unq.columns[0]);
+
   columns.forEach(col => {
     const field: IField = {
       label: upperFirst(startCase(col.name)),
@@ -47,13 +54,16 @@ export const toSchema = (
 
     if (col.is_primary_key) field.tags.push(FieldTag.PRIMARY);
     if (col.is_nullable) field.tags.push(FieldTag.NULLABLE);
-    if (col.is_unique) field.tags.push(FieldTag.UNIQUE);
+    if (col.is_unique || columnUniques.includes(col.name))
+      field.tags.push(FieldTag.UNIQUE);
 
     schema.fields.push(field);
   });
 
   foreignKeys.forEach(foreign => {
-    const target = link.getSchemas().find(s => s.tableName);
+    const target = link
+      .getSchemas()
+      .find(s => s.tableName === foreign.foreign_key_table);
     const localField = schema.fields.find(f => f.columnName == foreign.column);
     const remoteField = target.fields.find(
       f => f.columnName === foreign.foreign_key_column,
@@ -76,6 +86,15 @@ export const toSchema = (
     };
 
     schema.relations.push(relation);
+  });
+
+  compositUniques.forEach(cuniq => {
+    schema.uniques.push({
+      name: cuniq.name.replace(schema.tableName, ''),
+      fields: cuniq.columns.map(
+        col => schema.fields.find(f => f.columnName === col).reference,
+      ),
+    });
   });
 
   return schema;

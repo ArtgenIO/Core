@@ -1,8 +1,6 @@
 import { DepGraph } from 'dependency-graph';
 import { diff } from 'just-diff';
 import { Knex } from 'knex';
-import createInspector from 'knex-schema-inspector';
-import { SchemaInspector } from 'knex-schema-inspector/dist/types/schema-inspector';
 import { isEqual } from 'lodash';
 import { ILogger, Logger } from '../../../app/container';
 import { FieldTag, FieldType, ISchema } from '../../schema';
@@ -11,6 +9,7 @@ import { isPrimary } from '../../schema/util/field-tools';
 import { IConnection } from '../interface';
 import { toSchema } from '../transformer/to-schema';
 import { toStructure } from '../transformer/to-structure';
+import { Inspector } from './inspector';
 
 interface ChangeStep {
   type: 'backup' | 'copy' | 'create' | 'constraint' | 'foreign' | 'drop';
@@ -32,12 +31,13 @@ export class Synchronizer {
   protected async doAlterTable(
     schema: ISchema,
     link: IConnection,
-    inspector: SchemaInspector,
+    inspector: Inspector,
   ): Promise<ChangeStep[]> {
     const instructions: ChangeStep[] = [];
 
-    const columns = await inspector.columnInfo(schema.tableName);
+    const columns = await inspector.columns(schema.tableName);
     const foreignKeys = await inspector.foreignKeys(schema.tableName);
+    const uniques = await inspector.uniques(schema.tableName);
 
     // TODO need to read the unique sets from the table
     const revSchema = toSchema(
@@ -45,6 +45,7 @@ export class Synchronizer {
       schema.tableName,
       columns,
       foreignKeys,
+      uniques,
       link,
     );
 
@@ -317,7 +318,7 @@ export class Synchronizer {
     // - index for foreign key in local
     // - unique for foreign key targe
 
-    const inspector = createInspector(link.knex);
+    const inspector = new Inspector(link.knex);
     const currentTables = await inspector.tables();
     const isSchemaExits = (s: ISchema) => currentTables.includes(s.tableName);
 
