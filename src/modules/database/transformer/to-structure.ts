@@ -1,4 +1,4 @@
-import { ISchema } from '../../schema';
+import { FieldType, ISchema } from '../../schema';
 import { RelationKind } from '../../schema/interface/relation.interface';
 import { ISchemaStructure } from '../interface/schema-structure.interface';
 
@@ -36,7 +36,7 @@ export const toStructure = (schema: ISchema): ISchemaStructure => {
     .sort((a, b) => (a.columnName > b.columnName ? 1 : -1))
     .map(f => ({
       columnName: f.columnName,
-      type: f.type,
+      type: f.type === FieldType.JSONB ? FieldType.JSON : f.type,
       typeParams: f.typeParams,
     }));
 

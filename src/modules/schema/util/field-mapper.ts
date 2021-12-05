@@ -76,6 +76,7 @@ export const getFieldTypeFromString = (
       break;
     case 'TIMESTAMP WITHOUT TIME ZONE':
     case 'TIMESTAMP WITH TIME ZONE':
+    case 'DATETIME':
       type = FieldType.DATETIME;
       break;
     case 'UUID':
@@ -100,7 +101,20 @@ export const getFieldTypeFromString = (
     }
   }
 
+  // SQLITE uses CHAR for binary
+  if (text == 'CHAR') {
+    if (col.max_length == 36) {
+      type = FieldType.UUID;
+      params = {
+        values: [],
+      };
+    } else {
+      type = FieldType.TEXT;
+    }
+  }
+
   if (!type) {
+    console.log(col);
     throw new Exception(`Unknown type [${text}]`);
   }
 

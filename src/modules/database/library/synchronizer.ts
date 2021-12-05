@@ -3,11 +3,13 @@ import { diff } from 'just-diff';
 import { Knex } from 'knex';
 import { isEqual, snakeCase } from 'lodash';
 import hash from 'object-hash';
+import { inspect } from 'util';
 import { ILogger, Logger } from '../../../app/container';
 import { FieldTag, FieldType, ISchema } from '../../schema';
 import { RelationKind } from '../../schema/interface/relation.interface';
 import { isPrimary } from '../../schema/util/field-tools';
 import { IConnection } from '../interface';
+import { parseDialect } from '../parser/parse-dialect';
 import { toSchema } from '../transformer/to-schema';
 import { toStructure } from '../transformer/to-structure';
 import { Inspector } from './inspector';
@@ -71,8 +73,8 @@ export class Synchronizer {
       }
 
       console.log('Struct mismatch!', changes);
-      console.log('Known', knownStruct);
-      console.log('Reversed', revStruct);
+      console.log('Known', inspect(knownStruct, false, 4, true));
+      console.log('Reversed', inspect(revStruct, false, 4, true));
 
       if (1) process.exit(1);
     }
@@ -87,9 +89,11 @@ export class Synchronizer {
   ): Promise<ChangeStep[]> {
     const instructions: ChangeStep[] = [];
     const typeChecks = new Map<string, { exists: boolean; name: string }>();
+    const dialect = parseDialect(link.database.dsn);
 
     for (const f of schema.fields) {
       if (f.type === FieldType.ENUM) {
+        let enumExists = false;
         const curValues = f.typeParams.values.sort((a, b) => (a > b ? 1 : -1));
         const typeHash = hash(curValues, {
           algorithm: 'md5',
@@ -98,7 +102,13 @@ export class Synchronizer {
         const typeName = `__artgen_enum_${snakeCase(
           schema.reference,
         )}_${typeHash}`;
-        const enumExists = await inspector.isTypeExists(typeName);
+
+        // In PG we have to check for the type,
+        if (dialect === 'postgres') {
+          enumExists = await inspector.isTypeExists(typeName);
+        } else {
+          enumExists = false;
+        }
 
         typeChecks.set(f.reference, {
           exists: enumExists,
@@ -351,7 +361,7 @@ export class Synchronizer {
     // - index for foreign key in local
     // - unique for foreign key targe
 
-    const inspector = new Inspector(link.knex);
+    const inspector = new Inspector(link.knex, parseDialect(link.database.dsn));
     const currentTables = await inspector.tables();
     const isSchemaExits = (s: ISchema) => currentTables.includes(s.tableName);
 

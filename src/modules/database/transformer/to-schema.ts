@@ -44,6 +44,12 @@ export const toSchema = async (
     .filter(unq => unq.columns.length === 1)
     .map(unq => unq.columns[0]);
 
+  const enumChecks = [];
+
+  if (inspector.dialect == 'sqlite') {
+    // SQLite uses enum with value checks so we need to find every enum like check ~
+  }
+
   for (const col of columns) {
     const field: IField = {
       label: upperFirst(startCase(col.name)),
@@ -57,7 +63,7 @@ export const toSchema = async (
       tags: [],
     };
 
-    // Need to reverse the type
+    // Need to reverse the type (PG)
     if (col.data_type === 'USER-DEFINED') {
       const sType = await inspector.getType(tableName, col.name);
       field.type = sType.type;

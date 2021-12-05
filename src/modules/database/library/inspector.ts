@@ -3,16 +3,26 @@ import createInspector from 'knex-schema-inspector';
 import { Column } from 'knex-schema-inspector/dist/types/column';
 import { ForeignKey } from 'knex-schema-inspector/dist/types/foreign-key';
 import { SchemaInspector } from 'knex-schema-inspector/dist/types/schema-inspector';
+import { Dialect } from '../interface/dialect.type';
 import { IDialectInspector } from '../interface/inspector.interface';
 import { PostgresInspector } from './dialect/postgres.inspector';
+import { SQLiteInspector } from './dialect/sqlite.inspector';
 
 export class Inspector {
   protected knexInspector: SchemaInspector;
   protected dialectInspector: IDialectInspector;
 
-  constructor(knex: Knex) {
+  constructor(knex: Knex, readonly dialect: Dialect) {
     this.knexInspector = createInspector(knex);
-    this.dialectInspector = new PostgresInspector(knex);
+
+    switch (dialect) {
+      case 'postgres':
+        this.dialectInspector = new PostgresInspector(knex);
+        break;
+      case 'sqlite':
+        this.dialectInspector = new SQLiteInspector(knex);
+        break;
+    }
   }
 
   tables(): Promise<string[]> {

@@ -8,14 +8,14 @@ export type Unique = {
 export interface IDialectInspector {
   getUniques(tableName: string): Promise<Unique[]>;
 
-  getSpecialType(
+  getSpecialType?(
     tableName: string,
     columnName: string,
   ): Promise<Pick<IField, 'type' | 'typeParams'>>;
 
-  isTypeExists(typeName: string): Promise<boolean>;
+  isTypeExists?(typeName: string): Promise<boolean>;
 
-  getTablesForType(
+  getTablesForType?(
     typeName: string,
   ): Promise<{ tableName: string; columName: string }[]>;
 }
