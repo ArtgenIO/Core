@@ -1,7 +1,7 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { createLogger } from 'winston';
 import { IKernel, Kernel } from '../../../app/kernel';
-import { ExtensionModule } from '../../blueprint/extension.module';
+import { BlueprintModule } from '../../blueprint/blueprint.module';
 import { EventModule } from '../../event';
 import { SchemaModule } from '../../schema/collection.module';
 import { DatabaseModule } from '../database.module';
@@ -12,7 +12,7 @@ describe('DatabaseLink', () => {
 
   beforeEach(() => {
     app = new Kernel();
-    app.bootstrap([DatabaseModule, SchemaModule, EventModule, ExtensionModule]);
+    app.bootstrap([DatabaseModule, SchemaModule, EventModule, BlueprintModule]);
   });
 
   const createLink = (connection = {}) => {

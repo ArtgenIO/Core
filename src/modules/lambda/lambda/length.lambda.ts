@@ -1,5 +1,5 @@
 import { Service } from '../../../app/container';
-import { WorkflowSession } from '../../logic/library/workflow.session';
+import { WorkflowSession } from '../../flow/library/workflow.session';
 import { Lambda } from '../decorator/lambda.decorator';
 import { InputHandleDTO } from '../dto/input-handle.dto';
 import { OutputHandleDTO } from '../dto/output-handle.dto';

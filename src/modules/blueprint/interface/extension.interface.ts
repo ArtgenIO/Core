@@ -1,7 +1,7 @@
-import { ILogic } from '../../logic/interface';
+import { ILogic } from '../../flow/interface';
 import { ISchema } from '../../schema';
 
-export interface IExtension {
+export interface IBlueprint {
   /**
    * UUID
    */

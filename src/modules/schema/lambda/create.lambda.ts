@@ -1,12 +1,12 @@
 import { ISchema } from '..';
 import { Inject, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel/util/extract-error';
+import { WorkflowSession } from '../../flow/library/workflow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { JSCHEMA_ERR } from '../../lambda/utility/json-schema.helpers';
-import { WorkflowSession } from '../../logic/library/workflow.session';
 import { SchemaService } from '../service/schema.service';
 
 @Service({

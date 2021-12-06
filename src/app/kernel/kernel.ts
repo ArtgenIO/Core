@@ -95,14 +95,9 @@ export class Kernel implements IKernel {
             module,
           );
 
-          // Module export submodules
-          if (meta.exports) {
-            // Note: If we need to wait for a parent module then the dependsOn will
-            // cause locking, so maybe it would be beneficial to load the leaf modules first
-            // then the parent? We will see, but if needed we can simply pass the parent key here
-            // and register the module as dependents on the parent. Even tho this could easily create
-            // dead locks, if the parent module is a dependency but the dependency waiting for a submodule of the parent.
-            this.register(meta.exports);
+          // Module imports submodules, but not depends on their start, just their resources
+          if (meta.imports) {
+            this.register(meta.imports);
           }
 
           // Register dependencies
@@ -238,18 +233,27 @@ export class Kernel implements IKernel {
 
     this.logger.info("Startup sequence successful. Let's do this!");
 
-    // Propagate the onReady event, so the modules can register their things.
-    for (const moduleBinding of this.context.findByTag<IModule>('module')) {
-      const module = await moduleBinding.getValue(this.context);
+    // Propagate the onReady event, so the modules can register their handles.
+    // Unlike the on start event, this does not have to be in any order.
+    for (const binding of this.context.findByTag<any>('module')) {
+      const module: IModule = await binding.getValue(this.context);
 
       if (module?.onReady) {
-        module
+        await module
           .onReady(this)
-          .catch(e =>
-            this.logger.warn(
-              'Module [%s] had an unhandled exception in the ready hook',
-              module.constructor.name,
+          .then(() =>
+            this.logger.debug(
+              'Module [%s] is ready',
+              binding.source.value.name,
             ),
+          )
+          .catch(e =>
+            this.logger
+              .warn(
+                'Module [%s] had an unhandled exception in the ready hook',
+                binding.source.value.name,
+              )
+              .warn(getErrorMessage(e)),
           );
       }
     }

@@ -1,12 +1,12 @@
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel/util/extract-error';
+import { WorkflowSession } from '../../flow/library/workflow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import { WorkflowSession } from '../../logic/library/workflow.session';
-import { ExtensionService } from '../extension.service';
-import { IExtension } from '../interface/extension.interface';
+import { BlueprintService } from '../blueprint.service';
+import { IBlueprint } from '../interface/extension.interface';
 
 @Service({
   tags: 'lambda',
@@ -48,14 +48,14 @@ export class ExtensionImportLambda implements ILambda {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(ExtensionService)
-    readonly extService: ExtensionService,
+    @Inject(BlueprintService)
+    readonly extService: BlueprintService,
   ) {}
 
   async invoke(session: WorkflowSession) {
     const imp = session.getInput('import') as {
       database: string;
-      extension: IExtension;
+      extension: IBlueprint;
     };
 
     try {

@@ -99,13 +99,13 @@ describe('Kernel', () => {
       class SubSubModule {}
 
       @Module({
-        exports: [SubSubModule],
+        imports: [SubSubModule],
         providers: [SubServiceA],
       })
       class SubModule {}
 
       @Module({
-        exports: [SubModule],
+        imports: [SubModule],
         providers: [ServiceA],
       })
       class TopModule {}

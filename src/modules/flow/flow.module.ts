@@ -3,16 +3,16 @@ import { DatabaseModule } from '../database/database.module';
 import { IdentityModule } from '../identity/identity.module';
 import { LogicHttpGateway } from './gateway/http.gateway';
 import { WorkflowRpcGateway } from './gateway/rpc.gateway';
-import { WorkflowService as LogicService } from './service/workflow.service';
+import { FlowService } from './service/workflow.service';
 
 @Module({
   dependsOn: [IdentityModule, DatabaseModule],
-  providers: [LogicService, LogicHttpGateway, WorkflowRpcGateway],
+  providers: [FlowService, LogicHttpGateway, WorkflowRpcGateway],
 })
-export class LogicModule implements IModule {
+export class FlowModule implements IModule {
   constructor(
-    @Inject(LogicService)
-    readonly service: LogicService,
+    @Inject(FlowService)
+    readonly service: FlowService,
   ) {}
 
   async onStart() {

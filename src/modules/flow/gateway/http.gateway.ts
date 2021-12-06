@@ -10,7 +10,7 @@ import { IHttpGateway } from '../../http/interface/http-gateway.interface';
 import { HttpTriggerConfig } from '../../http/lambda/http-trigger.lambda';
 import { STRATEGY_CONFIG } from '../../identity/util/strategy.config';
 import { LambdaService } from '../../lambda/service/lambda.service';
-import { WorkflowService } from '../service/workflow.service';
+import { FlowService } from '../service/workflow.service';
 
 @Service({
   tags: 'http:gateway',
@@ -19,8 +19,8 @@ export class LogicHttpGateway implements IHttpGateway {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(WorkflowService)
-    readonly workflow: WorkflowService,
+    @Inject(FlowService)
+    readonly workflow: FlowService,
     @Inject(LambdaService)
     readonly node: LambdaService,
     @Inject(Authenticator)

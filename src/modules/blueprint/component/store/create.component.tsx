@@ -5,14 +5,14 @@ import { v4 } from 'uuid';
 import PageHeader from '../../../admin/layout/PageHeader';
 import PageWithHeader from '../../../admin/layout/PageWithHeader';
 import { useHttpClientOld } from '../../../admin/library/http-client';
-import { IExtension } from '../../interface/extension.interface';
+import { IBlueprint } from '../../interface/extension.interface';
 import ExtensionEdiorComponent from './_editor.component';
 
 export default function CreateExtension() {
   const history = useHistory();
   const client = useHttpClientOld();
 
-  const [extension, setExtension] = useState<IExtension>({
+  const [extension, setExtension] = useState<IBlueprint>({
     id: v4(),
     label: 'My Blog',
     version: '0.0.1',

@@ -2,7 +2,7 @@ import { ActionSchema, Context, ServiceBroker, ServiceSchema } from 'moleculer';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { IRpcGateway } from '../../rpc/interface/rpc-gateway.interface';
-import { WorkflowService } from '../service/workflow.service';
+import { FlowService } from '../service/workflow.service';
 
 @Service({
   tags: 'rpc:gateway',
@@ -11,8 +11,8 @@ export class WorkflowRpcGateway implements IRpcGateway {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(WorkflowService)
-    readonly workflow: WorkflowService,
+    @Inject(FlowService)
+    readonly workflow: FlowService,
     @Inject(LambdaService)
     readonly node: LambdaService,
   ) {}

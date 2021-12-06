@@ -1,10 +1,10 @@
 import { ILogger, Inject, Logger } from '../../app/container';
 import { Observer, On } from '../event';
 import { RestService } from '../rest/rest.service';
-import { IExtension } from './interface/extension.interface';
+import { IBlueprint } from './interface/extension.interface';
 
 @Observer()
-export class ExtensionObserver {
+export class BlueprintObserver {
   constructor(
     @Logger()
     readonly logger: ILogger,
@@ -12,11 +12,11 @@ export class ExtensionObserver {
     readonly rest: RestService,
   ) {}
 
-  @On('crud.system.Extension.deleted')
-  async handleExtensionDelete(ext: IExtension) {
+  @On('crud.system.Blueprint.deleted')
+  async handleBlueprintDelete(bp: IBlueprint) {
     this.logger.warn('Extension deletion detected!');
 
-    for (const wf of ext.workflows) {
+    for (const wf of bp.workflows) {
       await this.rest
         .delete('system', 'Workflow', {
           id: wf.id,
@@ -27,7 +27,7 @@ export class ExtensionObserver {
         );
     }
 
-    for (const schema of ext.schemas) {
+    for (const schema of bp.schemas) {
       this.rest
         .delete('system', 'Schema', {
           database: schema.database,

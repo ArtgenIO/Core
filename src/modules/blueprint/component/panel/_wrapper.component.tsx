@@ -12,8 +12,8 @@ import { Route, Switch, useLocation, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import CrudReadComponent from '../../../content/component/read.component';
-import WorkflowListComponent from '../../../logic/components/list.component';
-import { IExtension } from '../../interface/extension.interface';
+import WorkflowListComponent from '../../../flow/components/list.component';
+import { IBlueprint } from '../../interface/extension.interface';
 
 export default function ExtensionPanelWrapper() {
   const location = useLocation();
@@ -23,7 +23,7 @@ export default function ExtensionPanelWrapper() {
   const [selectedMenu, setSelectedMenu] = useState([]);
   const [openedMenu, setOpenedMenu] = useState([]);
 
-  const [{ data, loading, error }] = useHttpClient<IExtension>(
+  const [{ data, loading, error }] = useHttpClient<IBlueprint>(
     `/api/rest/system/extension/${params.id}`,
   );
 

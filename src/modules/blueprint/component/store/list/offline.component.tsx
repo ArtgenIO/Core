@@ -25,7 +25,7 @@ import { Link } from 'react-router-dom';
 import { useHttpClientOld } from '../../../../admin/library/http-client';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
 import { routeCrudAPI } from '../../../../content/util/schema-url';
-import { IExtension } from '../../../interface/extension.interface';
+import { IBlueprint } from '../../../interface/extension.interface';
 
 export default function OfflineExtensions() {
   const base = '/admin/ext/store';
@@ -34,7 +34,7 @@ export default function OfflineExtensions() {
   const [showSourceFor, setShowSourceFor] = useState(null);
 
   const [{ data: extensions, loading, error }, refetch] = useHttpClient<
-    IExtension[]
+    IBlueprint[]
   >(
     routeCrudAPI({ database: 'system', reference: 'Extension' }) +
       new QueryBuilder().top(100).toQuery(),

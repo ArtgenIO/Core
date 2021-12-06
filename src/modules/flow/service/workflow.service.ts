@@ -1,17 +1,17 @@
 import { Model } from 'objection';
 import { v4 } from 'uuid';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { IExtension } from '../../blueprint/interface/extension.interface';
-import { SystemExtensionProvider } from '../../blueprint/provider/system-extension.provider';
+import { IBlueprint } from '../../blueprint/interface/extension.interface';
+import { SystemBlueprintProvider } from '../../blueprint/provider/system-extension.provider';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { SchemaService } from '../../schema/service/schema.service';
 import { ILogic } from '../interface/workflow.interface';
 import { WorkflowSession } from '../library/workflow.session';
 
-type WorkflowModel = ILogic & Model;
+type FlowModel = ILogic & Model;
 
 @Service()
-export class WorkflowService {
+export class FlowService {
   constructor(
     @Logger()
     readonly logger: ILogger,
@@ -19,8 +19,8 @@ export class WorkflowService {
     readonly lambda: LambdaService,
     @Inject(SchemaService)
     readonly schema: SchemaService,
-    @Inject(SystemExtensionProvider)
-    readonly sysExt: IExtension,
+    @Inject(SystemBlueprintProvider)
+    readonly sysExt: IBlueprint,
   ) {}
 
   async seed(): Promise<void> {
@@ -38,13 +38,13 @@ export class WorkflowService {
 
   async findAll(): Promise<ILogic[]> {
     return (
-      await this.schema.getModel<WorkflowModel>('system', 'Workflow').query()
+      await this.schema.getModel<FlowModel>('system', 'Workflow').query()
     ).map(wf => wf.$toJson());
   }
 
   async createWorkflowSession(workflowId: string, actionId?: string) {
     const workflow = await this.schema
-      .getModel<WorkflowModel>('system', 'Workflow')
+      .getModel<FlowModel>('system', 'Workflow')
       .query()
       .findById(workflowId);
 
@@ -61,7 +61,7 @@ export class WorkflowService {
 
   async createWorkflow(workflow: Omit<ILogic, 'id'>): Promise<ILogic> {
     const record = await this.schema
-      .getModel<WorkflowModel>('system', 'Workflow')
+      .getModel<FlowModel>('system', 'Workflow')
       .query()
       .insertAndFetch(workflow);
 
@@ -73,7 +73,7 @@ export class WorkflowService {
 
   async updateWorkflow(workflow: ILogic): Promise<ILogic> {
     const record = await this.schema
-      .getModel<WorkflowModel>('system', 'Workflow')
+      .getModel<FlowModel>('system', 'Workflow')
       .query()
       .findById(workflow.id);
 

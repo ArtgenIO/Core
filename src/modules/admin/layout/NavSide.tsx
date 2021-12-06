@@ -9,7 +9,7 @@ import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useResetRecoilState } from 'recoil';
-import { IExtension } from '../../blueprint/interface/extension.interface';
+import { IBlueprint } from '../../blueprint/interface/extension.interface';
 import { routeCrudAPI } from '../../content/util/schema-url';
 import { jwtAtom } from '../admin.atoms';
 import { useHttpClient } from '../library/use-http-client';
@@ -48,7 +48,7 @@ const NavSide = () => {
   const [selected, setSelected] = useState('');
   const [menus, setMenus] = useState<IMenuItem[]>([]);
 
-  const [{ data: extensions, loading, error }] = useHttpClient<IExtension[]>(
+  const [{ data: extensions, loading, error }] = useHttpClient<IBlueprint[]>(
     routeCrudAPI({
       database: 'system',
       reference: 'Extension',

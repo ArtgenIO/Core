@@ -5,7 +5,7 @@ import PageHeader from '../../../admin/layout/PageHeader';
 import PageWithHeader from '../../../admin/layout/PageWithHeader';
 import { useHttpClientOld } from '../../../admin/library/http-client';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import { IExtension } from '../../interface/extension.interface';
+import { IBlueprint } from '../../interface/extension.interface';
 import ExtensionEdiorComponent from './_editor.component';
 
 export default function EditExtension() {
@@ -13,9 +13,9 @@ export default function EditExtension() {
   const params = useParams<{ id: string }>();
   const client = useHttpClientOld();
 
-  const [extension, setExtension] = useState<IExtension>(null);
+  const [extension, setExtension] = useState<IBlueprint>(null);
 
-  const [{ data, loading }] = useHttpClient<IExtension>(
+  const [{ data, loading }] = useHttpClient<IBlueprint>(
     `/api/rest/system/extension/${params.id}`,
   );
 

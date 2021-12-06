@@ -11,12 +11,12 @@ import {
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
-import { IExtension } from '../../../interface/extension.interface';
+import { IBlueprint } from '../../../interface/extension.interface';
 
 export default function CloudExtensions() {
   const base = '/admin/ext/store';
 
-  const [{ data: extensions, loading, error }] = useHttpClient<IExtension[]>(
+  const [{ data: extensions, loading, error }] = useHttpClient<IBlueprint[]>(
     '/api/extension-store/proxy',
   );
 

@@ -1,8 +1,7 @@
 import { Model } from 'objection';
 import { simpleSchema } from '../../../tests/schemas/simple.schema';
 import { IKernel, Kernel } from '../../app/kernel';
-import { ExtensionModule } from '../blueprint/extension.module';
-import { EventModule } from '../event';
+import { BlueprintModule } from '../blueprint/blueprint.module';
 import { SchemaModule } from '../schema/collection.module';
 import { DatabaseModule } from './database.module';
 import { ConnectionService } from './service/connection.service';
@@ -12,12 +11,7 @@ describe('Database E2E', () => {
 
   beforeEach(async () => {
     kernel = new Kernel();
-    kernel.bootstrap([
-      DatabaseModule,
-      EventModule,
-      SchemaModule,
-      ExtensionModule,
-    ]);
+    kernel.bootstrap([DatabaseModule, SchemaModule, BlueprintModule]);
 
     await kernel.start();
   });

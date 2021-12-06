@@ -1,4 +1,3 @@
-import { EventEmitter2 } from 'eventemitter2';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { ILogger, Inject, Logger, Service } from '../../app/container';
@@ -6,31 +5,33 @@ import { SEED_DIR } from '../../app/globals';
 import { getErrorMessage } from '../../app/kernel';
 import { ConnectionService } from '../database/service/connection.service';
 import { RestService } from '../rest/rest.service';
-import { IExtension } from './interface/extension.interface';
-import { SystemExtensionProvider } from './provider/system-extension.provider';
+import { IBlueprint } from './interface/extension.interface';
+import { SystemBlueprintProvider } from './provider/system-extension.provider';
 
 @Service()
-export class ExtensionService {
+export class BlueprintService {
   constructor(
     @Logger()
     readonly logger: ILogger,
     @Inject(RestService)
     readonly rest: RestService,
-    @Inject(SystemExtensionProvider)
-    readonly sysExt: IExtension,
-    @Inject(EventEmitter2)
-    readonly events: EventEmitter2,
+    @Inject(SystemBlueprintProvider)
+    readonly systemBlueprint: IBlueprint,
     @Inject(ConnectionService)
     readonly connections: ConnectionService,
   ) {}
 
   async seed() {
     const sysExists = await this.rest.read('system', 'Extension', {
-      id: this.sysExt.id,
+      id: this.systemBlueprint.id,
     });
 
     if (!sysExists) {
-      await this.rest.create('system', 'Extension', this.sysExt as any);
+      await this.rest.create(
+        'system',
+        'Extension',
+        this.systemBlueprint as any,
+      );
       this.logger.info('Extension [system] installed');
 
       // Install the identity extension too
@@ -43,7 +44,7 @@ export class ExtensionService {
     }
   }
 
-  async importFromSource(database: string, extension: IExtension) {
+  async importFromSource(database: string, extension: IBlueprint) {
     // Global db reference
     extension.database = database;
 

@@ -10,9 +10,10 @@ export type IModuleMeta = {
   providers?: Constructor<unknown>[];
 
   /**
-   * Sub modules provided by the module
+   * Resource dependencies provided by the imported modules,
+   * not context locked, but builds up a requirement for injections
    */
-  exports?: Constructor<unknown>[];
+  imports?: Constructor<unknown>[];
 
   /**
    * Modules used in the module as a dependency,

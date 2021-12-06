@@ -1,9 +1,9 @@
 import { inject } from '@loopback/context';
 import { IContext, Service } from '../../../app/container';
+import { WorkflowSession } from '../../flow/library/workflow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import { WorkflowSession } from '../../logic/library/workflow.session';
 import { HttpTriggerConfig } from './http-trigger.lambda';
 
 type IConfig = {

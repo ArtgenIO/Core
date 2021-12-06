@@ -1,5 +1,5 @@
-import { ILogic } from '../../logic/interface/workflow.interface';
-import { WorkflowSession } from '../../logic/library/workflow.session';
+import { ILogic } from '../../flow/interface/workflow.interface';
+import { WorkflowSession } from '../../flow/library/workflow.session';
 
 /**
  * Request executor, must be stateless so each invoking can be called without reinitialization

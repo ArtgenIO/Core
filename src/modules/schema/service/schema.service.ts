@@ -1,8 +1,8 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { IExtension } from '../../blueprint/interface/extension.interface';
-import { SystemExtensionProvider } from '../../blueprint/provider/system-extension.provider';
+import { IBlueprint } from '../../blueprint/interface/extension.interface';
+import { SystemBlueprintProvider } from '../../blueprint/provider/system-extension.provider';
 import { IConnection } from '../../database/interface';
 import { ConnectionService } from '../../database/service/connection.service';
 import { ISchema } from '../interface/schema.interface';
@@ -26,8 +26,8 @@ export class SchemaService {
     readonly event: EventEmitter2,
     @Inject(MigrationService)
     readonly migrator: MigrationService,
-    @Inject(SystemExtensionProvider)
-    readonly sysExt: IExtension,
+    @Inject(SystemBlueprintProvider)
+    readonly sysExt: IBlueprint,
   ) {}
 
   /**

@@ -1,10 +1,10 @@
 import { sign, SignOptions } from 'jsonwebtoken';
 import { Inject, Service } from '../../../app/container';
+import { WorkflowSession } from '../../flow/library/workflow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import { WorkflowSession } from '../../logic/library/workflow.session';
 import { IJwtPayload } from '../interface/jwt-payload.interface';
 import { AuthenticationService } from '../service/authentication.service';
 

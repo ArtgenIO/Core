@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
 import { ILogger, IModule, Logger, Module } from '../../app/container';
 import { IKernel } from '../../app/kernel';
-import { ExtensionModule } from '../blueprint/extension.module';
-import { LogicModule } from '../logic/workflow.module';
+import { BlueprintModule } from '../blueprint/blueprint.module';
+import { FlowModule } from '../flow/flow.module';
 import { PageModule } from '../page/page.module';
 import { HttpObserver } from './http.observer';
 import { HttpRequestLambda } from './lambda/http-request.lambda';
@@ -12,7 +12,7 @@ import { HttpServerProvider } from './provider/http.server';
 import { HttpService } from './service/http.service';
 
 @Module({
-  dependsOn: [LogicModule, ExtensionModule, PageModule],
+  dependsOn: [FlowModule, BlueprintModule, PageModule],
   providers: [
     HttpObserver,
     HttpService,

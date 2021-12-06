@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { OnParams, ON_META_KEY } from '.';
 import { ILogger, Inject, Logger } from '../../app/container';
 import { IKernel } from '../../app/kernel';
-import { WorkflowService } from '../logic/service/workflow.service';
+import { FlowService } from '../flow/service/workflow.service';
 import { EventTriggerConfig } from './lambda/event.trigger';
 
 export class EventService {
@@ -14,8 +14,8 @@ export class EventService {
     readonly logger: ILogger,
     @Inject(EventEmitter2)
     readonly bus: EventEmitter2,
-    @Inject(WorkflowService)
-    readonly workflow: WorkflowService,
+    @Inject(FlowService)
+    readonly workflow: FlowService,
   ) {}
 
   async register(kernel: IKernel) {

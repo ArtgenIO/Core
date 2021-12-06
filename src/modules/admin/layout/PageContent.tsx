@@ -24,7 +24,7 @@ export default function PageContent() {
             <Route
               path="/admin/workflow"
               component={lazy(
-                () => import('../../logic/components/index.component'),
+                () => import('../../flow/components/index.component'),
               )}
             />
             <Route

@@ -3,9 +3,9 @@ import { startCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import { routeCrudAPI } from '../../../content/util/schema-url';
-import { ILogic } from '../../../logic/interface';
+import { ILogic } from '../../../flow/interface';
 import { ISchema } from '../../../schema';
-import { IExtension } from '../../interface/extension.interface';
+import { IBlueprint } from '../../interface/extension.interface';
 
 type TransferItem = {
   key: string;
@@ -14,8 +14,8 @@ type TransferItem = {
 };
 
 type Props = {
-  extension: IExtension;
-  setExtension: Dispatch<SetStateAction<IExtension>>;
+  extension: IBlueprint;
+  setExtension: Dispatch<SetStateAction<IBlueprint>>;
   onSave: () => void;
 };
 

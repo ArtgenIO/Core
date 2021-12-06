@@ -1,7 +1,7 @@
+import { WorkflowSession } from '../../modules/flow/library/workflow.session';
 import { Lambda } from '../../modules/lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../modules/lambda/dto/input-handle.dto';
 import { ILambda } from '../../modules/lambda/interface/lambda.interface';
-import { WorkflowSession } from '../../modules/logic/library/workflow.session';
 import { ILogger, Logger, Service } from '../container';
 
 @Service({
