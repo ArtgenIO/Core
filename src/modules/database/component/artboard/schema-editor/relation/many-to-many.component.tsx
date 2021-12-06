@@ -6,7 +6,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { ISchema } from '../../../../../schema';
 import {
   IRelation,
-  IRelationManyToMany,
+  IRelationBelongsToMany,
 } from '../../../../../schema/interface/relation.interface';
 import {
   getTakenColumNames,
@@ -30,7 +30,7 @@ export default function RelationManyToMany({
   const [name, setName] = useState(relation.name);
   const [remoteField, setRemoteField] = useState<string>(relation.remoteField);
   const [through, setThrough] = useState<string>(
-    (relation as IRelationManyToMany).through,
+    (relation as IRelationBelongsToMany).through,
   );
 
   return (
@@ -99,7 +99,7 @@ export default function RelationManyToMany({
                 s.relations[idx].name = newName;
                 s.relations[idx].target = newTarget;
                 s.relations[idx].remoteField = remotePrimary.reference;
-                (s.relations[idx] as IRelationManyToMany).through = through;
+                (s.relations[idx] as IRelationBelongsToMany).through = through;
                 setThrough(through);
                 setName(newName);
                 setRemoteField(s.relations[idx].remoteField);
@@ -141,7 +141,7 @@ export default function RelationManyToMany({
               onChange={e => {
                 setThrough(e.target.value);
                 setSchema(s => {
-                  (s.relations[idx] as IRelationManyToMany).through =
+                  (s.relations[idx] as IRelationBelongsToMany).through =
                     e.target.value;
 
                   return s;
