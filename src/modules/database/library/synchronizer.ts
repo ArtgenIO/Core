@@ -207,7 +207,7 @@ export class Synchronizer {
           let col: Knex.ColumnBuilder;
 
           // MySQL requires length for TEXT, BLOB if indexed
-          if (inspector.dialect == 'mysql') {
+          if (inspector.dialect == 'mysql' || inspector.dialect == 'mariadb') {
             if (
               isIndexed(f) ||
               schema.uniques.some(unq => unq.fields.includes(f.reference)) ||

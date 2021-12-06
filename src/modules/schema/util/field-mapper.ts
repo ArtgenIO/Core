@@ -51,6 +51,7 @@ export const getFieldTypeFromString = (
       type = FieldType.INTEGER;
       break;
     case 'JSON':
+    case 'LONGTEXT': // MariaDB
       type = FieldType.JSON;
       break;
     case 'JSONB':

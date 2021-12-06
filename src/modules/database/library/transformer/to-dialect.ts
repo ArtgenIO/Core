@@ -6,7 +6,7 @@ import { Dialect } from '../../interface/dialect.type';
 export const toDialect = (schema: ISchema, dialect: Dialect): ISchema => {
   for (const field of schema.fields) {
     // Reversed field text always gets
-    if (dialect === 'mysql') {
+    if (dialect === 'mysql' || dialect == 'mariadb') {
       // Text and blob cannot have index, just varchar
       if (
         isIndexed(field) ||
@@ -39,6 +39,13 @@ export const toDialect = (schema: ISchema, dialect: Dialect): ISchema => {
       if (field.type == FieldType.TEXT) {
         if (!field.typeParams?.length) {
           field.typeParams.length = 65535;
+        }
+      }
+
+      // MariaDB JSON
+      if (field.type == FieldType.JSON) {
+        if (field.typeParams?.length) {
+          delete field.typeParams.length;
         }
       }
 
