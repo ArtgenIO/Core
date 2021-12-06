@@ -1,5 +1,8 @@
 import { Knex } from 'knex';
-import { IDialectInspector, Unique } from '../../interface/inspector.interface';
+import {
+  IDialectInspector,
+  Unique,
+} from '../../../interface/inspector.interface';
 
 export class MySQLInspector implements IDialectInspector {
   constructor(protected knex: Knex) {}

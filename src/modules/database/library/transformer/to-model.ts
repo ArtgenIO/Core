@@ -6,10 +6,10 @@ import {
   RelationType,
 } from 'objection';
 import { v4 } from 'uuid';
-import { FieldTag, FieldType, ISchema } from '../../schema/interface';
-import { RelationKind } from '../../schema/interface/relation.interface';
-import { isPrimary } from '../../schema/util/field-tools';
-import { IConnection } from '../interface';
+import { FieldTag, FieldType, ISchema } from '../../../schema/interface';
+import { RelationKind } from '../../../schema/interface/relation.interface';
+import { isPrimary } from '../../../schema/util/field-tools';
+import { IConnection } from '../../interface';
 
 // Map database columns to code level references
 const toProperty = (schema: ISchema) => {

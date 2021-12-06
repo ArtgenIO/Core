@@ -9,10 +9,10 @@ import { FieldTag, FieldType, ISchema } from '../../schema';
 import { RelationKind } from '../../schema/interface/relation.interface';
 import { isPrimary } from '../../schema/util/field-tools';
 import { IConnection } from '../interface';
-import { parseDialect } from '../parser/parse-dialect';
-import { toSchema } from '../transformer/to-schema';
-import { toStructure } from '../transformer/to-structure';
-import { Inspector } from './inspector';
+import { Inspector } from './inspector/inspector';
+import { parseDialect } from './parser/parse-dialect';
+import { toSchema } from './transformer/to-schema';
+import { toStructure } from './transformer/to-structure';
 
 interface ChangeStep {
   type: 'backup' | 'copy' | 'create' | 'constraint' | 'foreign' | 'drop';

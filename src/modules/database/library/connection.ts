@@ -7,9 +7,9 @@ import { Exception } from '../../../app/exceptions/exception';
 import { ISchema } from '../../schema';
 import { IConnection, IDatabase } from '../interface';
 import { IAssociation } from '../interface/association.interface';
-import { addRelations, toModel } from '../transformer/to-model';
-import { toStructure } from '../transformer/to-structure';
 import { Synchronizer } from './synchronizer';
+import { addRelations, toModel } from './transformer/to-model';
+import { toStructure } from './transformer/to-structure';
 
 export class Connection implements IConnection {
   /**

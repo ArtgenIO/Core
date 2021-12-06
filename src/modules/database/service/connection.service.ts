@@ -5,7 +5,7 @@ import { IKernel } from '../../../app/kernel';
 import { ISchema } from '../../schema';
 import { IConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
-import { parseDialect } from '../parser/parse-dialect';
+import { parseDialect } from '../library/parser/parse-dialect';
 import { ConnectionConcrete } from '../provider/connection-concrete.provider';
 
 @Service()
