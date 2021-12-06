@@ -6,13 +6,13 @@ import {
   RelationType,
 } from 'objection';
 import { v4 } from 'uuid';
-import { FieldTag, FieldType, ICollection } from '../../collection/interface';
-import { RelationKind } from '../../collection/interface/relation.interface';
-import { isPrimary } from '../../collection/util/field-tools';
+import { FieldTag, FieldType, ISchema } from '../../schema/interface';
+import { RelationKind } from '../../schema/interface/relation.interface';
+import { isPrimary } from '../../schema/util/field-tools';
 import { IConnection } from '../interface';
 
 // Map database columns to code level references
-const toProperty = (schema: ICollection) => {
+const toProperty = (schema: ISchema) => {
   const columnMap = new Map<string, string>(
     schema.fields.map(f => [f.columnName, f.reference]),
   );
@@ -33,7 +33,7 @@ const toProperty = (schema: ICollection) => {
 };
 
 // Map code level references to database columns
-const toColumn = (schema: ICollection) => {
+const toColumn = (schema: ISchema) => {
   const referenceMap = new Map<string, string>(
     schema.fields.map(f => [f.reference, f.columnName]),
   );
@@ -54,7 +54,7 @@ const toColumn = (schema: ICollection) => {
 };
 
 // Hook before the model is created
-const onCreate = (schema: ICollection) => {
+const onCreate = (schema: ISchema) => {
   const primaryKeys = schema.fields.filter(isPrimary);
   const hasUUIDPK =
     primaryKeys.length === 1 && primaryKeys[0].type === FieldType.UUID;
@@ -81,7 +81,7 @@ const onCreate = (schema: ICollection) => {
 };
 
 // Hook before the model is updated
-const onUpdate = (schema: ICollection) => {
+const onUpdate = (schema: ISchema) => {
   const updatedAt = schema.fields.find(f => f.tags.includes(FieldTag.UPDATED));
   const versioned = schema.fields.find(f => f.tags.includes(FieldTag.VERSION));
 
@@ -99,7 +99,7 @@ const onUpdate = (schema: ICollection) => {
 /**
  * Convert a schema into a model definition adjusted to the database's dialect.
  */
-export const toModel = (collection: ICollection): ModelClass<Model> => {
+export const toModel = (collection: ISchema): ModelClass<Model> => {
   const model = class extends Model {};
 
   model.tableName = collection.tableName;
@@ -126,7 +126,7 @@ export const toModel = (collection: ICollection): ModelClass<Model> => {
 
 export const addRelations = (
   model: ModelClass<Model>,
-  collection: ICollection,
+  collection: ISchema,
   connection: IConnection,
 ) => {
   const relationMappings: RelationMappings = {};

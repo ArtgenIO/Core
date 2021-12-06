@@ -1,7 +1,7 @@
 import { Form, Input, Tooltip, Typography } from 'antd';
 import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ICollection } from '../../../../collection';
+import { ISchema } from '../../../../schema';
 
 type InputLinkedProps = {
   isLinked: boolean;
@@ -32,8 +32,8 @@ export default function SchemaEditorNamingComponent({
   schema,
   setSchema,
 }: {
-  schema: Partial<ICollection>;
-  setSchema: Dispatch<SetStateAction<Partial<ICollection>>>;
+  schema: Partial<ISchema>;
+  setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
 }) {
   const [form] = Form.useForm();
 

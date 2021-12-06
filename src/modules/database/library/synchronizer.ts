@@ -5,9 +5,9 @@ import { isEqual, snakeCase } from 'lodash';
 import hash from 'object-hash';
 import { inspect } from 'util';
 import { ILogger, Logger } from '../../../app/container';
-import { FieldTag, FieldType, ICollection } from '../../collection';
-import { RelationKind } from '../../collection/interface/relation.interface';
-import { isPrimary } from '../../collection/util/field-tools';
+import { FieldTag, FieldType, ISchema } from '../../schema';
+import { RelationKind } from '../../schema/interface/relation.interface';
+import { isPrimary } from '../../schema/util/field-tools';
 import { IConnection } from '../interface';
 import { parseDialect } from '../parser/parse-dialect';
 import { toSchema } from '../transformer/to-schema';
@@ -19,10 +19,10 @@ interface ChangeStep {
   query: Knex.SchemaBuilder;
 }
 
-const fColumns = (s: ICollection) => (ref: string[]) =>
+const fColumns = (s: ISchema) => (ref: string[]) =>
   s.fields.filter(f => ref.includes(f.reference)).map(f => f.columnName);
 
-const getPKCols = (schema: ICollection) =>
+const getPKCols = (schema: ISchema) =>
   schema.fields.filter(isPrimary).map(f => f.columnName);
 
 export class Synchronizer {
@@ -35,7 +35,7 @@ export class Synchronizer {
     const instructions: ChangeStep[] = [];
 
     // Reduce the associations to only the changed schemas.
-    const changes: ICollection[] = Array.from(link.getAssications().values())
+    const changes: ISchema[] = Array.from(link.getAssications().values())
       .filter(association => !association.inSync)
       .map(association => association.schema);
 
@@ -62,8 +62,7 @@ export class Synchronizer {
 
     const inspector = new Inspector(link.knex, parseDialect(link.database.dsn));
     const currentTables = await inspector.tables();
-    const isSchemaExits = (s: ICollection) =>
-      currentTables.includes(s.tableName);
+    const isSchemaExits = (s: ISchema) => currentTables.includes(s.tableName);
 
     for (const schema of changes) {
       // Imported / protected schemas are not synchronized.
@@ -114,7 +113,7 @@ export class Synchronizer {
   }
 
   protected async doAlterTable(
-    schema: ICollection,
+    schema: ISchema,
     link: IConnection,
     inspector: Inspector,
   ): Promise<ChangeStep[]> {
@@ -165,7 +164,7 @@ export class Synchronizer {
   }
 
   protected async createTable(
-    schema: ICollection,
+    schema: ISchema,
     link: IConnection,
     inspector: Inspector,
   ): Promise<ChangeStep[]> {
@@ -357,10 +356,7 @@ export class Synchronizer {
     return instructions;
   }
 
-  protected createRelations(
-    schema: ICollection,
-    link: IConnection,
-  ): ChangeStep[] {
+  protected createRelations(schema: ISchema, link: IConnection): ChangeStep[] {
     return [
       {
         type: 'foreign',
@@ -392,7 +388,7 @@ export class Synchronizer {
     ];
   }
 
-  protected getDependencyGraph(schemas: ICollection[]): DepGraph<void> {
+  protected getDependencyGraph(schemas: ISchema[]): DepGraph<void> {
     const dependencies: DepGraph<void> = new DepGraph({
       circular: true,
     });
@@ -405,6 +401,11 @@ export class Synchronizer {
           const remoteSchema = schemas.find(s => s.reference === rel.target);
 
           if (rel.kind === RelationKind.BELONGS_TO_ONE) {
+            dependencies.addDependency(
+              localSchema.reference,
+              remoteSchema.reference,
+            );
+          } else if (rel.kind === RelationKind.BELONGS_TO_MANY) {
             dependencies.addDependency(
               localSchema.reference,
               remoteSchema.reference,

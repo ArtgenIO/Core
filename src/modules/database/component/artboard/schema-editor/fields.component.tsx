@@ -16,15 +16,15 @@ import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { pageDrawerAtom } from '../../../../admin/admin.atoms';
-import { FieldType, ICollection } from '../../../../collection';
+import { FieldType, ISchema } from '../../../../schema';
 import SchemaEditorFieldTunerComponent from './field-tune.component';
 
 export default function SchemaEditorFieldsComponent({
   schema,
   setSchema,
 }: {
-  schema: ICollection;
-  setSchema: Dispatch<SetStateAction<ICollection>>;
+  schema: ISchema;
+  setSchema: Dispatch<SetStateAction<ISchema>>;
 }) {
   const setPageDrawler = useSetRecoilState(pageDrawerAtom);
   const resetPageDrawler = useResetRecoilState(pageDrawerAtom);

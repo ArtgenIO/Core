@@ -1,15 +1,15 @@
 import { Model } from 'objection';
 import { Inject, Service } from '../../../app/container';
 import { IKeyValueRecord } from '../../content/interface/key-value.interface';
-import { CollectionService } from './collection.service';
+import { SchemaService } from './schema.service';
 
 type KVModel = IKeyValueRecord<any> & Model;
 
 @Service()
 export class KeyValueService {
   constructor(
-    @Inject(CollectionService)
-    readonly schema: CollectionService,
+    @Inject(SchemaService)
+    readonly schema: SchemaService,
   ) {}
 
   async get<T = string>(key: string, defaultValue: T = null): Promise<T> {

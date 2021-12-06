@@ -12,11 +12,11 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { useParams } from 'react-router';
 import { useHttpClientOld } from '../../../admin/library/http-client';
-import { ICollection } from '../../../collection';
-import { CollectionSerializer } from '../../../collection/serializer/schema.serializer';
-import { createEmptySchema } from '../../../collection/util/get-new-schema';
-import { createLayouOrganizer } from '../../../collection/util/layout-organizer';
 import { routeCrudAPI } from '../../../content/util/schema-url';
+import { ISchema } from '../../../schema';
+import { CollectionSerializer } from '../../../schema/serializer/schema.serializer';
+import { createEmptySchema } from '../../../schema/util/get-new-schema';
+import { createLayouOrganizer } from '../../../schema/util/layout-organizer';
 import './artboard.component.less';
 import DatabaseNameComponent from './name.component';
 import DatabaseSchemaEditorComponent from './schema-editor.component';
@@ -43,13 +43,13 @@ export default function DatabaseArtboardComponent() {
   const [elements, setElements] = useState<Elements>([]);
   const [openedNode, setOpenedNode] = useState<string>(null);
   const [selectedNode, setSelectedNode] = useState<string>(null);
-  const [savedState, setSavedState] = useState<ICollection[]>(null);
+  const [savedState, setSavedState] = useState<ISchema[]>(null);
 
   const layoutOrganizer = createLayouOrganizer();
 
   useEffect(() => {
     (async () => {
-      const response = await httpClient.get<ICollection[]>(apiReadUrl);
+      const response = await httpClient.get<ISchema[]>(apiReadUrl);
 
       setElements(() =>
         layoutOrganizer(CollectionSerializer.toElements(response.data)),

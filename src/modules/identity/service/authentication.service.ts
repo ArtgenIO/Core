@@ -3,8 +3,8 @@ import { sign } from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 import { Model } from 'objection';
 import { ILogger, Inject, Logger } from '../../../app/container';
-import { CollectionService } from '../../collection/service/collection.service';
-import { KeyValueService } from '../../collection/service/key-value.service';
+import { KeyValueService } from '../../schema/service/key-value.service';
+import { SchemaService } from '../../schema/service/schema.service';
 import { IAccessKey } from '../interface/access-key.interface';
 import { IAccount } from '../interface/account.interface';
 import { IJwtPayload } from '../interface/jwt-payload.interface';
@@ -18,8 +18,8 @@ export class AuthenticationService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(CollectionService)
-    readonly schema: CollectionService,
+    @Inject(SchemaService)
+    readonly schema: SchemaService,
     @Inject(KeyValueService)
     readonly kv: KeyValueService,
   ) {}

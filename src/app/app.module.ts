@@ -1,6 +1,5 @@
 import { AdminModule } from '../modules/admin/admin.module';
 import { ExtensionModule } from '../modules/blueprint/extension.module';
-import { CollectionModule } from '../modules/collection/collection.module';
 import { ContentModule } from '../modules/content/content.module';
 import { DatabaseModule } from '../modules/database/database.module';
 import { EventModule } from '../modules/event';
@@ -13,6 +12,7 @@ import { PageModule } from '../modules/page/page.module';
 import { RestModule } from '../modules/rest/rest.module';
 import { RpcModule } from '../modules/rpc/rpc.module';
 import { SchedulerModule } from '../modules/scheduler';
+import { SchemaModule } from '../modules/schema/collection.module';
 import { SecurityModule } from '../modules/security/security.module';
 import { TransformerModule } from '../modules/transformer/transformer.module';
 import { UpgradeModule } from '../modules/upgrade/upgrade.module';
@@ -35,7 +35,7 @@ import { LogLambda } from './logger/log.lambda';
     RestModule,
     RpcModule,
     SchedulerModule,
-    CollectionModule,
+    SchemaModule,
     SecurityModule,
     TransformerModule,
     UpgradeModule,

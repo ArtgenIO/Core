@@ -24,8 +24,8 @@ import PageHeader from '../../admin/layout/PageHeader';
 import PageWithHeader from '../../admin/layout/PageWithHeader';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { FieldType, ICollection } from '../../collection';
-import { isPrimary } from '../../collection/util/field-tools';
+import { FieldType, ISchema } from '../../schema';
+import { isPrimary } from '../../schema/util/field-tools';
 import { ContentAction } from '../interface/content-action.enum';
 import {
   routeCrudAPI,
@@ -43,9 +43,7 @@ export default function CrudReadComponent() {
   const route = useParams<RouteParams>();
 
   // Load schema
-  const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<
-    ICollection[]
-  >(
+  const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<ISchema[]>(
     routeCrudAPI({ database: 'system', reference: 'Schema' }) +
       new QueryBuilder()
         .filter(f =>

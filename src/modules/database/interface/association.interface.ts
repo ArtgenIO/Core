@@ -1,9 +1,9 @@
 import { Model, ModelClass } from 'objection';
-import { ICollection } from '../../collection';
+import { ISchema } from '../../schema';
 import { IDatabaseSchema } from './table-structure.interface';
 
 export interface IAssociation<T extends Model = Model> {
-  schema: ICollection;
+  schema: ISchema;
   structure: IDatabaseSchema;
   model: ModelClass<T>;
   inSync: boolean;

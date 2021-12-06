@@ -5,10 +5,10 @@ import {
   RouteHandlerMethod,
 } from 'fastify';
 import { Inject, Service } from '../../app/container';
-import { CollectionService } from '../collection/service/collection.service';
 import { ContentAction } from '../content/interface/content-action.enum';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
 import { AuthenticationHandlerProvider } from '../identity/provider/authentication-handler.provider';
+import { SchemaService } from '../schema/service/schema.service';
 import { RestService } from './rest.service';
 
 @Service({
@@ -18,8 +18,8 @@ export class RestGateway implements IHttpGateway {
   constructor(
     @Inject(RestService)
     readonly service: RestService,
-    @Inject(CollectionService)
-    readonly schema: CollectionService,
+    @Inject(SchemaService)
+    readonly schema: SchemaService,
     @Inject(AuthenticationHandlerProvider)
     readonly authHandler: RouteHandlerMethod,
   ) {}

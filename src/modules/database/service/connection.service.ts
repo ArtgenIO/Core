@@ -2,7 +2,7 @@ import { Constructor } from '@loopback/context';
 import knex, { Knex } from 'knex';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { IKernel } from '../../../app/kernel';
-import { ICollection } from '../../collection';
+import { ISchema } from '../../schema';
 import { IConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
 import { parseDialect } from '../parser/parse-dialect';
@@ -27,10 +27,7 @@ export class ConnectionService {
   /**
    * Create a connection to the given database, and synchornize the given schemas to it.
    */
-  async create(
-    database: IDatabase,
-    schemas: ICollection[],
-  ): Promise<IConnection> {
+  async create(database: IDatabase, schemas: ISchema[]): Promise<IConnection> {
     const connection = await this.kernel.create(this.connectionConcrete, [
       this.initKnex(database.dsn),
       database,

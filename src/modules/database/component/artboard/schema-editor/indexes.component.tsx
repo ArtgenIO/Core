@@ -1,12 +1,12 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { ICollection } from '../../../../collection';
+import { ISchema } from '../../../../schema';
 
 export default function SchemaEditorIndexesComponent({
   schema,
   setSchema,
 }: {
-  schema: Partial<ICollection>;
-  setSchema: Dispatch<SetStateAction<Partial<ICollection>>>;
+  schema: Partial<ISchema>;
+  setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
 }) {
   return <>To Be Implemented</>;
 }

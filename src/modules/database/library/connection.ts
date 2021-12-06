@@ -4,7 +4,7 @@ import { isEqual } from 'lodash';
 import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
-import { ICollection } from '../../collection';
+import { ISchema } from '../../schema';
 import { IConnection, IDatabase } from '../interface';
 import { IAssociation } from '../interface/association.interface';
 import { addRelations, toModel } from '../transformer/to-model';
@@ -17,17 +17,20 @@ export class Connection implements IConnection {
    */
   protected associations = new Map<string, IAssociation>();
 
+  protected synchornizer: Synchronizer;
+
   constructor(
     @Logger()
     readonly logger: ILogger,
     @Inject(EventEmitter2)
     readonly eventBus: EventEmitter2,
-    @Inject(Synchronizer)
-    readonly synchornizer: Synchronizer,
     readonly knex: Knex,
     readonly database: IDatabase,
   ) {
     this.logger = this.logger.child({ scope: `Link:${this.getName()}` });
+    this.synchornizer = new Synchronizer(
+      this.logger.child({ scope: `Sync:${this.getName()}` }),
+    );
   }
 
   getAssications() {
@@ -48,7 +51,7 @@ export class Connection implements IConnection {
     );
   }
 
-  getSchema(reference: string): ICollection {
+  getSchema(reference: string): ISchema {
     if (this.associations.has(reference)) {
       return this.associations.get(reference).schema;
     }
@@ -58,11 +61,11 @@ export class Connection implements IConnection {
     );
   }
 
-  getSchemas(): ICollection[] {
+  getSchemas(): ISchema[] {
     return Array.from(this.associations.values()).map(r => r.schema);
   }
 
-  async associate(schemas: ICollection[]): Promise<IConnection> {
+  async associate(schemas: ISchema[]): Promise<IConnection> {
     for (const schema of schemas) {
       const key = schema.reference;
       const structure = toStructure(schema);

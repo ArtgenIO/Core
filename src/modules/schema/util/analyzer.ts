@@ -1,7 +1,7 @@
-import { ICollection } from '..';
+import { ISchema } from '..';
 import { Exception } from '../../../app/exceptions/exception';
 
-export const SchemaAnalyzer = (schema: ICollection) => {
+export const SchemaAnalyzer = (schema: ISchema) => {
   const fieldColumnNameSet = schema.fields.map(f => f.columnName);
 
   // Verify relations.

@@ -1,7 +1,7 @@
 import { IField } from './field.interface';
 import { IRelation } from './relation.interface';
 
-export interface ICollection {
+export interface ISchema {
   /**
    * Migration tracker, to ensure compability.
    * Everytime a schema is loaded the system executes the migrations

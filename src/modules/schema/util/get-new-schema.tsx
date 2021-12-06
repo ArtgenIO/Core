@@ -1,6 +1,6 @@
-import { FieldTag, FieldType, ICollection } from '..';
+import { FieldTag, FieldType, ISchema } from '..';
 
-export const createEmptySchema = (database: string): ICollection => ({
+export const createEmptySchema = (database: string): ISchema => ({
   icon: 'table',
   version: 2,
   database,

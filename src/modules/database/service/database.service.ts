@@ -1,26 +1,100 @@
 import { Model } from 'objection';
-import { Inject, Service } from '../../../app/container';
-import { CollectionService } from '../../collection/service/collection.service';
+import { ILogger, Inject, Logger, Service } from '../../../app/container';
+import { getErrorMessage } from '../../../app/kernel';
+import { SchemaService } from '../../schema/service/schema.service';
 import { IConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
+import { ConnectionService } from './connection.service';
 
 type DatabaseModel = IDatabase & Model;
 
 @Service()
 export class DatabaseService {
   constructor(
-    @Inject(CollectionService)
-    readonly schemaService: CollectionService,
+    @Logger()
+    protected logger: ILogger,
+    @Inject(SchemaService)
+    readonly schemaSvc: SchemaService,
+    @Inject(ConnectionService)
+    readonly connections: ConnectionService,
   ) {}
+
+  /**
+   * Sets up the database with the system required tables and manages
+   * to initialize a valid connection for the rest of the system.
+   *
+   * At this point we don't have to handle the errors, because the system
+   * cannot function without the "system" connection, and the kernel will
+   * cancel the bootstrap with the error message.
+   *
+   * Custom connections may fail and those fails will be logged, but not breaking the system start.
+   */
+  async bootstrap() {
+    const connection = await this.connections.create(
+      this.getSystem(),
+      this.schemaSvc.getSystem(),
+    );
+
+    this.logger.debug('Synchronizing the system resources to the database');
+
+    // Ensure that the system schemas are available in the database.
+    await this.synchronize(connection);
+    await this.schemaSvc.synchronize(connection);
+
+    this.logger.debug('Loading custom resources from the database');
+
+    const [schemas, databases] = await Promise.all([
+      this.schemaSvc.findAll(),
+      this.findAll(),
+    ]);
+
+    const updates: Promise<IConnection | unknown>[] = [];
+
+    // Map schemas to databases.
+    for (const database of databases) {
+      const associations = schemas.filter(s => s.database === database.name);
+
+      // Connection does not exists yet, load up with the schemas.
+      if (database.name !== 'system') {
+        updates.push(
+          this.connections
+            .create(database, associations)
+            .catch(e => this.logger.warn(getErrorMessage(e))),
+        );
+      }
+      // Existing connection (system)
+      else {
+        updates.push(connection.associate(associations));
+      }
+    }
+
+    this.logger.debug('Updating connections with their resources');
+
+    await Promise.all(updates);
+  }
+
+  /**
+   * Close the database connections.
+   */
+  async shutdown() {
+    await Promise.all(
+      this.connections
+        .findAll()
+        .map(c =>
+          c
+            .close()
+            .then(() =>
+              this.logger.info('Connection [%s] closed', c.database.name),
+            ),
+        ),
+    );
+  }
 
   /**
    * Synchronize a link's database into the database which stores the connections.
    */
   async synchronize(link: IConnection) {
-    const model = this.schemaService.getModel<DatabaseModel>(
-      'system',
-      'Database',
-    );
+    const model = this.schemaSvc.getModel<DatabaseModel>('system', 'Database');
 
     let record = await model.query().findById(link.database.name);
 
@@ -39,9 +113,7 @@ export class DatabaseService {
    */
   async findAll(): Promise<IDatabase[]> {
     return (
-      await this.schemaService
-        .getModel<DatabaseModel>('system', 'Database')
-        .query()
+      await this.schemaSvc.getModel<DatabaseModel>('system', 'Database').query()
     ).map(db => db.$toJson());
   }
 

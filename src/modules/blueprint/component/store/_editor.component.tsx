@@ -2,9 +2,9 @@ import { Button, Divider, Form, Input, Select, Transfer } from 'antd';
 import { startCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import { ICollection } from '../../../collection';
 import { routeCrudAPI } from '../../../content/util/schema-url';
 import { ILogic } from '../../../logic/interface';
+import { ISchema } from '../../../schema';
 import { IExtension } from '../../interface/extension.interface';
 
 type TransferItem = {
@@ -43,7 +43,7 @@ export default function ExtensionEdiorComponent({
   );
 
   const [{ data: schemasReply, loading: schemasLoading }] = useHttpClient<
-    ICollection[]
+    ISchema[]
   >(
     routeCrudAPI({
       database: 'system',

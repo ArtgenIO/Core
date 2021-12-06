@@ -3,7 +3,7 @@ import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import { CollectionService } from '../service/collection.service';
+import { SchemaService } from '../service/schema.service';
 
 @Service({
   tags: 'lambda',
@@ -21,8 +21,8 @@ import { CollectionService } from '../service/collection.service';
 })
 export class ReadSchemaLambda implements ILambda {
   constructor(
-    @Inject(CollectionService)
-    readonly svc: CollectionService,
+    @Inject(SchemaService)
+    readonly svc: SchemaService,
   ) {}
 
   async invoke() {

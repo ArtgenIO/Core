@@ -3,8 +3,8 @@ import { v4 } from 'uuid';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { IExtension } from '../../blueprint/interface/extension.interface';
 import { SystemExtensionProvider } from '../../blueprint/provider/system-extension.provider';
-import { CollectionService } from '../../collection/service/collection.service';
 import { LambdaService } from '../../lambda/service/lambda.service';
+import { SchemaService } from '../../schema/service/schema.service';
 import { ILogic } from '../interface/workflow.interface';
 import { WorkflowSession } from '../library/workflow.session';
 
@@ -17,8 +17,8 @@ export class WorkflowService {
     readonly logger: ILogger,
     @Inject(LambdaService)
     readonly lambda: LambdaService,
-    @Inject(CollectionService)
-    readonly schema: CollectionService,
+    @Inject(SchemaService)
+    readonly schema: SchemaService,
     @Inject(SystemExtensionProvider)
     readonly sysExt: IExtension,
   ) {}

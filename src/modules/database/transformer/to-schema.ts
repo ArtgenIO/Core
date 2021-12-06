@@ -1,13 +1,13 @@
 import { Column } from 'knex-schema-inspector/dist/types/column';
 import { ForeignKey } from 'knex-schema-inspector/dist/types/foreign-key';
 import { camelCase, snakeCase, startCase, upperFirst } from 'lodash';
-import { FieldTag, FieldType, ICollection, IField } from '../../collection';
+import { FieldTag, FieldType, IField, ISchema } from '../../schema';
 import {
   IRelation,
   RelationKind,
-} from '../../collection/interface/relation.interface';
-import { getFieldTypeFromString } from '../../collection/util/field-mapper';
-import { isPrimary } from '../../collection/util/field-tools';
+} from '../../schema/interface/relation.interface';
+import { getFieldTypeFromString } from '../../schema/util/field-mapper';
+import { isPrimary } from '../../schema/util/field-tools';
 import { IConnection } from '../interface';
 import { Unique } from '../interface/inspector.interface';
 import { Inspector } from '../library/inspector';
@@ -20,8 +20,8 @@ export const toSchema = async (
   uniques: Unique[],
   link: IConnection,
   inspector: Inspector,
-): Promise<ICollection> => {
-  const schema: ICollection = {
+): Promise<ISchema> => {
+  const schema: ISchema = {
     database,
     reference: upperFirst(snakeCase(tableName)),
     tableName,

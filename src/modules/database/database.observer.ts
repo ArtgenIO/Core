@@ -1,8 +1,8 @@
 import { ILogger, Inject, Logger } from '../../app/container';
 import { getErrorMessage } from '../../app/kernel';
-import { ICollection } from '../collection';
-import { CollectionService } from '../collection/service/collection.service';
 import { Observer, On } from '../event';
+import { ISchema } from '../schema';
+import { SchemaService } from '../schema/service/schema.service';
 import { IDatabase } from './interface';
 import { ConnectionService } from './service/connection.service';
 
@@ -13,12 +13,12 @@ export class DatabaseObserver {
     readonly logger: ILogger,
     @Inject(ConnectionService)
     readonly linkService: ConnectionService,
-    @Inject(CollectionService)
-    readonly schemaService: CollectionService,
+    @Inject(SchemaService)
+    readonly schemaService: SchemaService,
   ) {}
 
   @On('crud.system.Schema.created')
-  async handleSchemaCreate(schema: ICollection) {
+  async handleSchemaCreate(schema: ISchema) {
     this.logger.warn('New schema created! [%s]', schema.reference);
 
     try {
@@ -32,7 +32,7 @@ export class DatabaseObserver {
   }
 
   @On('crud.system.Schema.updated')
-  async handleSchemaUpdate(schema: ICollection) {
+  async handleSchemaUpdate(schema: ISchema) {
     this.logger.warn('Schema changed! [%s]', schema.reference);
 
     try {
@@ -43,7 +43,7 @@ export class DatabaseObserver {
   }
 
   @On('crud.system.Schema.deleted')
-  async handleSchemaDelete(schema: ICollection) {
+  async handleSchemaDelete(schema: ISchema) {
     this.logger.warn('Schema delete! [%s]', schema.reference);
 
     try {

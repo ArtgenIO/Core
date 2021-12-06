@@ -1,14 +1,14 @@
 import { List, Switch, Typography } from 'antd';
 import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
-import { FieldTag, FieldType, ICollection } from '../../../../collection';
+import { FieldTag, FieldType, ISchema } from '../../../../schema';
 
 export default function SchemaEditorCapabilitiesComponent({
   schema,
   setSchema,
 }: {
-  schema: Partial<ICollection>;
-  setSchema: Dispatch<SetStateAction<Partial<ICollection>>>;
+  schema: Partial<ISchema>;
+  setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
 }) {
   const hasIdentity = !!schema.fields.find(
     f => f.type == FieldType.UUID && f.tags.includes(FieldTag.PRIMARY),

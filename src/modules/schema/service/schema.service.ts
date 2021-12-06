@@ -5,17 +5,17 @@ import { IExtension } from '../../blueprint/interface/extension.interface';
 import { SystemExtensionProvider } from '../../blueprint/provider/system-extension.provider';
 import { IConnection } from '../../database/interface';
 import { ConnectionService } from '../../database/service/connection.service';
-import { ICollection } from '../interface/schema.interface';
+import { ISchema } from '../interface/schema.interface';
 import { MigrationService } from './migration.service';
 
-type CollectionModel = ICollection & Model;
+type SchemaModel = ISchema & Model;
 
 @Service()
-export class CollectionService {
+export class SchemaService {
   /**
    * In memory cache to access schemas.
    */
-  registry: ICollection[] = [];
+  registry: ISchema[] = [];
 
   constructor(
     @Logger()
@@ -37,7 +37,7 @@ export class CollectionService {
    */
   async synchronize(link: IConnection) {
     // Get the schema repository.
-    const model = this.getModel<CollectionModel>('system', 'Schema');
+    const model = this.getModel<SchemaModel>('system', 'Schema');
 
     for (const schema of link.getSchemas()) {
       const exists = await model.query().findOne({
@@ -68,7 +68,7 @@ export class CollectionService {
    * can be used at bootstrap to load the system
    * schemas from local disk.
    */
-  getSystem(): ICollection[] {
+  getSystem(): ISchema[] {
     return this.sysExt.schemas.map(s => this.migrator.migrate(s));
   }
 
@@ -76,8 +76,8 @@ export class CollectionService {
    * Fetch the newest schemas from the database, and use this opportunity to
    * ensure the local cache is up to date.
    */
-  async findAll(): Promise<ICollection[]> {
-    const schemas = await this.getModel<CollectionModel>(
+  async findAll(): Promise<ISchema[]> {
+    const schemas = await this.getModel<SchemaModel>(
       'system',
       'Schema',
     ).query();
@@ -102,14 +102,14 @@ export class CollectionService {
     return this.registry.filter(s => s.database === database);
   }
 
-  findOne(database: string, reference: string): ICollection {
+  findOne(database: string, reference: string): ISchema {
     return this.registry.find(
       s => s.database === database && s.reference === reference,
     );
   }
 
-  async create(schema: ICollection) {
-    const model = this.getModel<CollectionModel>('system', 'Schema');
+  async create(schema: ISchema) {
+    const model = this.getModel<SchemaModel>('system', 'Schema');
     await model.query().insert(schema);
 
     this.registry.push(schema);
@@ -118,8 +118,8 @@ export class CollectionService {
     return schema;
   }
 
-  async update(update: ICollection) {
-    const model = this.getModel<CollectionModel>('system', 'Schema');
+  async update(update: ISchema) {
+    const model = this.getModel<SchemaModel>('system', 'Schema');
     const record = await model.query().findOne({
       database: update.database,
       reference: update.reference,

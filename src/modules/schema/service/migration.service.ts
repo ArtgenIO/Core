@@ -1,4 +1,4 @@
-import { ICollection } from '..';
+import { ISchema } from '..';
 import { Service } from '../../../app/container';
 
 /**
@@ -14,14 +14,14 @@ export class MigrationService {
    * Ensure that the schema is up to date, this function migrates between versions
    * so the user does not have to worry about compability.
    */
-  migrate(schema: ICollection): ICollection {
+  migrate(schema: ISchema): ISchema {
     return this.toVersion2(schema);
   }
 
   /**
    * Execute the migration from V1 to V2
    */
-  protected toVersion2(schema: ICollection): ICollection {
+  protected toVersion2(schema: ISchema): ISchema {
     // Add missing version key.
     if (!schema?.version || schema.version < 2) {
       schema.version = 2;

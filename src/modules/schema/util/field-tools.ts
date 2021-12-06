@@ -1,4 +1,4 @@
-import { FieldTag, FieldType, ICollection, IField } from '..';
+import { FieldTag, FieldType, IField, ISchema } from '..';
 
 export const isPrimary = (field: IField) =>
   field.tags.includes(FieldTag.PRIMARY);
@@ -37,7 +37,7 @@ export const isIndexed = (field: IField) =>
   field.tags.includes(FieldTag.INDEX) ||
   field.tags.includes(FieldTag.UNIQUE);
 
-export const getTakenColumNames = (schema: ICollection) => [
+export const getTakenColumNames = (schema: ISchema) => [
   ...schema.fields.map(field => field.columnName), // Locked in the table
   ...schema.fields.map(field => field.reference), // Locked in the JSON
   ...schema.relations.map(r => r.localField), // Locked in the table

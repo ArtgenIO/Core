@@ -4,16 +4,16 @@ import { cloneDeep, startCase } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
-import { ICollection } from '../../../../collection';
 import { routeCrudAPI } from '../../../../content/util/schema-url';
+import { ISchema } from '../../../../schema';
 import { IDatabase } from '../../../interface';
 
 export default function SelectDatabaseComponent({
   schema,
   setSchema,
 }: {
-  schema: Partial<ICollection>;
-  setSchema: Dispatch<SetStateAction<Partial<ICollection>>>;
+  schema: Partial<ISchema>;
+  setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
 }) {
   const [{ data: databases, loading, error }] = useHttpClient<IDatabase[]>(
     routeCrudAPI({

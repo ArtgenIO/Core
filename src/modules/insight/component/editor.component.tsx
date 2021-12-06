@@ -8,11 +8,11 @@ import PageHeader from '../../admin/layout/PageHeader';
 import PageWithHeader from '../../admin/layout/PageWithHeader';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { ICollection } from '../../collection';
 import { routeCrudAPI } from '../../content/util/schema-url';
+import { ISchema } from '../../schema';
 
 export default function AnalyticsEditorComponent() {
-  const [schema, setSchema] = useState<ICollection>(null);
+  const [schema, setSchema] = useState<ISchema>(null);
   const [chartType, setChartType] = useState('counter');
   const [result, setResult] = useState(0);
   const client = useHttpClientOld();
@@ -32,7 +32,7 @@ export default function AnalyticsEditorComponent() {
     }
   }, [schema]);
 
-  const [{ data, loading, error }] = useHttpClient<ICollection[]>(
+  const [{ data, loading, error }] = useHttpClient<ISchema[]>(
     routeCrudAPI({
       database: 'system',
       reference: 'Schema',

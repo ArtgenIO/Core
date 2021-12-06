@@ -2,12 +2,12 @@ import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Avatar, Button, Input, List, Popconfirm, Select, Tooltip } from 'antd';
 import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { ICollection } from '../../../../../collection';
-import { IRelation } from '../../../../../collection/interface/relation.interface';
+import { ISchema } from '../../../../../schema';
+import { IRelation } from '../../../../../schema/interface/relation.interface';
 import {
   getTakenColumNames,
   isPrimary,
-} from '../../../../../collection/util/field-tools';
+} from '../../../../../schema/util/field-tools';
 
 export default function RelationBelongsToOne({
   relation,
@@ -16,9 +16,9 @@ export default function RelationBelongsToOne({
   schemas,
 }: {
   relation: IRelation;
-  setSchema: Dispatch<SetStateAction<ICollection>>;
+  setSchema: Dispatch<SetStateAction<ISchema>>;
   idx: number;
-  schemas: ICollection[];
+  schemas: ISchema[];
 }) {
   const [name, setName] = useState(relation.name);
   const [remoteField, setRemoteField] = useState<string>(relation.remoteField);

@@ -1,5 +1,5 @@
 import { Edge, Elements, isNode, Node } from 'react-flow-renderer';
-import { ICollection } from '../interface';
+import { ISchema } from '../interface';
 import { RelationKind } from '../interface/relation.interface';
 
 let offsetX = 0;
@@ -8,7 +8,7 @@ let offsetX = 0;
  * Responsible to serialize between schema list state and node/edge elements state.
  */
 export class CollectionSerializer {
-  static toElements(schemas: ICollection[]): Elements {
+  static toElements(schemas: ISchema[]): Elements {
     const elements: Elements = [];
 
     for (const schema of schemas) {
@@ -76,10 +76,8 @@ export class CollectionSerializer {
     return elements;
   }
 
-  static fromElements(
-    elements: Elements<{ schema: ICollection }>,
-  ): ICollection[] {
-    const collections: ICollection[] = [];
+  static fromElements(elements: Elements<{ schema: ISchema }>): ISchema[] {
+    const collections: ISchema[] = [];
 
     for (const element of elements) {
       if (isNode(element)) {

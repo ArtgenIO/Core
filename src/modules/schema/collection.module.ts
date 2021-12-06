@@ -2,13 +2,13 @@ import { Module } from '../../app/container';
 import { CreateSchemaLambda } from './lambda/create.lambda';
 import { ReadSchemaLambda } from './lambda/read.lambda';
 import { UpdateSchemaLambda } from './lambda/update.lambda';
-import { CollectionService } from './service/collection.service';
 import { KeyValueService } from './service/key-value.service';
 import { MigrationService } from './service/migration.service';
+import { SchemaService } from './service/schema.service';
 
 @Module({
   providers: [
-    CollectionService,
+    SchemaService,
     MigrationService,
     CreateSchemaLambda,
     ReadSchemaLambda,
@@ -16,4 +16,4 @@ import { MigrationService } from './service/migration.service';
     KeyValueService,
   ],
 })
-export class CollectionModule {}
+export class SchemaModule {}

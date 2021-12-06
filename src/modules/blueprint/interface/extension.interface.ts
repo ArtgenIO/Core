@@ -1,5 +1,5 @@
-import { ICollection } from '../../collection';
 import { ILogic } from '../../logic/interface';
+import { ISchema } from '../../schema';
 
 export interface IExtension {
   /**
@@ -40,7 +40,7 @@ export interface IExtension {
   /**
    * Provided schemas
    */
-  schemas: ICollection[];
+  schemas: ISchema[];
 
   /**
    * Provided workflows

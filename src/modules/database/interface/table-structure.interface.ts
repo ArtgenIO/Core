@@ -1,5 +1,5 @@
-import { ICollection, IField } from '../../collection';
-import { IRelation } from '../../collection/interface/relation.interface';
+import { IField, ISchema } from '../../schema';
+import { IRelation } from '../../schema/interface/relation.interface';
 
 type IColumnSchema = Pick<IField, 'columnName' | 'type' | 'typeParams'>;
 
@@ -8,9 +8,9 @@ type IColumnSchema = Pick<IField, 'columnName' | 'type' | 'typeParams'>;
  * this is used to track if the database needs to synchronized or not.
  */
 export interface IDatabaseSchema {
-  tableName: ICollection['tableName'];
+  tableName: ISchema['tableName'];
   columns: IColumnSchema[];
   relations: Pick<IRelation, 'target' | 'localField' | 'remoteField'>[];
   uniques: { fields: string[] }[];
-  indices: ICollection['indices'];
+  indices: ISchema['indices'];
 }

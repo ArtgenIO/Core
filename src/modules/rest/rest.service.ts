@@ -5,11 +5,11 @@ import { kebabCase } from 'lodash';
 import { ILogger, Inject, Logger } from '../../app/container';
 import { Exception } from '../../app/exceptions/exception';
 import { getErrorMessage } from '../../app/kernel';
-import { ICollection } from '../collection';
-import { CollectionService } from '../collection/service/collection.service';
-import { isManagedField, isPrimary } from '../collection/util/field-tools';
 import { ContentAction } from '../content/interface/content-action.enum';
 import { schemaToJsonSchema } from '../content/util/schema-to-jsonschema';
+import { ISchema } from '../schema';
+import { SchemaService } from '../schema/service/schema.service';
+import { isManagedField, isPrimary } from '../schema/util/field-tools';
 
 type SchemaInput = Record<string, unknown>;
 
@@ -20,8 +20,8 @@ export class RestService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(CollectionService)
-    readonly schema: CollectionService,
+    @Inject(SchemaService)
+    readonly schema: SchemaService,
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
   ) {}
@@ -207,13 +207,13 @@ export class RestService {
     }
   }
 
-  getResourceURL(schema: ICollection): string {
+  getResourceURL(schema: ISchema): string {
     return `/api/rest/${kebabCase(schema.database)}/${kebabCase(
       schema.reference,
     )}`;
   }
 
-  getRecordURL(schema: ICollection) {
+  getRecordURL(schema: ISchema) {
     const primaryKeys = schema.fields.filter(isPrimary);
     const record =
       '/:' + primaryKeys.map(f => kebabCase(f.reference)).join('/:');
@@ -222,7 +222,7 @@ export class RestService {
   }
 
   buildOpenApiDefinition(
-    schema: ICollection,
+    schema: ISchema,
     action: ContentAction,
   ): FastifySchema {
     const definition: FastifySchema = {
@@ -296,7 +296,7 @@ export class RestService {
     return definition;
   }
 
-  protected getUrlParamsSchema(schema: ICollection): JSONSchema7Definition {
+  protected getUrlParamsSchema(schema: ISchema): JSONSchema7Definition {
     const primaryKeys = schema.fields.filter(isPrimary);
     const definition: JSONSchema7Definition = {
       type: 'object',

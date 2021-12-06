@@ -2,8 +2,8 @@ import { Model } from 'objection';
 import { simpleSchema } from '../../../tests/schemas/simple.schema';
 import { IKernel, Kernel } from '../../app/kernel';
 import { ExtensionModule } from '../blueprint/extension.module';
-import { CollectionModule } from '../collection/collection.module';
 import { EventModule } from '../event';
+import { SchemaModule } from '../schema/collection.module';
 import { DatabaseModule } from './database.module';
 import { ConnectionService } from './service/connection.service';
 
@@ -15,7 +15,7 @@ describe('Database E2E', () => {
     kernel.bootstrap([
       DatabaseModule,
       EventModule,
-      CollectionModule,
+      SchemaModule,
       ExtensionModule,
     ]);
 

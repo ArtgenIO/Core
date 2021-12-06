@@ -1,5 +1,5 @@
-import { FieldType, ICollection } from '../../collection';
-import { RelationKind } from '../../collection/interface/relation.interface';
+import { FieldType, ISchema } from '../../schema';
+import { RelationKind } from '../../schema/interface/relation.interface';
 import { IDatabaseSchema } from '../interface/table-structure.interface';
 
 const sortByName = (a: { name: string }, b: { name: string }) =>
@@ -8,7 +8,7 @@ const sortByName = (a: { name: string }, b: { name: string }) =>
 const sortByValue = (a: string, b: string) => (a > b ? 1 : -1);
 
 // Use dialect to convert types for the dialect
-export const toStructure = (schema: ICollection): IDatabaseSchema => {
+export const toStructure = (schema: ISchema): IDatabaseSchema => {
   // Ensure no spaces are messing up the table name.
   const tableName = schema.tableName.trim();
   // Sort the relations by name.

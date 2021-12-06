@@ -1,6 +1,6 @@
 import { IModule, Inject, Module } from '../../app/container';
 import { ExtensionModule } from '../blueprint/extension.module';
-import { CollectionModule } from '../collection/collection.module';
+import { SchemaModule } from '../schema/collection.module';
 import { IdentityGateway } from './gateway/authentication.gateway';
 import { HashCompareLambda } from './lambda/hash-compare.lambda';
 import { HashCreateLambda } from './lambda/hash-create.lambda';
@@ -21,7 +21,7 @@ import { AuthenticationService } from './service/authentication.service';
     SignInLambda,
     TokenSignLambda,
   ],
-  dependsOn: [CollectionModule, ExtensionModule],
+  dependsOn: [SchemaModule, ExtensionModule],
 })
 export class IdentityModule implements IModule {
   constructor(

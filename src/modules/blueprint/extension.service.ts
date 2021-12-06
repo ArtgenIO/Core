@@ -21,7 +21,7 @@ export class ExtensionService {
     @Inject(EventEmitter2)
     readonly events: EventEmitter2,
     @Inject(ConnectionService)
-    readonly linkService: ConnectionService,
+    readonly connections: ConnectionService,
   ) {}
 
   async seed() {
@@ -47,7 +47,7 @@ export class ExtensionService {
     // Global db reference
     extension.database = database;
 
-    const link = this.linkService.findOne(database);
+    const link = this.connections.findOne(database);
 
     // Preload the schemas before they are injected one by one.
     await link.associate(extension.schemas);

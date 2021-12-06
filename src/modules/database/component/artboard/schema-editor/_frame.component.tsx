@@ -1,6 +1,6 @@
 import { Tabs } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
-import { ICollection } from '../../../../collection';
+import { ISchema } from '../../../../schema';
 import SchemaEditorCapabilitiesComponent from './capabilities.component';
 import SchemaEditorFieldsComponent from './fields.component';
 import SchemaEditorIndexesComponent from './indexes.component';
@@ -8,8 +8,8 @@ import SchemaEditorNamingComponent from './naming.component';
 import RelationsComponent from './relations.component';
 
 type Props = {
-  schema: ICollection;
-  setSchema: Dispatch<SetStateAction<ICollection>>;
+  schema: ISchema;
+  setSchema: Dispatch<SetStateAction<ISchema>>;
 };
 
 export default function SchemaEditorFrameComponent({

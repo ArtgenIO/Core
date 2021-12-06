@@ -3,12 +3,12 @@ import { Avatar, Button, Input, List, Popconfirm, Select, Tooltip } from 'antd';
 import { pluralize } from 'inflection';
 import { camelCase, cloneDeep, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ICollection } from '../../../../../collection';
-import { IRelation } from '../../../../../collection/interface/relation.interface';
+import { ISchema } from '../../../../../schema';
+import { IRelation } from '../../../../../schema/interface/relation.interface';
 import {
   getTakenColumNames,
   isPrimary,
-} from '../../../../../collection/util/field-tools';
+} from '../../../../../schema/util/field-tools';
 
 export default function RelationHasMany({
   relation,
@@ -18,10 +18,10 @@ export default function RelationHasMany({
   schemas,
 }: {
   relation: IRelation;
-  schema: ICollection;
-  setSchema: Dispatch<SetStateAction<ICollection>>;
+  schema: ISchema;
+  setSchema: Dispatch<SetStateAction<ISchema>>;
   idx: number;
-  schemas: ICollection[];
+  schemas: ISchema[];
 }) {
   const primary = schema.fields.find(isPrimary);
   const [name, setName] = useState(relation.name);

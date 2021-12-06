@@ -1,4 +1,4 @@
-import { ICollection } from '..';
+import { ISchema } from '..';
 import { Inject, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel/util/extract-error';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
@@ -7,7 +7,7 @@ import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { JSCHEMA_ERR } from '../../lambda/utility/json-schema.helpers';
 import { WorkflowSession } from '../../logic/library/workflow.session';
-import { CollectionService } from '../service/collection.service';
+import { SchemaService } from '../service/schema.service';
 
 @Service({
   tags: 'lambda',
@@ -28,12 +28,12 @@ import { CollectionService } from '../service/collection.service';
 })
 export class CreateSchemaLambda implements ILambda {
   constructor(
-    @Inject(CollectionService)
-    readonly svc: CollectionService,
+    @Inject(SchemaService)
+    readonly svc: SchemaService,
   ) {}
 
   async invoke(sess: WorkflowSession) {
-    const schema = sess.getInput('schema') as ICollection;
+    const schema = sess.getInput('schema') as ISchema;
 
     try {
       sess.setOutput('result', await this.svc.create(schema));

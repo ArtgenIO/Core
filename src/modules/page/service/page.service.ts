@@ -3,7 +3,7 @@ import { Model } from 'objection';
 import { join } from 'path';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { SEED_DIR } from '../../../app/globals';
-import { CollectionService } from '../../collection/service/collection.service';
+import { SchemaService } from '../../schema/service/schema.service';
 import { IPage } from '../interface/page.interface';
 
 type PageModel = IPage & Model;
@@ -15,8 +15,8 @@ export class PageService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(CollectionService)
-    readonly schema: CollectionService,
+    @Inject(SchemaService)
+    readonly schema: SchemaService,
   ) {}
 
   async loadRoutes(): Promise<IPage[]> {
