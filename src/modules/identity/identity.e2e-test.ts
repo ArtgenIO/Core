@@ -12,8 +12,9 @@ describe('Identity (e2e)', () => {
 
   beforeAll(async () => {
     app = new Kernel();
-    app.bootstrap([AppModule]);
+    app.register([AppModule]);
 
+    await app.boostrap();
     await app.start();
   }, 30_000);
 

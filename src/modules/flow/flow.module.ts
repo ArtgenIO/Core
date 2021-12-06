@@ -14,7 +14,7 @@ import { FlowService } from './service/workflow.service';
   providers: [FlowService, LogicHttpGateway, WorkflowRpcGateway],
 })
 export class FlowModule implements IModule {
-  async onStart(kernel: IKernel) {
+  async onReady(kernel: IKernel) {
     await (await kernel.get(FlowService)).seed();
   }
 }

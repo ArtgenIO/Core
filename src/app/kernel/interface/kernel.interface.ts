@@ -15,12 +15,17 @@ export interface IKernel {
   /**
    * Registers the kernel modules
    */
-  bootstrap(modules: Constructor<IModule>[]): boolean;
+  register(modules: Constructor<IModule>[]): boolean;
 
   /**
    * Start the kernel and invoke the modules
    */
-  start(): Promise<boolean>;
+  boostrap(): Promise<boolean>;
+
+  /**
+   * Invoke the ready hooks
+   */
+  start(): Promise<void>;
 
   /**
    * Stop the kernel and propagate the shutdown request to the modules

@@ -62,7 +62,7 @@ export class Kernel implements IKernel {
   /**
    * Register modules in the dependency container and module load graph.
    */
-  protected register(modules: ModuleConcrete[], by: string = '__kernel__') {
+  protected discover(modules: ModuleConcrete[], by: string = '__kernel__') {
     // Resolve the forward ref, and validate the output.
     const resolve = (module: ModuleConcrete): Constructor<IModule> => {
       if (typeof module === 'object' && module?.resolve) {
@@ -108,12 +108,12 @@ export class Kernel implements IKernel {
           );
 
           if (meta.imports) {
-            this.register(meta.imports, name);
+            this.discover(meta.imports, name);
           }
 
           // Register dependencies
           if (meta.dependsOn) {
-            this.register(meta.dependsOn, name);
+            this.discover(meta.dependsOn, name);
 
             for (let dependency of meta.dependsOn.map(resolve)) {
               const dependencyKey = `module.${dependency.name}`;
@@ -170,11 +170,11 @@ export class Kernel implements IKernel {
   /**
    * @inheritdoc
    */
-  bootstrap(modules: Constructor<IModule>[]): boolean {
+  register(modules: Constructor<IModule>[]): boolean {
     this.logger.debug('Bootstrap sequence initialized...');
 
     try {
-      this.register(modules);
+      this.discover(modules);
       this.logger.info('Bootstrap sequence successful!');
 
       return true;
@@ -210,7 +210,7 @@ export class Kernel implements IKernel {
   /**
    * @inheritdoc
    */
-  async start(): Promise<boolean> {
+  async boostrap(): Promise<boolean> {
     this.logger.debug('Startup request received');
     this.logger.debug('Invoking the module startup sequence...');
 
@@ -240,6 +240,13 @@ export class Kernel implements IKernel {
 
     this.logger.info("Startup sequence successful. Let's do this!");
 
+    return true;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  async start() {
     // Propagate the onReady event, so the modules can register their handles.
     // Unlike the on start event, this does not have to be in any order.
     for (const binding of this.context.findByTag<any>('module')) {
@@ -264,8 +271,6 @@ export class Kernel implements IKernel {
           );
       }
     }
-
-    return true;
   }
 
   /**

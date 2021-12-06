@@ -12,7 +12,7 @@ describe('DatabaseLink', () => {
 
   beforeEach(() => {
     app = new Kernel();
-    app.bootstrap([DatabaseModule, SchemaModule, EventModule, BlueprintModule]);
+    app.register([DatabaseModule, SchemaModule, EventModule, BlueprintModule]);
   });
 
   const createLink = (connection = {}) => {

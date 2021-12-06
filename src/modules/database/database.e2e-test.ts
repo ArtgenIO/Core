@@ -11,9 +11,9 @@ describe('Database E2E', () => {
 
   beforeEach(async () => {
     kernel = new Kernel();
-    kernel.bootstrap([DatabaseModule, SchemaModule, BlueprintModule]);
+    kernel.register([DatabaseModule, SchemaModule, BlueprintModule]);
 
-    await kernel.start();
+    await kernel.boostrap();
   });
 
   test('should synchornize a system schema', async () => {

@@ -35,7 +35,7 @@ describe('Kernel', () => {
     test('should proceed even if no module is registered', () => {
       const app = new Kernel();
 
-      expect(app.bootstrap([])).toBe(true);
+      expect(app.register([])).toBe(true);
     });
 
     test('should fail when an invalid type is registered', () => {
@@ -43,7 +43,7 @@ describe('Kernel', () => {
       const nonModules: any[] = [{}, '', 2, true];
 
       for (const subject of nonModules) {
-        expect(app.bootstrap([subject])).toBe(false);
+        expect(app.register([subject])).toBe(false);
       }
     });
 
@@ -52,7 +52,7 @@ describe('Kernel', () => {
 
       class NotAModule {}
 
-      expect(app.bootstrap([NotAModule])).toBe(false);
+      expect(app.register([NotAModule])).toBe(false);
     });
 
     test('should register a blank module', () => {
@@ -61,7 +61,7 @@ describe('Kernel', () => {
       @Module()
       class BlankModule {}
 
-      expect(app.bootstrap([BlankModule])).toBe(true);
+      expect(app.register([BlankModule])).toBe(true);
       expect(app.context.contains('module.BlankModule')).toBe(true);
     });
 
@@ -78,7 +78,7 @@ describe('Kernel', () => {
       })
       class TestModule {}
 
-      expect(app.bootstrap([TestModule])).toBe(true);
+      expect(app.register([TestModule])).toBe(true);
       expect(app.context.contains('classes.ServiceA')).toBe(true);
       expect(app.context.contains('classes.ServiceB')).toBe(true);
     });
@@ -110,7 +110,7 @@ describe('Kernel', () => {
       })
       class TopModule {}
 
-      expect(app.bootstrap([TopModule])).toBe(true);
+      expect(app.register([TopModule])).toBe(true);
 
       expect(app.context.contains('classes.ServiceA')).toBe(true);
       expect(app.context.contains('classes.SubServiceA')).toBe(true);
@@ -140,7 +140,7 @@ describe('Kernel', () => {
       })
       class TestModule {}
 
-      expect(app.bootstrap([TestModule])).toBe(true);
+      expect(app.register([TestModule])).toBe(true);
 
       const serviceA = app.context.getSync<ServiceA>(ServiceA.name);
       const serviceB = app.context.getSync<ServiceB>(ServiceB.name);
@@ -169,7 +169,7 @@ describe('Kernel', () => {
       })
       class TestModule {}
 
-      expect(app.bootstrap([TestModule])).toBe(true);
+      expect(app.register([TestModule])).toBe(true);
 
       const product = app.context.getSync<Product>(Product.name);
 
@@ -180,9 +180,9 @@ describe('Kernel', () => {
   describe('Starting', () => {
     test('should start without modules', async () => {
       const app = new Kernel();
-      app.bootstrap([]);
+      app.register([]);
 
-      expect(await app.start()).toBe(true);
+      expect(await app.boostrap()).toBe(true);
     });
 
     test('should invoke the onStart hook', async () => {
@@ -196,9 +196,9 @@ describe('Kernel', () => {
         }
       }
 
-      app.bootstrap([StartMeModule]);
+      app.register([StartMeModule]);
 
-      expect(await app.start()).toBe(true);
+      expect(await app.boostrap()).toBe(true);
       expect(startMock).toHaveBeenCalled();
       expect(startMock).toHaveBeenCalledTimes(1);
       expect(startMock).toHaveBeenCalledWith(app);
@@ -214,9 +214,9 @@ describe('Kernel', () => {
         }
       }
 
-      app.bootstrap([BadModule]);
+      app.register([BadModule]);
 
-      expect(await app.start()).toBe(false);
+      expect(await app.boostrap()).toBe(false);
     });
 
     test('should call the onStop when the start failing', async () => {
@@ -234,9 +234,9 @@ describe('Kernel', () => {
         }
       }
 
-      app.bootstrap([BadModule]);
+      app.register([BadModule]);
 
-      expect(await app.start()).toBe(false);
+      expect(await app.boostrap()).toBe(false);
       expect(stopMock).toHaveBeenCalled();
       expect(stopMock).toHaveBeenCalledTimes(1);
       expect(stopMock).toHaveBeenCalledWith(app);
@@ -278,9 +278,9 @@ describe('Kernel', () => {
         }
       }
 
-      app.bootstrap([ForthModule, ThirdModule, SecondModule, FirstModule]);
+      app.register([ForthModule, ThirdModule, SecondModule, FirstModule]);
 
-      expect(await app.start()).toBe(true);
+      expect(await app.boostrap()).toBe(true);
       expect(order).toStrictEqual(['forth', 'first', 'second', 'third']);
     });
 
@@ -299,7 +299,7 @@ describe('Kernel', () => {
         async onStop(app: IKernel) {}
       }
 
-      app.bootstrap([BadModule]);
+      app.register([BadModule]);
 
       expect(await app.stop()).toBe(true);
     });
@@ -314,7 +314,7 @@ describe('Kernel', () => {
         }
       }
 
-      app.bootstrap([BadModule]);
+      app.register([BadModule]);
 
       expect(await app.stop()).toBe(false);
     });
@@ -332,7 +332,7 @@ describe('Kernel', () => {
         }
       }
 
-      app.bootstrap([BadModule]);
+      app.register([BadModule]);
       const stop = app.stop();
 
       jest.advanceTimersByTime(15_000);
@@ -379,9 +379,9 @@ describe('Kernel', () => {
         }
       }
 
-      app.bootstrap([ForthModule, ThirdModule, SecondModule, FirstModule]);
+      app.register([ForthModule, ThirdModule, SecondModule, FirstModule]);
 
-      expect(await app.start()).toBe(true);
+      expect(await app.boostrap()).toBe(true);
       expect(await app.stop()).toBe(true);
       expect(order).toStrictEqual(
         ['forth', 'first', 'second', 'third'].reverse(),

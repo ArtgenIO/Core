@@ -12,7 +12,7 @@ describe(ConnectionService.name, () => {
 
   beforeEach(() => {
     kernel = new Kernel();
-    kernel.bootstrap([DatabaseModule, SchemaModule, EventModule]);
+    kernel.register([DatabaseModule, SchemaModule, EventModule]);
   });
 
   test('should register the connection service', async () => {

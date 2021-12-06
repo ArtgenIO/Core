@@ -10,12 +10,12 @@ describe(DatabaseModule.name, () => {
   beforeAll(() => {
     kernel = new Kernel();
 
-    assert(kernel.bootstrap([DatabaseModule]));
+    assert(kernel.register([DatabaseModule]));
   });
 
   test('should create the system connection', async () => {
     // Kernel can start
-    const result = await kernel.start();
+    const result = await kernel.boostrap();
     expect(result).toBe(true);
 
     // Creates one connection
