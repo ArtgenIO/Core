@@ -238,6 +238,22 @@ export class Kernel implements IKernel {
 
     this.logger.info("Startup sequence successful. Let's do this!");
 
+    // Propagate the onReady event, so the modules can register their things.
+    for (const moduleBinding of this.context.findByTag<IModule>('module')) {
+      const module = await moduleBinding.getValue(this.context);
+
+      if (module?.onReady) {
+        module
+          .onReady(this)
+          .catch(e =>
+            this.logger.warn(
+              'Module [%s] had an unhandled exception in the ready hook',
+              module.constructor.name,
+            ),
+          );
+      }
+    }
+
     return true;
   }
 

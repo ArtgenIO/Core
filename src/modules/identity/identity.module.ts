@@ -1,4 +1,5 @@
-import { IModule, Inject, Module } from '../../app/container';
+import { IModule, Module } from '../../app/container';
+import { IKernel } from '../../app/kernel';
 import { ExtensionModule } from '../blueprint/extension.module';
 import { SchemaModule } from '../schema/collection.module';
 import { IdentityGateway } from './gateway/authentication.gateway';
@@ -24,12 +25,7 @@ import { AuthenticationService } from './service/authentication.service';
   dependsOn: [SchemaModule, ExtensionModule],
 })
 export class IdentityModule implements IModule {
-  constructor(
-    @Inject(AuthenticationService)
-    readonly auth: AuthenticationService,
-  ) {}
-
-  async onStart() {
-    await this.auth.seed();
+  async onReady(kernel: IKernel) {
+    await (await kernel.get(AuthenticationService)).seed();
   }
 }

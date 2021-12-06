@@ -11,7 +11,7 @@ export class SchedulerModule {
     readonly logger: ILogger,
   ) {}
 
-  async onStart(kernel: IKernel) {
+  async onReady(kernel: IKernel) {
     for (const key of kernel.context.findByTag<Constructor<unknown>>(
       'scheduler',
     )) {

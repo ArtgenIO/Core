@@ -16,7 +16,6 @@ export class Connection implements IConnection {
    * Inner registry to track the schema associations and their synchronized structures
    */
   protected associations = new Map<string, IAssociation>();
-
   protected synchornizer: Synchronizer;
 
   constructor(

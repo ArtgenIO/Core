@@ -6,7 +6,7 @@ import { EventModule } from '../modules/event';
 import { HttpModule } from '../modules/http/http.module';
 import { IdentityModule } from '../modules/identity/identity.module';
 import { LambdaModule } from '../modules/lambda/lambda.module';
-import { WorkflowModule } from '../modules/logic/workflow.module';
+import { LogicModule } from '../modules/logic/workflow.module';
 import { ODataModule } from '../modules/odata/odata.module';
 import { PageModule } from '../modules/page/page.module';
 import { RestModule } from '../modules/rest/rest.module';
@@ -39,7 +39,7 @@ import { LogLambda } from './logger/log.lambda';
     SecurityModule,
     TransformerModule,
     UpgradeModule,
-    WorkflowModule,
+    LogicModule,
     ValidatorModule,
   ],
   providers: [LogLambda],

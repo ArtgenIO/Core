@@ -20,8 +20,8 @@ export class RpcModule implements IModule {
     protected logger: ILogger,
   ) {}
 
-  async onStart(application: IKernel): Promise<void> {
-    await Promise.all([this.startRpcServer(application.context)]);
+  async onReady(kernel: IKernel): Promise<void> {
+    await Promise.all([this.startRpcServer(kernel.context)]);
   }
 
   protected async startRpcServer(ctx: IContext): Promise<void> {
@@ -42,7 +42,6 @@ export class RpcModule implements IModule {
 
   async onStop(app: IKernel) {
     const rpc = await app.context.get<ServiceBroker>(ServiceBroker.name);
-
     await rpc.stop().then(() => this.logger.info('RPC server stopped'));
   }
 }

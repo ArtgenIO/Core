@@ -2,12 +2,17 @@ import { IKernel } from '../../kernel/interface/kernel.interface';
 
 export interface IModule {
   /**
-   * Hook for the application.start event
+   * Called when the kernel is starting, mapped for dependencies.
    */
-  onStart?(application: IKernel): Promise<void>;
+  onStart?(kernel: IKernel): Promise<void>;
 
   /**
-   * Hook for the application.stop event
+   * Called when the application start is finished, can register the hooks.
    */
-  onStop?(application: IKernel): Promise<void>;
+  onReady?(kernel: IKernel): Promise<void>;
+
+  /**
+   * Called when the kernel is shuting down.
+   */
+  onStop?(kernel: IKernel): Promise<void>;
 }

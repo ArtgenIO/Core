@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
-import { ILogger, IModule, Inject, Logger, Module } from '../../app/container';
+import { ILogger, IModule, Logger, Module } from '../../app/container';
 import { IKernel } from '../../app/kernel';
 import { ExtensionModule } from '../blueprint/extension.module';
-import { WorkflowModule } from '../logic/workflow.module';
+import { LogicModule } from '../logic/workflow.module';
 import { PageModule } from '../page/page.module';
 import { HttpObserver } from './http.observer';
 import { HttpRequestLambda } from './lambda/http-request.lambda';
@@ -12,7 +12,7 @@ import { HttpServerProvider } from './provider/http.server';
 import { HttpService } from './service/http.service';
 
 @Module({
-  dependsOn: [WorkflowModule, ExtensionModule, PageModule],
+  dependsOn: [LogicModule, ExtensionModule, PageModule],
   providers: [
     HttpObserver,
     HttpService,
@@ -26,12 +26,10 @@ export class HttpModule implements IModule {
   constructor(
     @Logger()
     protected logger: ILogger,
-    @Inject(HttpService)
-    protected service: HttpService,
   ) {}
 
-  async onStart(): Promise<void> {
-    await Promise.all([this.service.startServer()]);
+  async onReady(kernel: IKernel): Promise<void> {
+    await Promise.all([(await kernel.get(HttpService)).startServer()]);
   }
 
   async onStop(kernel: IKernel) {
@@ -40,7 +38,7 @@ export class HttpModule implements IModule {
     );
 
     // Deregister gateways.
-    await this.service.stopServer();
+    await (await kernel.get(HttpService)).stopServer();
 
     await http.close().then(() => this.logger.info('HTTP server stopped'));
   }

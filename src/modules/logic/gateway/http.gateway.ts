@@ -15,7 +15,7 @@ import { WorkflowService } from '../service/workflow.service';
 @Service({
   tags: 'http:gateway',
 })
-export class WorkflowHttpGateway implements IHttpGateway {
+export class LogicHttpGateway implements IHttpGateway {
   constructor(
     @Logger()
     readonly logger: ILogger,

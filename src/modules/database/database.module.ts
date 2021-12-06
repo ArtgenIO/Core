@@ -13,16 +13,13 @@ import { DatabaseService } from './service/database.service';
   ],
 })
 export class DatabaseModule implements IModule {
-  constructor(
-    @Inject(DatabaseService)
-    protected service: DatabaseService,
-  ) {}
+  constructor(@Inject(DatabaseService) protected service: DatabaseService) {}
 
   async onStart(): Promise<void> {
-    return this.service.bootstrap();
+    await this.service.bootstrap();
   }
 
-  async onStop() {
-    return this.service.shutdown();
+  async onStop(): Promise<void> {
+    await this.service.shutdown();
   }
 }
