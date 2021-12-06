@@ -7,11 +7,12 @@ import {
   Logger,
   Module,
 } from '../../app/container';
+import { moduleRef } from '../../app/container/module-ref';
 import { IKernel } from '../../app/kernel/interface/kernel.interface';
 import { DatabaseModule } from '../database/database.module';
 
 @Module({
-  dependsOn: [DatabaseModule],
+  dependsOn: [moduleRef(() => DatabaseModule)],
   providers: [RpcServerProvider],
 })
 export class RpcModule implements IModule {

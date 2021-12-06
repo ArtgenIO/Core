@@ -14,8 +14,8 @@ export class EventService {
     readonly logger: ILogger,
     @Inject(EventEmitter2)
     readonly bus: EventEmitter2,
-    @Inject(FlowService)
-    readonly workflow: FlowService,
+    @Inject('Kernel')
+    readonly kernel: IKernel,
   ) {}
 
   async register(kernel: IKernel) {
@@ -47,7 +47,8 @@ export class EventService {
     }
 
     // Register workflows
-    const workflows = await this.workflow.findAll();
+    const flowService = await this.kernel.get(FlowService);
+    const workflows = await flowService.findAll();
 
     for (const workflow of workflows) {
       const trigger = workflow.nodes.find(
@@ -67,7 +68,7 @@ export class EventService {
         this.bus.on(config.eventName, async (eventData: unknown) => {
           const startAt = Date.now();
           const eventId = v4();
-          const session = await this.workflow.createWorkflowSession(
+          const session = await flowService.createWorkflowSession(
             workflow.id,
             eventId,
           );

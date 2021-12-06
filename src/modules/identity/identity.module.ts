@@ -1,5 +1,5 @@
 import { IModule, Module } from '../../app/container';
-import { forwardRef } from '../../app/container/forward-ref';
+import { moduleRef } from '../../app/container/module-ref';
 import { IKernel } from '../../app/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
 import { SchemaModule } from '../schema/schema.module';
@@ -23,10 +23,7 @@ import { AuthenticationService } from './service/authentication.service';
     SignInLambda,
     TokenSignLambda,
   ],
-  dependsOn: [
-    forwardRef(() => SchemaModule),
-    forwardRef(() => BlueprintModule),
-  ],
+  dependsOn: [moduleRef(() => SchemaModule), moduleRef(() => BlueprintModule)],
 })
 export class IdentityModule implements IModule {
   async onReady(kernel: IKernel) {

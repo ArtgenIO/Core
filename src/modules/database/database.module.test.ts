@@ -1,10 +1,5 @@
 import { assert } from 'console';
 import { IKernel, Kernel } from '../../app/kernel';
-import { EventModule } from '../event';
-import { FlowModule } from '../flow/flow.module';
-import { LambdaModule } from '../lambda/lambda.module';
-import { RestModule } from '../rest/rest.module';
-import { SchemaModule } from '../schema/schema.module';
 import { DatabaseModule } from './database.module';
 import { Connection } from './library/connection';
 import { ConnectionService } from './service/connection.service';
@@ -15,16 +10,7 @@ describe(DatabaseModule.name, () => {
   beforeAll(() => {
     kernel = new Kernel();
 
-    assert(
-      kernel.bootstrap([
-        DatabaseModule,
-        SchemaModule,
-        EventModule,
-        FlowModule,
-        LambdaModule,
-        RestModule,
-      ]),
-    );
+    assert(kernel.bootstrap([DatabaseModule]));
   });
 
   test('should create the system connection', async () => {
