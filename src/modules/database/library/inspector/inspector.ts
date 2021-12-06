@@ -11,6 +11,8 @@ import { MySQLInspector } from './dialect/mysql.inspector';
 import { PostgresInspector } from './dialect/postgres.inspector';
 import { SQLiteInspector } from './dialect/sqlite.inspector';
 
+type EnumColumn = { column: string; values: string[] };
+
 export class Inspector {
   protected schemaInspector: SchemaInspector;
   protected customInspector: IDialectInspector;
@@ -31,6 +33,13 @@ export class Inspector {
         this.schemaInspector = new MySQLKnexInspector(knex);
         break;
     }
+  }
+
+  async getEnumerators(
+    tableName: string,
+    columns: Column[],
+  ): Promise<EnumColumn[]> {
+    return this.customInspector.getEnumerators(tableName, columns);
   }
 
   tables(): Promise<string[]> {

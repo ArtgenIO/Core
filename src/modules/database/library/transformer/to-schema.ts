@@ -12,6 +12,8 @@ import { IConnection } from '../../interface';
 import { Unique } from '../../interface/inspector.interface';
 import { Inspector } from '../inspector/inspector';
 
+type EnumColumn = { column: string; values: string[] };
+
 export const toSchema = async (
   database: string,
   tableName: string,
@@ -44,10 +46,11 @@ export const toSchema = async (
     .filter(unq => unq.columns.length === 1)
     .map(unq => unq.columns[0]);
 
-  const enumChecks = [];
+  const enums: EnumColumn[] = [];
 
+  // SQLite uses enum with value checks so we need to find every enum like check ~
   if (inspector.dialect == 'sqlite') {
-    // SQLite uses enum with value checks so we need to find every enum like check ~
+    enums.push(...(await inspector.getEnumerators(tableName, columns)));
   }
 
   for (const col of columns) {
@@ -72,6 +75,15 @@ export const toSchema = async (
       const revType = getFieldTypeFromString(col);
       field.type = revType.type;
       field.typeParams = revType.typeParams;
+    }
+
+    if (enums.length) {
+      const enumReplace = enums.find(e => e.column == field.columnName);
+
+      if (enumReplace) {
+        field.type = FieldType.ENUM;
+        field.typeParams.values = enumReplace.values;
+      }
     }
 
     if (col.is_primary_key) field.tags.push(FieldTag.PRIMARY);
