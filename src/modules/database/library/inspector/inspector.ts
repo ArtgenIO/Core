@@ -39,7 +39,11 @@ export class Inspector {
     tableName: string,
     columns: Column[],
   ): Promise<EnumColumn[]> {
-    return this.customInspector.getEnumerators(tableName, columns);
+    if (this.customInspector?.getEnumerators) {
+      return this.customInspector.getEnumerators(tableName, columns);
+    } else {
+      return [];
+    }
   }
 
   tables(): Promise<string[]> {

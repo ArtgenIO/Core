@@ -9,6 +9,7 @@ import { IConnection, IDatabase } from '../interface';
 import { IAssociation } from '../interface/association.interface';
 import { parseDialect } from './parser/parse-dialect';
 import { Synchronizer } from './synchronizer';
+import { toDialect } from './transformer/to-dialect';
 import { addRelations, toModel } from './transformer/to-model';
 import { toStructure } from './transformer/to-structure';
 
@@ -66,9 +67,14 @@ export class Connection implements IConnection {
   }
 
   async associate(schemas: ISchema[]): Promise<IConnection> {
+    const dialect = parseDialect(this.database.dsn);
+
+    // Patch the schema for the dialect exceptions
+    schemas = schemas.map(s => toDialect(s, dialect));
+
     for (const schema of schemas) {
       const key = schema.reference;
-      const structure = toStructure(schema, parseDialect(this.database.dsn));
+      const structure = toStructure(schema, dialect);
 
       // Check if the schema is already associated with the registry.
       if (this.associations.has(key)) {

@@ -74,7 +74,7 @@ const onCreate = (schema: ISchema) => {
     }
 
     if (createdAt) {
-      this[createdAt.reference] = new Date().toISOString().replace('T', ' ');
+      this[createdAt.reference] = new Date().toISOString().replace(/T|Z/g, ' ');
     }
 
     if (hasUUIDPK) {
@@ -98,7 +98,7 @@ const onUpdate = (schema: ISchema) => {
 
   return function () {
     if (updatedAt) {
-      this[updatedAt.reference] = new Date().toISOString().replace('T', ' ');
+      this[updatedAt.reference] = new Date().toISOString().replace(/T|Z/g, ' ');
     }
 
     if (versioned) {

@@ -11,6 +11,7 @@ import { isIndexed, isPrimary } from '../../schema/util/field-tools';
 import { IConnection } from '../interface';
 import { Inspector } from './inspector/inspector';
 import { parseDialect } from './parser/parse-dialect';
+import { toDialect } from './transformer/to-dialect';
 import { toSchema } from './transformer/to-schema';
 import { toStructure } from './transformer/to-structure';
 
@@ -50,7 +51,7 @@ export class Synchronizer {
     //
     // Or when we change a column and we plan to drop it, because the type will not match???
     // Or when the column is removed from the schema but still on the db!
-    const dependencies = this.getDependencyGraph(changes);
+    //const dependencies = this.getDependencyGraph(changes);
 
     // TODO validate the schema for sanity,
     // - types match their foreign keys
@@ -123,15 +124,17 @@ export class Synchronizer {
     const foreignKeys = await inspector.foreignKeys(schema.tableName);
     const uniques = await inspector.uniques(schema.tableName);
 
-    // TODO need to read the unique sets from the table
-    const revSchema = await toSchema(
-      schema.database,
-      schema.tableName,
-      columns,
-      foreignKeys,
-      uniques,
-      link,
-      inspector,
+    const revSchema = toDialect(
+      await toSchema(
+        schema.database,
+        schema.tableName,
+        columns,
+        foreignKeys,
+        uniques,
+        link,
+        inspector,
+      ),
+      inspector.dialect,
     );
 
     const revStruct = toStructure(revSchema, inspector.dialect);
@@ -246,7 +249,7 @@ export class Synchronizer {
               col = table.json(f.columnName);
               break;
             case FieldType.TEXT:
-              let textLength: string | number = 'text';
+              let textLength: string = 'text';
 
               switch (f.typeParams?.length) {
                 case 'medium':
@@ -255,17 +258,9 @@ export class Synchronizer {
                 case 'long':
                   textLength = 'longtext';
                   break;
-                default:
-                  textLength = f.typeParams.length;
-                  break;
               }
 
-              if (typeof textLength === 'number') {
-                col = table.string(f.columnName, textLength);
-              } else {
-                col = table.text(f.columnName, textLength);
-              }
-
+              col = table.text(f.columnName, textLength);
               break;
             case FieldType.UUID:
               col = table.uuid(f.columnName);
@@ -340,35 +335,17 @@ export class Synchronizer {
           }
 
           if (f.defaultValue !== undefined) {
-            let canHaveDefault = true;
+            const defType = typeof f.defaultValue;
 
-            // Simple, MySQL does not allow default for those types ~
-            if (inspector.dialect === 'mysql') {
-              if (
-                [
-                  FieldType.BLOB,
-                  FieldType.TEXT,
-                  FieldType.JSON,
-                  FieldType.JSONB,
-                ].includes(f.type)
-              ) {
-                canHaveDefault = false;
-              }
-            }
-
-            if (canHaveDefault) {
-              const defType = typeof f.defaultValue;
-
-              switch (defType) {
-                case 'boolean':
-                case 'number':
-                case 'string':
-                  col.defaultTo(f.defaultValue as string);
-                  break;
-                case 'object':
-                  col.defaultTo(JSON.stringify(f.defaultValue));
-                  break;
-              }
+            switch (defType) {
+              case 'boolean':
+              case 'number':
+              case 'string':
+                col.defaultTo(f.defaultValue as string);
+                break;
+              case 'object':
+                col.defaultTo(JSON.stringify(f.defaultValue));
+                break;
             }
           }
         }

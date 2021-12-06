@@ -49,9 +49,7 @@ export const toSchema = async (
   const enums: EnumColumn[] = [];
 
   // SQLite uses enum with value checks so we need to find every enum like check ~
-  if (inspector.dialect == 'sqlite') {
-    enums.push(...(await inspector.getEnumerators(tableName, columns)));
-  }
+  enums.push(...(await inspector.getEnumerators(tableName, columns)));
 
   for (const col of columns) {
     const field: IField = {
@@ -77,17 +75,20 @@ export const toSchema = async (
       field.typeParams = revType.typeParams;
     }
 
-    if (inspector.dialect == 'sqlite') {
-      // SQLite enum check hack
-      if (enums.length) {
-        const enumReplace = enums.find(e => e.column == field.columnName);
+    // Enum check hack
+    if (enums.length) {
+      const enumReplace = enums.find(e => e.column == field.columnName);
 
-        if (enumReplace) {
-          field.type = FieldType.ENUM;
-          field.typeParams.values = enumReplace.values;
-        }
+      if (enumReplace) {
+        field.type = FieldType.ENUM;
+        field.typeParams.values = enumReplace.values;
+
+        // MySQL thing
+        delete field.typeParams.length;
       }
-    } else if (inspector.dialect === 'mysql') {
+    }
+
+    if (inspector.dialect === 'mysql') {
       if (field.type == FieldType.TEXT) {
         if (field.typeParams?.length == 65535) {
           delete field.typeParams.length;
