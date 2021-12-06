@@ -1,13 +1,11 @@
-import { IModule, Inject, Module } from '../../app/container';
-import { BlueprintModule } from '../blueprint/blueprint.module';
-import { SchemaModule } from '../schema/collection.module';
+import { IModule, Module } from '../../app/container';
+import { IKernel } from '../../app/kernel';
 import { DatabaseObserver } from './database.observer';
 import { ConnectionConcrete } from './provider/connection-concrete.provider';
 import { ConnectionService } from './service/connection.service';
 import { DatabaseService } from './service/database.service';
 
 @Module({
-  imports: [BlueprintModule, SchemaModule],
   providers: [
     ConnectionConcrete,
     ConnectionService,
@@ -16,13 +14,11 @@ import { DatabaseService } from './service/database.service';
   ],
 })
 export class DatabaseModule implements IModule {
-  constructor(@Inject(DatabaseService) protected service: DatabaseService) {}
-
-  async onStart(): Promise<void> {
-    await this.service.bootstrap();
+  async onStart(kernel: IKernel): Promise<void> {
+    await (await kernel.get(DatabaseService)).bootstrap();
   }
 
-  async onStop(): Promise<void> {
-    await this.service.shutdown();
+  async onStop(kernel: IKernel): Promise<void> {
+    await (await kernel.get(DatabaseService)).shutdown();
   }
 }

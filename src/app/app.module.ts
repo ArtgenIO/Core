@@ -12,7 +12,7 @@ import { PageModule } from '../modules/page/page.module';
 import { RestModule } from '../modules/rest/rest.module';
 import { RpcModule } from '../modules/rpc/rpc.module';
 import { SchedulerModule } from '../modules/scheduler';
-import { SchemaModule } from '../modules/schema/collection.module';
+import { SchemaModule } from '../modules/schema/schema.module';
 import { SecurityModule } from '../modules/security/security.module';
 import { TransformerModule } from '../modules/transformer/transformer.module';
 import { UpgradeModule } from '../modules/upgrade/upgrade.module';

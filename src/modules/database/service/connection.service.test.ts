@@ -1,7 +1,7 @@
 import { IKernel } from '../../../app/kernel/interface/kernel.interface';
 import { Kernel } from '../../../app/kernel/kernel';
 import { EventModule } from '../../event/event.module';
-import { SchemaModule } from '../../schema/collection.module';
+import { SchemaModule } from '../../schema/schema.module';
 import { DatabaseModule } from '../database.module';
 import { Connection } from '../library/connection';
 import { ConnectionConcrete } from '../provider/connection-concrete.provider';

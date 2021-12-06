@@ -1,7 +1,8 @@
 import { IModule, Module } from '../../app/container';
+import { forwardRef } from '../../app/container/forward-ref';
 import { IKernel } from '../../app/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
-import { SchemaModule } from '../schema/collection.module';
+import { SchemaModule } from '../schema/schema.module';
 import { IdentityGateway } from './gateway/authentication.gateway';
 import { HashCompareLambda } from './lambda/hash-compare.lambda';
 import { HashCreateLambda } from './lambda/hash-create.lambda';
@@ -22,7 +23,10 @@ import { AuthenticationService } from './service/authentication.service';
     SignInLambda,
     TokenSignLambda,
   ],
-  dependsOn: [SchemaModule, BlueprintModule],
+  dependsOn: [
+    forwardRef(() => SchemaModule),
+    forwardRef(() => BlueprintModule),
+  ],
 })
 export class IdentityModule implements IModule {
   async onReady(kernel: IKernel) {

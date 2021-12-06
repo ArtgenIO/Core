@@ -17,6 +17,7 @@ import {
   ILogger,
   IModule,
   IModuleMeta,
+  ModuleConcrete,
   MODULE_KEY,
 } from '../container';
 import { Exception } from '../exceptions/exception';
@@ -61,15 +62,26 @@ export class Kernel implements IKernel {
   /**
    * Register modules in the dependency container and module load graph.
    */
-  protected register(modules: Constructor<IModule>[]) {
-    for (const module of modules) {
+  protected register(modules: ModuleConcrete[], by: string = '__kernel__') {
+    // Resolve the forward ref, and validate the output.
+    const resolve = (module: ModuleConcrete): Constructor<IModule> => {
+      if (typeof module === 'object' && module?.resolve) {
+        module = module.resolve();
+      }
+
       // Test for basic module expectations
       if (typeof module !== 'function') {
         throw new Exception(
-          `Could not register [${module}], it's not a module!`,
+          `Could not register module [${
+            (module as unknown as Constructor<IModule>)?.name ?? module
+          }] referenced by [${by}]!`,
         );
       }
 
+      return module;
+    };
+
+    for (let module of modules.map(resolve)) {
       const name = module.name;
       const key = `module.${name}`;
 
@@ -78,7 +90,7 @@ export class Kernel implements IKernel {
         if (!this.moduleGraph.hasNode(key)) {
           this.moduleGraph.addNode(key);
 
-          this.logger.debug('Discovered [%s] module', name);
+          this.logger.debug('Discovered [%s] module by [%s]', name, by);
         }
 
         // Bind the instance for hook executions
@@ -95,14 +107,15 @@ export class Kernel implements IKernel {
             module,
           );
 
-          // Module imports submodules, but not depends on their start, just their resources
           if (meta.imports) {
-            this.register(meta.imports);
+            this.register(meta.imports, name);
           }
 
           // Register dependencies
           if (meta.dependsOn) {
-            for (const dependency of meta.dependsOn) {
+            this.register(meta.dependsOn, name);
+
+            for (let dependency of meta.dependsOn.map(resolve)) {
               const dependencyKey = `module.${dependency.name}`;
 
               this.logger.debug(
@@ -110,12 +123,6 @@ export class Kernel implements IKernel {
                 name,
                 dependency.name,
               );
-
-              // Inject the dependency, because the discovery is not executed in
-              // dependency order, and causes to break the node tree.
-              if (!this.moduleGraph.hasNode(dependencyKey)) {
-                this.moduleGraph.addNode(dependencyKey);
-              }
 
               this.moduleGraph.addDependency(key, dependencyKey);
             }

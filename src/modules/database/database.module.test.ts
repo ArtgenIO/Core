@@ -1,4 +1,10 @@
+import { assert } from 'console';
 import { IKernel, Kernel } from '../../app/kernel';
+import { EventModule } from '../event';
+import { FlowModule } from '../flow/flow.module';
+import { LambdaModule } from '../lambda/lambda.module';
+import { RestModule } from '../rest/rest.module';
+import { SchemaModule } from '../schema/schema.module';
 import { DatabaseModule } from './database.module';
 import { Connection } from './library/connection';
 import { ConnectionService } from './service/connection.service';
@@ -8,7 +14,17 @@ describe(DatabaseModule.name, () => {
 
   beforeAll(() => {
     kernel = new Kernel();
-    kernel.bootstrap([DatabaseModule]);
+
+    assert(
+      kernel.bootstrap([
+        DatabaseModule,
+        SchemaModule,
+        EventModule,
+        FlowModule,
+        LambdaModule,
+        RestModule,
+      ]),
+    );
   });
 
   test('should create the system connection', async () => {
@@ -40,15 +56,11 @@ describe(DatabaseModule.name, () => {
     for (const assoc of associations.values()) {
       expect(assoc.inSync).toBe(true);
     }
-
-    console.log('Calling stop!');
-    await kernel.stop();
-    console.log('Stopped!');
   });
 
   // Still something is off with ts-node stops, can't finish the shutdown sequence
   // but only when running in dev mode
-  test.skip('should destroy the system connection', async () => {
+  test('should destroy the system connection', async () => {
     const result = await kernel.stop();
     expect(result).toBe(true);
   });

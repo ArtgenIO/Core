@@ -1,7 +1,11 @@
 import { Constructor } from '@loopback/context';
 import { ClassDecoratorFactory } from '@loopback/metadata';
+import { IModule } from '..';
 
 export const MODULE_KEY = 'artgen:module';
+
+export type ModuleResolver = { resolve: () => Constructor<IModule> };
+export type ModuleConcrete = Constructor<IModule> | ModuleResolver;
 
 export type IModuleMeta = {
   /**
@@ -10,16 +14,15 @@ export type IModuleMeta = {
   providers?: Constructor<unknown>[];
 
   /**
-   * Resource dependencies provided by the imported modules,
-   * not context locked, but builds up a requirement for injections
-   */
-  imports?: Constructor<unknown>[];
-
-  /**
    * Modules used in the module as a dependency,
    * this enforces the rule that the module cannot start until the dependency is ready.
    */
-  dependsOn?: Constructor<unknown>[];
+  dependsOn?: ModuleConcrete[];
+
+  /**
+   *
+   */
+  imports?: ModuleConcrete[];
 };
 
 export function Module(meta?: IModuleMeta) {

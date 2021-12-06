@@ -115,6 +115,8 @@ export class Connection implements IConnection {
   }
 
   close(): Promise<void> {
+    this.logger.info('Closing the connection pool');
+
     return this.knex.destroy();
   }
 }

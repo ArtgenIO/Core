@@ -3,7 +3,7 @@ import { createLogger } from 'winston';
 import { IKernel, Kernel } from '../../../app/kernel';
 import { BlueprintModule } from '../../blueprint/blueprint.module';
 import { EventModule } from '../../event';
-import { SchemaModule } from '../../schema/collection.module';
+import { SchemaModule } from '../../schema/schema.module';
 import { DatabaseModule } from '../database.module';
 import { Connection } from './connection';
 

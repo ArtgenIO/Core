@@ -6,7 +6,7 @@ import { ILogger } from '../container';
 const { combine, timestamp, printf, splat } = format;
 
 export const createLogger = (): ILogger => {
-  const isSilent = process.env.NODE_ENV === 'test';
+  let isSilent = process.env.NODE_ENV === 'test';
 
   if (!isSilent) {
     //console.clear();
@@ -26,6 +26,11 @@ export const createLogger = (): ILogger => {
       chalk.green('-'.repeat(80)),
       '\n',
     );
+  }
+
+  // Turn logging back when it's useful to debug test sequnces.
+  if (process.argv.includes('--silent=0')) {
+    isSilent = false;
   }
 
   const levels = {

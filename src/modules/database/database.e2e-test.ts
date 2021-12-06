@@ -2,7 +2,7 @@ import { Model } from 'objection';
 import { simpleSchema } from '../../../tests/schemas/simple.schema';
 import { IKernel, Kernel } from '../../app/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
-import { SchemaModule } from '../schema/collection.module';
+import { SchemaModule } from '../schema/schema.module';
 import { DatabaseModule } from './database.module';
 import { ConnectionService } from './service/connection.service';
 
