@@ -1,4 +1,5 @@
 import { EventEmitter2 } from 'eventemitter2';
+import { Knex } from 'knex';
 import { createLogger } from 'winston';
 import { IKernel, Kernel } from '../../../app/kernel';
 import { BlueprintModule } from '../../blueprint/blueprint.module';
@@ -19,7 +20,7 @@ describe('DatabaseLink', () => {
     return new Connection(
       createLogger(),
       new EventEmitter2(),
-      connection as any,
+      connection as Partial<Knex> as any,
       {
         name: 'test',
         dsn: 'sqlite::memory:',
@@ -38,13 +39,13 @@ describe('DatabaseLink', () => {
   });
 
   test('Propagate the close call to the connection', async () => {
-    const con = {
-      close: jest.fn(),
+    const con: Pick<Knex, 'destroy'> = {
+      destroy: jest.fn(),
     };
     const link = createLink(con);
     await link.close();
 
-    expect(con.close).toHaveBeenCalled();
+    expect(con.destroy).toHaveBeenCalled();
   });
 
   describe('Schema Managemenent', () => {
