@@ -7,6 +7,7 @@ import { Exception } from '../../../app/exceptions/exception';
 import { ISchema } from '../../schema';
 import { IConnection, IDatabase } from '../interface';
 import { IAssociation } from '../interface/association.interface';
+import { parseDialect } from './parser/parse-dialect';
 import { Synchronizer } from './synchronizer';
 import { addRelations, toModel } from './transformer/to-model';
 import { toStructure } from './transformer/to-structure';
@@ -67,7 +68,7 @@ export class Connection implements IConnection {
   async associate(schemas: ISchema[]): Promise<IConnection> {
     for (const schema of schemas) {
       const key = schema.reference;
-      const structure = toStructure(schema);
+      const structure = toStructure(schema, parseDialect(this.database.dsn));
 
       // Check if the schema is already associated with the registry.
       if (this.associations.has(key)) {

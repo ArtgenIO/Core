@@ -60,10 +60,21 @@ const onCreate = (schema: ISchema) => {
     primaryKeys.length === 1 && primaryKeys[0].type === FieldType.UUID;
   const createdAt = schema.fields.find(f => f.tags.includes(FieldTag.CREATED));
   const versioned = schema.fields.find(f => f.tags.includes(FieldTag.VERSION));
+  const defaults = schema.fields.filter(
+    f => typeof f.defaultValue !== 'undefined',
+  );
 
   return function () {
+    const defined = Object.keys(this);
+
+    for (const defField of defaults) {
+      if (!defined.includes(defField.reference)) {
+        this[defField.reference] = defField.defaultValue;
+      }
+    }
+
     if (createdAt) {
-      this[createdAt.reference] = new Date().toISOString();
+      this[createdAt.reference] = new Date().toISOString().replace('T', ' ');
     }
 
     if (hasUUIDPK) {
@@ -87,7 +98,7 @@ const onUpdate = (schema: ISchema) => {
 
   return function () {
     if (updatedAt) {
-      this[updatedAt.reference] = new Date().toISOString();
+      this[updatedAt.reference] = new Date().toISOString().replace('T', ' ');
     }
 
     if (versioned) {

@@ -77,12 +77,21 @@ export const toSchema = async (
       field.typeParams = revType.typeParams;
     }
 
-    if (enums.length) {
-      const enumReplace = enums.find(e => e.column == field.columnName);
+    if (inspector.dialect == 'sqlite') {
+      // SQLite enum check hack
+      if (enums.length) {
+        const enumReplace = enums.find(e => e.column == field.columnName);
 
-      if (enumReplace) {
-        field.type = FieldType.ENUM;
-        field.typeParams.values = enumReplace.values;
+        if (enumReplace) {
+          field.type = FieldType.ENUM;
+          field.typeParams.values = enumReplace.values;
+        }
+      }
+    } else if (inspector.dialect === 'mysql') {
+      if (field.type == FieldType.TEXT) {
+        if (field.typeParams?.length == 65535) {
+          delete field.typeParams.length;
+        }
       }
     }
 

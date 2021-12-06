@@ -7,7 +7,7 @@ import { inspect } from 'util';
 import { ILogger, Logger } from '../../../app/container';
 import { FieldTag, FieldType, ISchema } from '../../schema';
 import { RelationKind } from '../../schema/interface/relation.interface';
-import { isPrimary } from '../../schema/util/field-tools';
+import { isIndexed, isPrimary } from '../../schema/util/field-tools';
 import { IConnection } from '../interface';
 import { Inspector } from './inspector/inspector';
 import { parseDialect } from './parser/parse-dialect';
@@ -134,8 +134,8 @@ export class Synchronizer {
       inspector,
     );
 
-    const revStruct = toStructure(revSchema);
-    const knownStruct = toStructure(schema);
+    const revStruct = toStructure(revSchema, inspector.dialect);
+    const knownStruct = toStructure(schema, inspector.dialect);
 
     if (!isEqual(revStruct, knownStruct)) {
       // const alterQuery = connection.schema.table(schema.tableName, table => {});
@@ -170,7 +170,6 @@ export class Synchronizer {
   ): Promise<ChangeStep[]> {
     const instructions: ChangeStep[] = [];
     const typeChecks = new Map<string, { exists: boolean; name: string }>();
-    const dialect = parseDialect(link.database.dsn);
 
     for (const f of schema.fields) {
       if (f.type === FieldType.ENUM) {
@@ -185,7 +184,7 @@ export class Synchronizer {
         )}_${typeHash}`;
 
         // In PG we have to check for the type,
-        if (dialect === 'postgres') {
+        if (inspector.dialect === 'postgres') {
           enumExists = await inspector.isTypeExists(typeName);
         } else {
           enumExists = false;
@@ -203,6 +202,26 @@ export class Synchronizer {
       query: link.knex.schema.createTable(schema.tableName, table => {
         for (const f of schema.fields) {
           let col: Knex.ColumnBuilder;
+
+          // MySQL requires length for TEXT, BLOB if indexed
+          if (inspector.dialect == 'mysql') {
+            if (
+              isIndexed(f) ||
+              schema.uniques.some(unq => unq.fields.includes(f.reference)) ||
+              schema.relations.some(
+                rel =>
+                  (rel.kind == RelationKind.BELONGS_TO_MANY ||
+                    rel.kind == RelationKind.BELONGS_TO_ONE) &&
+                  rel.localField == f.reference,
+              )
+            ) {
+              if (f.type == FieldType.BLOB || f.type == FieldType.TEXT) {
+                if (!f.typeParams?.length) {
+                  f.typeParams.length = 255;
+                }
+              }
+            }
+          }
 
           switch (f.type) {
             case FieldType.BOOLEAN:
@@ -227,7 +246,7 @@ export class Synchronizer {
               col = table.json(f.columnName);
               break;
             case FieldType.TEXT:
-              let textLength = 'text';
+              let textLength: string | number = 'text';
 
               switch (f.typeParams?.length) {
                 case 'medium':
@@ -236,9 +255,17 @@ export class Synchronizer {
                 case 'long':
                   textLength = 'longtext';
                   break;
+                default:
+                  textLength = f.typeParams.length;
+                  break;
               }
 
-              col = table.text(f.columnName, textLength);
+              if (typeof textLength === 'number') {
+                col = table.string(f.columnName, textLength);
+              } else {
+                col = table.text(f.columnName, textLength);
+              }
+
               break;
             case FieldType.UUID:
               col = table.uuid(f.columnName);
@@ -313,17 +340,35 @@ export class Synchronizer {
           }
 
           if (f.defaultValue !== undefined) {
-            const defType = typeof f.defaultValue;
+            let canHaveDefault = true;
 
-            switch (defType) {
-              case 'boolean':
-              case 'number':
-              case 'string':
-                col.defaultTo(f.defaultValue as string);
-                break;
-              case 'object':
-                col.defaultTo(JSON.stringify(f.defaultValue));
-                break;
+            // Simple, MySQL does not allow default for those types ~
+            if (inspector.dialect === 'mysql') {
+              if (
+                [
+                  FieldType.BLOB,
+                  FieldType.TEXT,
+                  FieldType.JSON,
+                  FieldType.JSONB,
+                ].includes(f.type)
+              ) {
+                canHaveDefault = false;
+              }
+            }
+
+            if (canHaveDefault) {
+              const defType = typeof f.defaultValue;
+
+              switch (defType) {
+                case 'boolean':
+                case 'number':
+                case 'string':
+                  col.defaultTo(f.defaultValue as string);
+                  break;
+                case 'object':
+                  col.defaultTo(JSON.stringify(f.defaultValue));
+                  break;
+              }
             }
           }
         }
