@@ -1,0 +1,44 @@
+{
+  "database": "system",
+  "reference": "textsxl2",
+  "tableName": "textsxl2",
+  "fields": [
+    {
+      "label": "id",
+      "reference": "id",
+      "columnName": "id",
+      "type": "uuid",
+      "typeParams": {
+        "values": []
+      },
+      "tags": [
+        "primary"
+      ]
+    },
+    {
+      "label": "Char 65535 Field",
+      "reference": "char65535Field",
+      "columnName": "char65535_field",
+      "type": "char",
+      "typeParams": {
+        "length": 65535,
+        "values": []
+      },
+      "tags": []
+    }
+  ],
+  "indices": [],
+  "relations": [],
+  "uniques": [],
+  "label": "Texts XL2",
+  "version": 2,
+  "artboard": {
+    "position": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "icon": "widgets",
+  "permission": "rw",
+  "tags": []
+}

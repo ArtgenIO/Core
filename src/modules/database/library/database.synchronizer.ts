@@ -216,12 +216,7 @@ export class DatabaseSynchronizer {
               case FieldType.TIME:
                 col = table.time(f.columnName);
                 break;
-              case FieldType.INTEGER:
-                col = table.integer(
-                  f.columnName,
-                  (f.typeParams.length as number) ?? undefined,
-                );
-                break;
+
               case FieldType.JSON:
                 col = table.json(f.columnName);
                 break;
@@ -229,6 +224,9 @@ export class DatabaseSynchronizer {
                 let textLength: string = 'text';
 
                 switch (f.typeParams?.length) {
+                  case 'tiny':
+                    textLength = 'tinytext';
+                    break;
                   case 'medium':
                     textLength = 'mediumtext';
                     break;
@@ -237,24 +235,49 @@ export class DatabaseSynchronizer {
                     break;
                 }
 
-                col = table.text(f.columnName, textLength);
+                if (textLength === 'tinytext') {
+                  col = table.specificType(f.columnName, 'tinytext');
+                } else {
+                  col = table.text(f.columnName, textLength);
+                }
+
                 break;
               case FieldType.UUID:
                 col = table.uuid(f.columnName);
                 break;
               case FieldType.STRING:
-                col = table.string(f.columnName);
+                let stringLength: number;
+
+                if (f.typeParams?.length) {
+                  if (typeof f.typeParams.length === 'number') {
+                    stringLength = f.typeParams.length;
+                  }
+                }
+
+                col = table.string(f.columnName, stringLength);
                 break;
-              case FieldType.BIGINT:
-                col = table.bigInteger(f.columnName);
-                break;
+
+              // Integers >
               case FieldType.TINYINT:
                 col = table.tinyint(f.columnName);
                 break;
               case FieldType.SMALLINT:
-              case FieldType.MEDIUMINT:
-                col = table.integer(f.columnName);
+                col = table.specificType(f.columnName, 'smallint');
                 break;
+              case FieldType.MEDIUMINT:
+                col = table.specificType(f.columnName, 'mediumint');
+                break;
+              case FieldType.INTEGER:
+                col = table.integer(
+                  f.columnName,
+                  (f.typeParams.length as number) ?? undefined,
+                );
+                break;
+              case FieldType.BIGINT:
+                col = table.bigInteger(f.columnName);
+                break;
+              // Integers &
+
               case FieldType.FLOAT:
                 col = table.float(f.columnName);
                 break;
@@ -287,6 +310,20 @@ export class DatabaseSynchronizer {
                 break;
               case FieldType.HSTORE:
                 col = table.specificType(f.columnName, 'HSTORE');
+                break;
+              case FieldType.CHAR:
+                let charLength: number;
+
+                if (f.typeParams?.length) {
+                  if (typeof f.typeParams.length === 'number') {
+                    charLength = f.typeParams.length;
+                  }
+                }
+
+                col = table.specificType(
+                  f.columnName,
+                  'char' + (charLength ? `(${charLength})` : ''),
+                );
                 break;
               case FieldType.CIDR:
                 col = table.specificType(f.columnName, 'CIDR');

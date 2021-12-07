@@ -1,0 +1,129 @@
+{
+  "database": "system",
+  "reference": "texts",
+  "tableName": "texts",
+  "fields": [
+    {
+      "label": "id",
+      "reference": "id",
+      "columnName": "id",
+      "type": "uuid",
+      "typeParams": {
+        "values": []
+      },
+      "tags": [
+        "primary"
+      ]
+    },
+    {
+      "label": "Text Field",
+      "reference": "textField",
+      "columnName": "text_field",
+      "type": "text",
+      "typeParams": {
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Varchar Default Field",
+      "reference": "vcharField",
+      "columnName": "vchar_field",
+      "type": "string",
+      "typeParams": {
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Char Default Field",
+      "reference": "charField",
+      "columnName": "char_field",
+      "type": "string",
+      "typeParams": {
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Varchar 8 Field",
+      "reference": "vchar8Field",
+      "columnName": "vchar8_field",
+      "type": "string",
+      "typeParams": {
+        "length": 8,
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Varchar 16 Field",
+      "reference": "vchar16Field",
+      "columnName": "vchar16_field",
+      "type": "string",
+      "typeParams": {
+        "length": 16,
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Varchar 32 Field",
+      "reference": "vchar32Field",
+      "columnName": "vchar32_field",
+      "type": "string",
+      "typeParams": {
+        "length": 32,
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Varchar 255 Field",
+      "reference": "vchar255Field",
+      "columnName": "vchar255_field",
+      "type": "string",
+      "typeParams": {
+        "length": 255,
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Varchar 512 Field",
+      "reference": "vchar512Field",
+      "columnName": "vchar512_field",
+      "type": "string",
+      "typeParams": {
+        "length": 512,
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Varchar 1024 Field",
+      "reference": "vchar1024Field",
+      "columnName": "vchar1024_field",
+      "type": "string",
+      "typeParams": {
+        "length": 1024,
+        "values": []
+      },
+      "tags": []
+    }
+  ],
+  "indices": [],
+  "relations": [],
+  "uniques": [],
+  "label": "Texts",
+  "version": 2,
+  "artboard": {
+    "position": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "icon": "widgets",
+  "permission": "rw",
+  "tags": []
+}

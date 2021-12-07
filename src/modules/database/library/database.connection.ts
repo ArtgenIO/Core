@@ -181,6 +181,23 @@ export class DatabaseConnection implements IDatabaseConnection {
           }
         }
 
+        // VARCHAR maximum 16383 by default, we assume an utf8_mb4 here for safety
+        // I do not expect too much situation where the user has a varchar over this size,
+        // text is much more fitting for this kind of load.
+        // But we can improve on this by getting a collation for the column.
+        if (field.type === FieldType.STRING) {
+          if (typeof field.typeParams?.length == 'number') {
+            field.typeParams.length = Math.min(field.typeParams.length, 4095);
+          }
+        }
+
+        // CHAR maximum is 255
+        if (field.type === FieldType.CHAR) {
+          if (typeof field.typeParams?.length == 'number') {
+            field.typeParams.length = Math.min(field.typeParams.length, 255);
+          }
+        }
+
         // Following types cannot have default value in MySQL
         if (
           [

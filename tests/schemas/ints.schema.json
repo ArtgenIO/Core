@@ -1,0 +1,138 @@
+{
+  "database": "system",
+  "reference": "ints",
+  "tableName": "ints",
+  "fields": [
+    {
+      "label": "id",
+      "reference": "id",
+      "columnName": "id",
+      "type": "int",
+      "typeParams": {
+        "values": []
+      },
+      "tags": [
+        "primary"
+      ]
+    },
+    {
+      "label": "Tiny Int Field",
+      "reference": "tinyIntField",
+      "columnName": "tiny_int_field",
+      "type": "tinyint",
+      "typeParams": {
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Small Int Field",
+      "reference": "smallIntField",
+      "columnName": "small_int_field",
+      "type": "smallint",
+      "typeParams": {
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Medium Int Field",
+      "reference": "mediumIntField",
+      "columnName": "medium_int_field",
+      "type": "mediumint",
+      "typeParams": {
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Normal Int Field",
+      "reference": "normalIntField",
+      "columnName": "normal_int_field",
+      "type": "int",
+      "typeParams": {
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "Big Int Field",
+      "reference": "bigIntField",
+      "columnName": "big_int_field",
+      "type": "bigint",
+      "typeParams": {
+        "values": []
+      },
+      "tags": []
+    },
+    {
+      "label": "UTiny Int Field",
+      "reference": "utinyIntField",
+      "columnName": "utiny_int_field",
+      "type": "tinyint",
+      "typeParams": {
+        "values": [],
+        "unsigned": true
+      },
+      "tags": []
+    },
+    {
+      "label": "USmall Int Field",
+      "reference": "usmallIntField",
+      "columnName": "usmall_int_field",
+      "type": "smallint",
+      "typeParams": {
+        "values": [],
+        "unsigned": true
+      },
+      "tags": []
+    },
+    {
+      "label": "UMedium Int Field",
+      "reference": "umediumIntField",
+      "columnName": "umedium_int_field",
+      "type": "mediumint",
+      "typeParams": {
+        "values": [],
+        "unsigned": true
+      },
+      "tags": []
+    },
+    {
+      "label": "UNormal Int Field",
+      "reference": "unormalIntField",
+      "columnName": "unormal_int_field",
+      "type": "int",
+      "typeParams": {
+        "values": [],
+        "unsigned": true
+      },
+      "tags": []
+    },
+    {
+      "label": "UBig Int Field",
+      "reference": "ubigIntField",
+      "columnName": "ubig_int_field",
+      "type": "bigint",
+      "typeParams": {
+        "values": [],
+        "unsigned": true
+      },
+      "tags": []
+    }
+  ],
+  "indices": [],
+  "relations": [],
+  "uniques": [],
+  "label": "Ints",
+  "version": 2,
+  "artboard": {
+    "position": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "icon": "widgets",
+  "permission": "rw",
+  "tags": []
+}

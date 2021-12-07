@@ -1,0 +1,44 @@
+{
+  "database": "system",
+  "reference": "textsxl",
+  "tableName": "textsxl",
+  "fields": [
+    {
+      "label": "id",
+      "reference": "id",
+      "columnName": "id",
+      "type": "uuid",
+      "typeParams": {
+        "values": []
+      },
+      "tags": [
+        "primary"
+      ]
+    },
+    {
+      "label": "Varchar 65535 Field",
+      "reference": "vchar65535Field",
+      "columnName": "vchar65535_field",
+      "type": "string",
+      "typeParams": {
+        "length": 65535,
+        "values": []
+      },
+      "tags": []
+    }
+  ],
+  "indices": [],
+  "relations": [],
+  "uniques": [],
+  "label": "Texts XL",
+  "version": 2,
+  "artboard": {
+    "position": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "icon": "widgets",
+  "permission": "rw",
+  "tags": []
+}

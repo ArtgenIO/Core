@@ -16,26 +16,38 @@ describe('Database E2E', () => {
     await kernel.stop();
   });
 
-  test.each(['simple', 'enums', 'commons'])(
-    'should synchornize the [%s] test schema',
-    async (ref: string) => {
-      // Prepare deps
-      const connections = await kernel.get(DatabaseConnectionService);
-      const connection = connections.findOne('system');
-      // Load the test schema
-      const subject = require(`../../../tests/schemas/${ref}.schema.json`);
+  test.each([
+    'simple',
+    'enums',
+    'commons',
+    'texts',
+    'textsxl',
+    'textsxl2',
+    'textsxl3',
+    'ints',
+  ])('should synchornize the [%s] test schema', async (ref: string) => {
+    // Prepare deps
+    const connections = await kernel.get(DatabaseConnectionService);
+    const connection = connections.findOne('system');
+    // Load the test schema
+    const subject = require(`../../../tests/schemas/${ref}.schema.json`);
 
-      // Remove artifacts from previous test if any
-      await connection.synchornizer.deleteTable(ref);
+    // Remove artifacts from previous test if any
+    await connection.synchornizer.deleteTable(ref);
 
-      // Run the synchronization
-      await connection.associate([subject]);
+    // Run the synchronization
+    await connection.associate([subject]);
 
-      expect(connection.getModel(ref)).toBeTruthy();
-      expect(connection.getSchema(ref).reference).toBe(ref);
+    // Reset the sync, so we can fail if there is a diff in revert
+    connection.associations.get(ref).inSync = false;
 
-      // Clean up
-      await connection.synchornizer.deleteTable(ref).catch(e => {});
-    },
-  );
+    // Resync
+    await connection.synchornizer.sync();
+
+    expect(connection.getModel(ref)).toBeTruthy();
+    expect(connection.getSchema(ref).reference).toBe(ref);
+
+    // Clean up
+    //await connection.synchornizer.deleteTable(ref).catch(e => {});
+  });
 });
