@@ -1,13 +1,12 @@
-import { Knex } from 'knex';
-import { FieldType, IField } from '../../../../schema';
+import BaseAdapter from 'knex-schema-inspector/dist/dialects/postgres';
+import { Column } from 'knex-schema-inspector/dist/types/column';
 import {
-  IDialectInspector,
+  IDatabaseInspectorAdapter as IAdapter,
+  IEnumeratorStructure,
   Unique,
-} from '../../../interface/inspector.interface';
+} from '../../interface/inspector';
 
-export class PostgresInspector implements IDialectInspector {
-  constructor(protected knex: Knex) {}
-
+export class PostgresAdapter extends BaseAdapter implements IAdapter {
   async isTypeExists(typeName: string): Promise<boolean> {
     const query = this.knex('pg_type').where({ typname: typeName }).count();
     const result = await query;
@@ -15,50 +14,62 @@ export class PostgresInspector implements IDialectInspector {
     return result[0].count == 1;
   }
 
-  async getSpecialType(
+  async enumerators(
     tableName: string,
-    columnName: string,
-  ): Promise<Pick<IField, 'type' | 'typeParams'>> {
-    const query = this.knex({
-      e: 'pg_enum',
-    })
-      .select({
-        type: 't.typname',
-        value: 'e.enumlabel',
-      })
-      .join(
-        {
-          t: 'pg_type',
-        },
-        {
-          't.oid': 'e.enumtypid',
-        },
-      )
-      .join(
-        {
-          c: 'information_schema.columns',
-        },
-        {
-          't.typname': 'c.udt_name',
-        },
-      )
-      .where({
-        'c.table_name': tableName,
-        'c.column_name': columnName,
-      })
-      .groupBy(['e.enumlabel', 't.typname']);
+    columns: Column[],
+  ): Promise<IEnumeratorStructure[]> {
+    const enumColumns = columns
+      .filter(col => col.data_type === 'USER-DEFINED')
+      .map(c => c.name);
 
-    const rows = await query;
+    if (enumColumns.length) {
+      const query = this.knex({
+        e: 'pg_enum',
+      })
+        .select({
+          type: 't.typname',
+          value: 'e.enumlabel',
+          column: 'c.column_name',
+        })
+        .join(
+          {
+            t: 'pg_type',
+          },
+          {
+            't.oid': 'e.enumtypid',
+          },
+        )
+        .join(
+          {
+            c: 'information_schema.columns',
+          },
+          {
+            't.typname': 'c.udt_name',
+          },
+        )
+        .where({
+          'c.table_name': tableName,
+        })
+        .whereIn('c.column_name', enumColumns)
+        .groupBy(['e.enumlabel', 't.typname', 'c.column_name']);
 
-    return {
-      type: FieldType.ENUM,
-      typeParams: {
-        values: rows.map(r => r.value),
-      },
-    };
+      const rows = await query;
+      const enums = new Map<string, string[]>(enumColumns.map(n => [n, []]));
+
+      for (const row of rows) {
+        enums.get(row.column).push(row.value);
+      }
+
+      return Array.from(enums.entries()).map(([column, values]) => ({
+        column,
+        values,
+      }));
+    }
+
+    return [];
   }
 
-  async getTablesForType(
+  async associatedTables(
     typeName: string,
   ): Promise<{ tableName: string; columName: string }[]> {
     const query = this.knex({
@@ -94,7 +105,7 @@ export class PostgresInspector implements IDialectInspector {
     return rows;
   }
 
-  async getUniques(tableName: string): Promise<Unique[]> {
+  async uniques(tableName: string): Promise<Unique[]> {
     const query = this.knex({
       tc: 'information_schema.table_constraints',
     })

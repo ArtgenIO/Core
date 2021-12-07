@@ -3,8 +3,8 @@ import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { IBlueprint } from '../../blueprint/interface/extension.interface';
 import { SystemBlueprintProvider } from '../../blueprint/provider/system-extension.provider';
-import { IConnection } from '../../database/interface';
-import { ConnectionService } from '../../database/service/connection.service';
+import { IDatabaseConnection } from '../../database/interface';
+import { DatabaseConnectionService } from '../../database/service/database-connection.service';
 import { ISchema } from '../interface/schema.interface';
 import { MigrationService } from './migration.service';
 
@@ -20,8 +20,8 @@ export class SchemaService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(ConnectionService)
-    readonly linkService: ConnectionService,
+    @Inject(DatabaseConnectionService)
+    readonly connections: DatabaseConnectionService,
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
     @Inject(MigrationService)
@@ -35,7 +35,7 @@ export class SchemaService {
    * to extend on the system's behavior, the synchronizer will only ensure the
    * existence of the schema and does not overide it if its present.
    */
-  async synchronize(link: IConnection) {
+  async synchronize(link: IDatabaseConnection) {
     // Get the schema repository.
     const model = this.getModel<SchemaModel>('system', 'Schema');
 
@@ -95,7 +95,7 @@ export class SchemaService {
     database: string,
     schema: string,
   ): ModelClass<T> {
-    return this.linkService.findOne(database).getModel<T>(schema);
+    return this.connections.findOne(database).getModel<T>(schema);
   }
 
   findByDatabase(database: string) {

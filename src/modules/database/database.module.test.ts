@@ -1,8 +1,8 @@
 import { assert } from 'console';
 import { IKernel, Kernel } from '../../app/kernel';
 import { DatabaseModule } from './database.module';
-import { Connection } from './library/connection';
-import { ConnectionService } from './service/connection.service';
+import { DatabaseConnection } from './library/database.connection';
+import { DatabaseConnectionService } from './service/database-connection.service';
 
 describe(DatabaseModule.name, () => {
   let kernel: IKernel;
@@ -19,12 +19,12 @@ describe(DatabaseModule.name, () => {
     expect(result).toBe(true);
 
     // Creates one connection
-    const connections = await kernel.get(ConnectionService);
+    const connections = await kernel.get(DatabaseConnectionService);
     expect(connections.findAll().length).toBe(1);
 
     // It's named system
     const connection = connections.findOne('system');
-    expect(connection).toBeInstanceOf(Connection);
+    expect(connection).toBeInstanceOf(DatabaseConnection);
     expect(connection.database.name).toBe('system');
 
     // Schemas are connected to the system database
@@ -37,9 +37,7 @@ describe(DatabaseModule.name, () => {
     }
 
     // Schemas are synchronized
-    const associations = connection.getAssications();
-
-    for (const assoc of associations.values()) {
+    for (const assoc of connection.associations.values()) {
       expect(assoc.inSync).toBe(true);
     }
   });

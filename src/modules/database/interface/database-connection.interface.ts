@@ -1,10 +1,14 @@
 import { Knex } from 'knex';
 import { Model, ModelClass } from 'objection';
-import { IDatabase } from '.';
+import { IDatabase, ITableStructure } from '.';
+import { DatabaseSynchronizer } from '..';
 import { ISchema } from '../../schema';
-import { IAssociation } from './association.interface';
+import { IConnectionAssociation } from './connection-association.interface';
+import { Dialect } from './dialect.type';
 
-export interface IConnection {
+export interface IDatabaseConnection {
+  readonly synchornizer: DatabaseSynchronizer;
+
   /**
    * Reference to the database record
    */
@@ -16,14 +20,14 @@ export interface IConnection {
   readonly knex: Knex;
 
   /**
-   *
+   * Connection's dialect.
    */
-  getAssications(): Map<string, IAssociation>;
+  readonly dialect: Dialect;
 
   /**
-   * Get the unique name for the database link.
+   *
    */
-  getName(): string;
+  readonly associations: Map<string, IConnectionAssociation>;
 
   /**
    * Get the model by reference
@@ -36,7 +40,7 @@ export interface IConnection {
    *
    * It may strip invalid relations until the referenced schema is added.
    */
-  associate(schemas: ISchema[]): Promise<IConnection>;
+  associate(schemas: ISchema[]): Promise<IDatabaseConnection>;
 
   /**
    * Get the associated schemas.
@@ -52,4 +56,7 @@ export interface IConnection {
    * Close the connection to the database.
    */
   close(): Promise<void>;
+
+  toDialectSchema(schema: ISchema): ISchema;
+  toStructure(schema: ISchema): ITableStructure;
 }

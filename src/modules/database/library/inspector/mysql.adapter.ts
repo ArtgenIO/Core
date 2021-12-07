@@ -1,20 +1,14 @@
-import { Knex } from 'knex';
+import BaseAdapter from 'knex-schema-inspector/dist/dialects/mysql';
 import { Column } from 'knex-schema-inspector/dist/types/column';
 import {
-  IDialectInspector,
+  IDatabaseInspectorAdapter as IAdapter,
+  IEnumeratorStructure as Enum,
   Unique,
-} from '../../../interface/inspector.interface';
+} from '../../interface/inspector';
 
-type EnumColumn = { column: string; values: string[] };
-
-export class MySQLInspector implements IDialectInspector {
-  constructor(protected knex: Knex) {}
-
-  async getEnumerators(
-    tableName: string,
-    columns: Column[],
-  ): Promise<EnumColumn[]> {
-    const enums: EnumColumn[] = [];
+export class MySQLAdapter extends BaseAdapter implements IAdapter {
+  async enumerators(tableName: string, columns: Column[]): Promise<Enum[]> {
+    const enums: Enum[] = [];
 
     for (const col of columns) {
       if (col.data_type == 'enum') {
@@ -39,7 +33,7 @@ export class MySQLInspector implements IDialectInspector {
     return enums;
   }
 
-  async getUniques(tableName: string): Promise<Unique[]> {
+  async uniques(tableName: string): Promise<Unique[]> {
     const query = this.knex({
       tc: 'information_schema.table_constraints',
     })

@@ -1,32 +1,41 @@
 import { IKernel, Kernel } from '../../app/kernel';
-import { BlueprintModule } from '../blueprint/blueprint.module';
-import { SchemaModule } from '../schema/schema.module';
 import { DatabaseModule } from './database.module';
-import { ConnectionService } from './service/connection.service';
+import { DatabaseConnectionService } from './service/database-connection.service';
 
 describe('Database E2E', () => {
   let kernel: IKernel;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     kernel = new Kernel();
-    kernel.register([DatabaseModule, SchemaModule, BlueprintModule]);
+    kernel.register([DatabaseModule]);
 
     await kernel.boostrap();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await kernel.stop();
   });
 
-  test('should synchornize a simple schema', async () => {
-    const connSvc = await kernel.get(ConnectionService);
-    const simpleSchema = require('../../../tests/schemas/simple.schema.json');
-    const conn = await connSvc.findOne('system').associate([simpleSchema]);
+  test.each(['simple', 'enums', 'commons'])(
+    'should synchornize the [%s] test schema',
+    async (ref: string) => {
+      // Prepare deps
+      const connections = await kernel.get(DatabaseConnectionService);
+      const connection = connections.findOne('system');
+      // Load the test schema
+      const subject = require(`../../../tests/schemas/${ref}.schema.json`);
 
-    const model = conn.getModel('simple');
-    expect(model).toBeTruthy();
+      // Remove artifacts from previous test if any
+      await connection.synchornizer.deleteTable(ref);
 
-    const schema = conn.getSchema('simple');
-    expect(schema.reference).toBe('simple');
-  });
+      // Run the synchronization
+      await connection.associate([subject]);
+
+      expect(connection.getModel(ref)).toBeTruthy();
+      expect(connection.getSchema(ref).reference).toBe(ref);
+
+      // Clean up
+      await connection.synchornizer.deleteTable(ref).catch(e => {});
+    },
+  );
 });

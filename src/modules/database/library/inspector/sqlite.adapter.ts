@@ -1,9 +1,10 @@
-import { Knex } from 'knex';
+import BaseAdapter from 'knex-schema-inspector/dist/dialects/sqlite';
 import { Column } from 'knex-schema-inspector/dist/types/column';
 import {
-  IDialectInspector,
+  IDatabaseInspectorAdapter as IAdapter,
+  IEnumeratorStructure,
   Unique,
-} from '../../../interface/inspector.interface';
+} from '../../interface/inspector';
 
 type IndexRecord = {
   name: string;
@@ -14,16 +15,12 @@ type IndexInfoRecord = {
   name: string;
 };
 
-type EnumColumn = { column: string; values: string[] };
-
-export class SQLiteInspector implements IDialectInspector {
-  constructor(protected knex: Knex) {}
-
-  async getEnumerators(
+export class SQLiteAdapter extends BaseAdapter implements IAdapter {
+  async enumerators(
     tableName: string,
     columns: Column[],
-  ): Promise<EnumColumn[]> {
-    const enums: EnumColumn[] = [];
+  ): Promise<IEnumeratorStructure[]> {
+    const enums: IEnumeratorStructure[] = [];
     const colNames = columns.map(c => c.name);
 
     let cTable: string = (
@@ -59,7 +56,7 @@ export class SQLiteInspector implements IDialectInspector {
     return enums;
   }
 
-  async getUniques(tableName: string): Promise<Unique[]> {
+  async uniques(tableName: string): Promise<Unique[]> {
     const uniques: Unique[] = [];
     const indices = await this.knex.raw<IndexRecord[]>(
       `PRAGMA index_list('${tableName}')`,

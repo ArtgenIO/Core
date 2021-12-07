@@ -1,0 +1,66 @@
+{
+  "database": "system",
+  "reference": "enums",
+  "tableName": "enums",
+  "fields": [
+    {
+      "label": "id",
+      "reference": "id",
+      "columnName": "id",
+      "type": "uuid",
+      "typeParams": {
+        "values": []
+      },
+      "tags": [
+        "primary"
+      ]
+    },
+    {
+      "label": "enum string",
+      "reference": "enumstr",
+      "columnName": "enum_Strings",
+      "type": "enum",
+      "typeParams": {
+        "values": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "EF"
+        ]
+      },
+      "tags": []
+    },
+    {
+      "label": "enum numbers",
+      "reference": "enumint",
+      "columnName": "enum_Integers",
+      "type": "enum",
+      "typeParams": {
+        "values": [
+          1,
+          2,
+          3,
+          5,
+          99,
+          42
+        ]
+      },
+      "tags": []
+    }
+  ],
+  "indices": [],
+  "relations": [],
+  "uniques": [],
+  "label": "Enums",
+  "version": 2,
+  "artboard": {
+    "position": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  "icon": "widgets",
+  "permission": "rw",
+  "tags": []
+}

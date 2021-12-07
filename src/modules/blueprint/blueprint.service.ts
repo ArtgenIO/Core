@@ -3,7 +3,7 @@ import { join } from 'path';
 import { ILogger, Inject, Logger, Service } from '../../app/container';
 import { SEED_DIR } from '../../app/globals';
 import { getErrorMessage } from '../../app/kernel';
-import { ConnectionService } from '../database/service/connection.service';
+import { DatabaseConnectionService } from '../database/service/database-connection.service';
 import { RestService } from '../rest/rest.service';
 import { IBlueprint } from './interface/extension.interface';
 import { SystemBlueprintProvider } from './provider/system-extension.provider';
@@ -17,8 +17,8 @@ export class BlueprintService {
     readonly rest: RestService,
     @Inject(SystemBlueprintProvider)
     readonly systemBlueprint: IBlueprint,
-    @Inject(ConnectionService)
-    readonly connections: ConnectionService,
+    @Inject(DatabaseConnectionService)
+    readonly connections: DatabaseConnectionService,
   ) {}
 
   async seed() {

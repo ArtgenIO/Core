@@ -2,9 +2,9 @@ import { Model } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel';
 import { SchemaService } from '../../schema/service/schema.service';
-import { IConnection } from '../interface';
+import { IDatabaseConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
-import { ConnectionService } from './connection.service';
+import { DatabaseConnectionService } from './database-connection.service';
 
 type DatabaseModel = IDatabase & Model;
 
@@ -15,8 +15,8 @@ export class DatabaseService {
     protected logger: ILogger,
     @Inject(SchemaService)
     readonly schemaSvc: SchemaService,
-    @Inject(ConnectionService)
-    readonly connections: ConnectionService,
+    @Inject(DatabaseConnectionService)
+    readonly connections: DatabaseConnectionService,
   ) {}
 
   /**
@@ -48,7 +48,7 @@ export class DatabaseService {
       this.findAll(),
     ]);
 
-    const updates: Promise<IConnection | unknown>[] = [];
+    const updates: Promise<IDatabaseConnection | unknown>[] = [];
 
     // Map schemas to databases.
     for (const database of databases) {
@@ -93,7 +93,7 @@ export class DatabaseService {
   /**
    * Synchronize a link's database into the database which stores the connections.
    */
-  async synchronize(link: IConnection) {
+  async synchronize(link: IDatabaseConnection) {
     const model = this.schemaSvc.getModel<DatabaseModel>('system', 'Database');
 
     let record = await model.query().findById(link.database.name);
