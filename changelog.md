@@ -2,6 +2,7 @@
 
 - Use homebrew table sync for better control
 - Replaced the Sequelize with Knex for stability
+- Enhanced testing for every database provider
 
 ### Version 0.0.19
 

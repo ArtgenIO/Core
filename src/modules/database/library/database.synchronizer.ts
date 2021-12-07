@@ -1,7 +1,14 @@
 import { diff } from 'just-diff';
 import { Knex } from 'knex';
 import { Column } from 'knex-schema-inspector/dist/types/column';
-import { camelCase, isEqual, snakeCase, startCase, upperFirst } from 'lodash';
+import {
+  camelCase,
+  cloneDeep,
+  isEqual,
+  snakeCase,
+  startCase,
+  upperFirst,
+} from 'lodash';
 import hash from 'object-hash';
 import { inspect } from 'util';
 import { ILogger } from '../../../app/container';
@@ -83,15 +90,16 @@ export class DatabaseSynchronizer {
         continue;
       }
       this.logger.debug('Processing [%s] schema', schema.reference);
+      const dialected = this.connection.toDialectSchema(cloneDeep(schema));
 
-      if (!isSchemaExits(schema)) {
-        instructions.push(...(await this.createTable(schema)));
-        instructions.push(...this.createRelations(schema));
+      if (!isSchemaExits(dialected)) {
+        instructions.push(...(await this.createTable(dialected)));
+        instructions.push(...this.createRelations(dialected));
       } else {
-        instructions.push(...(await this.doAlterTable(schema)));
+        instructions.push(...(await this.doAlterTable(dialected)));
       }
 
-      this.connection.associations.get(schema.reference).inSync = true;
+      this.connection.associations.get(dialected.reference).inSync = true;
     }
 
     const order: ChangeStep['type'][] = [
