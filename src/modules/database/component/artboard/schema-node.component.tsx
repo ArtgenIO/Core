@@ -32,7 +32,7 @@ export const createSchemaNode =
         />
 
         <div key="label" className="node-label">
-          {props.data.schema.label ?? 'Missing Label'}
+          {props.data.schema.title ?? 'Missing Label'}
         </div>
         <div key="icon" className="text-center node-content relative">
           <img

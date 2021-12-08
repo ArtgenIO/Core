@@ -172,7 +172,7 @@ export default function CrudReadComponent() {
             title={
               schemas ? (
                 <>
-                  {schemas[0].label}
+                  {schemas[0].title}
                   <span className="ml-4">
                     {schemas[0].tags.map(t => (
                       <Tag key={t}>{t}</Tag>

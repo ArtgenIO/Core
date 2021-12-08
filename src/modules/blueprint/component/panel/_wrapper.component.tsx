@@ -81,13 +81,13 @@ export default function ExtensionPanelWrapper() {
           >
             {data
               ? data.schemas
-                  .sort((a, b) => (a.label > b.label ? 1 : -1))
+                  .sort((a, b) => (a.title > b.title ? 1 : -1))
                   .map(s => (
                     <Menu.Item key={s.reference}>
                       <Link
                         to={`${base}/contents/${s.database}/${s.reference}`}
                       >
-                        {s.label}
+                        {s.title}
                       </Link>
                     </Menu.Item>
                   ))

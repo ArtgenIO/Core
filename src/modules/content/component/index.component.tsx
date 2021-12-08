@@ -47,7 +47,7 @@ export default function CrudIndexComponent() {
     }
 
     return (
-      !!schema.label.toLowerCase().match(search) ||
+      !!schema.title.toLowerCase().match(search) ||
       !!schema.reference.toLowerCase().match(search) ||
       !!schema.tableName.toLowerCase().match(search) ||
       schema.tags.some(t => t.toLowerCase().match(search))
@@ -86,7 +86,7 @@ export default function CrudIndexComponent() {
             ? schemas.filter(menuFilter).map((schema, k) => {
                 return (
                   <Menu.Item key={`schema-${k}`}>
-                    <Link to={routeCrudUI(schema)}>{schema.label}</Link>
+                    <Link to={routeCrudUI(schema)}>{schema.title}</Link>
                   </Menu.Item>
                 );
               })

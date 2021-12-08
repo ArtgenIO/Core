@@ -509,7 +509,7 @@ export class DatabaseSynchronizer {
 
     // Configure the meta, and known facts.
     schema.reference = upperFirst(snakeCase(tableName));
-    schema.label = upperFirst(startCase(tableName));
+    schema.title = upperFirst(startCase(tableName));
     schema.tableName = tableName;
     schema.fields = [];
 

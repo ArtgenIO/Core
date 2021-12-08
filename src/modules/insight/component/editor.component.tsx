@@ -77,7 +77,7 @@ export default function AnalyticsEditorComponent() {
                   >
                     {data.map(s => (
                       <Select.Option key={s.reference} value={s.reference}>
-                        {s.label}
+                        {s.title}
                       </Select.Option>
                     ))}
                   </Select>
@@ -95,7 +95,7 @@ export default function AnalyticsEditorComponent() {
             </div>
             <div className="w-1/2 pl-8">
               {chartType === 'counter' ? (
-                <Statistic title={`Count of ${schema?.label}`} value={result} />
+                <Statistic title={`Count of ${schema?.title}`} value={result} />
               ) : undefined}
             </div>
           </div>

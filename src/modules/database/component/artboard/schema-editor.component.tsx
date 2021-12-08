@@ -48,7 +48,7 @@ export default function DatabaseSchemaEditorComponent({
       width="70%"
       title={
         <Typography.Title style={{ marginBottom: 0 }}>
-          {schema.label}
+          {schema.title}
         </Typography.Title>
       }
       visible

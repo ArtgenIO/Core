@@ -3,42 +3,42 @@ import { IRelation } from './relation.interface';
 
 export interface ISchema {
   /**
-   * Unique name used to identify a data source as a model.
-   * Does not change even if the table is renamed, it's saved in the meta.
+   * Human readable title.
    */
-  reference: string;
+  title: string;
 
   /**
-   * Database ID
+   * Name of the database where it stored.
    */
   database: string;
 
   /**
-   * Used in UI and other settings, where the data is displayed.
-   * Human friendly apperence.
+   * Unique reference for programatic identification.
    */
-  label: string;
+  reference: string;
 
   /**
-   * Real table name in the database.
+   * Table's name in the database.
    */
   tableName: string;
 
   /**
-   * Behavior tags.
-   */
-  tags: string[];
-
-  /**
-   * Table column mappings.
+   * Table's column mappings.
    */
   fields: IField[];
 
+  /**
+   * Compositive table indices.
+   */
   indices: { name: string; fields: string[] }[];
+
+  /**
+   * Compositive table unique indices.
+   */
   uniques: { name: string; fields: string[] }[];
 
   /**
-   * Associations / relations between models.
+   * Relation mappings.
    */
   relations: IRelation[];
 
@@ -51,4 +51,9 @@ export interface ISchema {
       y: number;
     };
   };
+
+  /**
+   * Behavior tags.
+   */
+  tags: string[];
 }

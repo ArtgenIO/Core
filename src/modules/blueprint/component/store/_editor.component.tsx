@@ -114,7 +114,7 @@ export default function ExtensionEdiorComponent({
           .filter(c => !c.tags.includes('system'))
           .map(s => ({
             key: s.reference,
-            title: s.label,
+            title: s.title,
             description: '',
           })),
       );
@@ -126,7 +126,7 @@ export default function ExtensionEdiorComponent({
           .filter(c => !c.tags.includes('system'))
           .map(s => ({
             key: s.reference,
-            title: s.label,
+            title: s.title,
             description: '',
           })),
       );

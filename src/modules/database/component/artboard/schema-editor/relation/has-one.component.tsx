@@ -107,7 +107,7 @@ export default function RelationHasOne({
               if (primaries === 1 && sameType) {
                 return (
                   <Select.Option key={opt.reference} value={opt.reference}>
-                    {opt.label}
+                    {opt.title}
                   </Select.Option>
                 );
               }

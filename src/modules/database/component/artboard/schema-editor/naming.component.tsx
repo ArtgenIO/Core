@@ -82,7 +82,7 @@ export default function SchemaEditorNamingComponent({
           setSchema(current => {
             const update = cloneDeep(current);
 
-            update.label = form.getFieldValue('label');
+            update.title = form.getFieldValue('label');
             update.reference = form.getFieldValue('reference');
             update.tableName = form.getFieldValue('tableName');
 

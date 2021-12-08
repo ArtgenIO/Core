@@ -115,7 +115,7 @@ export default function RelationBelongsToOne({
               if (primaries === 1) {
                 return (
                   <Select.Option key={opt.reference} value={opt.reference}>
-                    {opt.label}
+                    {opt.title}
                   </Select.Option>
                 );
               }

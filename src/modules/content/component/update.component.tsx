@@ -74,7 +74,7 @@ export default function CrudUpdateComponent() {
       <PageWithHeader
         header={
           <PageHeader
-            title={`Update ${schemas ? schemas[0].label : '~'}`}
+            title={`Update ${schemas ? schemas[0].title : '~'}`}
             avatar={{
               icon: <TableOutlined />,
             }}

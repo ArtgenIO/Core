@@ -66,7 +66,7 @@ export default function CrudCreateComponent() {
       <PageWithHeader
         header={
           <PageHeader
-            title={`Create New ${schemas ? schemas[0].label : '~'}`}
+            title={`Create New ${schemas ? schemas[0].title : '~'}`}
             avatar={{
               icon: <TableOutlined />,
             }}
