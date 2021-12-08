@@ -23,3 +23,11 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add('login', () => {
+  cy.visit('http://localhost:7200/admin');
+
+  cy.get('.test--email-address').type('demo@artgen.io');
+  cy.get('.test--password').type('demo');
+  cy.get('.test--sign-in').click();
+  cy.get('.test--sign-out').should('exist');
+});

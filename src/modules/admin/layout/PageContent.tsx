@@ -1,6 +1,7 @@
 import { Layout } from 'antd';
 import React, { lazy, Suspense } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
+import { ADMIN_URL } from '../admin.constants';
 import DashboardPage from '../component/dashboard.component';
 import Route404 from '../route/404.route';
 import PageLoading from './PageLoading';
@@ -18,41 +19,41 @@ export default function PageContent() {
           <Switch location={location}>
             <Route
               exact
-              path="/admin(/index.html)?"
+              path={`${ADMIN_URL}(/index.html)?`}
               component={DashboardPage}
             />
             <Route
-              path="/admin/workflow"
+              path={`${ADMIN_URL}/workflow`}
               component={lazy(
                 () => import('../../flow/components/index.component'),
               )}
             />
             <Route
-              path="/admin/database"
+              path={`${ADMIN_URL}/database`}
               component={lazy(
-                () => import('../../database/component/index.component'),
+                () => import('../../database/component/_router.component'),
               )}
             />
             <Route
-              path="/admin/content"
+              path={`${ADMIN_URL}/content`}
               component={lazy(
                 () => import('../../content/component/index.component'),
               )}
             />
             <Route
-              path="/admin/page"
+              path={`${ADMIN_URL}/page`}
               component={lazy(
                 () => import('../../page/component/index.component'),
               )}
             />
             <Route
-              path="/admin/analytics"
+              path={`${ADMIN_URL}/analytics`}
               component={lazy(
                 () => import('../../insight/component/index.component'),
               )}
             />
             <Route
-              path="/admin/ext"
+              path={`${ADMIN_URL}/ext`}
               component={lazy(
                 () => import('../../blueprint/component/_router.component'),
               )}
