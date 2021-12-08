@@ -48,6 +48,6 @@ describe('Database E2E', () => {
     expect(connection.getSchema(ref).reference).toBe(ref);
 
     // Clean up
-    //await connection.synchornizer.deleteTable(ref).catch(e => {});
+    await connection.synchornizer.deleteTable(ref).catch(e => {});
   });
 });

@@ -476,7 +476,7 @@ export class DatabaseSynchronizer {
         field.type = FieldType.ENUM;
         field.typeParams.values = enumFix.values;
       } else {
-        const revType = this.getFieldType(col);
+        const revType = await this.getFieldType(tableName, col);
         field.type = revType.type;
         field.typeParams = revType.typeParams;
       }
@@ -540,7 +540,10 @@ export class DatabaseSynchronizer {
     return schema;
   }
 
-  protected getFieldType(column: Column): Pick<IField, 'type' | 'typeParams'> {
+  protected async getFieldType(
+    tableName: string,
+    column: Column,
+  ): Promise<Pick<IField, 'type' | 'typeParams'>> {
     let type: FieldType;
     let typeParams: IField['typeParams'] = {
       values: [],
@@ -566,14 +569,12 @@ export class DatabaseSynchronizer {
       case 'VARCHAR':
         type = FieldType.STRING;
         break;
-      case 'BIGINT':
-        type = FieldType.BIGINT;
-        break;
+
       case 'BOOLEAN':
         type = FieldType.BOOLEAN;
         break;
       case 'BYTEA':
-        type = FieldType.STRING;
+        type = FieldType.BLOB;
         typeParams.binary = true;
         break;
       case 'CIDR':
@@ -588,13 +589,11 @@ export class DatabaseSynchronizer {
       case 'INET':
         type = FieldType.INET;
         break;
-      case 'INTEGER':
-        type = FieldType.INTEGER;
-        break;
+
       case 'JSON':
-      case 'LONGTEXT': // MariaDB
         type = FieldType.JSON;
         break;
+
       case 'JSONB':
         type = FieldType.JSONB;
         break;
@@ -627,6 +626,68 @@ export class DatabaseSynchronizer {
       case 'ENUM':
         type = FieldType.ENUM;
         break;
+      case 'BLOB':
+        type = FieldType.BLOB;
+        break;
+      case 'TINYTEXT':
+        type = FieldType.TEXT;
+        typeParams.length = 'tiny';
+        break;
+      case 'MEDIUMTEXT':
+        type = FieldType.TEXT;
+        typeParams.length = 'medium';
+        break;
+      case 'LONGTEXT': // MariaDB JSON?
+        type = FieldType.TEXT;
+        typeParams.length = 'long';
+
+        // MariaDB uses LONGTEXT with json check to store JSON
+        if (this.connection.dialect === 'mariadb') {
+          const isJson = await this.inspector.isJson(tableName, column.name);
+
+          if (isJson) {
+            type = FieldType.JSON;
+            delete typeParams.length;
+          }
+        }
+
+        break;
+      case 'CHARACTER':
+        type = FieldType.CHAR;
+        break;
+      case 'TINYINT':
+        type = FieldType.TINYINT;
+        break;
+      case 'TINYINT UNSIGNED':
+        type = FieldType.TINYINT;
+        typeParams.unsigned = true;
+        break;
+      case 'SMALLINT UNSIGNED':
+        type = FieldType.SMALLINT;
+        typeParams.unsigned = true;
+        break;
+      case 'MEDIUMINT UNSIGNED':
+        type = FieldType.MEDIUMINT;
+        typeParams.unsigned = true;
+        break;
+      case 'INT UNSIGNED':
+        type = FieldType.INTEGER;
+        typeParams.unsigned = true;
+        break;
+      case 'BIGINT UNSIGNED':
+        type = FieldType.BIGINT;
+        typeParams.unsigned = true;
+        break;
+      case 'MEDIUMINT':
+        type = FieldType.MEDIUMINT;
+        break;
+      case 'BIGINT':
+        type = FieldType.BIGINT;
+        break;
+      case 'INTEGER':
+      case 'INT':
+        type = FieldType.INTEGER;
+        break;
     }
 
     if (!type) {
@@ -654,7 +715,7 @@ export class DatabaseSynchronizer {
           values: [],
         };
       } else {
-        type = FieldType.TEXT;
+        type = FieldType.CHAR;
       }
     }
 

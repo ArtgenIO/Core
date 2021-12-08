@@ -19,7 +19,6 @@ export enum FieldType {
   DECIMAL = 'decimal',
   BLOB = 'blob',
   ENUM = 'enum',
-
   HSTORE = 'hstore',
   JSONB = 'jsonb',
   CIDR = 'cidr',

@@ -70,4 +70,15 @@ export class MySQLAdapter extends BaseAdapter implements IAdapter {
 
     return uniques;
   }
+
+  async isJson(tableName: string, columnName: string): Promise<boolean> {
+    const query = await await this.knex.raw(
+      'SHOW CREATE TABLE `' + tableName + '`;',
+    );
+
+    const cTable = query[0][0]['Create Table'];
+    const regex = new RegExp('json_valid\\(`' + columnName + '`\\)', 'gmis');
+
+    return regex.test(cTable);
+  }
 }

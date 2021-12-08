@@ -74,4 +74,11 @@ export class DatabaseInspector {
   ): Promise<{ tableName: string; columName: string }[]> {
     return this.adapter.associatedTables(typeName);
   }
+
+  /**
+   * MariaDB special for JSON checks
+   */
+  async isJson(tableName: string, columnName: string): Promise<boolean> {
+    return this.adapter.isJson(tableName, columnName);
+  }
 }

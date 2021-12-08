@@ -21,6 +21,8 @@ export interface IDatabaseInspectorAdapter extends SchemaInspector {
 
   isTypeExists?(typeName: string): Promise<boolean>;
 
+  isJson?(tableName: string, columnName: string): Promise<boolean>;
+
   /**
    * Finds tables which use the given types.
    *
