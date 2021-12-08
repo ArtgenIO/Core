@@ -6,7 +6,6 @@ import { SystemBlueprintProvider } from '../../blueprint/provider/system-extensi
 import { IDatabaseConnection } from '../../database/interface';
 import { DatabaseConnectionService } from '../../database/service/database-connection.service';
 import { ISchema } from '../interface/schema.interface';
-import { MigrationService } from './migration.service';
 
 type SchemaModel = ISchema & Model;
 
@@ -24,8 +23,6 @@ export class SchemaService {
     readonly connections: DatabaseConnectionService,
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
-    @Inject(MigrationService)
-    readonly migrator: MigrationService,
     @Inject(SystemBlueprintProvider)
     readonly sysExt: IBlueprint,
   ) {}
@@ -69,7 +66,7 @@ export class SchemaService {
    * schemas from local disk.
    */
   getSystem(): ISchema[] {
-    return this.sysExt.schemas.map(s => this.migrator.migrate(s));
+    return this.sysExt.schemas;
   }
 
   /**
@@ -82,8 +79,7 @@ export class SchemaService {
       'Schema',
     ).query();
 
-    // Update the schemas, in case the database schema is not migrated.
-    this.registry = schemas.map(s => this.migrator.migrate(s.$toJson()));
+    this.registry = schemas.map(s => s.$toJson());
 
     return this.registry;
   }
