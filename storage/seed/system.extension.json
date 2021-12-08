@@ -69,13 +69,7 @@
       "tags": [
         "active",
         "system"
-      ],
-      "artboard": {
-        "position": {
-          "x": 370.00044138667477,
-          "y": 60
-        }
-      }
+      ]
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
@@ -127,13 +121,7 @@
       "tags": [
         "system",
         "active"
-      ],
-      "artboard": {
-        "position": {
-          "x": 370.00032306906684,
-          "y": 702
-        }
-      }
+      ]
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
@@ -222,13 +210,7 @@
       "tags": [
         "active",
         "system"
-      ],
-      "artboard": {
-        "position": {
-          "x": 370.00003013389363,
-          "y": 916
-        }
-      }
+      ]
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
@@ -331,17 +313,12 @@
           "args": {}
         },
         {
-          "reference": "artboard",
-          "columnName": "artboard",
-          "title": "Artboard",
+          "reference": "meta",
+          "columnName": "meta",
+          "title": "Meta",
           "type": "json",
+          "defaultValue": {},
           "tags": [],
-          "defaultValue": {
-            "position": {
-              "x": 0,
-              "y": 0
-            }
-          },
           "args": {}
         }
       ],
@@ -359,13 +336,7 @@
       "tags": [
         "active",
         "system"
-      ],
-      "artboard": {
-        "position": {
-          "x": 200.00058638224152,
-          "y": 702
-        }
-      }
+      ]
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
@@ -403,13 +374,7 @@
       "tags": [
         "active",
         "system"
-      ],
-      "artboard": {
-        "position": {
-          "x": 370.00027415118717,
-          "y": 1130
-        }
-      }
+      ]
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
@@ -534,13 +499,7 @@
       "tags": [
         "active",
         "system"
-      ],
-      "artboard": {
-        "position": {
-          "x": 540.0007144897936,
-          "y": 1130
-        }
-      }
+      ]
     }
   ],
   "workflows": [

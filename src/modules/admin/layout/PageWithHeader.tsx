@@ -6,11 +6,9 @@ type Props = {
 
 export default function PageWithHeader(props: Props) {
   return (
-    <>
+    <div className="min-h-screen">
       {props.header}
-      <div className="pb-96" style={{ paddingLeft: 25, paddingRight: 25 }}>
-        {props.children}
-      </div>
-    </>
+      <div className="px-6">{props.children}</div>
+    </div>
   );
 }

@@ -57,13 +57,7 @@
       "tags": [
         "system",
         "active"
-      ],
-      "artboard": {
-        "position": {
-          "x": 200.00024520539853,
-          "y": 488
-        }
-      }
+      ]
     },
     {
       "extensionId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
@@ -115,13 +109,7 @@
       "tags": [
         "active",
         "system"
-      ],
-      "artboard": {
-        "position": {
-          "x": 370.0006810298832,
-          "y": 488
-        }
-      }
+      ]
     }
   ],
   "workflows": [

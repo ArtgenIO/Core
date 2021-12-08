@@ -3,6 +3,7 @@ import { Route, Switch, useLocation } from 'react-router';
 import { ADMIN_URL } from '../../admin/admin.constants';
 import DatabaseAddComponent from './connect.component';
 import DatabaseListComponent from './list.component';
+import DatabaseTreeComponent from './tree.component';
 
 export default function DatabaseIndexComponent() {
   const location = useLocation();
@@ -15,6 +16,11 @@ export default function DatabaseIndexComponent() {
         exact
         path={`${base}/connect`}
         component={DatabaseAddComponent}
+      ></Route>
+      <Route
+        exact
+        path={`${base}/tree`}
+        component={DatabaseTreeComponent}
       ></Route>
       <Route
         path={`${base}/artboard/:database`}
