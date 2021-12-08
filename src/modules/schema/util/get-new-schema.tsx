@@ -2,7 +2,6 @@ import { FieldTag, FieldType, ISchema } from '..';
 
 export const createEmptySchema = (database: string): ISchema => ({
   icon: 'table',
-  version: 2,
   database,
   label: 'New Schema',
   reference: 'newSchema',

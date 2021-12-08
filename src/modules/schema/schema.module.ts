@@ -13,11 +13,11 @@ import { SchemaService } from './service/schema.service';
   imports: [moduleRef(() => EventModule), moduleRef(() => BlueprintModule)],
   dependsOn: [moduleRef(() => DatabaseModule)],
   providers: [
-    SchemaService,
     CreateSchemaLambda,
-    ReadSchemaLambda,
-    UpdateSchemaLambda,
     KeyValueService,
+    ReadSchemaLambda,
+    SchemaService,
+    UpdateSchemaLambda,
   ],
 })
 export class SchemaModule {}

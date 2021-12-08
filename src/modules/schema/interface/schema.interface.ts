@@ -3,15 +3,6 @@ import { IRelation } from './relation.interface';
 
 export interface ISchema {
   /**
-   * Migration tracker, to ensure compability.
-   * Everytime a schema is loaded the system executes the migrations
-   * until it's changed and being saved as a newer version.
-   *
-   * @since V2
-   */
-  version: number;
-
-  /**
    * Data abstraction driver.
    *
    * @since V2
