@@ -451,7 +451,6 @@
         "active",
         "system"
       ],
-      "permission": "rw",
       "artboard": {
         "position": {
           "x": 370.00027415118717,
@@ -602,7 +601,6 @@
         "active",
         "system"
       ],
-      "permission": "rw",
       "artboard": {
         "position": {
           "x": 540.0007144897936,

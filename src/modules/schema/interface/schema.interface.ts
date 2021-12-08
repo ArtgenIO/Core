@@ -3,13 +3,6 @@ import { IRelation } from './relation.interface';
 
 export interface ISchema {
   /**
-   * Data abstraction driver.
-   *
-   * @since V2
-   */
-  //abstraction: 'collection' | 'singleton' | 'set';
-
-  /**
    * Display icon, used to help differentiate the schema in a list.
    *
    * @since V2
@@ -55,12 +48,6 @@ export interface ISchema {
    * Associations / relations between models.
    */
   relations: IRelation[];
-
-  /**
-   * Readonly databases where we only fetch data, this is garanteed on the
-   * CRUD manager level.
-   */
-  permission: 'rw' | 'r';
 
   /**
    * ArtBoard meta data.

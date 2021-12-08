@@ -33,7 +33,6 @@ export const createEmptySchema = (database: string): ISchema => ({
   uniques: [],
   relations: [],
   tags: ['active'],
-  permission: 'rw',
   artboard: {
     position: {
       x: 50,

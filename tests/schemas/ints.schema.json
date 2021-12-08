@@ -132,6 +132,5 @@
     }
   },
   "icon": "widgets",
-  "permission": "rw",
   "tags": []
 }
