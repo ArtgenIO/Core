@@ -42,7 +42,7 @@ export class PageGateway implements IHttpGateway {
       );
       this.logger.info(
         'Page [%s] registered at [GET][%s]',
-        page.label,
+        page.title,
         page.path,
       );
     }

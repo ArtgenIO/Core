@@ -20,7 +20,7 @@ const { Sider } = Layout;
 
 type IMenuItem = {
   icon: React.ReactNode;
-  label: string;
+  title: string;
   to: string;
 };
 
@@ -28,16 +28,16 @@ const menuItems: IMenuItem[] = [
   {
     icon: <HomeOutlined />,
     to: ADMIN_BASE_URL,
-    label: 'Dashboard',
+    title: 'Dashboard',
   },
   {
     icon: <DatabaseOutlined />,
     to: ADMIN_BASE_URL + '/database',
-    label: 'Databases',
+    title: 'Databases',
   },
   {
     icon: <AppstoreOutlined />,
-    label: 'Extension Store',
+    title: 'Extension Store',
     to: ADMIN_BASE_URL + '/ext/store',
   },
 ];
@@ -54,9 +54,9 @@ const NavSide = () => {
       reference: 'Extension',
     }) +
       new QueryBuilder()
-        .select('id,label,icon')
+        .select('id,title,icon')
         .top(100)
-        .orderBy('label')
+        .orderBy('title')
         .toQuery(),
   );
 
@@ -72,7 +72,7 @@ const NavSide = () => {
                   {ext.icon ?? 'widgets'}
                 </span>
               ),
-              label: ext.label,
+              title: ext.title,
               to: `${ADMIN_BASE_URL}/ext/${ext.id}`,
             } as IMenuItem),
         ),
@@ -114,7 +114,7 @@ const NavSide = () => {
         >
           {menus.map(menu => (
             <Menu.Item key={`k-${menu.to}`} icon={menu.icon}>
-              <Link to={menu.to}>{menu.label}</Link>
+              <Link to={menu.to}>{menu.title}</Link>
             </Menu.Item>
           ))}
         </Menu>

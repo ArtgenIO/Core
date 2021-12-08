@@ -4,7 +4,7 @@
   "tableName": "ints",
   "fields": [
     {
-      "label": "id",
+      "title": "id",
       "reference": "id",
       "columnName": "id",
       "type": "int",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "label": "Tiny Int Field",
+      "title": "Tiny Int Field",
       "reference": "tinyIntField",
       "columnName": "tiny_int_field",
       "type": "tinyint",
@@ -26,7 +26,7 @@
       "tags": []
     },
     {
-      "label": "Small Int Field",
+      "title": "Small Int Field",
       "reference": "smallIntField",
       "columnName": "small_int_field",
       "type": "smallint",
@@ -36,7 +36,7 @@
       "tags": []
     },
     {
-      "label": "Medium Int Field",
+      "title": "Medium Int Field",
       "reference": "mediumIntField",
       "columnName": "medium_int_field",
       "type": "mediumint",
@@ -46,7 +46,7 @@
       "tags": []
     },
     {
-      "label": "Normal Int Field",
+      "title": "Normal Int Field",
       "reference": "normalIntField",
       "columnName": "normal_int_field",
       "type": "int",
@@ -56,7 +56,7 @@
       "tags": []
     },
     {
-      "label": "Big Int Field",
+      "title": "Big Int Field",
       "reference": "bigIntField",
       "columnName": "big_int_field",
       "type": "bigint",
@@ -66,7 +66,7 @@
       "tags": []
     },
     {
-      "label": "UTiny Int Field",
+      "title": "UTiny Int Field",
       "reference": "utinyIntField",
       "columnName": "utiny_int_field",
       "type": "tinyint",
@@ -77,7 +77,7 @@
       "tags": []
     },
     {
-      "label": "USmall Int Field",
+      "title": "USmall Int Field",
       "reference": "usmallIntField",
       "columnName": "usmall_int_field",
       "type": "smallint",
@@ -88,7 +88,7 @@
       "tags": []
     },
     {
-      "label": "UMedium Int Field",
+      "title": "UMedium Int Field",
       "reference": "umediumIntField",
       "columnName": "umedium_int_field",
       "type": "mediumint",
@@ -99,7 +99,7 @@
       "tags": []
     },
     {
-      "label": "UNormal Int Field",
+      "title": "UNormal Int Field",
       "reference": "unormalIntField",
       "columnName": "unormal_int_field",
       "type": "int",
@@ -110,7 +110,7 @@
       "tags": []
     },
     {
-      "label": "UBig Int Field",
+      "title": "UBig Int Field",
       "reference": "ubigIntField",
       "columnName": "ubig_int_field",
       "type": "bigint",
@@ -125,11 +125,5 @@
   "relations": [],
   "uniques": [],
   "title": "Ints",
-  "artboard": {
-    "position": {
-      "x": 0,
-      "y": 0
-    }
-  },
   "tags": []
 }

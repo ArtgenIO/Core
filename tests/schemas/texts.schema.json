@@ -4,7 +4,7 @@
   "tableName": "texts",
   "fields": [
     {
-      "label": "id",
+      "title": "id",
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "label": "Text Field",
+      "title": "Text Field",
       "reference": "textField",
       "columnName": "text_field",
       "type": "text",
@@ -26,7 +26,7 @@
       "tags": []
     },
     {
-      "label": "Varchar Default Field",
+      "title": "Varchar Default Field",
       "reference": "vcharField",
       "columnName": "vchar_field",
       "type": "string",
@@ -36,7 +36,7 @@
       "tags": []
     },
     {
-      "label": "Char Default Field",
+      "title": "Char Default Field",
       "reference": "charField",
       "columnName": "char_field",
       "type": "string",
@@ -46,7 +46,7 @@
       "tags": []
     },
     {
-      "label": "Varchar 8 Field",
+      "title": "Varchar 8 Field",
       "reference": "vchar8Field",
       "columnName": "vchar8_field",
       "type": "string",
@@ -57,7 +57,7 @@
       "tags": []
     },
     {
-      "label": "Varchar 16 Field",
+      "title": "Varchar 16 Field",
       "reference": "vchar16Field",
       "columnName": "vchar16_field",
       "type": "string",
@@ -68,7 +68,7 @@
       "tags": []
     },
     {
-      "label": "Varchar 32 Field",
+      "title": "Varchar 32 Field",
       "reference": "vchar32Field",
       "columnName": "vchar32_field",
       "type": "string",
@@ -79,7 +79,7 @@
       "tags": []
     },
     {
-      "label": "Varchar 255 Field",
+      "title": "Varchar 255 Field",
       "reference": "vchar255Field",
       "columnName": "vchar255_field",
       "type": "string",
@@ -90,7 +90,7 @@
       "tags": []
     },
     {
-      "label": "Varchar 512 Field",
+      "title": "Varchar 512 Field",
       "reference": "vchar512Field",
       "columnName": "vchar512_field",
       "type": "string",
@@ -101,7 +101,7 @@
       "tags": []
     },
     {
-      "label": "Varchar 1024 Field",
+      "title": "Varchar 1024 Field",
       "reference": "vchar1024Field",
       "columnName": "vchar1024_field",
       "type": "string",
@@ -116,11 +116,5 @@
   "relations": [],
   "uniques": [],
   "title": "Texts",
-  "artboard": {
-    "position": {
-      "x": 0,
-      "y": 0
-    }
-  },
   "tags": []
 }

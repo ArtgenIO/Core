@@ -83,7 +83,7 @@ export default function CrudReadComponent() {
       for (const field of schemas[0].fields) {
         const fieldDef: ColumnType<any> = {
           key: field.reference,
-          title: field.label,
+          title: field.title,
           dataIndex: field.reference,
         };
 

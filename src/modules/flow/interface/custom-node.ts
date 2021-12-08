@@ -4,7 +4,7 @@ export interface CustomNodeData {
   /**
    * Human friendly name for a node.
    */
-  label: string;
+  title: string;
 
   /**
    * Original lambda type, for deserialization.

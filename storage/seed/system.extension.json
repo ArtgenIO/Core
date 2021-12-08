@@ -1,6 +1,6 @@
 {
   "id": "10000000-0000-0000-0000-000000000000",
-  "label": "System",
+  "title": "System",
   "version": "0.0.1",
   "icon": "settings",
   "source": "offline",
@@ -17,7 +17,7 @@
         {
           "reference": "id",
           "columnName": "id",
-          "label": "Identifier",
+          "title": "Identifier",
           "type": "uuid",
           "tags": [
             "primary"
@@ -29,7 +29,7 @@
         {
           "reference": "extensionId",
           "columnName": "extensionId",
-          "label": "Extension ID",
+          "title": "Extension ID",
           "type": "uuid",
           "tags": [
             "indexed"
@@ -41,7 +41,7 @@
         {
           "reference": "name",
           "columnName": "name",
-          "label": "Name",
+          "title": "Name",
           "type": "text",
           "tags": [
             "unique"
@@ -53,7 +53,7 @@
         {
           "reference": "nodes",
           "columnName": "nodes",
-          "label": "Nodes",
+          "title": "Nodes",
           "type": "json",
           "tags": [],
           "defaultValue": [],
@@ -64,7 +64,7 @@
         {
           "reference": "edges",
           "columnName": "edges",
-          "label": "Edges",
+          "title": "Edges",
           "type": "json",
           "tags": [],
           "defaultValue": [],
@@ -97,7 +97,7 @@
         {
           "reference": "name",
           "columnName": "name",
-          "label": "Name",
+          "title": "Name",
           "type": "text",
           "tags": [
             "primary"
@@ -109,7 +109,7 @@
         {
           "reference": "dsn",
           "columnName": "dsn",
-          "label": "Data Source Name (DSN)",
+          "title": "Data Source Name (DSN)",
           "type": "text",
           "tags": [
             "unique"
@@ -151,7 +151,7 @@
         {
           "reference": "id",
           "columnName": "id",
-          "label": "Identifier",
+          "title": "Identifier",
           "type": "uuid",
           "tags": [
             "primary"
@@ -163,7 +163,7 @@
         {
           "reference": "extensionId",
           "columnName": "extensionId",
-          "label": "Extension ID",
+          "title": "Extension ID",
           "type": "uuid",
           "tags": [
             "indexed"
@@ -173,9 +173,9 @@
           }
         },
         {
-          "reference": "label",
-          "columnName": "label",
-          "label": "Label",
+          "reference": "title",
+          "columnName": "title",
+          "title": "title",
           "type": "text",
           "tags": [],
           "typeParams": {
@@ -185,7 +185,7 @@
         {
           "reference": "domain",
           "columnName": "domain",
-          "label": "Domain",
+          "title": "Domain",
           "type": "text",
           "tags": [],
           "typeParams": {
@@ -195,7 +195,7 @@
         {
           "reference": "path",
           "columnName": "path",
-          "label": "path",
+          "title": "path",
           "type": "text",
           "tags": [],
           "defaultValue": "/page/x",
@@ -206,7 +206,7 @@
         {
           "reference": "content",
           "columnName": "content",
-          "label": "Content",
+          "title": "Content",
           "type": "json",
           "tags": [],
           "defaultValue": {},
@@ -217,7 +217,7 @@
         {
           "reference": "tags",
           "columnName": "__artgen_tags",
-          "label": "Tags",
+          "title": "Tags",
           "type": "json",
           "tags": [],
           "defaultValue": [
@@ -260,7 +260,7 @@
         {
           "reference": "database",
           "columnName": "database",
-          "label": "Database",
+          "title": "Database",
           "type": "text",
           "tags": [
             "primary"
@@ -272,7 +272,7 @@
         {
           "reference": "extensionId",
           "columnName": "extensionId",
-          "label": "Extension ID",
+          "title": "Extension ID",
           "type": "uuid",
           "tags": [
             "indexed"
@@ -284,7 +284,7 @@
         {
           "reference": "reference",
           "columnName": "reference",
-          "label": "Rerefence",
+          "title": "Rerefence",
           "type": "text",
           "tags": [
             "primary"
@@ -294,9 +294,9 @@
           }
         },
         {
-          "reference": "label",
-          "columnName": "label",
-          "label": "Label",
+          "reference": "title",
+          "columnName": "title",
+          "title": "title",
           "type": "text",
           "tags": [],
           "typeParams": {
@@ -306,7 +306,7 @@
         {
           "reference": "tableName",
           "columnName": "tableName",
-          "label": "Table Name",
+          "title": "Table Name",
           "type": "text",
           "tags": [],
           "typeParams": {
@@ -316,7 +316,7 @@
         {
           "reference": "fields",
           "columnName": "fields",
-          "label": "Fields",
+          "title": "Fields",
           "type": "json",
           "tags": [],
           "defaultValue": [],
@@ -327,7 +327,7 @@
         {
           "reference": "indices",
           "columnName": "indices",
-          "label": "Indices",
+          "title": "Indices",
           "type": "json",
           "tags": [],
           "defaultValue": [],
@@ -338,7 +338,7 @@
         {
           "reference": "uniques",
           "columnName": "uniques",
-          "label": "Uniques",
+          "title": "Uniques",
           "type": "json",
           "tags": [],
           "defaultValue": [],
@@ -349,7 +349,7 @@
         {
           "reference": "relations",
           "columnName": "relations",
-          "label": "Relations",
+          "title": "Relations",
           "type": "json",
           "tags": [],
           "defaultValue": [],
@@ -360,7 +360,7 @@
         {
           "reference": "tags",
           "columnName": "__artgen_tags",
-          "label": "Tags",
+          "title": "Tags",
           "type": "json",
           "tags": [],
           "defaultValue": [
@@ -373,7 +373,7 @@
         {
           "reference": "artboard",
           "columnName": "artboard",
-          "label": "Artboard",
+          "title": "Artboard",
           "type": "json",
           "tags": [],
           "defaultValue": {
@@ -418,7 +418,7 @@
       "fields": [
         {
           "reference": "key",
-          "label": "Key",
+          "title": "Key",
           "columnName": "key",
           "defaultValue": null,
           "type": "text",
@@ -431,7 +431,7 @@
         },
         {
           "reference": "value",
-          "label": "Value",
+          "title": "Value",
           "columnName": "value",
           "defaultValue": null,
           "type": "jsonb",
@@ -465,7 +465,7 @@
       "tableName": "__artgen_extensions",
       "fields": [
         {
-          "label": "Identifier",
+          "title": "Identifier",
           "reference": "id",
           "columnName": "id",
           "type": "uuid",
@@ -477,9 +477,9 @@
           ]
         },
         {
-          "reference": "label",
-          "label": "Label",
-          "columnName": "label",
+          "reference": "title",
+          "title": "title",
+          "columnName": "title",
           "defaultValue": null,
           "type": "text",
           "typeParams": {
@@ -489,7 +489,7 @@
         },
         {
           "reference": "version",
-          "label": "Version",
+          "title": "Version",
           "columnName": "version",
           "defaultValue": "0.0.1",
           "type": "text",
@@ -500,7 +500,7 @@
         },
         {
           "reference": "icon",
-          "label": "Icon",
+          "title": "Icon",
           "columnName": "icon",
           "defaultValue": "widgets",
           "type": "text",
@@ -513,7 +513,7 @@
         },
         {
           "reference": "config",
-          "label": "Config",
+          "title": "Config",
           "columnName": "config",
           "defaultValue": {},
           "type": "json",
@@ -524,7 +524,7 @@
         },
         {
           "reference": "schemas",
-          "label": "Schemas",
+          "title": "Schemas",
           "columnName": "schemas",
           "defaultValue": [],
           "type": "json",
@@ -535,7 +535,7 @@
         },
         {
           "reference": "workflows",
-          "label": "Workflows",
+          "title": "Workflows",
           "columnName": "workflows",
           "defaultValue": [],
           "type": "json",
@@ -546,7 +546,7 @@
         },
         {
           "reference": "installedAt",
-          "label": "Installed At",
+          "title": "Installed At",
           "columnName": "installed_at",
           "type": "timestamp",
           "typeParams": {
@@ -558,7 +558,7 @@
         },
         {
           "reference": "database",
-          "label": "Database",
+          "title": "Database",
           "columnName": "database",
           "defaultValue": null,
           "type": "text",
@@ -571,7 +571,7 @@
         },
         {
           "reference": "source",
-          "label": "Source",
+          "title": "Source",
           "columnName": "source",
           "defaultValue": "offline",
           "type": "enum",
@@ -625,7 +625,7 @@
             "response": "{\"ack\":true}",
             "waitForLastNode": "true"
           },
-          "label": "Import EP",
+          "title": "Import EP",
           "position": [
             359.3333333333333,
             198
@@ -637,7 +637,7 @@
           "config": {
             "statusCode": "401"
           },
-          "label": "Http ERR",
+          "title": "Http ERR",
           "position": [
             739.6666666666666,
             248
@@ -649,7 +649,7 @@
           "config": {
             "statusCode": "200"
           },
-          "label": "Http Ok",
+          "title": "Http Ok",
           "position": [
             717.5,
             118.5
@@ -659,7 +659,7 @@
           "id": "extension.import.1",
           "type": "extension.import",
           "config": null,
-          "label": "Call SVC",
+          "title": "Call SVC",
           "position": [
             546,
             201
@@ -677,7 +677,7 @@
             "response": "{\"ack\":true}",
             "waitForLastNode": "true"
           },
-          "label": "Store Proxy",
+          "title": "Store Proxy",
           "position": [
             364.46908503480597,
             496.6939407485281
@@ -687,7 +687,7 @@
           "id": "http.request.1",
           "type": "http.request",
           "config": null,
-          "label": "Read Store",
+          "title": "Read Store",
           "position": [
             548.4153862197652,
             496.3652549344316
@@ -699,7 +699,7 @@
           "config": {
             "statusCode": "200"
           },
-          "label": "Store OK",
+          "title": "Store OK",
           "position": [
             746.7670572862287,
             401.05051167804555
@@ -711,7 +711,7 @@
           "config": {
             "statusCode": "200"
           },
-          "label": "Store Err",
+          "title": "Store Err",
           "position": [
             745.6704950901559,
             553.7427397005147
@@ -729,7 +729,7 @@
             "response": "{\"ack\":true}",
             "waitForLastNode": "true"
           },
-          "label": "Install PX",
+          "title": "Install PX",
           "position": [
             361.90379601315806,
             721.6811040582255
@@ -739,7 +739,7 @@
           "id": "http.request.2",
           "type": "http.request",
           "config": null,
-          "label": "Read Extension",
+          "title": "Read Extension",
           "position": [
             547.7431997043435,
             721.4520508288837
@@ -751,7 +751,7 @@
           "config": {
             "statusCode": "200"
           },
-          "label": "Install OK",
+          "title": "Install OK",
           "position": [
             742.5295294423252,
             668.3891973156046
@@ -763,7 +763,7 @@
           "config": {
             "statusCode": "200"
           },
-          "label": "Install Err",
+          "title": "Install Err",
           "position": [
             743.2138874267264,
             808.7104427384514

@@ -29,7 +29,7 @@ export class PageService {
     const model = this.schema.getModel<PageModel>('system', 'Page');
     const pages = await model
       .query()
-      .select(['id', 'label', 'domain', 'path', '__artgen_tags']);
+      .select(['id', 'title', 'domain', 'path', '__artgen_tags']);
 
     return pages.map(p => p.$toJson());
   }
@@ -39,7 +39,7 @@ export class PageService {
     const page: IPage = (await model.query().findById(id)).$toJson();
     const html = `<html>
       <head>
-        <title>${page.label}</title>
+        <title>${page.title}</title>
         <style>${page.content['gjs-css']}</style>
       </head>
       <body>${page.content['gjs-html']}</body>

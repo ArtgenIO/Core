@@ -53,7 +53,7 @@ describe('Database E2E', () => {
     // Add a new int field
     const mod1 = cloneDeep(subject);
     mod1.fields.push({
-      label: 'Extra Int',
+      title: 'Extra Int',
       reference: 'xtraInt',
       columnName: 'xtra_int',
       defaultValue: 5,
@@ -70,7 +70,7 @@ describe('Database E2E', () => {
     // Add a new text field
     const mod2 = cloneDeep(mod1);
     mod2.fields.push({
-      label: 'Extra Text',
+      title: 'Extra Text',
       reference: 'xtraTxt',
       columnName: 'xtra_txt',
       defaultValue: 'Haps',

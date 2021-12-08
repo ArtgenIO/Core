@@ -31,7 +31,7 @@ export const createSchemaNode =
           id="belongs-to-one"
         />
 
-        <div key="label" className="node-label">
+        <div key="title" className="node-label">
           {props.data.schema.title ?? 'Missing Label'}
         </div>
         <div key="icon" className="text-center node-content relative">
@@ -44,7 +44,7 @@ export const createSchemaNode =
         </div>
         <div key="field" className="fields flex flex-wrap">
           {props.data.schema.fields.slice(0, 8).map(f => (
-            <Tooltip key={`label-${f.reference}`} title={f.label}>
+            <Tooltip key={`label-${f.reference}`} title={f.title}>
               <div className="schema-field">
                 {isPrimary(f) ? (
                   <span key="primary" className="material-icons-outlined">

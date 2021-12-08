@@ -14,16 +14,15 @@ type TypeParams = {
 
 export interface IField {
   /**
-   * Unique name used to identify a data column.
-   * Does not change even if the column is renamed, it's saved in the meta.
+   * Unique readonly reference to track the schema even if the column name changed.
+   * This is the default mapping when the data is read from the database.
    */
   readonly reference: string;
 
   /**
-   * Used in UI and other settings, where the data is displayed.
-   * Human friendly apperence.
+   * Human readable title.
    */
-  label: string;
+  title: string;
 
   /**
    * Real column name in the database.

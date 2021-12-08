@@ -15,7 +15,7 @@ export const createEmptySchema = (database: string): ISchema => ({
   },
   fields: [
     {
-      label: 'Identifier',
+      title: 'Identifier',
       reference: 'id',
       columnName: 'id',
       type: FieldType.UUID,
@@ -25,7 +25,7 @@ export const createEmptySchema = (database: string): ISchema => ({
       tags: [FieldTag.PRIMARY],
     },
     {
-      label: 'Tags',
+      title: 'Tags',
       reference: 'tags',
       columnName: 'tags',
       type: FieldType.JSON,

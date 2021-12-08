@@ -58,7 +58,7 @@ export default function SchemaEditorCapabilitiesComponent({
 
                 if (isOn) {
                   update.fields.unshift({
-                    label: 'Identifier',
+                    title: 'Identifier',
                     reference: 'id',
                     columnName: 'id',
                     type: FieldType.UUID,
@@ -101,7 +101,7 @@ export default function SchemaEditorCapabilitiesComponent({
 
                 if (isOn) {
                   update.fields.push({
-                    label: 'Tags',
+                    title: 'Tags',
                     reference: 'tags',
                     columnName: 'tags',
                     type: FieldType.JSON,
@@ -141,7 +141,7 @@ export default function SchemaEditorCapabilitiesComponent({
 
                 if (isOn) {
                   update.fields.push({
-                    label: 'Created Date',
+                    title: 'Created Date',
                     reference: 'createdAt',
                     columnName: 'created_at',
                     type: FieldType.DATETIME,
@@ -180,7 +180,7 @@ export default function SchemaEditorCapabilitiesComponent({
 
                 if (isOn) {
                   update.fields.push({
-                    label: 'Updated Date',
+                    title: 'Updated Date',
                     reference: 'updatedAt',
                     columnName: 'updated_at',
                     typeParams: {
@@ -219,7 +219,7 @@ export default function SchemaEditorCapabilitiesComponent({
 
                 if (isOn) {
                   update.fields.push({
-                    label: 'Deleted Date',
+                    title: 'Deleted Date',
                     reference: 'deletedAt',
                     columnName: 'deleted_at',
                     typeParams: {
@@ -258,7 +258,7 @@ export default function SchemaEditorCapabilitiesComponent({
 
                 if (isOn) {
                   update.fields.push({
-                    label: 'Revision',
+                    title: 'Revision',
                     reference: 'Revision',
                     columnName: 'revision',
                     typeParams: {

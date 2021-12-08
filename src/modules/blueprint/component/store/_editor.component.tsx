@@ -151,7 +151,7 @@ export default function ExtensionEdiorComponent({
         const keys = Object.keys(props);
 
         for (const key of keys) {
-          if (['id', 'label', 'version'].includes(key)) {
+          if (['id', 'title', 'version'].includes(key)) {
             setExtension(ext => {
               ext[key] = props[key];
               return ext;
@@ -165,7 +165,7 @@ export default function ExtensionEdiorComponent({
         <Input readOnly disabled />
       </Form.Item>
 
-      <Form.Item label="Label" name="label">
+      <Form.Item label="Title" name="title">
         <Input />
       </Form.Item>
 

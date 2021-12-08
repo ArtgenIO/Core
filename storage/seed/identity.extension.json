@@ -1,6 +1,6 @@
 {
   "id": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
-  "label": "Identity",
+  "title": "Identity",
   "version": "0.0.1",
   "icon": "people",
   "source": "offline",
@@ -17,7 +17,7 @@
         {
           "reference": "id",
           "columnName": "id",
-          "label": "Identifier",
+          "title": "Identifier",
           "tags": [
             "primary"
           ],
@@ -29,7 +29,7 @@
         {
           "reference": "email",
           "columnName": "email",
-          "label": "Email Address",
+          "title": "Email Address",
           "tags": [
             "unique"
           ],
@@ -41,7 +41,7 @@
         {
           "reference": "password",
           "columnName": "password",
-          "label": "Password Hash",
+          "title": "Password Hash",
           "tags": [],
           "type": "text",
           "typeParams": {
@@ -79,7 +79,7 @@
       "tableName": "__identity_access_keys",
       "fields": [
         {
-          "label": "Key",
+          "title": "Key",
           "reference": "key",
           "columnName": "key",
           "type": "uuid",
@@ -92,7 +92,7 @@
         },
         {
           "reference": "issuedAt",
-          "label": "Issued At",
+          "title": "Issued At",
           "columnName": "issued_at",
           "type": "timestamp",
           "typeParams": {
@@ -104,7 +104,7 @@
         },
         {
           "reference": "accountId",
-          "label": "Accound ID",
+          "title": "Accound ID",
           "columnName": "account_id",
           "type": "uuid",
           "typeParams": {
@@ -154,7 +154,7 @@
             "response": "{\"ack\":true}",
             "waitForLastNode": "true"
           },
-          "label": "HTTP Endpoint",
+          "title": "HTTP Endpoint",
           "position": [
             88.66666666666666,
             203.33333333333334
@@ -171,7 +171,7 @@
             ],
             "schema": "Account"
           },
-          "label": "Find Account",
+          "title": "Find Account",
           "position": [
             250.66666666666663,
             203.08333333333337
@@ -185,7 +185,7 @@
             "against": true,
             "negate": false
           },
-          "label": "If Found",
+          "title": "If Found",
           "position": [
             547.4166666666666,
             88.89583333333337
@@ -195,7 +195,7 @@
           "id": "length.1",
           "type": "length",
           "config": null,
-          "label": "Count",
+          "title": "Count",
           "position": [
             394.91666666666663,
             92.95833333333337
@@ -207,7 +207,7 @@
           "config": {
             "statusCode": "200"
           },
-          "label": "Success",
+          "title": "Success",
           "position": [
             1071.4166666666665,
             -71.64358877512277
@@ -220,7 +220,7 @@
             "transform": "{\"success\": false, \"message\": \"Authentication failed\"}",
             "statusCode": "400"
           },
-          "label": "Fail",
+          "title": "Fail",
           "position": [
             885.1666666666666,
             328.08333333333337
@@ -230,7 +230,7 @@
           "id": "hash.compare.1",
           "type": "hash.compare",
           "config": null,
-          "label": "CHK Passwd",
+          "title": "CHK Passwd",
           "position": [
             722.2326274056248,
             17.129489116421098
@@ -242,7 +242,7 @@
           "config": {
             "expiresIn": "8h"
           },
-          "label": "Sign JWT",
+          "title": "Sign JWT",
           "position": [
             897.1467175777061,
             -71.80098784951204
@@ -333,7 +333,7 @@
           "id": "auth.sign.in.44",
           "type": "auth.sign.in",
           "config": {},
-          "label": "Sign JWT",
+          "title": "Sign JWT",
           "position": [
             662.5574827119007,
             -76.18026377771865
@@ -345,7 +345,7 @@
           "config": {
             "statusCode": "400"
           },
-          "label": "HTTP Error",
+          "title": "HTTP Error",
           "position": [
             845,
             22.20833333333337
@@ -357,7 +357,7 @@
           "config": {
             "statusCode": "200"
           },
-          "label": "HTTP Created",
+          "title": "HTTP Created",
           "position": [
             850,
             -132.29166666666663
@@ -370,7 +370,7 @@
             "database": "system",
             "schema": "Account"
           },
-          "label": "Create Account",
+          "title": "Create Account",
           "position": [
             487.98025579572163,
             6.281453640181695
@@ -387,7 +387,7 @@
             "response": "{\"ack\": true}",
             "waitForLastNode": "true"
           },
-          "label": "SignUp EP",
+          "title": "SignUp EP",
           "position": [
             263.5,
             5.583333333333311

@@ -48,7 +48,7 @@ export default function CloudExtensions() {
                   icon={<AppstoreAddOutlined />}
                 />
               }
-              title={<span className="text-xl font-thin">{ext.label}</span>}
+              title={<span className="text-xl font-thin">{ext.title}</span>}
             />
 
             <Link to={base + `/${ext.id}/install`}>

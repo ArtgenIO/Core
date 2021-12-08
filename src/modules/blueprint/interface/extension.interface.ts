@@ -15,7 +15,7 @@ export interface IBlueprint {
   /**
    * Display name
    */
-  label: string;
+  title: string;
 
   /**
    * SemVer

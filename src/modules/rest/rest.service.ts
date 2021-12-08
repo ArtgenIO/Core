@@ -307,7 +307,7 @@ export class RestService {
     primaryKeys.forEach(
       pk =>
         (definition.properties[kebabCase(pk.reference)] = {
-          title: pk.label,
+          title: pk.title,
           type: 'string',
         }),
     );

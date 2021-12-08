@@ -18,8 +18,8 @@ export default function PageIndexComponent() {
   const [{ data: pages, loading, error }] = useHttpClient<IPage[]>(
     routeCrudAPI({ database: 'system', reference: 'Page' }) +
       new QueryBuilder()
-        .select('id,label,domain,path,tags')
-        .orderBy('label')
+        .select('id,title,domain,path,tags')
+        .orderBy('id')
         .top(100)
         .toQuery(),
   );
@@ -42,7 +42,7 @@ export default function PageIndexComponent() {
     }
 
     return (
-      !!page.label.toLowerCase().match(search) ||
+      !!page.title.toLowerCase().match(search) ||
       !!page.domain.toLowerCase().match(search) ||
       !!page.path.toLowerCase().match(search) ||
       page.tags.some(t => t.toLowerCase().match(search))
@@ -87,7 +87,7 @@ export default function PageIndexComponent() {
                   return (
                     <Menu.Item key={`page-${page.id}`}>
                       <Link to={`/admin/page/${page.id}`}>
-                        <span>{page.domain}</span> &raquo; {page.label}
+                        <span>{page.domain}</span> &raquo; {page.title}
                       </Link>
                     </Menu.Item>
                   );

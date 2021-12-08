@@ -528,7 +528,7 @@ export class DatabaseSynchronizer {
 
     for (const col of columns) {
       const field: IField = {
-        label: upperFirst(startCase(col.name)),
+        title: upperFirst(startCase(col.name)),
         reference: camelCase(col.name),
         columnName: col.name,
         defaultValue: col.default_value,

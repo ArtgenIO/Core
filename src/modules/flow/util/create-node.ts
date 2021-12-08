@@ -29,7 +29,7 @@ export const createNode = (
     id: `${meta.type}.${nth}`,
     type: kebabCase(meta.type),
     data: {
-      label: startCase(`${meta.type}.${nth}`),
+      title: startCase(`${meta.type}.${nth}`),
       config: updateNodeConfig(null, meta?.config),
       type: meta.type,
     },

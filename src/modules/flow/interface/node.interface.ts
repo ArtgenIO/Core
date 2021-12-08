@@ -22,5 +22,5 @@ export interface INode {
   /**
    * Human friendly name
    */
-  label: string;
+  title: string;
 }

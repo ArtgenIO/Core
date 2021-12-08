@@ -15,7 +15,7 @@ function InputLinked({ isLinked, setIsLinked }: InputLinkedProps) {
       title={
         isLinked
           ? 'Click to edit independently'
-          : 'Input is independent from the label name'
+          : 'Input is independent from the title name'
       }
     >
       <span
@@ -64,16 +64,16 @@ export default function SchemaEditorNamingComponent({
         onValuesChange={changedValues => {
           const keys = Object.keys(changedValues);
 
-          if (keys.includes('label')) {
+          if (keys.includes('title')) {
             if (refLinked) {
               form.setFieldsValue({
-                reference: upperFirst(camelCase(changedValues['label'])),
+                reference: upperFirst(camelCase(changedValues['title'])),
               });
             }
 
             if (tblLinked) {
               form.setFieldsValue({
-                tableName: snakeCase(camelCase(changedValues['label'])),
+                tableName: snakeCase(camelCase(changedValues['title'])),
               });
             }
           }
@@ -82,7 +82,7 @@ export default function SchemaEditorNamingComponent({
           setSchema(current => {
             const update = cloneDeep(current);
 
-            update.title = form.getFieldValue('label');
+            update.title = form.getFieldValue('title');
             update.reference = form.getFieldValue('reference');
             update.tableName = form.getFieldValue('tableName');
 
@@ -91,11 +91,11 @@ export default function SchemaEditorNamingComponent({
         }}
       >
         <Form.Item
-          label="Label"
-          name="label"
-          rules={[{ required: true, message: 'Please type a label!' }]}
+          label="Title"
+          name="title"
+          rules={[{ required: true, message: 'Please type a title!' }]}
         >
-          <Input placeholder="Just a human friendly label, like Products" />
+          <Input placeholder="Just a human friendly title, like Products" />
         </Form.Item>
 
         <Form.Item

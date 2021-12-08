@@ -44,7 +44,7 @@ export default function SchemaEditorFieldsComponent({
       newState.fields.push({
         reference: `newField${fieldKey}`,
         columnName: `newField${fieldKey}`,
-        label: `New Field ${fieldKey}`,
+        title: `New Field ${fieldKey}`,
         type: FieldType.TEXT,
         defaultValue: null,
         typeParams: {
@@ -96,7 +96,7 @@ export default function SchemaEditorFieldsComponent({
                   icon={<DatabaseOutlined />}
                 />
               }
-              title={<span className="text-xl font-thin">{field.label}</span>}
+              title={<span className="text-xl font-thin">{field.title}</span>}
             />
             {field.tags.map(t => (
               <Tag key={t}>{t}</Tag>

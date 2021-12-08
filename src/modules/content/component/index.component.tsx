@@ -20,8 +20,8 @@ export default function CrudIndexComponent() {
   const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
     routeCrudAPI({ database: 'system', reference: 'Schema' }) +
       new QueryBuilder()
-        .select('database,reference,label,tableName,tags')
-        .orderBy('label')
+        .select('database,reference,title,tableName,tags')
+        .orderBy('title')
         .top(1000)
         .toQuery(),
     {

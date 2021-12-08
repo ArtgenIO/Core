@@ -70,7 +70,7 @@ export default function OfflineExtensions() {
                   icon={<AppstoreOutlined />}
                 />
               }
-              title={<span className="text-xl font-thin">{ext.label}</span>}
+              title={<span className="text-xl font-thin">{ext.title}</span>}
             />
 
             <Tooltip title="Show Extension Source" placement="leftBottom">

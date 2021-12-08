@@ -75,7 +75,7 @@ export default function SchemaEditorFieldTunerComponent({
 
       const newField: IField = {
         reference: form.getFieldValue('reference'),
-        label: form.getFieldValue('label'),
+        title: form.getFieldValue('title'),
         columnName: form.getFieldValue('columnName'),
         defaultValue: dv === 'null' ? null : dv,
         type,
@@ -128,16 +128,16 @@ export default function SchemaEditorFieldTunerComponent({
           onValuesChange={changedValues => {
             const keys = Object.keys(changedValues);
 
-            if (keys.includes('label')) {
+            if (keys.includes('title')) {
               if (refLinked) {
                 form.setFieldsValue({
-                  reference: upperFirst(camelCase(changedValues['label'])),
+                  reference: upperFirst(camelCase(changedValues['title'])),
                 });
               }
 
               if (clmLinked) {
                 form.setFieldsValue({
-                  columnName: snakeCase(camelCase(changedValues['label'])),
+                  columnName: snakeCase(camelCase(changedValues['title'])),
                 });
               }
             }
@@ -151,14 +151,14 @@ export default function SchemaEditorFieldTunerComponent({
             &nbsp;
             <Form.Item
               className="mb-4"
-              name="label"
-              rules={[{ required: true, message: 'Please type a label!' }]}
+              name="title"
+              rules={[{ required: true, message: 'Please type a title!' }]}
             >
               <Input
                 size="small"
                 className="text-2xl pl-0"
                 bordered={false}
-                placeholder="Just a human friendly label"
+                placeholder="Just a human friendly title"
               />
             </Form.Item>
           </div>

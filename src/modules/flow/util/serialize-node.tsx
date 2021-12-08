@@ -6,7 +6,7 @@ export const serializeNode = (element: CustomNode): INode => {
     id: element.id,
     type: element.data.type, // Revert to the original type
     config: element.data.config,
-    label: element.data.label,
+    title: element.data.title,
     position: [element.position.x, element.position.y],
   };
 

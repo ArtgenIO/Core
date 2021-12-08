@@ -14,7 +14,7 @@ export default function CreateExtension() {
 
   const [extension, setExtension] = useState<IBlueprint>({
     id: v4(),
-    label: 'My Blog',
+    title: 'My Blog',
     version: '0.0.1',
     database: 'system',
     source: 'offline',

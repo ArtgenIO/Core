@@ -1,6 +1,6 @@
 export interface IPage {
   id: string;
-  label: string;
+  title: string;
   domain: string;
   path: string;
   content: object;

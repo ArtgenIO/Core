@@ -117,17 +117,17 @@ export default function ArtboardNodeConfigComponent() {
                 column={1}
                 bordered
               >
-                <Descriptions.Item label="Label">
+                <Descriptions.Item label="Title">
                   <Input
-                    placeholder="Label"
-                    defaultValue={nodeData.label}
+                    placeholder="Title"
+                    defaultValue={nodeData.title}
                     onChange={event => {
                       setElements(els => {
                         const node = cloneDeep(
                           els.find(el => el.id === selectedNodeId),
                         ) as CustomNode;
 
-                        node.data.label = event.target.value;
+                        node.data.title = event.target.value;
 
                         const newElements = els.filter(
                           el => el.id !== selectedNodeId,

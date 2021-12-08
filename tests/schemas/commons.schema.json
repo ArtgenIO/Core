@@ -4,7 +4,7 @@
   "tableName": "commons",
   "fields": [
     {
-      "label": "id",
+      "title": "id",
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "label": "Text Field",
+      "title": "Text Field",
       "reference": "textField",
       "columnName": "text_field",
       "type": "text",
@@ -26,7 +26,7 @@
       "tags": []
     },
     {
-      "label": "Integer Field",
+      "title": "Integer Field",
       "reference": "intField",
       "columnName": "int_field",
       "type": "int",
@@ -36,7 +36,7 @@
       "tags": []
     },
     {
-      "label": "Date Field",
+      "title": "Date Field",
       "reference": "dateField",
       "columnName": "date_field",
       "type": "dateonly",
@@ -46,7 +46,7 @@
       "tags": []
     },
     {
-      "label": "Timestamp Field",
+      "title": "Timestamp Field",
       "reference": "timestampField",
       "columnName": "timestamp_field",
       "type": "timestamp",
@@ -56,7 +56,7 @@
       "tags": []
     },
     {
-      "label": "UUID Field",
+      "title": "UUID Field",
       "reference": "uuidField",
       "columnName": "uuid_field",
       "type": "uuid",
@@ -66,7 +66,7 @@
       "tags": []
     },
     {
-      "label": "Enumerated Field",
+      "title": "Enumerated Field",
       "reference": "enumField",
       "columnName": "enum_field",
       "type": "enum",
@@ -83,12 +83,6 @@
   "indices": [],
   "relations": [],
   "uniques": [],
-  "displayName": "Commons",
-  "artboard": {
-    "position": {
-      "x": 0,
-      "y": 0
-    }
-  },
+  "title": "Commons",
   "tags": []
 }

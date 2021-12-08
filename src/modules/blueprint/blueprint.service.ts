@@ -62,7 +62,7 @@ export class BlueprintService {
         .then(() =>
           this.logger.info(
             'Schema [%s][%s] installed',
-            extension.label,
+            extension.title,
             schema.reference,
           ),
         )
@@ -80,7 +80,7 @@ export class BlueprintService {
         .then(() =>
           this.logger.info(
             'Workflow [%s][%s] installed',
-            extension.label,
+            extension.title,
             wf.id,
           ),
         )
@@ -93,7 +93,7 @@ export class BlueprintService {
 
     // Save the extension
     await this.rest.create('system', 'Extension', extension as any);
-    this.logger.info('Extension [%s] installed', extension.label);
+    this.logger.info('Extension [%s] installed', extension.title);
 
     return extension;
   }

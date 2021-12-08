@@ -4,7 +4,7 @@
   "tableName": "textsxl2",
   "fields": [
     {
-      "label": "id",
+      "title": "id",
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "label": "Char 65535 Field",
+      "title": "Char 65535 Field",
       "reference": "char65535Field",
       "columnName": "char65535_field",
       "type": "char",
@@ -31,11 +31,5 @@
   "relations": [],
   "uniques": [],
   "title": "Texts XL2",
-  "artboard": {
-    "position": {
-      "x": 0,
-      "y": 0
-    }
-  },
   "tags": []
 }

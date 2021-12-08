@@ -139,7 +139,7 @@ export default function RelationHasOne({
                     .filter(f => f.type === primary.type)
                     .map(f => (
                       <Select.Option key={f.reference} value={f.reference}>
-                        {f.label}
+                        {f.title}
                       </Select.Option>
                     ))
                 : undefined}

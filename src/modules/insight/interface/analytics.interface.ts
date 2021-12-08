@@ -3,7 +3,7 @@ import { IAxis } from './axis.interface';
 export interface IAnalytics {
   id: string;
 
-  label: string;
+  title: string;
 
   type: 'counter' | 'line' | 'bar';
 

@@ -4,7 +4,7 @@
   "tableName": "textsxl3",
   "fields": [
     {
-      "label": "id",
+      "title": "id",
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "label": "Text Field",
+      "title": "Text Field",
       "reference": "textField",
       "columnName": "text_field",
       "type": "text",
@@ -26,7 +26,7 @@
       "tags": []
     },
     {
-      "label": "Blog Field",
+      "title": "Blog Field",
       "reference": "blobField",
       "columnName": "blob_field",
       "type": "blob",
@@ -36,7 +36,7 @@
       "tags": []
     },
     {
-      "label": "Tiny Text Field",
+      "title": "Tiny Text Field",
       "reference": "tinyTextField",
       "columnName": "tiny_text_field",
       "type": "text",
@@ -47,7 +47,7 @@
       "tags": []
     },
     {
-      "label": "Medium Text Field",
+      "title": "Medium Text Field",
       "reference": "mediumTextField",
       "columnName": "medium_text_field",
       "type": "text",
@@ -58,7 +58,7 @@
       "tags": []
     },
     {
-      "label": "Long Text Field",
+      "title": "Long Text Field",
       "reference": "longTextField",
       "columnName": "long_text_field",
       "type": "text",
@@ -69,7 +69,7 @@
       "tags": []
     },
     {
-      "label": "755 Text Field",
+      "title": "755 Text Field",
       "reference": "text755Field",
       "columnName": "text_755_field",
       "type": "text",
@@ -84,11 +84,5 @@
   "relations": [],
   "uniques": [],
   "title": "Texts XL3",
-  "artboard": {
-    "position": {
-      "x": 0,
-      "y": 0
-    }
-  },
   "tags": []
 }

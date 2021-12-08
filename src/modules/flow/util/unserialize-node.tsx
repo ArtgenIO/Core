@@ -7,7 +7,7 @@ export const unserializeNode = (serialized: INode): CustomNode => {
     id: serialized.id,
     type: kebabCase(serialized.type),
     data: {
-      label: serialized.label ?? startCase(serialized.id),
+      title: serialized.title ?? startCase(serialized.id),
       config: serialized.config,
       type: serialized.type,
     },

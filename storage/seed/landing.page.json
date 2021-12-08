@@ -1,7 +1,7 @@
 {
   "id": "1e1b9598-f8b8-4487-9b7b-166a363e8ce8",
   "extensionId": "10000000-0000-0000-0000-000000000000",
-  "label": "Landing",
+  "title": "Landing",
   "domain": "artgen.io",
   "path": "/",
   "content": {
