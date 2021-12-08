@@ -85,11 +85,11 @@ describe('Database E2E', () => {
     expect(mod2Changes).toBeGreaterThanOrEqual(1);
 
     // Remove the extra int
-    // const mod3 = cloneDeep(mod2);
-    // mod3.fields.splice(mod3.fields.length - 2, 1);
+    const mod3 = cloneDeep(mod2);
+    mod3.fields.splice(mod3.fields.length - 2, 1);
 
-    // const mod3Changes = await connection.associate([mod3]);
-    // expect(mod3Changes).toBeGreaterThanOrEqual(1);
+    const mod3Changes = await connection.associate([mod3]);
+    expect(mod3Changes).toBeGreaterThanOrEqual(1);
 
     // Clean up
     //await connection.synchornizer.deleteTable(ref).catch(e => {});

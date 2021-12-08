@@ -429,25 +429,23 @@ export class DatabaseConnection implements IDatabaseConnection {
       }));
     // Sort the indices
     const indices = Array.from(schema.indices).sort(sortByName);
+    const columns = {};
 
-    // Strip fields
-    const fields = Array.from(schema.fields)
-      //.sort((a, b) => (a.columnName > b.columnName ? 1 : -1))
-      .map(f => ({
-        columnName: f.columnName,
-        type: f.type === FieldType.JSONB ? FieldType.JSON : f.type,
-        typeParams: f.typeParams,
-      }));
-
-    for (const f of fields) {
+    for (const f of schema.fields) {
       if (f.typeParams.values?.length) {
         f.typeParams.values = f.typeParams.values
           .map(v => v.toString())
           .sort((a, b) => (a > b ? 1 : -1));
       }
+
+      columns[f.columnName] = {
+        columnName: f.columnName,
+        type: f.type === FieldType.JSONB ? FieldType.JSON : f.type,
+        typeParams: f.typeParams,
+      };
     }
 
-    return { tableName, relations, uniques, indices, columns: fields };
+    return { tableName, relations, uniques, indices, columns: columns };
   }
 
   protected toModel(schema: ISchema): ModelClass<Model> {

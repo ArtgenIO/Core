@@ -9,7 +9,9 @@ export type IColumnSchema = Pick<IField, 'columnName' | 'type' | 'typeParams'>;
  */
 export interface ITableStructure {
   tableName: ISchema['tableName'];
-  columns: IColumnSchema[];
+  columns: {
+    [name: string]: IColumnSchema;
+  };
   relations: Pick<IRelation, 'target' | 'localField' | 'remoteField'>[];
   uniques: { fields: string[] }[];
   indices: ISchema['indices'];

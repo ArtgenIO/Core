@@ -151,9 +151,6 @@ export class DatabaseSynchronizer {
     if (!isEqual(revStruct, knownStruct)) {
       const changes = diff(revStruct, knownStruct);
 
-      // Find the column remove, because everythings shift when a column removed,
-      // and the operations go nuts.
-
       for (const change of changes) {
         // Field has been removed
         if (change.op === 'remove' && change.path[0] === 'columns') {
@@ -162,12 +159,14 @@ export class DatabaseSynchronizer {
             type: 'drop',
             query: this.connection.knex.schema.alterTable(
               knownSchema.tableName,
-              t => t.dropColumn(revStruct.columns[change.path[1]].columnName),
+              t => t.dropColumn(change.path[1] as string),
             ),
           });
         } else if (change.op === 'add' && change.path[0] === 'columns') {
           // Adds a new column
-          const newField = knownSchema.fields[change.path[1] as number];
+          const newField = knownSchema.fields.find(
+            f => f.columnName == change.path[1],
+          );
 
           instructions.push({
             type: 'create',
