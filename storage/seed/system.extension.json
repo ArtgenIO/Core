@@ -411,7 +411,6 @@
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
-      "icon": "table",
       "database": "system",
       "label": "Key-Value Storage",
       "reference": "KeyValueStorage",
@@ -460,7 +459,6 @@
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
-      "icon": "table",
       "database": "system",
       "label": "Extensions",
       "reference": "Extension",

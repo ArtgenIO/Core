@@ -3,13 +3,6 @@ import { IRelation } from './relation.interface';
 
 export interface ISchema {
   /**
-   * Display icon, used to help differentiate the schema in a list.
-   *
-   * @since V2
-   */
-  icon: string;
-
-  /**
    * Unique name used to identify a data source as a model.
    * Does not change even if the table is renamed, it's saved in the meta.
    */
