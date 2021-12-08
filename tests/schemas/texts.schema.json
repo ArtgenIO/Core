@@ -8,9 +8,7 @@
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": [
         "primary"
       ]
@@ -20,9 +18,7 @@
       "reference": "textField",
       "columnName": "text_field",
       "type": "text",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -30,9 +26,7 @@
       "reference": "vcharField",
       "columnName": "vchar_field",
       "type": "string",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -40,9 +34,7 @@
       "reference": "charField",
       "columnName": "char_field",
       "type": "string",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -51,8 +43,7 @@
       "columnName": "vchar8_field",
       "type": "string",
       "typeParams": {
-        "length": 8,
-        "values": []
+        "length": 8
       },
       "tags": []
     },
@@ -62,8 +53,7 @@
       "columnName": "vchar16_field",
       "type": "string",
       "typeParams": {
-        "length": 16,
-        "values": []
+        "length": 16
       },
       "tags": []
     },
@@ -73,8 +63,7 @@
       "columnName": "vchar32_field",
       "type": "string",
       "typeParams": {
-        "length": 32,
-        "values": []
+        "length": 32
       },
       "tags": []
     },
@@ -84,8 +73,7 @@
       "columnName": "vchar255_field",
       "type": "string",
       "typeParams": {
-        "length": 255,
-        "values": []
+        "length": 255
       },
       "tags": []
     },
@@ -95,8 +83,7 @@
       "columnName": "vchar512_field",
       "type": "string",
       "typeParams": {
-        "length": 512,
-        "values": []
+        "length": 512
       },
       "tags": []
     },
@@ -106,8 +93,7 @@
       "columnName": "vchar1024_field",
       "type": "string",
       "typeParams": {
-        "length": 1024,
-        "values": []
+        "length": 1024
       },
       "tags": []
     }

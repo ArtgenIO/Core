@@ -8,9 +8,7 @@
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": [
         "primary"
       ]
@@ -20,9 +18,7 @@
       "reference": "textField",
       "columnName": "text_field",
       "type": "text",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -30,9 +26,7 @@
       "reference": "intField",
       "columnName": "int_field",
       "type": "int",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -40,9 +34,7 @@
       "reference": "dateField",
       "columnName": "date_field",
       "type": "dateonly",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -50,9 +42,7 @@
       "reference": "timestampField",
       "columnName": "timestamp_field",
       "type": "timestamp",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -60,9 +50,7 @@
       "reference": "uuidField",
       "columnName": "uuid_field",
       "type": "uuid",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {

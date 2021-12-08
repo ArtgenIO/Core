@@ -533,9 +533,7 @@ export class DatabaseSynchronizer {
         columnName: col.name,
         defaultValue: col.default_value,
         type: FieldType.STRING,
-        typeParams: {
-          values: [],
-        },
+        typeParams: {},
         tags: [],
       };
 
@@ -615,9 +613,7 @@ export class DatabaseSynchronizer {
     column: Column,
   ): Promise<Pick<IField, 'type' | 'typeParams'>> {
     let type: FieldType;
-    let typeParams: IField['typeParams'] = {
-      values: [],
-    };
+    let typeParams: IField['typeParams'] = {};
 
     if (column.numeric_precision !== null) {
       typeParams.precision = column.numeric_precision;
@@ -781,9 +777,7 @@ export class DatabaseSynchronizer {
     if (text == 'CHAR') {
       if (column.max_length == 36) {
         type = FieldType.UUID;
-        typeParams = {
-          values: [],
-        };
+        typeParams = {};
       } else {
         type = FieldType.CHAR;
       }

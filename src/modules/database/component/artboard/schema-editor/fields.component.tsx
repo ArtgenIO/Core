@@ -47,9 +47,7 @@ export default function SchemaEditorFieldsComponent({
         title: `New Field ${fieldKey}`,
         type: FieldType.TEXT,
         defaultValue: null,
-        typeParams: {
-          values: [],
-        },
+        typeParams: {},
         tags: [],
       });
 

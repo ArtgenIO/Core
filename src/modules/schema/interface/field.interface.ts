@@ -9,7 +9,7 @@ type TypeParams = {
   decimals?: number;
   scale?: number;
   precision?: number;
-  values: string[];
+  values?: string[];
 };
 
 export interface IField {

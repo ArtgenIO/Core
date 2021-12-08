@@ -432,7 +432,7 @@ export class DatabaseConnection implements IDatabaseConnection {
     const columns = {};
 
     for (const f of schema.fields) {
-      if (f.typeParams.values?.length) {
+      if (f.typeParams?.values?.length) {
         f.typeParams.values = f.typeParams.values
           .map(v => v.toString())
           .sort((a, b) => (a > b ? 1 : -1));

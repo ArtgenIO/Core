@@ -8,9 +8,7 @@
       "reference": "id",
       "columnName": "id",
       "type": "int",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": [
         "primary"
       ]
@@ -20,9 +18,7 @@
       "reference": "tinyIntField",
       "columnName": "tiny_int_field",
       "type": "tinyint",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -30,9 +26,7 @@
       "reference": "smallIntField",
       "columnName": "small_int_field",
       "type": "smallint",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -40,9 +34,7 @@
       "reference": "mediumIntField",
       "columnName": "medium_int_field",
       "type": "mediumint",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -50,9 +42,7 @@
       "reference": "normalIntField",
       "columnName": "normal_int_field",
       "type": "int",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -60,9 +50,7 @@
       "reference": "bigIntField",
       "columnName": "big_int_field",
       "type": "bigint",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -71,7 +59,6 @@
       "columnName": "utiny_int_field",
       "type": "tinyint",
       "typeParams": {
-        "values": [],
         "unsigned": true
       },
       "tags": []
@@ -82,7 +69,6 @@
       "columnName": "usmall_int_field",
       "type": "smallint",
       "typeParams": {
-        "values": [],
         "unsigned": true
       },
       "tags": []
@@ -93,7 +79,6 @@
       "columnName": "umedium_int_field",
       "type": "mediumint",
       "typeParams": {
-        "values": [],
         "unsigned": true
       },
       "tags": []
@@ -104,7 +89,6 @@
       "columnName": "unormal_int_field",
       "type": "int",
       "typeParams": {
-        "values": [],
         "unsigned": true
       },
       "tags": []
@@ -115,7 +99,6 @@
       "columnName": "ubig_int_field",
       "type": "bigint",
       "typeParams": {
-        "values": [],
         "unsigned": true
       },
       "tags": []

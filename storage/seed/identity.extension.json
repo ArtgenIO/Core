@@ -22,9 +22,7 @@
             "primary"
           ],
           "type": "uuid",
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "email",
@@ -34,9 +32,7 @@
             "unique"
           ],
           "type": "text",
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "password",
@@ -44,9 +40,7 @@
           "title": "Password Hash",
           "tags": [],
           "type": "text",
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         }
       ],
       "indices": [],
@@ -83,9 +77,7 @@
           "reference": "key",
           "columnName": "key",
           "type": "uuid",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": [
             "primary"
           ]
@@ -95,9 +87,7 @@
           "title": "Issued At",
           "columnName": "issued_at",
           "type": "timestamp",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": [
             "created"
           ]
@@ -107,9 +97,7 @@
           "title": "Accound ID",
           "columnName": "account_id",
           "type": "uuid",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": []
         }
       ],

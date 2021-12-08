@@ -8,9 +8,7 @@
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": [
         "primary"
       ]

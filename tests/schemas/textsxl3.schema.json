@@ -8,9 +8,7 @@
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": [
         "primary"
       ]
@@ -20,9 +18,7 @@
       "reference": "textField",
       "columnName": "text_field",
       "type": "text",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -30,9 +26,7 @@
       "reference": "blobField",
       "columnName": "blob_field",
       "type": "blob",
-      "typeParams": {
-        "values": []
-      },
+      "typeParams": {},
       "tags": []
     },
     {
@@ -41,7 +35,6 @@
       "columnName": "tiny_text_field",
       "type": "text",
       "typeParams": {
-        "values": [],
         "length": "tiny"
       },
       "tags": []
@@ -52,7 +45,6 @@
       "columnName": "medium_text_field",
       "type": "text",
       "typeParams": {
-        "values": [],
         "length": "medium"
       },
       "tags": []
@@ -63,7 +55,6 @@
       "columnName": "long_text_field",
       "type": "text",
       "typeParams": {
-        "values": [],
         "length": "long"
       },
       "tags": []
@@ -74,7 +65,6 @@
       "columnName": "text_755_field",
       "type": "text",
       "typeParams": {
-        "values": [],
         "length": 755
       },
       "tags": []

@@ -22,9 +22,7 @@
           "tags": [
             "primary"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "extensionId",
@@ -34,9 +32,7 @@
           "tags": [
             "indexed"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "name",
@@ -46,9 +42,7 @@
           "tags": [
             "unique"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "nodes",
@@ -57,9 +51,7 @@
           "type": "json",
           "tags": [],
           "defaultValue": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "edges",
@@ -68,9 +60,7 @@
           "type": "json",
           "tags": [],
           "defaultValue": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         }
       ],
       "indices": [],
@@ -100,9 +90,7 @@
           "title": "Title",
           "type": "text",
           "tags": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "name",
@@ -112,9 +100,7 @@
           "tags": [
             "primary"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "dsn",
@@ -124,9 +110,7 @@
           "tags": [
             "unique"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         }
       ],
       "indices": [],
@@ -166,9 +150,7 @@
           "tags": [
             "primary"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "extensionId",
@@ -178,9 +160,7 @@
           "tags": [
             "indexed"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "title",
@@ -188,9 +168,7 @@
           "title": "title",
           "type": "text",
           "tags": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "domain",
@@ -198,9 +176,7 @@
           "title": "Domain",
           "type": "text",
           "tags": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "path",
@@ -209,9 +185,7 @@
           "type": "text",
           "tags": [],
           "defaultValue": "/page/x",
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "content",
@@ -220,9 +194,7 @@
           "type": "json",
           "tags": [],
           "defaultValue": {},
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "tags",
@@ -233,9 +205,7 @@
           "defaultValue": [
             "active"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         }
       ],
       "indices": [],
@@ -275,9 +245,7 @@
           "tags": [
             "primary"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "extensionId",
@@ -287,9 +255,7 @@
           "tags": [
             "indexed"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "reference",
@@ -299,9 +265,7 @@
           "tags": [
             "primary"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "title",
@@ -309,9 +273,7 @@
           "title": "title",
           "type": "text",
           "tags": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "tableName",
@@ -319,9 +281,7 @@
           "title": "Table Name",
           "type": "text",
           "tags": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "fields",
@@ -330,9 +290,7 @@
           "type": "json",
           "tags": [],
           "defaultValue": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "indices",
@@ -341,9 +299,7 @@
           "type": "json",
           "tags": [],
           "defaultValue": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "uniques",
@@ -352,9 +308,7 @@
           "type": "json",
           "tags": [],
           "defaultValue": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "relations",
@@ -363,9 +317,7 @@
           "type": "json",
           "tags": [],
           "defaultValue": [],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "tags",
@@ -376,9 +328,7 @@
           "defaultValue": [
             "active"
           ],
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         },
         {
           "reference": "artboard",
@@ -392,9 +342,7 @@
               "y": 0
             }
           },
-          "typeParams": {
-            "values": []
-          }
+          "typeParams": {}
         }
       ],
       "indices": [],
@@ -432,9 +380,7 @@
           "columnName": "key",
           "defaultValue": null,
           "type": "text",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": [
             "primary"
           ]
@@ -445,9 +391,7 @@
           "columnName": "value",
           "defaultValue": null,
           "type": "jsonb",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": [
             "nullable"
           ]
@@ -479,9 +423,7 @@
           "reference": "id",
           "columnName": "id",
           "type": "uuid",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": [
             "primary"
           ]
@@ -492,9 +434,7 @@
           "columnName": "title",
           "defaultValue": null,
           "type": "text",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": []
         },
         {
@@ -503,9 +443,7 @@
           "columnName": "version",
           "defaultValue": "0.0.1",
           "type": "text",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": []
         },
         {
@@ -514,9 +452,7 @@
           "columnName": "icon",
           "defaultValue": "widgets",
           "type": "text",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": [
             "nullable"
           ]
@@ -527,9 +463,7 @@
           "columnName": "config",
           "defaultValue": {},
           "type": "json",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": []
         },
         {
@@ -538,9 +472,7 @@
           "columnName": "schemas",
           "defaultValue": [],
           "type": "json",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": []
         },
         {
@@ -549,9 +481,7 @@
           "columnName": "workflows",
           "defaultValue": [],
           "type": "json",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": []
         },
         {
@@ -559,9 +489,7 @@
           "title": "Installed At",
           "columnName": "installed_at",
           "type": "timestamp",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": [
             "created"
           ]
@@ -572,9 +500,7 @@
           "columnName": "database",
           "defaultValue": null,
           "type": "text",
-          "typeParams": {
-            "values": []
-          },
+          "typeParams": {},
           "tags": [
             "indexed"
           ]
