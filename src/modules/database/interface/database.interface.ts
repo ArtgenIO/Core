@@ -1,5 +1,10 @@
 export interface IDatabase {
   /**
+   * Human readable title.
+   */
+  title: string;
+
+  /**
    * Readonly unique name, used as an identifier.
    */
   readonly name: string;

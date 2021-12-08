@@ -69,7 +69,7 @@ export default function DatabaseListComponent() {
                     icon={<DatabaseOutlined />}
                   />
                 }
-                title={<span className="text-xl font-thin">{db.name}</span>}
+                title={<span className="text-xl font-thin">{db.title}</span>}
               />
 
               <Link to={`/admin/database/${db.name}/edit`}>

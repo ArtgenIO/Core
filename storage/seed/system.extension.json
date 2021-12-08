@@ -95,6 +95,16 @@
       "tableName": "__artgen_databases",
       "fields": [
         {
+          "reference": "title",
+          "columnName": "title",
+          "title": "Title",
+          "type": "text",
+          "tags": [],
+          "typeParams": {
+            "values": []
+          }
+        },
+        {
           "reference": "name",
           "columnName": "name",
           "title": "Name",

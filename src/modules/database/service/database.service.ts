@@ -123,6 +123,7 @@ export class DatabaseService {
    */
   getMainDatabase(): IDatabase {
     return {
+      title: 'Main',
       name: 'main',
       dsn: process.env.ARTGEN_DATABASE_DSN,
     };
