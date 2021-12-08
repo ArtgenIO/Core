@@ -8,7 +8,7 @@
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
-      "typeParams": {},
+      "args": {},
       "tags": [
         "primary"
       ]
@@ -18,7 +18,7 @@
       "reference": "enumstr",
       "columnName": "enum_Strings",
       "type": "enum",
-      "typeParams": {
+      "args": {
         "values": [
           "a",
           "b",
@@ -34,7 +34,7 @@
       "reference": "enumint",
       "columnName": "enum_Integers",
       "type": "enum",
-      "typeParams": {
+      "args": {
         "values": [
           1,
           2,

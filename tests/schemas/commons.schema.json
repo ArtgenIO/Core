@@ -8,7 +8,7 @@
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
-      "typeParams": {},
+      "args": {},
       "tags": [
         "primary"
       ]
@@ -18,7 +18,7 @@
       "reference": "textField",
       "columnName": "text_field",
       "type": "text",
-      "typeParams": {},
+      "args": {},
       "tags": []
     },
     {
@@ -26,7 +26,7 @@
       "reference": "intField",
       "columnName": "int_field",
       "type": "int",
-      "typeParams": {},
+      "args": {},
       "tags": []
     },
     {
@@ -34,7 +34,7 @@
       "reference": "dateField",
       "columnName": "date_field",
       "type": "dateonly",
-      "typeParams": {},
+      "args": {},
       "tags": []
     },
     {
@@ -42,7 +42,7 @@
       "reference": "timestampField",
       "columnName": "timestamp_field",
       "type": "timestamp",
-      "typeParams": {},
+      "args": {},
       "tags": []
     },
     {
@@ -50,7 +50,7 @@
       "reference": "uuidField",
       "columnName": "uuid_field",
       "type": "uuid",
-      "typeParams": {},
+      "args": {},
       "tags": []
     },
     {
@@ -58,7 +58,7 @@
       "reference": "enumField",
       "columnName": "enum_field",
       "type": "enum",
-      "typeParams": {
+      "args": {
         "values": [
           "yes",
           "no",

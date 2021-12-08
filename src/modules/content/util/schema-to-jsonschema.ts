@@ -76,8 +76,8 @@ export const schemaToJsonSchema = (
     }
 
     if (field.type === FieldType.ENUM) {
-      if (field.typeParams?.values) {
-        fieldDef.enum = field.typeParams.values;
+      if (field.args?.values) {
+        fieldDef.enum = field.args.values;
       } else {
         fieldDef.enum = [];
       }

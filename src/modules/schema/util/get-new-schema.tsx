@@ -19,7 +19,7 @@ export const createEmptySchema = (database: string): ISchema => ({
       reference: 'id',
       columnName: 'id',
       type: FieldType.UUID,
-      typeParams: {},
+      args: {},
       tags: [FieldTag.PRIMARY],
     },
     {
@@ -28,7 +28,7 @@ export const createEmptySchema = (database: string): ISchema => ({
       columnName: 'tags',
       type: FieldType.JSON,
       tags: [FieldTag.TAGS],
-      typeParams: {},
+      args: {},
       defaultValue: [],
     },
   ],

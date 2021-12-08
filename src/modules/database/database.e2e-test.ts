@@ -58,7 +58,7 @@ describe('Database E2E', () => {
       columnName: 'xtra_int',
       defaultValue: 5,
       type: FieldType.INTEGER,
-      typeParams: {},
+      args: {},
       tags: [],
     });
 
@@ -73,7 +73,7 @@ describe('Database E2E', () => {
       columnName: 'xtra_txt',
       defaultValue: 'Haps',
       type: FieldType.TEXT,
-      typeParams: {},
+      args: {},
       tags: [],
     });
 
@@ -90,7 +90,7 @@ describe('Database E2E', () => {
     // Replace the int to text
     const mod4 = cloneDeep(mod3);
     mod4.fields.find(f => f.reference == 'xtraTxt').type = FieldType.STRING;
-    mod4.fields.find(f => f.reference == 'xtraTxt').typeParams.length = 52;
+    mod4.fields.find(f => f.reference == 'xtraTxt').args.length = 52;
 
     const mod4Changes = await connection.associate([mod4]);
     expect(mod4Changes).toBeGreaterThanOrEqual(1);

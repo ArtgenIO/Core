@@ -254,7 +254,7 @@ export class DatabaseSynchronizer {
       case FieldType.TEXT:
         let textLength: string = 'text';
 
-        switch (f.typeParams?.length) {
+        switch (f.args?.length) {
           case 'tiny':
             textLength = 'tinytext';
             break;
@@ -279,9 +279,9 @@ export class DatabaseSynchronizer {
       case FieldType.STRING:
         let stringLength: number;
 
-        if (f.typeParams?.length) {
-          if (typeof f.typeParams.length === 'number') {
-            stringLength = f.typeParams.length;
+        if (f.args?.length) {
+          if (typeof f.args.length === 'number') {
+            stringLength = f.args.length;
           }
         }
 
@@ -301,7 +301,7 @@ export class DatabaseSynchronizer {
       case FieldType.INTEGER:
         col = table.integer(
           f.columnName,
-          (f.typeParams.length as number) ?? undefined,
+          (f.args.length as number) ?? undefined,
         );
         break;
       case FieldType.BIGINT:
@@ -317,11 +317,7 @@ export class DatabaseSynchronizer {
         col = table.double(f.columnName);
         break;
       case FieldType.DECIMAL:
-        col = table.decimal(
-          f.columnName,
-          f.typeParams.precision,
-          f.typeParams.scale,
-        );
+        col = table.decimal(f.columnName, f.args.precision, f.args.scale);
         break;
       case FieldType.BLOB:
         col = table.binary(f.columnName);
@@ -329,7 +325,7 @@ export class DatabaseSynchronizer {
       case FieldType.ENUM:
         const typeFor = typeChecks.get(f.reference);
 
-        col = table.enum(f.columnName, f.typeParams.values, {
+        col = table.enum(f.columnName, f.args.values, {
           useNative: true,
           enumName: typeFor.name,
           existingType: typeFor.exists,
@@ -345,9 +341,9 @@ export class DatabaseSynchronizer {
       case FieldType.CHAR:
         let charLength: number;
 
-        if (f.typeParams?.length) {
-          if (typeof f.typeParams.length === 'number') {
-            charLength = f.typeParams.length;
+        if (f.args?.length) {
+          if (typeof f.args.length === 'number') {
+            charLength = f.args.length;
           }
         }
 
@@ -370,7 +366,7 @@ export class DatabaseSynchronizer {
     }
 
     // Field modifiers
-    if (f.typeParams.unsigned) {
+    if (f.args.unsigned) {
       col = col.unsigned();
     }
 
@@ -406,7 +402,7 @@ export class DatabaseSynchronizer {
     for (const f of schema.fields) {
       if (f.type === FieldType.ENUM) {
         let enumExists = false;
-        const curValues = f.typeParams.values.sort((a, b) => (a > b ? 1 : -1));
+        const curValues = f.args.values.sort((a, b) => (a > b ? 1 : -1));
         const typeHash = hash(curValues, {
           algorithm: 'md5',
           encoding: 'hex',
@@ -533,7 +529,7 @@ export class DatabaseSynchronizer {
         columnName: col.name,
         defaultValue: col.default_value,
         type: FieldType.STRING,
-        typeParams: {},
+        args: {},
         tags: [],
       };
 
@@ -542,11 +538,11 @@ export class DatabaseSynchronizer {
 
       if (enumFix) {
         field.type = FieldType.ENUM;
-        field.typeParams.values = enumFix.values;
+        field.args.values = enumFix.values;
       } else {
         const revType = await this.getFieldType(tableName, col);
         field.type = revType.type;
-        field.typeParams = revType.typeParams;
+        field.args = revType.args;
       }
 
       if (col.is_primary_key) {
@@ -611,20 +607,20 @@ export class DatabaseSynchronizer {
   protected async getFieldType(
     tableName: string,
     column: Column,
-  ): Promise<Pick<IField, 'type' | 'typeParams'>> {
+  ): Promise<Pick<IField, 'type' | 'args'>> {
     let type: FieldType;
-    let typeParams: IField['typeParams'] = {};
+    let args: IField['args'] = {};
 
     if (column.numeric_precision !== null) {
-      typeParams.precision = column.numeric_precision;
+      args.precision = column.numeric_precision;
     }
 
     if (column.numeric_scale !== null) {
-      typeParams.scale = column.numeric_scale;
+      args.scale = column.numeric_scale;
     }
 
     if (column.max_length !== null) {
-      typeParams.length = column.max_length;
+      args.length = column.max_length;
     }
 
     const text = column.data_type.toUpperCase();
@@ -641,7 +637,7 @@ export class DatabaseSynchronizer {
         break;
       case 'BYTEA':
         type = FieldType.BLOB;
-        typeParams.binary = true;
+        args.binary = true;
         break;
       case 'CIDR':
         type = FieldType.CIDR;
@@ -697,15 +693,15 @@ export class DatabaseSynchronizer {
         break;
       case 'TINYTEXT':
         type = FieldType.TEXT;
-        typeParams.length = 'tiny';
+        args.length = 'tiny';
         break;
       case 'MEDIUMTEXT':
         type = FieldType.TEXT;
-        typeParams.length = 'medium';
+        args.length = 'medium';
         break;
       case 'LONGTEXT': // MariaDB JSON?
         type = FieldType.TEXT;
-        typeParams.length = 'long';
+        args.length = 'long';
 
         // MariaDB uses LONGTEXT with json check to store JSON
         if (this.connection.dialect === 'mariadb') {
@@ -713,7 +709,7 @@ export class DatabaseSynchronizer {
 
           if (isJson) {
             type = FieldType.JSON;
-            delete typeParams.length;
+            delete args.length;
           }
         }
 
@@ -726,23 +722,23 @@ export class DatabaseSynchronizer {
         break;
       case 'TINYINT UNSIGNED':
         type = FieldType.TINYINT;
-        typeParams.unsigned = true;
+        args.unsigned = true;
         break;
       case 'SMALLINT UNSIGNED':
         type = FieldType.SMALLINT;
-        typeParams.unsigned = true;
+        args.unsigned = true;
         break;
       case 'MEDIUMINT UNSIGNED':
         type = FieldType.MEDIUMINT;
-        typeParams.unsigned = true;
+        args.unsigned = true;
         break;
       case 'INT UNSIGNED':
         type = FieldType.INTEGER;
-        typeParams.unsigned = true;
+        args.unsigned = true;
         break;
       case 'BIGINT UNSIGNED':
         type = FieldType.BIGINT;
-        typeParams.unsigned = true;
+        args.unsigned = true;
         break;
       case 'MEDIUMINT':
         type = FieldType.MEDIUMINT;
@@ -762,14 +758,14 @@ export class DatabaseSynchronizer {
       // VARCHAR
       if (text.match(VCHAR_PATTERN)) {
         type = FieldType.STRING;
-        typeParams.length = parseInt(text.match(VCHAR_PATTERN)[1], 10);
+        args.length = parseInt(text.match(VCHAR_PATTERN)[1], 10);
       }
 
       const CHAR_PATTERN = /CHARACTER\((\d+)\)/;
       // CHAR
       if (text.match(CHAR_PATTERN)) {
         type = FieldType.CHAR;
-        typeParams.length = parseInt(text.match(CHAR_PATTERN)[1], 10);
+        args.length = parseInt(text.match(CHAR_PATTERN)[1], 10);
       }
     }
 
@@ -777,7 +773,7 @@ export class DatabaseSynchronizer {
     if (text == 'CHAR') {
       if (column.max_length == 36) {
         type = FieldType.UUID;
-        typeParams = {};
+        args = {};
       } else {
         type = FieldType.CHAR;
       }
@@ -787,6 +783,6 @@ export class DatabaseSynchronizer {
       throw new Exception(`Unknown type [${text}]`);
     }
 
-    return { type, typeParams };
+    return { type, args: args };
   }
 }

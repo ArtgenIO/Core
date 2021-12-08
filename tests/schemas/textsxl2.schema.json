@@ -8,7 +8,7 @@
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
-      "typeParams": {},
+      "args": {},
       "tags": [
         "primary"
       ]
@@ -18,7 +18,7 @@
       "reference": "char65535Field",
       "columnName": "char65535_field",
       "type": "char",
-      "typeParams": {
+      "args": {
         "length": 65535
       },
       "tags": []

@@ -1,7 +1,7 @@
 import { FieldTag } from './field-tags.enum';
 import { FieldType } from './field-type.enum';
 
-type TypeParams = {
+type FieldArgs = {
   binary?: boolean;
   length?: number | 'tiny' | 'medium' | 'long';
   zerofill?: boolean;
@@ -40,9 +40,9 @@ export interface IField {
   type: FieldType;
 
   /**
-   * Type parameters
+   * Type args
    */
-  typeParams: TypeParams;
+  args: FieldArgs;
 
   /**
    * Behavior tags.

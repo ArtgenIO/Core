@@ -8,7 +8,7 @@
       "reference": "id",
       "columnName": "id",
       "type": "uuid",
-      "typeParams": {},
+      "args": {},
       "tags": [
         "primary"
       ]
@@ -18,7 +18,7 @@
       "reference": "textField",
       "columnName": "text_field",
       "type": "text",
-      "typeParams": {},
+      "args": {},
       "tags": []
     },
     {
@@ -26,7 +26,7 @@
       "reference": "vcharField",
       "columnName": "vchar_field",
       "type": "string",
-      "typeParams": {},
+      "args": {},
       "tags": []
     },
     {
@@ -34,7 +34,7 @@
       "reference": "charField",
       "columnName": "char_field",
       "type": "string",
-      "typeParams": {},
+      "args": {},
       "tags": []
     },
     {
@@ -42,7 +42,7 @@
       "reference": "vchar8Field",
       "columnName": "vchar8_field",
       "type": "string",
-      "typeParams": {
+      "args": {
         "length": 8
       },
       "tags": []
@@ -52,7 +52,7 @@
       "reference": "vchar16Field",
       "columnName": "vchar16_field",
       "type": "string",
-      "typeParams": {
+      "args": {
         "length": 16
       },
       "tags": []
@@ -62,7 +62,7 @@
       "reference": "vchar32Field",
       "columnName": "vchar32_field",
       "type": "string",
-      "typeParams": {
+      "args": {
         "length": 32
       },
       "tags": []
@@ -72,7 +72,7 @@
       "reference": "vchar255Field",
       "columnName": "vchar255_field",
       "type": "string",
-      "typeParams": {
+      "args": {
         "length": 255
       },
       "tags": []
@@ -82,7 +82,7 @@
       "reference": "vchar512Field",
       "columnName": "vchar512_field",
       "type": "string",
-      "typeParams": {
+      "args": {
         "length": 512
       },
       "tags": []
@@ -92,7 +92,7 @@
       "reference": "vchar1024Field",
       "columnName": "vchar1024_field",
       "type": "string",
-      "typeParams": {
+      "args": {
         "length": 1024
       },
       "tags": []

@@ -62,7 +62,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     reference: 'id',
                     columnName: 'id',
                     type: FieldType.UUID,
-                    typeParams: {},
+                    args: {},
                     tags: [FieldTag.PRIMARY],
                   });
                 } else {
@@ -104,7 +104,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     columnName: 'tags',
                     type: FieldType.JSON,
                     tags: [FieldTag.TAGS],
-                    typeParams: {},
+                    args: {},
                     defaultValue: [],
                   });
                 } else {
@@ -141,7 +141,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     reference: 'createdAt',
                     columnName: 'created_at',
                     type: FieldType.DATETIME,
-                    typeParams: {},
+                    args: {},
                     tags: [FieldTag.CREATED],
                   });
                 } else {
@@ -177,7 +177,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     title: 'Updated Date',
                     reference: 'updatedAt',
                     columnName: 'updated_at',
-                    typeParams: {},
+                    args: {},
                     type: FieldType.DATETIME,
                     tags: [FieldTag.UPDATED],
                   });
@@ -214,7 +214,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     title: 'Deleted Date',
                     reference: 'deletedAt',
                     columnName: 'deleted_at',
-                    typeParams: {},
+                    args: {},
                     type: FieldType.DATETIME,
                     tags: [FieldTag.DELETED],
                   });
@@ -251,7 +251,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     title: 'Revision',
                     reference: 'Revision',
                     columnName: 'revision',
-                    typeParams: {},
+                    args: {},
                     type: FieldType.INTEGER,
                     tags: [FieldTag.VERSION],
                     defaultValue: 1,

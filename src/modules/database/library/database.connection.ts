@@ -134,8 +134,8 @@ export class DatabaseConnection implements IDatabaseConnection {
       if (isMySQL) {
         // Longest value in the enum is responded as the length of the enum.
         if (field.type === FieldType.JSON) {
-          if (field.typeParams?.length) {
-            delete field.typeParams.length;
+          if (field.args?.length) {
+            delete field.args.length;
           }
         }
 
@@ -144,9 +144,9 @@ export class DatabaseConnection implements IDatabaseConnection {
         // Not the perfect fix, but usually text is not indexed unless it's kinda short.
         if (isIndexed) {
           if (FieldTool.isText(field)) {
-            if (!field.typeParams?.length) {
+            if (!field.args?.length) {
               field.type = FieldType.STRING;
-              field.typeParams.length = 255;
+              field.args.length = 255;
             }
           }
         }
@@ -154,28 +154,28 @@ export class DatabaseConnection implements IDatabaseConnection {
         // MySQL will return with the default 65535 if nothing is set
         // With this we can avoid the collision on schema reversal.
         if (field.type == FieldType.TEXT) {
-          if (!field.typeParams?.length) {
-            field.typeParams.length = 65535;
+          if (!field.args?.length) {
+            field.args.length = 65535;
           }
         }
 
         // MySQL uses TINY, MEDIUM, and LONG text types.
         if (field.type == FieldType.TEXT) {
-          if (typeof field.typeParams?.length == 'number') {
+          if (typeof field.args?.length == 'number') {
             // We convert the TEXT into VARCHAR so it can have a length.
             // 65535 is actualy the "normal" text length.
-            if (field.typeParams.length !== 65535) {
+            if (field.args.length !== 65535) {
               field.type = FieldType.STRING;
             } else {
-              delete field.typeParams.length;
+              delete field.args.length;
             }
           }
         }
 
         // MariaDB responds with LONGTEXT for JSON fields, but the length is meaningless.
         if (field.type == FieldType.JSON) {
-          if (field.typeParams?.length) {
-            delete field.typeParams.length;
+          if (field.args?.length) {
+            delete field.args.length;
           }
         }
 
@@ -184,15 +184,15 @@ export class DatabaseConnection implements IDatabaseConnection {
         // text is much more fitting for this kind of load.
         // But we can improve on this by getting a collation for the column.
         if (field.type === FieldType.STRING) {
-          if (typeof field.typeParams?.length == 'number') {
-            field.typeParams.length = Math.min(field.typeParams.length, 4095);
+          if (typeof field.args?.length == 'number') {
+            field.args.length = Math.min(field.args.length, 4095);
           }
         }
 
         // CHAR maximum is 255
         if (field.type === FieldType.CHAR) {
-          if (typeof field.typeParams?.length == 'number') {
-            field.typeParams.length = Math.min(field.typeParams.length, 255);
+          if (typeof field.args?.length == 'number') {
+            field.args.length = Math.min(field.args.length, 255);
           }
         }
 
@@ -219,7 +219,7 @@ export class DatabaseConnection implements IDatabaseConnection {
           // Text
           case FieldType.UUID:
             f.type = FieldType.CHAR;
-            f.typeParams.length = 36;
+            f.args.length = 36;
             break;
           case FieldType.CIDR:
           case FieldType.INET:
@@ -240,31 +240,28 @@ export class DatabaseConnection implements IDatabaseConnection {
 
         // Char | VChar gets a default 255 length
         if (f.type == FieldType.CHAR || f.type == FieldType.STRING) {
-          if (!f.typeParams?.length) {
-            f.typeParams.length = 255;
+          if (!f.args?.length) {
+            f.args.length = 255;
           }
         }
 
         // Only tinytext is supported, medium and long is converted into text
         if (f.type == FieldType.TEXT) {
-          if (f.typeParams?.length) {
-            if (typeof f.typeParams?.length == 'string') {
-              if (
-                f.typeParams.length == 'medium' ||
-                f.typeParams.length == 'long'
-              ) {
-                delete f.typeParams.length;
+          if (f.args?.length) {
+            if (typeof f.args?.length == 'string') {
+              if (f.args.length == 'medium' || f.args.length == 'long') {
+                delete f.args.length;
               }
             } else {
               // Numeric text length is not supported just on char or vchar
-              delete f.typeParams.length;
+              delete f.args.length;
             }
           }
         }
 
         // Unsigned is ignored
-        if (f.typeParams?.unsigned) {
-          delete f.typeParams.unsigned;
+        if (f.args?.unsigned) {
+          delete f.args.unsigned;
         }
       }
     }
@@ -274,59 +271,59 @@ export class DatabaseConnection implements IDatabaseConnection {
       for (const f of schema.fields) {
         // Char | VChar gets a default 255 length
         if (f.type == FieldType.CHAR || f.type == FieldType.STRING) {
-          if (!f.typeParams?.length) {
-            f.typeParams.length = 255;
+          if (!f.args?.length) {
+            f.args.length = 255;
           }
         }
 
         // Blob defaults to 65535
         if (f.type == FieldType.BLOB) {
-          if (!f.typeParams?.length) {
-            f.typeParams.length = 65535;
+          if (!f.args?.length) {
+            f.args.length = 65535;
           }
         }
 
         // Integers gets a default scale and precision
         if (FieldTool.isInteger(f)) {
-          if (!f.typeParams?.scale) {
-            f.typeParams.scale = 0;
+          if (!f.args?.scale) {
+            f.args.scale = 0;
           }
 
-          if (!f.typeParams?.precision) {
-            if (f.typeParams?.unsigned) {
+          if (!f.args?.precision) {
+            if (f.args?.unsigned) {
               switch (f.type) {
                 case FieldType.BIGINT:
-                  f.typeParams.precision = 20;
+                  f.args.precision = 20;
                   break;
                 case FieldType.INTEGER:
-                  f.typeParams.precision = 10;
+                  f.args.precision = 10;
                   break;
                 case FieldType.MEDIUMINT:
-                  f.typeParams.precision = this.dialect === 'mariadb' ? 8 : 7;
+                  f.args.precision = this.dialect === 'mariadb' ? 8 : 7;
                   break;
                 case FieldType.SMALLINT:
-                  f.typeParams.precision = 5;
+                  f.args.precision = 5;
                   break;
                 case FieldType.TINYINT:
-                  f.typeParams.precision = 3;
+                  f.args.precision = 3;
                   break;
               }
             } else {
               switch (f.type) {
                 case FieldType.BIGINT:
-                  f.typeParams.precision = 19;
+                  f.args.precision = 19;
                   break;
                 case FieldType.INTEGER:
-                  f.typeParams.precision = 10;
+                  f.args.precision = 10;
                   break;
                 case FieldType.MEDIUMINT:
-                  f.typeParams.precision = 7;
+                  f.args.precision = 7;
                   break;
                 case FieldType.SMALLINT:
-                  f.typeParams.precision = 5;
+                  f.args.precision = 5;
                   break;
                 case FieldType.TINYINT:
-                  f.typeParams.precision = 3;
+                  f.args.precision = 3;
                   break;
               }
             }
@@ -344,14 +341,14 @@ export class DatabaseConnection implements IDatabaseConnection {
           f.type == FieldType.STRING ||
           f.type == FieldType.BLOB
         ) {
-          if (!f.typeParams?.length) {
-            f.typeParams.length = 255;
+          if (!f.args?.length) {
+            f.args.length = 255;
           }
         }
 
         // Blob marked as binary.
         if (f.type == FieldType.BLOB) {
-          f.typeParams.binary = true;
+          f.args.binary = true;
         }
 
         // Integers gets a default scale and precision
@@ -365,34 +362,34 @@ export class DatabaseConnection implements IDatabaseConnection {
             f.type = FieldType.SMALLINT;
           }
 
-          f.typeParams.scale = f.typeParams?.scale ?? 0;
+          f.args.scale = f.args?.scale ?? 0;
 
-          if (!f.typeParams?.precision) {
+          if (!f.args?.precision) {
             switch (f.type) {
               case FieldType.INTEGER:
-                f.typeParams.precision = 32;
+                f.args.precision = 32;
                 break;
 
               case FieldType.BIGINT:
-                f.typeParams.precision = 64;
+                f.args.precision = 64;
                 break;
                 break;
               case FieldType.SMALLINT:
-                f.typeParams.precision = 16;
+                f.args.precision = 16;
                 break;
             }
           }
 
           // Postgres does not have unsigned int, will have serial for this
-          if (f.typeParams?.unsigned) {
-            delete f.typeParams.unsigned;
+          if (f.args?.unsigned) {
+            delete f.args.unsigned;
           }
         }
 
         // Text is unlimited in postgres
         if (f.type == FieldType.TEXT) {
-          if (f.typeParams?.length) {
-            delete f.typeParams?.length;
+          if (f.args?.length) {
+            delete f.args?.length;
           }
         }
       }
@@ -432,8 +429,8 @@ export class DatabaseConnection implements IDatabaseConnection {
     const columns = {};
 
     for (const f of schema.fields) {
-      if (f.typeParams?.values?.length) {
-        f.typeParams.values = f.typeParams.values
+      if (f.args?.values?.length) {
+        f.args.values = f.args.values
           .map(v => v.toString())
           .sort((a, b) => (a > b ? 1 : -1));
       }
@@ -441,7 +438,7 @@ export class DatabaseConnection implements IDatabaseConnection {
       columns[f.columnName] = {
         columnName: f.columnName,
         type: f.type === FieldType.JSONB ? FieldType.JSON : f.type,
-        typeParams: f.typeParams,
+        args: f.args,
       };
     }
 

@@ -64,7 +64,7 @@ export default function SchemaEditorFieldTunerComponent({
       const update = cloneDeep(current);
       const currentField = update.fields[idx];
       const dv = form.getFieldValue('defaultValue');
-      let values: string[] = form.getFieldValue(['typeParams', 'values']);
+      let values: string[] = form.getFieldValue(['args', 'values']);
       const type = form.getFieldValue('type');
 
       if (type === FieldType.ENUM) {
@@ -79,8 +79,8 @@ export default function SchemaEditorFieldTunerComponent({
         columnName: form.getFieldValue('columnName'),
         defaultValue: dv === 'null' ? null : dv,
         type,
-        typeParams: {
-          ...currentField.typeParams,
+        args: {
+          ...currentField.args,
           values,
         },
         tags: form.getFieldValue('tags'),
@@ -92,16 +92,16 @@ export default function SchemaEditorFieldTunerComponent({
     });
 
     if (form.getFieldValue('type') === FieldType.ENUM) {
-      if (!form.getFieldValue(['typeParams', 'values']).length) {
+      if (!form.getFieldValue(['args', 'values']).length) {
         form.setFieldsValue({
-          typeParams: {
+          args: {
             values: [''],
           },
         });
       }
     } else {
       form.setFieldsValue({
-        typeParams: {
+        args: {
           values: [],
         },
       });
@@ -292,7 +292,7 @@ export default function SchemaEditorFieldTunerComponent({
               </Select>
             </Form.Item>
 
-            <Form.List name={['typeParams', 'values']}>
+            <Form.List name={['args', 'values']}>
               {(valueFields, { add, remove }) => {
                 return (
                   <Form.Item
