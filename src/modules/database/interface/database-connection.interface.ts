@@ -40,7 +40,7 @@ export interface IDatabaseConnection {
    *
    * It may strip invalid relations until the referenced schema is added.
    */
-  associate(schemas: ISchema[]): Promise<IDatabaseConnection>;
+  associate(schemas: ISchema[]): Promise<number>;
 
   /**
    * Get the associated schemas.

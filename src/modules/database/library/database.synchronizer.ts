@@ -51,7 +51,9 @@ export class DatabaseSynchronizer {
     await this.connection.knex.schema.dropTableIfExists(tableName);
   }
 
-  async sync() {
+  async sync(): Promise<number> {
+    let changeQueries = 0;
+
     const startAt = Date.now();
     const instructions: ChangeStep[] = [];
 
@@ -62,7 +64,7 @@ export class DatabaseSynchronizer {
 
     // Nothing has changed, skip early.
     if (!changes.length) {
-      return;
+      return changeQueries;
     }
 
     // Dependency tree is used to remove foreign keys
@@ -125,46 +127,235 @@ export class DatabaseSynchronizer {
 
       queries.forEach(q => console.log('--SQL:\t', q.toQuery()));
 
+      changeQueries += queries.length;
+
       await Promise.all(queries);
     }
 
     this.logger.info('Finished in [%d] ms', Date.now() - startAt);
+
+    return changeQueries;
   }
 
   protected async doAlterTable(schema: ISchema): Promise<ChangeStep[]> {
     const instructions: ChangeStep[] = [];
 
+    const knownSchema = this.connection.toDialectSchema(cloneDeep(schema));
     const revSchema = this.connection.toDialectSchema(
       await this.toSchema(schema.tableName),
     );
 
     const revStruct = this.connection.toStructure(revSchema);
-    const knownStruct = this.connection.toStructure(schema);
+    const knownStruct = this.connection.toStructure(knownSchema);
 
     if (!isEqual(revStruct, knownStruct)) {
-      // const alterQuery = connection.schema.table(schema.tableName, table => {});
       const changes = diff(revStruct, knownStruct);
+
+      // Find the column remove, because everythings shift when a column removed,
+      // and the operations go nuts.
 
       for (const change of changes) {
         // Field has been removed
-        if (change.op === 'remove' && change.path[0] === 'fields') {
+        if (change.op === 'remove' && change.path[0] === 'columns') {
+          // Removes a column
           instructions.push({
             type: 'drop',
-            query: this.connection.knex.schema.alterTable(schema.tableName, t =>
-              t.dropColumn(revStruct.columns[change.path[1]].columnName),
+            query: this.connection.knex.schema.alterTable(
+              knownSchema.tableName,
+              t => t.dropColumn(revStruct.columns[change.path[1]].columnName),
             ),
           });
+        } else if (change.op === 'add' && change.path[0] === 'columns') {
+          // Adds a new column
+          const newField = knownSchema.fields[change.path[1] as number];
+
+          instructions.push({
+            type: 'create',
+            query: this.connection.knex.schema.alterTable(
+              knownSchema.tableName,
+              t => this.addColumn(t, newField, new Map()),
+            ),
+          });
+        } else {
+          console.log('Struct mismatch!', changes);
+          console.log('Known', inspect(knownStruct, false, 4, true));
+          console.log('Reversed', inspect(revStruct, false, 4, true));
+          if (1) process.exit(1);
         }
       }
-
-      console.log('Struct mismatch!', changes);
-      console.log('Known', inspect(knownStruct, false, 4, true));
-      console.log('Reversed', inspect(revStruct, false, 4, true));
-
-      if (1) process.exit(1);
     }
 
     return instructions;
+  }
+
+  protected addColumn(
+    table: Knex.TableBuilder,
+    f: IField,
+    typeChecks: Map<string, { exists: boolean; name: string }>,
+  ) {
+    let col: Knex.ColumnBuilder;
+
+    switch (f.type) {
+      case FieldType.BOOLEAN:
+        col = table.boolean(f.columnName);
+        break;
+      case FieldType.DATETIME:
+        col = table.datetime(f.columnName);
+        break;
+      case FieldType.DATEONLY:
+        col = table.date(f.columnName);
+        break;
+      case FieldType.TIME:
+        col = table.time(f.columnName);
+        break;
+
+      case FieldType.JSON:
+        col = table.json(f.columnName);
+        break;
+      case FieldType.TEXT:
+        let textLength: string = 'text';
+
+        switch (f.typeParams?.length) {
+          case 'tiny':
+            textLength = 'tinytext';
+            break;
+          case 'medium':
+            textLength = 'mediumtext';
+            break;
+          case 'long':
+            textLength = 'longtext';
+            break;
+        }
+
+        if (textLength === 'tinytext') {
+          col = table.specificType(f.columnName, 'tinytext');
+        } else {
+          col = table.text(f.columnName, textLength);
+        }
+
+        break;
+      case FieldType.UUID:
+        col = table.uuid(f.columnName);
+        break;
+      case FieldType.STRING:
+        let stringLength: number;
+
+        if (f.typeParams?.length) {
+          if (typeof f.typeParams.length === 'number') {
+            stringLength = f.typeParams.length;
+          }
+        }
+
+        col = table.string(f.columnName, stringLength);
+        break;
+
+      // Integers >
+      case FieldType.TINYINT:
+        col = table.tinyint(f.columnName);
+        break;
+      case FieldType.SMALLINT:
+        col = table.specificType(f.columnName, 'smallint');
+        break;
+      case FieldType.MEDIUMINT:
+        col = table.specificType(f.columnName, 'mediumint');
+        break;
+      case FieldType.INTEGER:
+        col = table.integer(
+          f.columnName,
+          (f.typeParams.length as number) ?? undefined,
+        );
+        break;
+      case FieldType.BIGINT:
+        col = table.bigInteger(f.columnName);
+        break;
+      // Integers &
+
+      case FieldType.FLOAT:
+        col = table.float(f.columnName);
+        break;
+      case FieldType.REAL:
+      case FieldType.DOUBLE:
+        col = table.double(f.columnName);
+        break;
+      case FieldType.DECIMAL:
+        col = table.decimal(
+          f.columnName,
+          f.typeParams.precision,
+          f.typeParams.scale,
+        );
+        break;
+      case FieldType.BLOB:
+        col = table.binary(f.columnName);
+        break;
+      case FieldType.ENUM:
+        const typeFor = typeChecks.get(f.reference);
+
+        col = table.enum(f.columnName, f.typeParams.values, {
+          useNative: true,
+          enumName: typeFor.name,
+          existingType: typeFor.exists,
+        });
+
+        break;
+      case FieldType.JSONB:
+        col = table.jsonb(f.columnName);
+        break;
+      case FieldType.HSTORE:
+        col = table.specificType(f.columnName, 'HSTORE');
+        break;
+      case FieldType.CHAR:
+        let charLength: number;
+
+        if (f.typeParams?.length) {
+          if (typeof f.typeParams.length === 'number') {
+            charLength = f.typeParams.length;
+          }
+        }
+
+        col = table.specificType(
+          f.columnName,
+          'char' + (charLength ? `(${charLength})` : ''),
+        );
+        break;
+      case FieldType.CIDR:
+        col = table.specificType(f.columnName, 'CIDR');
+        break;
+      case FieldType.INET:
+        col = table.specificType(f.columnName, 'INET');
+        break;
+      case FieldType.MACADDR:
+        col = table.specificType(f.columnName, 'MACADDR');
+        break;
+      default:
+        throw new Exception(`Unhandled type [${f.type}]`);
+    }
+
+    // Field modifiers
+    if (f.typeParams.unsigned) {
+      col = col.unsigned();
+    }
+
+    // Add nullable
+    if (f.tags.includes(FieldTag.NULLABLE) || f.defaultValue === null) {
+      col = col.nullable();
+    } else {
+      col = col.notNullable();
+    }
+
+    if (f.defaultValue !== undefined) {
+      const defType = typeof f.defaultValue;
+
+      switch (defType) {
+        case 'boolean':
+        case 'number':
+        case 'string':
+          col.defaultTo(f.defaultValue as string);
+          break;
+        case 'object':
+          col.defaultTo(JSON.stringify(f.defaultValue));
+          break;
+      }
+    }
   }
 
   protected async createTable(schema: ISchema): Promise<ChangeStep[]> {
@@ -201,169 +392,7 @@ export class DatabaseSynchronizer {
         schema.tableName,
         table => {
           for (const f of schema.fields) {
-            let col: Knex.ColumnBuilder;
-
-            switch (f.type) {
-              case FieldType.BOOLEAN:
-                col = table.boolean(f.columnName);
-                break;
-              case FieldType.DATETIME:
-                col = table.datetime(f.columnName);
-                break;
-              case FieldType.DATEONLY:
-                col = table.date(f.columnName);
-                break;
-              case FieldType.TIME:
-                col = table.time(f.columnName);
-                break;
-
-              case FieldType.JSON:
-                col = table.json(f.columnName);
-                break;
-              case FieldType.TEXT:
-                let textLength: string = 'text';
-
-                switch (f.typeParams?.length) {
-                  case 'tiny':
-                    textLength = 'tinytext';
-                    break;
-                  case 'medium':
-                    textLength = 'mediumtext';
-                    break;
-                  case 'long':
-                    textLength = 'longtext';
-                    break;
-                }
-
-                if (textLength === 'tinytext') {
-                  col = table.specificType(f.columnName, 'tinytext');
-                } else {
-                  col = table.text(f.columnName, textLength);
-                }
-
-                break;
-              case FieldType.UUID:
-                col = table.uuid(f.columnName);
-                break;
-              case FieldType.STRING:
-                let stringLength: number;
-
-                if (f.typeParams?.length) {
-                  if (typeof f.typeParams.length === 'number') {
-                    stringLength = f.typeParams.length;
-                  }
-                }
-
-                col = table.string(f.columnName, stringLength);
-                break;
-
-              // Integers >
-              case FieldType.TINYINT:
-                col = table.tinyint(f.columnName);
-                break;
-              case FieldType.SMALLINT:
-                col = table.specificType(f.columnName, 'smallint');
-                break;
-              case FieldType.MEDIUMINT:
-                col = table.specificType(f.columnName, 'mediumint');
-                break;
-              case FieldType.INTEGER:
-                col = table.integer(
-                  f.columnName,
-                  (f.typeParams.length as number) ?? undefined,
-                );
-                break;
-              case FieldType.BIGINT:
-                col = table.bigInteger(f.columnName);
-                break;
-              // Integers &
-
-              case FieldType.FLOAT:
-                col = table.float(f.columnName);
-                break;
-              case FieldType.REAL:
-              case FieldType.DOUBLE:
-                col = table.double(f.columnName);
-                break;
-              case FieldType.DECIMAL:
-                col = table.decimal(
-                  f.columnName,
-                  f.typeParams.precision,
-                  f.typeParams.scale,
-                );
-                break;
-              case FieldType.BLOB:
-                col = table.binary(f.columnName);
-                break;
-              case FieldType.ENUM:
-                const typeFor = typeChecks.get(f.reference);
-
-                col = table.enum(f.columnName, f.typeParams.values, {
-                  useNative: true,
-                  enumName: typeFor.name,
-                  existingType: typeFor.exists,
-                });
-
-                break;
-              case FieldType.JSONB:
-                col = table.jsonb(f.columnName);
-                break;
-              case FieldType.HSTORE:
-                col = table.specificType(f.columnName, 'HSTORE');
-                break;
-              case FieldType.CHAR:
-                let charLength: number;
-
-                if (f.typeParams?.length) {
-                  if (typeof f.typeParams.length === 'number') {
-                    charLength = f.typeParams.length;
-                  }
-                }
-
-                col = table.specificType(
-                  f.columnName,
-                  'char' + (charLength ? `(${charLength})` : ''),
-                );
-                break;
-              case FieldType.CIDR:
-                col = table.specificType(f.columnName, 'CIDR');
-                break;
-              case FieldType.INET:
-                col = table.specificType(f.columnName, 'INET');
-                break;
-              case FieldType.MACADDR:
-                col = table.specificType(f.columnName, 'MACADDR');
-                break;
-              default:
-                throw new Exception(`Unhandled type [${f.type}]`);
-            }
-
-            // Field modifiers
-            if (f.typeParams.unsigned) {
-              col = col.unsigned();
-            }
-
-            // Add nullable
-            if (f.tags.includes(FieldTag.NULLABLE) || f.defaultValue === null) {
-              col = col.nullable();
-            } else {
-              col = col.notNullable();
-            }
-
-            if (f.defaultValue !== undefined) {
-              const defType = typeof f.defaultValue;
-
-              switch (defType) {
-                case 'boolean':
-                case 'number':
-                case 'string':
-                  col.defaultTo(f.defaultValue as string);
-                  break;
-                case 'object':
-                  col.defaultTo(JSON.stringify(f.defaultValue));
-                  break;
-              }
-            }
+            this.addColumn(table, f, typeChecks);
           }
         },
       ),

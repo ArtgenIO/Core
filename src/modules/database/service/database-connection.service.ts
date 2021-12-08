@@ -42,7 +42,9 @@ export class DatabaseConnectionService {
     this.connections.set(database.name, connection);
 
     // Runs the synchornization on association.
-    return await connection.associate(schemas);
+    await connection.associate(schemas);
+
+    return connection;
   }
 
   /**

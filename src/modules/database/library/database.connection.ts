@@ -69,7 +69,7 @@ export class DatabaseConnection implements IDatabaseConnection {
     return Array.from(this.associations.values()).map(r => r.schema);
   }
 
-  async associate(schemas: ISchema[]): Promise<IDatabaseConnection> {
+  async associate(schemas: ISchema[]): Promise<number> {
     for (const schema of schemas) {
       const key = schema.reference;
 
@@ -110,9 +110,7 @@ export class DatabaseConnection implements IDatabaseConnection {
       this.mapRelations(this.getModel(schema.reference), schema);
     }
 
-    await this.synchornizer.sync();
-
-    return this;
+    return await this.synchornizer.sync();
   }
 
   /**
@@ -434,7 +432,7 @@ export class DatabaseConnection implements IDatabaseConnection {
 
     // Strip fields
     const fields = Array.from(schema.fields)
-      .sort((a, b) => (a.columnName > b.columnName ? 1 : -1))
+      //.sort((a, b) => (a.columnName > b.columnName ? 1 : -1))
       .map(f => ({
         columnName: f.columnName,
         type: f.type === FieldType.JSONB ? FieldType.JSON : f.type,
