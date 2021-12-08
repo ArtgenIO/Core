@@ -24,7 +24,14 @@ import { IDatabaseConnection, IEnumeratorStructure } from '../interface';
 import { DatabaseInspector } from './database.inspector';
 
 interface ChangeStep {
-  type: 'backup' | 'copy' | 'create' | 'constraint' | 'foreign' | 'drop';
+  type:
+    | 'backup'
+    | 'copy'
+    | 'create'
+    | 'constraint'
+    | 'foreign'
+    | 'drop'
+    | 'alter';
   query: Knex.SchemaBuilder;
 }
 
@@ -111,6 +118,7 @@ export class DatabaseSynchronizer {
       'constraint',
       'foreign',
       'drop',
+      'alter',
     ];
 
     for (const phase of order) {
@@ -150,10 +158,38 @@ export class DatabaseSynchronizer {
 
     if (!isEqual(revStruct, knownStruct)) {
       const changes = diff(revStruct, knownStruct);
+      const alterColumns: string[] = [];
 
       for (const change of changes) {
-        // Field has been removed
-        if (change.op === 'remove' && change.path[0] === 'columns') {
+        console.log('Struct mismatch!', changes);
+        console.log('Known', inspect(knownStruct, false, 4, true));
+        console.log('Reversed', inspect(revStruct, false, 4, true));
+
+        // Field has been altered
+        if (change.path[0] === 'columns' && change.path.length > 2) {
+          if (alterColumns.includes(change.path[1] as string)) {
+            continue;
+          } else {
+            alterColumns.push(change.path[1] as string);
+          }
+
+          // replace a column
+          const changedField = knownSchema.fields.find(
+            f => f.columnName == change.path[1],
+          );
+
+          instructions.push({
+            type: 'alter',
+            query: this.connection.knex.schema.alterTable(
+              knownSchema.tableName,
+              t => this.addColumn(t, changedField, new Map()).alter(),
+            ),
+          });
+        } else if (
+          change.op === 'remove' &&
+          change.path[0] === 'columns' &&
+          change.path.length == 2
+        ) {
           // Removes a column
           instructions.push({
             type: 'drop',
@@ -162,7 +198,11 @@ export class DatabaseSynchronizer {
               t => t.dropColumn(change.path[1] as string),
             ),
           });
-        } else if (change.op === 'add' && change.path[0] === 'columns') {
+        } else if (
+          change.op === 'add' &&
+          change.path[0] === 'columns' &&
+          change.path.length == 2
+        ) {
           // Adds a new column
           const newField = knownSchema.fields.find(
             f => f.columnName == change.path[1],
@@ -355,6 +395,8 @@ export class DatabaseSynchronizer {
           break;
       }
     }
+
+    return col;
   }
 
   protected async createTable(schema: ISchema): Promise<ChangeStep[]> {

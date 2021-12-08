@@ -91,6 +91,14 @@ describe('Database E2E', () => {
     const mod3Changes = await connection.associate([mod3]);
     expect(mod3Changes).toBeGreaterThanOrEqual(1);
 
+    // Replace the int to text
+    const mod4 = cloneDeep(mod3);
+    mod4.fields.find(f => f.reference == 'xtraTxt').type = FieldType.STRING;
+    mod4.fields.find(f => f.reference == 'xtraTxt').typeParams.length = 52;
+
+    const mod4Changes = await connection.associate([mod4]);
+    expect(mod4Changes).toBeGreaterThanOrEqual(1);
+
     // Clean up
     //await connection.synchornizer.deleteTable(ref).catch(e => {});
   });
