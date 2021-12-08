@@ -24,7 +24,7 @@ export default function ExtensionPanelWrapper() {
   const [openedMenu, setOpenedMenu] = useState([]);
 
   const [{ data, loading, error }] = useHttpClient<IBlueprint>(
-    `/api/rest/system/extension/${params.id}`,
+    `/api/rest/main/extension/${params.id}`,
   );
 
   useEffect(() => {

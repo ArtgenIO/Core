@@ -36,7 +36,7 @@ export default function OfflineExtensions() {
   const [{ data: extensions, loading, error }, refetch] = useHttpClient<
     IBlueprint[]
   >(
-    routeCrudAPI({ database: 'system', reference: 'Extension' }) +
+    routeCrudAPI({ database: 'main', reference: 'Extension' }) +
       new QueryBuilder().top(100).toQuery(),
   );
 
@@ -110,7 +110,7 @@ export default function OfflineExtensions() {
               icon={<QuestionCircleOutlined />}
               onConfirm={() =>
                 client
-                  .delete(`/api/rest/system/extension/${ext.id}`)
+                  .delete(`/api/rest/main/extension/${ext.id}`)
                   .then(() => message.warn('Extension deleted'))
                   .then(() => refetch())
               }

@@ -26,7 +26,7 @@ import { IDatabase } from '../interface';
 
 export default function DatabaseListComponent() {
   const [{ data: databases, loading, error }] = useHttpClient<IDatabase[]>(
-    routeCrudAPI({ database: 'system', reference: 'Database' }) +
+    routeCrudAPI({ database: 'main', reference: 'Database' }) +
       new QueryBuilder().top(100).toQuery(),
   );
 

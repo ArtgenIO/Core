@@ -16,7 +16,7 @@ export default function EditExtension() {
   const [extension, setExtension] = useState<IBlueprint>(null);
 
   const [{ data, loading }] = useHttpClient<IBlueprint>(
-    `/api/rest/system/extension/${params.id}`,
+    `/api/rest/main/extension/${params.id}`,
   );
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function EditExtension() {
           setExtension={setExtension}
           onSave={() => {
             client
-              .patch(`/api/rest/system/extension/${extension.id}`, extension)
+              .patch(`/api/rest/main/extension/${extension.id}`, extension)
               .then(() => message.success('Extension updated!'))
               .then(() => history.push('/admin/ext/store'));
           }}

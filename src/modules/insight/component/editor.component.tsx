@@ -22,7 +22,7 @@ export default function AnalyticsEditorComponent() {
       client
         .get<unknown[]>(
           routeCrudAPI({
-            database: 'system',
+            database: 'main',
             reference: schema.reference,
           }),
         )
@@ -34,7 +34,7 @@ export default function AnalyticsEditorComponent() {
 
   const [{ data, loading, error }] = useHttpClient<ISchema[]>(
     routeCrudAPI({
-      database: 'system',
+      database: 'main',
       reference: 'Schema',
     }),
   );

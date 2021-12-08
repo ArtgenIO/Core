@@ -28,7 +28,7 @@ export default function RelationsComponent({
   );
 
   const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
-    routeCrudAPI({ database: 'system', reference: 'Schema' }) +
+    routeCrudAPI({ database: 'main', reference: 'Schema' }) +
       new QueryBuilder()
         .top(1000)
         .filter(f => f.filterExpression('database', 'eq', schema.database))

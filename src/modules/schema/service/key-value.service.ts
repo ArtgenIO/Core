@@ -13,7 +13,7 @@ export class KeyValueService {
   ) {}
 
   async get<T = string>(key: string, defaultValue: T = null): Promise<T> {
-    const model = this.schema.getModel<KVModel>('system', 'KeyValueStorage');
+    const model = this.schema.getModel<KVModel>('main', 'KeyValueStorage');
     const record = await model.query().findById(key);
 
     if (record) {
@@ -24,7 +24,7 @@ export class KeyValueService {
   }
 
   async set<T = string>(key: string, value: T): Promise<T> {
-    const model = this.schema.getModel<KVModel>('system', 'KeyValueStorage');
+    const model = this.schema.getModel<KVModel>('main', 'KeyValueStorage');
     let record = await model.query().findById(key);
 
     if (!record) {

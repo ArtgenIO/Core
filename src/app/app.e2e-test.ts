@@ -98,19 +98,19 @@ describe('Application (e2e)', () => {
       };
     });
 
-    test('should be able to read the system database', async () => {
+    test('should be able to read the main database', async () => {
       const srv = await getServer();
 
       const response = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/database/system',
+        url: '/api/rest/main/database/main',
         headers: authHeader,
       });
 
       expect(response.statusCode).toBe(200);
       expect(response.json()).toHaveProperty('name');
       expect(response.json()).toHaveProperty('dsn');
-      expect(response.json().name).toBe('system');
+      expect(response.json().name).toBe('main');
     });
 
     // Need to have some transformer to handle this JSON hacks, simply can't store JSON encoded string with most of the driver.
@@ -123,7 +123,7 @@ describe('Application (e2e)', () => {
 
       const response = await srv.inject({
         method: 'POST',
-        url: '/api/rest/system/key-value-storage',
+        url: '/api/rest/main/key-value-storage',
         headers: authHeader,
         payload,
       });
@@ -133,7 +133,7 @@ describe('Application (e2e)', () => {
 
       const readback = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/key-value-storage/testarr',
+        url: '/api/rest/main/key-value-storage/testarr',
         headers: authHeader,
       });
 
@@ -150,7 +150,7 @@ describe('Application (e2e)', () => {
 
       const response = await srv.inject({
         method: 'POST',
-        url: '/api/rest/system/key-value-storage',
+        url: '/api/rest/main/key-value-storage',
         headers: authHeader,
         payload,
       });
@@ -160,7 +160,7 @@ describe('Application (e2e)', () => {
 
       const readback = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/key-value-storage/teststr',
+        url: '/api/rest/main/key-value-storage/teststr',
         headers: authHeader,
       });
 

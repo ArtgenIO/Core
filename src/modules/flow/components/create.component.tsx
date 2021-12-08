@@ -14,7 +14,7 @@ export default function CreateWorkflowComponent() {
 
   const sendRequest = async (data: Omit<ILogic, 'id'>) => {
     const response = await httpClient.post<ILogic>(
-      '/api/rest/system/workflow',
+      '/api/rest/main/workflow',
       data,
     );
 

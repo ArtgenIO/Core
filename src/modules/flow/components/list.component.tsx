@@ -34,7 +34,7 @@ export default function WorkflowListComponent() {
 
     if (workflow) {
       try {
-        await httpClient.delete(`/api/rest/system/workflow/${id}`);
+        await httpClient.delete(`/api/rest/main/workflow/${id}`);
 
         setWorkflows(wfs => wfs.filter(wf => wf.id !== id));
 
@@ -52,9 +52,7 @@ export default function WorkflowListComponent() {
 
   useEffect(() => {
     httpClient
-      .get<ILogic[]>(
-        routeCrudAPI({ database: 'system', reference: 'Workflow' }),
-      )
+      .get<ILogic[]>(routeCrudAPI({ database: 'main', reference: 'Workflow' }))
       .then(response => {
         setWorkflows(response.data);
         setIsLoading(false);

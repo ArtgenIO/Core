@@ -4,12 +4,12 @@
   "version": "0.0.1",
   "icon": "people",
   "source": "offline",
-  "database": "system",
+  "database": "main",
   "config": {},
   "schemas": [
     {
       "extensionId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
-      "database": "system",
+      "database": "main",
       "reference": "Account",
       "title": "Accounts",
       "tableName": "__identity_accounts",
@@ -73,7 +73,7 @@
     },
     {
       "extensionId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
-      "database": "system",
+      "database": "main",
       "reference": "AccessKey",
       "title": "Access Keys",
       "tableName": "__identity_access_keys",
@@ -164,7 +164,7 @@
           "id": "rest.find.1",
           "type": "rest.find",
           "config": {
-            "database": "system",
+            "database": "main",
             "fields": [
               "id",
               "password"
@@ -367,7 +367,7 @@
           "id": "content.create.1",
           "type": "content.create",
           "config": {
-            "database": "system",
+            "database": "main",
             "schema": "Account"
           },
           "title": "Create Account",

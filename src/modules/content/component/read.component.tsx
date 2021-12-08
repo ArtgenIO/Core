@@ -44,7 +44,7 @@ export default function CrudReadComponent() {
 
   // Load schema
   const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<ISchema[]>(
-    routeCrudAPI({ database: 'system', reference: 'Schema' }) +
+    routeCrudAPI({ database: 'main', reference: 'Schema' }) +
       new QueryBuilder()
         .filter(f =>
           f

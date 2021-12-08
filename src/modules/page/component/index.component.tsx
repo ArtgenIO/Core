@@ -16,7 +16,7 @@ export default function PageIndexComponent() {
   const [search, setSearch] = useState<string>(null);
 
   const [{ data: pages, loading, error }] = useHttpClient<IPage[]>(
-    routeCrudAPI({ database: 'system', reference: 'Page' }) +
+    routeCrudAPI({ database: 'main', reference: 'Page' }) +
       new QueryBuilder()
         .select('id,title,domain,path,tags')
         .orderBy('id')

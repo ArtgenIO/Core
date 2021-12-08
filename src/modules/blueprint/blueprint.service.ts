@@ -22,21 +22,17 @@ export class BlueprintService {
   ) {}
 
   async seed() {
-    const sysExists = await this.rest.read('system', 'Extension', {
+    const sysExists = await this.rest.read('main', 'Extension', {
       id: this.systemBlueprint.id,
     });
 
     if (!sysExists) {
-      await this.rest.create(
-        'system',
-        'Extension',
-        this.systemBlueprint as any,
-      );
+      await this.rest.create('main', 'Extension', this.systemBlueprint as any);
       this.logger.info('Extension [system] installed');
 
       // Install the identity extension too
       await this.importFromSource(
-        'system',
+        'main',
         JSON.parse(
           readFileSync(join(SEED_DIR, 'identity.extension.json')).toString(),
         ),
@@ -58,7 +54,7 @@ export class BlueprintService {
       schema.database = database;
 
       await this.rest
-        .create('system', 'Schema', schema as any)
+        .create('main', 'Schema', schema as any)
         .then(() =>
           this.logger.info(
             'Schema [%s][%s] installed',
@@ -76,7 +72,7 @@ export class BlueprintService {
     // TODO find database references and replace them
     for (const wf of extension.workflows) {
       await this.rest
-        .create('system', 'Workflow', wf as any)
+        .create('main', 'Workflow', wf as any)
         .then(() =>
           this.logger.info(
             'Workflow [%s][%s] installed',
@@ -92,7 +88,7 @@ export class BlueprintService {
     }
 
     // Save the extension
-    await this.rest.create('system', 'Extension', extension as any);
+    await this.rest.create('main', 'Extension', extension as any);
     this.logger.info('Extension [%s] installed', extension.title);
 
     return extension;

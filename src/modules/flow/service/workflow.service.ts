@@ -26,7 +26,7 @@ export class FlowService {
   async seed(): Promise<void> {
     for (const wf of this.sysExt.workflows) {
       const exists = await this.schema
-        .getModel('system', 'Workflow')
+        .getModel('main', 'Workflow')
         .query()
         .findById(wf.id);
 
@@ -38,13 +38,13 @@ export class FlowService {
 
   async findAll(): Promise<ILogic[]> {
     return (
-      await this.schema.getModel<FlowModel>('system', 'Workflow').query()
+      await this.schema.getModel<FlowModel>('main', 'Workflow').query()
     ).map(wf => wf.$toJson());
   }
 
   async createWorkflowSession(workflowId: string, actionId?: string) {
     const workflow = await this.schema
-      .getModel<FlowModel>('system', 'Workflow')
+      .getModel<FlowModel>('main', 'Workflow')
       .query()
       .findById(workflowId);
 
@@ -61,7 +61,7 @@ export class FlowService {
 
   async createWorkflow(workflow: Omit<ILogic, 'id'>): Promise<ILogic> {
     const record = await this.schema
-      .getModel<FlowModel>('system', 'Workflow')
+      .getModel<FlowModel>('main', 'Workflow')
       .query()
       .insertAndFetch(workflow);
 
@@ -73,7 +73,7 @@ export class FlowService {
 
   async updateWorkflow(workflow: ILogic): Promise<ILogic> {
     const record = await this.schema
-      .getModel<FlowModel>('system', 'Workflow')
+      .getModel<FlowModel>('main', 'Workflow')
       .query()
       .findById(workflow.id);
 

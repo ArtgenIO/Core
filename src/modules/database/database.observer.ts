@@ -17,7 +17,7 @@ export class DatabaseObserver {
     readonly schemaService: SchemaService,
   ) {}
 
-  @On('crud.system.Schema.created')
+  @On('crud.main.Schema.created')
   async handleSchemaCreate(schema: ISchema) {
     this.logger.warn('New schema created! [%s]', schema.reference);
 
@@ -31,7 +31,7 @@ export class DatabaseObserver {
     }
   }
 
-  @On('crud.system.Schema.updated')
+  @On('crud.main.Schema.updated')
   async handleSchemaUpdate(schema: ISchema) {
     this.logger.warn('Schema changed! [%s]', schema.reference);
 
@@ -42,7 +42,7 @@ export class DatabaseObserver {
     }
   }
 
-  @On('crud.system.Schema.deleted')
+  @On('crud.main.Schema.deleted')
   async handleSchemaDelete(schema: ISchema) {
     this.logger.warn('Schema delete! [%s]', schema.reference);
 
@@ -55,7 +55,7 @@ export class DatabaseObserver {
     }
   }
 
-  @On('crud.system.Database.deleted')
+  @On('crud.main.Database.deleted')
   async handleDatabaseDelete(database: IDatabase) {
     this.logger.warn('Database [%s] deleted', database.name);
 

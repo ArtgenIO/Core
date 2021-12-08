@@ -15,7 +15,7 @@ export default function DatabaseAddComponent() {
     try {
       await httpClient.post<IDatabase>(
         routeCrudAPI({
-          database: 'system',
+          database: 'main',
           reference: 'Database',
         }),
         formValues,

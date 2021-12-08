@@ -1,5 +1,5 @@
 {
-  "database": "system",
+  "database": "main",
   "reference": "textsxl",
   "tableName": "textsxl",
   "fields": [

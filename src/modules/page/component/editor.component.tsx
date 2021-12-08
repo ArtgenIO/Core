@@ -23,7 +23,7 @@ export default function PageEditorComponent() {
 
   // Load schema
   const storeURL =
-    routeCrudAPI({ database: 'system', reference: 'Page' }) +
+    routeCrudAPI({ database: 'main', reference: 'Page' }) +
     new QueryBuilder()
       .filter(f => f.filterExpression('id', 'eq', route.id))
       .top(1)

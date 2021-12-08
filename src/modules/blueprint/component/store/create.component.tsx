@@ -16,7 +16,7 @@ export default function CreateExtension() {
     id: v4(),
     title: 'My Blog',
     version: '0.0.1',
-    database: 'system',
+    database: 'main',
     source: 'offline',
     config: {},
     schemas: [],
@@ -31,7 +31,7 @@ export default function CreateExtension() {
           setExtension={setExtension}
           onSave={() => {
             client
-              .post('/api/rest/system/extension', extension)
+              .post('/api/rest/main/extension', extension)
               .then(() => message.success('Extension saved!'))
               .then(() => history.push('/admin/ext/store'));
           }}

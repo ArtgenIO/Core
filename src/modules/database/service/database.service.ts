@@ -24,14 +24,14 @@ export class DatabaseService {
    * to initialize a valid connection for the rest of the system.
    *
    * At this point we don't have to handle the errors, because the system
-   * cannot function without the "system" connection, and the kernel will
+   * cannot function without the "main" connection, and the kernel will
    * cancel the bootstrap with the error message.
    *
    * Custom connections may fail and those fails will be logged, but not breaking the system start.
    */
   async bootstrap() {
     const connection = await this.connections.create(
-      this.getSystem(),
+      this.getMainDatabase(),
       this.schemaSvc.getSystem(),
     );
 
@@ -55,14 +55,14 @@ export class DatabaseService {
       const associations = schemas.filter(s => s.database === database.name);
 
       // Connection does not exists yet, load up with the schemas.
-      if (database.name !== 'system') {
+      if (database.name !== 'main') {
         updates.push(
           this.connections
             .create(database, associations)
             .catch(e => this.logger.warn(getErrorMessage(e))),
         );
       }
-      // Existing connection (system)
+      // Existing connection (main)
       else {
         updates.push(connection.associate(associations));
       }
@@ -94,7 +94,7 @@ export class DatabaseService {
    * Synchronize a link's database into the database which stores the connections.
    */
   async synchronize(link: IDatabaseConnection) {
-    const model = this.schemaSvc.getModel<DatabaseModel>('system', 'Database');
+    const model = this.schemaSvc.getModel<DatabaseModel>('main', 'Database');
 
     let record = await model.query().findById(link.database.name);
 
@@ -113,7 +113,7 @@ export class DatabaseService {
    */
   async findAll(): Promise<IDatabase[]> {
     return (
-      await this.schemaSvc.getModel<DatabaseModel>('system', 'Database').query()
+      await this.schemaSvc.getModel<DatabaseModel>('main', 'Database').query()
     ).map(db => db.$toJson());
   }
 
@@ -121,9 +121,9 @@ export class DatabaseService {
    * Generates a database record based on the environment variables.
    * Database type is auto extracted from the DSN.
    */
-  getSystem(): IDatabase {
+  getMainDatabase(): IDatabase {
     return {
-      name: 'system',
+      name: 'main',
       dsn: process.env.ARTGEN_DATABASE_DSN,
     };
   }

@@ -17,7 +17,7 @@ export default function SelectDatabaseComponent({
 }) {
   const [{ data: databases, loading, error }] = useHttpClient<IDatabase[]>(
     routeCrudAPI({
-      database: 'system',
+      database: 'main',
       reference: 'Database',
     }),
   );
@@ -37,7 +37,7 @@ export default function SelectDatabaseComponent({
       <Typography className="mb-8">
         <Typography.Title>
           Select the Target Database
-          <Link to="/admin/content/system/Database/create">
+          <Link to="/admin/content/main/Database/create">
             <Button
               className="float-right"
               type="primary"

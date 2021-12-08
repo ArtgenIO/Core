@@ -44,7 +44,7 @@ describe('Identity (e2e)', () => {
       const srv = await getServer();
 
       const response = await srv.inject({
-        url: '/api/rest/system/database/system',
+        url: '/api/rest/main/database/main',
       });
 
       expect(response.statusCode).toBe(401);
@@ -119,13 +119,13 @@ describe('Identity (e2e)', () => {
 
       const response = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/database/system',
+        url: '/api/rest/main/database/main',
         headers: authHeader,
       });
 
       expect(response.statusCode).toBe(200);
       expect(response.json()).toHaveProperty('name');
-      expect(response.json().name).toBe('system');
+      expect(response.json().name).toBe('main');
     });
   });
 
@@ -137,7 +137,7 @@ describe('Identity (e2e)', () => {
 
       const response = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/database/system',
+        url: '/api/rest/main/database/main',
       });
 
       expect(response.statusCode).toBe(401);
@@ -148,7 +148,7 @@ describe('Identity (e2e)', () => {
 
       const response = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/database/system?access-key=x',
+        url: '/api/rest/main/database/main?access-key=x',
       });
 
       expect(response.statusCode).toBe(401);
@@ -159,7 +159,7 @@ describe('Identity (e2e)', () => {
 
       const response = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/database/system?access-key=336373a4-f61a-4b08-b7b0-43d3147f6e58',
+        url: '/api/rest/main/database/main?access-key=336373a4-f61a-4b08-b7b0-43d3147f6e58',
       });
 
       expect(response.statusCode).toBe(401);
@@ -182,7 +182,7 @@ describe('Identity (e2e)', () => {
 
       const create = await srv.inject({
         method: 'POST',
-        url: '/api/rest/system/access-key',
+        url: '/api/rest/main/access-key',
         headers: {
           Authorization: 'Bearer ' + signin.json().accessToken,
         },
@@ -207,12 +207,12 @@ describe('Identity (e2e)', () => {
 
       const response = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/database/system?access-key=' + validAccessKey,
+        url: '/api/rest/main/database/main?access-key=' + validAccessKey,
       });
 
       expect(response.statusCode).toBe(200);
       expect(response.json()).toHaveProperty('name');
-      expect(response.json().name).toBe('system');
+      expect(response.json().name).toBe('main');
     });
 
     test('should accept the access key (header)', async () => {
@@ -220,7 +220,7 @@ describe('Identity (e2e)', () => {
 
       const response = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/database/system',
+        url: '/api/rest/main/database/main',
         headers: {
           'X-Access-Key': validAccessKey,
         },
@@ -228,7 +228,7 @@ describe('Identity (e2e)', () => {
 
       expect(response.statusCode).toBe(200);
       expect(response.json()).toHaveProperty('name');
-      expect(response.json().name).toBe('system');
+      expect(response.json().name).toBe('main');
     });
 
     test('should be able to read the access key', async () => {
@@ -236,7 +236,7 @@ describe('Identity (e2e)', () => {
 
       const response = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/access-key/' + validAccessKey,
+        url: '/api/rest/main/access-key/' + validAccessKey,
         headers: {
           'X-Access-Key': validAccessKey,
         },
@@ -252,7 +252,7 @@ describe('Identity (e2e)', () => {
 
       const response = await srv.inject({
         method: 'DELETE',
-        url: '/api/rest/system/access-key/' + validAccessKey,
+        url: '/api/rest/main/access-key/' + validAccessKey,
         headers: {
           'X-Access-Key': validAccessKey,
         },
@@ -266,7 +266,7 @@ describe('Identity (e2e)', () => {
 
       const delRes = await srv.inject({
         method: 'GET',
-        url: '/api/rest/system/access-key/' + validAccessKey,
+        url: '/api/rest/main/access-key/' + validAccessKey,
         headers: {
           'X-Access-Key': validAccessKey,
         },

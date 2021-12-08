@@ -16,7 +16,7 @@ export function InjectModel(
     },
     async (ctx: Context, injection): Promise<ModelClass<Model>> =>
       (await ctx.get<SchemaService>(SchemaService.name)).getModel(
-        'system',
+        'main',
         reference,
       ),
   );

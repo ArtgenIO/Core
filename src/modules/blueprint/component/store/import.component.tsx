@@ -23,7 +23,7 @@ export default function ImportExtension() {
   const [source, setSource] = useState('');
   const [{ data: databases, loading }] = useHttpClient<IDatabase[]>(
     routeCrudAPI({
-      database: 'system',
+      database: 'main',
       reference: 'Database',
     }),
   );
@@ -36,7 +36,7 @@ export default function ImportExtension() {
             {
               ...resp.data,
               source: 'cloud',
-              database: 'system',
+              database: 'main',
               installedAt: resp.data.createdAt,
             },
             null,

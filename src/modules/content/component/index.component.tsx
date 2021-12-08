@@ -18,7 +18,7 @@ export default function CrudIndexComponent() {
   const [search, setSearch] = useState<string>(null);
 
   const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
-    routeCrudAPI({ database: 'system', reference: 'Schema' }) +
+    routeCrudAPI({ database: 'main', reference: 'Schema' }) +
       new QueryBuilder()
         .select('database,reference,title,tableName,tags')
         .orderBy('title')

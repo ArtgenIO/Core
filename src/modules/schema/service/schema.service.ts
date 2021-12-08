@@ -34,7 +34,7 @@ export class SchemaService {
    */
   async synchronize(link: IDatabaseConnection) {
     // Get the schema repository.
-    const model = this.getModel<SchemaModel>('system', 'Schema');
+    const model = this.getModel<SchemaModel>('main', 'Schema');
 
     for (const schema of link.getSchemas()) {
       const exists = await model.query().findOne({
@@ -74,10 +74,7 @@ export class SchemaService {
    * ensure the local cache is up to date.
    */
   async findAll(): Promise<ISchema[]> {
-    const schemas = await this.getModel<SchemaModel>(
-      'system',
-      'Schema',
-    ).query();
+    const schemas = await this.getModel<SchemaModel>('main', 'Schema').query();
 
     this.registry = schemas.map(s => s.$toJson());
 
@@ -105,7 +102,7 @@ export class SchemaService {
   }
 
   async create(schema: ISchema) {
-    const model = this.getModel<SchemaModel>('system', 'Schema');
+    const model = this.getModel<SchemaModel>('main', 'Schema');
     await model.query().insert(schema);
 
     this.registry.push(schema);
@@ -115,7 +112,7 @@ export class SchemaService {
   }
 
   async update(update: ISchema) {
-    const model = this.getModel<SchemaModel>('system', 'Schema');
+    const model = this.getModel<SchemaModel>('main', 'Schema');
     const record = await model.query().findOne({
       database: update.database,
       reference: update.reference,

@@ -2,7 +2,7 @@ import { Modal, Typography } from 'antd';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Elements, isNode, Node, OnLoadParams } from 'react-flow-renderer';
 import { ISchema } from '../../../schema';
-import { CollectionSerializer } from '../../../schema/serializer/schema.serializer';
+import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
 import SchemaEditorFrameComponent from './schema-editor/_frame.component';
 
 type Props = {
@@ -59,14 +59,14 @@ export default function DatabaseSchemaEditorComponent({
         setOpenedNode(null);
 
         setElements(() => {
-          const update = CollectionSerializer.fromElements(
+          const update = SchemaSerializer.fromElements(
             flowInstance.getElements(),
           );
           const idx = update.findIndex(s => s.reference === originalRef);
 
           update.splice(idx, 1, schema);
 
-          return CollectionSerializer.toElements(update);
+          return SchemaSerializer.toElements(update);
         });
       }}
     >

@@ -2,7 +2,7 @@ import { CloudDownloadOutlined } from '@ant-design/icons';
 import { Input, Modal } from 'antd';
 import { useState } from 'react';
 import { OnLoadParams } from 'react-flow-renderer';
-import { CollectionSerializer } from '../../../schema/serializer/schema.serializer';
+import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
 
 export default function DatabaseSerializerComponent({
   flowInstance,
@@ -12,9 +12,7 @@ export default function DatabaseSerializerComponent({
   const [source, setSource] = useState<string>('');
 
   const doShowSerializer = () => {
-    const schemas = CollectionSerializer.fromElements(
-      flowInstance.getElements(),
-    );
+    const schemas = SchemaSerializer.fromElements(flowInstance.getElements());
 
     setSource(JSON.stringify(schemas, null, 2));
   };

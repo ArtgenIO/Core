@@ -12,13 +12,13 @@ export class BlueprintObserver {
     readonly rest: RestService,
   ) {}
 
-  @On('crud.system.Blueprint.deleted')
+  @On('crud.main.Blueprint.deleted')
   async handleBlueprintDelete(bp: IBlueprint) {
     this.logger.warn('Extension deletion detected!');
 
     for (const wf of bp.workflows) {
       await this.rest
-        .delete('system', 'Workflow', {
+        .delete('main', 'Workflow', {
           id: wf.id,
         })
         .then(() => this.logger.info('Associated workflow [%s] deleted', wf.id))
@@ -29,7 +29,7 @@ export class BlueprintObserver {
 
     for (const schema of bp.schemas) {
       this.rest
-        .delete('system', 'Schema', {
+        .delete('main', 'Schema', {
           database: schema.database,
           reference: schema.reference,
         })

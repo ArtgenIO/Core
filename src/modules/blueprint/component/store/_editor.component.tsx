@@ -46,7 +46,7 @@ export default function ExtensionEdiorComponent({
     ISchema[]
   >(
     routeCrudAPI({
-      database: 'system',
+      database: 'main',
       reference: 'Schema',
     }),
   );
@@ -55,7 +55,7 @@ export default function ExtensionEdiorComponent({
     ILogic[]
   >(
     routeCrudAPI({
-      database: 'system',
+      database: 'main',
       reference: 'Workflow',
     }),
   );

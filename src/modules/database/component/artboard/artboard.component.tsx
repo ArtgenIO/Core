@@ -14,7 +14,7 @@ import { useParams } from 'react-router';
 import { useHttpClientOld } from '../../../admin/library/http-client';
 import { routeCrudAPI } from '../../../content/util/schema-url';
 import { ISchema } from '../../../schema';
-import { CollectionSerializer } from '../../../schema/serializer/schema.serializer';
+import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
 import { createEmptySchema } from '../../../schema/util/get-new-schema';
 import { createLayouOrganizer } from '../../../schema/util/layout-organizer';
 import './artboard.component.less';
@@ -29,7 +29,7 @@ export default function DatabaseArtboardComponent() {
   const databaseName = useParams<{ database: string }>().database;
   const apiReadUrl =
     routeCrudAPI({
-      database: 'system',
+      database: 'main',
       reference: 'Schema',
     }) +
     new QueryBuilder()
@@ -52,14 +52,14 @@ export default function DatabaseArtboardComponent() {
       const response = await httpClient.get<ISchema[]>(apiReadUrl);
 
       setElements(() =>
-        layoutOrganizer(CollectionSerializer.toElements(response.data)),
+        layoutOrganizer(SchemaSerializer.toElements(response.data)),
       );
       setSavedState(response.data);
     })();
   }, [databaseName]);
 
   const doSave = async () => {
-    const currentState = CollectionSerializer.fromElements(
+    const currentState = SchemaSerializer.fromElements(
       flowInstance.getElements(),
     );
 
@@ -71,7 +71,7 @@ export default function DatabaseArtboardComponent() {
         await httpClient
           .post(
             routeCrudAPI({
-              database: 'system',
+              database: 'main',
               reference: 'Schema',
             }),
             schema,
@@ -93,7 +93,7 @@ export default function DatabaseArtboardComponent() {
           await httpClient
             .patch(
               routeCrudAPI({
-                database: 'system',
+                database: 'main',
                 reference: 'Schema',
               }) +
                 new QueryBuilder()
@@ -126,7 +126,7 @@ export default function DatabaseArtboardComponent() {
       await httpClient
         .delete(
           routeCrudAPI({
-            database: 'system',
+            database: 'main',
             reference: 'Schema',
           }) +
             new QueryBuilder()
@@ -155,13 +155,13 @@ export default function DatabaseArtboardComponent() {
   };
 
   const doNew = () => {
-    const currentState = CollectionSerializer.fromElements(
+    const currentState = SchemaSerializer.fromElements(
       flowInstance.getElements(),
     );
 
     currentState.push(createEmptySchema(databaseName));
 
-    setElements(CollectionSerializer.toElements(currentState));
+    setElements(SchemaSerializer.toElements(currentState));
     flowInstance.fitView();
   };
 

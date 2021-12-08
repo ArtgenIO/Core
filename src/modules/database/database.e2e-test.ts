@@ -30,7 +30,7 @@ describe('Database E2E', () => {
   ])('should synchornize the [%s] test schema', async (ref: string) => {
     // Prepare deps
     const connections = await kernel.get(DatabaseConnectionService);
-    const connection = connections.findOne('system');
+    const connection = connections.findOne('main');
     // Load the test schema
     const subject: ISchema = require(`../../../tests/schemas/${ref}.schema.json`);
 

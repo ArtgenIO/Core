@@ -44,7 +44,7 @@ type Config = {
       database: {
         title: 'Database',
         type: 'string',
-        default: 'system',
+        default: 'main',
       },
       schema: {
         title: 'Schema',

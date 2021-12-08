@@ -1,5 +1,5 @@
 {
-  "database": "system",
+  "database": "main",
   "reference": "ints",
   "tableName": "ints",
   "fields": [

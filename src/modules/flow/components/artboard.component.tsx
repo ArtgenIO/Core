@@ -118,7 +118,7 @@ export default function WorkflowArtboardComponent() {
     (async () => {
       const nodes = await httpClient.get<ILambdaMeta[]>('/api/lambda');
       const workflow = await httpClient.get<ILogic>(
-        `/api/rest/system/workflow/${workflowId}`,
+        `/api/rest/main/workflow/${workflowId}`,
       );
 
       const customNodes: NodeTypesType = {};

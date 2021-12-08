@@ -13,7 +13,7 @@ describe(DatabaseModule.name, () => {
     assert(kernel.register([DatabaseModule]));
   });
 
-  test('should create the system connection', async () => {
+  test('should create the main connection', async () => {
     // Kernel can start
     const result = await kernel.boostrap();
     expect(result).toBe(true);
@@ -22,18 +22,18 @@ describe(DatabaseModule.name, () => {
     const connections = await kernel.get(DatabaseConnectionService);
     expect(connections.findAll().length).toBe(1);
 
-    // It's named system
-    const connection = connections.findOne('system');
+    // It's named main
+    const connection = connections.findOne('main');
     expect(connection).toBeInstanceOf(DatabaseConnection);
-    expect(connection.database.name).toBe('system');
+    expect(connection.database.name).toBe('main');
 
-    // Schemas are connected to the system database
+    // Schemas are connected to the main database
     const schemas = connection.getSchemas();
     expect(schemas.length).toBeGreaterThan(1);
 
     for (const schema of schemas) {
       expect(schema).toHaveProperty('database');
-      expect(schema.database).toBe('system');
+      expect(schema.database).toBe('main');
     }
 
     // Schemas are synchronized
@@ -44,7 +44,7 @@ describe(DatabaseModule.name, () => {
 
   // Still something is off with ts-node stops, can't finish the shutdown sequence
   // but only when running in dev mode
-  test('should destroy the system connection', async () => {
+  test('should destroy the main connection', async () => {
     const result = await kernel.stop();
     expect(result).toBe(true);
   });

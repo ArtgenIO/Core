@@ -27,7 +27,7 @@ export default function ArtboardSave() {
     );
 
     httpClient
-      .patch(`/api/rest/system/workflow/${workflow.id}`, serializedWorkflow)
+      .patch(`/api/rest/main/workflow/${workflow.id}`, serializedWorkflow)
       .then(() => {
         notification.success({
           key: SAVING_NOTIFICATION,

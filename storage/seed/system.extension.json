@@ -4,12 +4,12 @@
   "version": "0.0.1",
   "icon": "settings",
   "source": "offline",
-  "database": "system",
+  "database": "main",
   "config": {},
   "schemas": [
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
-      "database": "system",
+      "database": "main",
       "reference": "Workflow",
       "title": "Workflows",
       "tableName": "__artgen_workflows",
@@ -89,7 +89,7 @@
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
-      "database": "system",
+      "database": "main",
       "reference": "Database",
       "title": "Databases",
       "tableName": "__artgen_databases",
@@ -143,7 +143,7 @@
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
-      "database": "system",
+      "database": "main",
       "reference": "Page",
       "title": "Pages",
       "tableName": "__artgen_pages",
@@ -252,7 +252,7 @@
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
-      "database": "system",
+      "database": "main",
       "reference": "Schema",
       "title": "Schemas",
       "tableName": "__artgen_schemas",
@@ -411,7 +411,7 @@
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
-      "database": "system",
+      "database": "main",
       "title": "Key-Value Storage",
       "reference": "KeyValueStorage",
       "tableName": "__artgen_key_value_storage",
@@ -459,7 +459,7 @@
     },
     {
       "extensionId": "10000000-0000-0000-0000-000000000000",
-      "database": "system",
+      "database": "main",
       "title": "Extensions",
       "reference": "Extension",
       "tableName": "__artgen_extensions",

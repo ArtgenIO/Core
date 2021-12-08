@@ -7,15 +7,18 @@ let offsetX = 0;
 /**
  * Responsible to serialize between schema list state and node/edge elements state.
  */
-export class CollectionSerializer {
+export class SchemaSerializer {
   static toElements(schemas: ISchema[]): Elements {
     const elements: Elements = [];
 
     for (const schema of schemas) {
       if (!schema.meta?.artboard?.position) {
-        if (!schema.meta.artboard) {
-          schema.meta.artboard = {
-            position: { x: 0, y: 0 },
+        if (!schema.meta?.artboard) {
+          schema.meta = {
+            ...schema.meta,
+            artboard: {
+              position: { x: 0, y: 0 },
+            },
           };
         }
 
@@ -88,9 +91,12 @@ export class CollectionSerializer {
         const schema = element.data.schema;
 
         if (!schema.meta?.artboard?.position) {
-          if (!schema.meta.artboard) {
-            schema.meta.artboard = {
-              position: { x: 0, y: 0 },
+          if (!schema.meta?.artboard) {
+            schema.meta = {
+              ...schema.meta,
+              artboard: {
+                position: { x: 0, y: 0 },
+              },
             };
           }
 

@@ -50,7 +50,7 @@ const NavSide = () => {
 
   const [{ data: extensions, loading, error }] = useHttpClient<IBlueprint[]>(
     routeCrudAPI({
-      database: 'system',
+      database: 'main',
       reference: 'Extension',
     }) +
       new QueryBuilder()
