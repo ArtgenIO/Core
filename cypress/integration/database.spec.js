@@ -40,6 +40,7 @@ describe('Database Manager', () => {
     // See the notification
     cy.get('.test--db-deleted-not').should('exist');
     // List item removed
+    cy.get('[data-db-delete="main"]').should('exist');
     cy.get('[data-db-delete="testmem"]').should('not.exist');
   });
 });

@@ -7,6 +7,7 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import {
+  Alert,
   Avatar,
   Button,
   List,
@@ -50,7 +51,6 @@ export default function DatabaseListComponent() {
       header={
         <PageHeader
           title="Databases"
-          subTitle="Artgen can manage multiple database connection at once, so You can just connect your existing database, or add new ones to use for different workloads."
           actions={
             <Link key="create" to={`${ADMIN_URL}/database/connect`}>
               <Button
@@ -67,6 +67,13 @@ export default function DatabaseListComponent() {
       }
     >
       <Skeleton loading={loading}>
+        <Alert
+          message="Artgen can manage multiple database connection at once, so You can just connect your existing database, or add new ones to use for different workloads."
+          type="info"
+          className="mb-8"
+          showIcon
+        />
+
         <List
           bordered
           size="large"
