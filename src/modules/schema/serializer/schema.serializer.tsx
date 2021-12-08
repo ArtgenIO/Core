@@ -12,12 +12,16 @@ export class CollectionSerializer {
     const elements: Elements = [];
 
     for (const schema of schemas) {
-      if (!schema.artboard) {
-        schema.artboard = {
-          position: {
-            x: offsetX++ * 100 + 100,
-            y: offsetX * 50 + 100,
-          },
+      if (!schema.meta?.artboard?.position) {
+        if (!schema.meta.artboard) {
+          schema.meta.artboard = {
+            position: { x: 0, y: 0 },
+          };
+        }
+
+        schema.meta.artboard.position = {
+          x: offsetX++ * 100 + 100,
+          y: offsetX * 50 + 100,
         };
       }
 
@@ -25,7 +29,7 @@ export class CollectionSerializer {
       const node: Node = {
         id: nodeID,
         type: 'schema',
-        position: schema.artboard.position,
+        position: schema.meta.artboard.position,
         data: {
           schema,
         },
@@ -77,23 +81,29 @@ export class CollectionSerializer {
   }
 
   static fromElements(elements: Elements<{ schema: ISchema }>): ISchema[] {
-    const collections: ISchema[] = [];
+    const schemas: ISchema[] = [];
 
     for (const element of elements) {
       if (isNode(element)) {
-        const collection = element.data.schema;
+        const schema = element.data.schema;
 
-        if (!collection.artboard) {
-          collection.artboard = { position: { x: 0, y: 0 } };
+        if (!schema.meta?.artboard?.position) {
+          if (!schema.meta.artboard) {
+            schema.meta.artboard = {
+              position: { x: 0, y: 0 },
+            };
+          }
+
+          schema.meta.artboard = { position: { x: 0, y: 0 } };
         }
 
         // Keep the position meta.
-        collection.artboard.position = element.position;
+        schema.meta.artboard.position = element.position;
 
-        collections.push(collection);
+        schemas.push(schema);
       }
     }
 
-    return collections;
+    return schemas;
   }
 }

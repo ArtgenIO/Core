@@ -5,6 +5,14 @@ export const createEmptySchema = (database: string): ISchema => ({
   title: 'New Schema',
   reference: 'newSchema',
   tableName: 'newSchema',
+  meta: {
+    artboard: {
+      position: {
+        x: 50,
+        y: 50,
+      },
+    },
+  },
   fields: [
     {
       label: 'Identifier',
@@ -32,10 +40,4 @@ export const createEmptySchema = (database: string): ISchema => ({
   uniques: [],
   relations: [],
   tags: ['active'],
-  artboard: {
-    position: {
-      x: 50,
-      y: 50,
-    },
-  },
 });

@@ -3,6 +3,24 @@ import { IRelation } from './relation.interface';
 
 export interface ISchema {
   /**
+   * Non esential meta data, used by visual and other components for fancy works, haps!
+   */
+  meta: {
+    /**
+     * Artboard appearance meta.
+     */
+    artboard: {
+      /**
+       *  Position on the artboard's coordinate system
+       */
+      position: {
+        x: number;
+        y: number;
+      };
+    };
+  };
+
+  /**
    * Human readable title.
    */
   title: string;
@@ -41,16 +59,6 @@ export interface ISchema {
    * Relation mappings.
    */
   relations: IRelation[];
-
-  /**
-   * ArtBoard meta data.
-   */
-  artboard: {
-    position: {
-      x: number;
-      y: number;
-    };
-  };
 
   /**
    * Behavior tags.
