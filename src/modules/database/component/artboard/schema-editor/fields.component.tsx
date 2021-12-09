@@ -13,7 +13,7 @@ import {
   Typography,
 } from 'antd';
 import { cloneDeep } from 'lodash';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { pageDrawerAtom } from '../../../../admin/admin.atoms';
 import { FieldType, ISchema } from '../../../../schema';
@@ -28,6 +28,7 @@ export default function SchemaEditorFieldsComponent({
 }) {
   const setPageDrawler = useSetRecoilState(pageDrawerAtom);
   const resetPageDrawler = useResetRecoilState(pageDrawerAtom);
+  const [fieldTuneKey, setFieldTuneKey] = useState<number>(null);
 
   const addNewField = () => {
     setSchema(s => {
@@ -73,18 +74,7 @@ export default function SchemaEditorFieldsComponent({
         size="small"
         dataSource={schema.fields}
         renderItem={(field, k) => (
-          <List.Item
-            key={`field-${k}`}
-            onClick={() =>
-              setPageDrawler(
-                <SchemaEditorFieldTunerComponent
-                  fieldKey={k}
-                  schema={schema}
-                  setSchema={setSchema}
-                />,
-              )
-            }
-          >
+          <List.Item key={`field-${k}`} onClick={() => setFieldTuneKey(k)}>
             <List.Item.Meta
               avatar={
                 <Avatar
@@ -144,6 +134,14 @@ export default function SchemaEditorFieldsComponent({
       >
         <span className="material-icons-outlined">add</span>
       </Button>
+      {fieldTuneKey !== null ? (
+        <SchemaEditorFieldTunerComponent
+          fieldKey={fieldTuneKey}
+          schema={schema}
+          setSchema={setSchema}
+          onClose={setFieldTuneKey}
+        />
+      ) : undefined}
     </>
   );
 }

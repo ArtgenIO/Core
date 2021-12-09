@@ -1,148 +1,109 @@
-.react-flow__node {
-  background: #fefefe;
-  color: #151719;
+.flowboard {
+  .react-flow__node {
+    background: #fefefe;
+    color: #151719;
 
-  width: 72px;
-  height: 72px;
+    width: 72px;
+    height: 72px;
 
-  border-radius: 12px;
+    border-radius: 12px;
 
-  font-size: 10px;
-  line-height: 72px;
+    font-size: 10px;
+    line-height: 72px;
 
-  padding: 0;
+    padding: 0;
 
-  box-shadow: #000 0px 0px 5px 1px;
-}
+    box-shadow: #000 0px 0px 5px 1px;
+  }
 
-.react-flow__node.selected {
-  box-shadow: #46bdc6 0px 0px 5px 1px;
-}
+  .react-flow__node.selected {
+    box-shadow: #46bdc6 0px 0px 5px 1px;
+  }
 
-.react-flow__edge-path {
-  stroke: #cfd2d9;
-}
+  .react-flow__edge-path {
+    stroke: #cfd2d9;
+  }
 
-.react-flow__edge-artgen-edge:hover .react-flow__edge-path {
-  stroke: #46bdc6;
-  filter: drop-shadow(0px 0px 2px rgb(200 255 0 / 0.4));
-}
+  .react-flow__edge-artgen-edge:hover .react-flow__edge-path {
+    stroke: #46bdc6;
+    filter: drop-shadow(0px 0px 2px rgb(200 255 0 / 0.4));
+  }
 
-.react-flow__handle.handle-custom {
-  @apply transition-all duration-500;
+  .react-flow__handle.handle-custom {
+    @apply transition-all duration-500;
 
-  width: 16px;
-  height: 16px;
-  z-index: 2;
-}
+    width: 16px;
+    height: 16px;
+    z-index: 2;
+  }
 
-.react-flow__handle.react-flow__handle-left {
-  left: -7px;
-  border-radius: 2px 14px 14px 2px;
-  background-color: #46bdc6;
-}
+  .react-flow__handle.react-flow__handle-left {
+    left: -7px;
+    border-radius: 2px 14px 14px 2px;
+    background-color: #46bdc6;
+  }
 
-.react-flow__handle.react-flow__handle-left:hover {
-  border-color: #37393f;
-}
+  .react-flow__handle.react-flow__handle-left:hover {
+    border-color: #37393f;
+  }
 
-.react-flow__handle.react-flow__handle-right {
-  right: -7px;
-  border-radius: 100%;
-  background-color: #009758;
-}
+  .react-flow__handle.react-flow__handle-right {
+    right: -7px;
+    border-radius: 100%;
+    background-color: #009758;
+  }
 
-.react-flow__handle.react-flow__handle-right:hover {
-  border-color: #37393f;
-}
+  .react-flow__handle.react-flow__handle-right:hover {
+    border-color: #37393f;
+  }
 
-.handle-set-2.handle-set-nth-1 {
-  margin-top: -14px;
-}
+  .handle-set-2.handle-set-nth-1 {
+    margin-top: -14px;
+  }
 
-.handle-set-2.handle-set-nth-2 {
-  margin-top: 14px;
-}
+  .handle-set-2.handle-set-nth-2 {
+    margin-top: 14px;
+  }
 
-.react-flow__handle.handle-error,
-.react-flow__handle.handle-invalid,
-.react-flow__handle.handle-no,
-.react-flow__handle.handle-failed,
-.react-flow__handle.handle-false {
-  background-color: #e33668;
-}
+  .react-flow__handle.handle-error,
+  .react-flow__handle.handle-invalid,
+  .react-flow__handle.handle-no,
+  .react-flow__handle.handle-failed,
+  .react-flow__handle.handle-false {
+    background-color: #e33668;
+  }
 
-.artboard-edit-button {
-  background-color: #37393f;
-  border-color: #37393f;
-  color: #fff;
-}
+  .artboard-edit-button {
+    background-color: #37393f;
+    border-color: #37393f;
+    color: #fff;
+  }
 
-.artboard-edit-button.has-transform {
-  color: #ff6b6b;
-}
+  .artboard-edit-button.has-transform {
+    color: #ff6b6b;
+  }
 
-.react-flow__node:not(.selected) .artboard-edit-button {
-  opacity: 0;
-}
+  .react-flow__node:not(.selected) .artboard-edit-button {
+    opacity: 0;
+  }
 
-.node-component:hover .artboard-edit-button,
-.react-flow__node.selected .artboard-edit-button {
-  background-color: #cfd2d9;
-  border-color: #37393f;
-  color: #37393f;
-  opacity: 1;
-  z-index: 15;
-}
+  .node-component:hover .artboard-edit-button,
+  .react-flow__node.selected .artboard-edit-button {
+    background-color: #cfd2d9;
+    border-color: #37393f;
+    color: #37393f;
+    opacity: 1;
+    z-index: 15;
+  }
 
-.artboard-tools {
-  background-color: #cfd2d9;
-  box-shadow: #000 0px 0px 5px 1px;
-  color: #37393f;
-  font-size: 24px;
-  line-height: 38px;
-  z-index: 5;
-}
+  .node-label {
+    @apply absolute left-0 right-0 -bottom-5 rounded-sm text-center;
 
-.artboard-tools > div:hover {
-  background-color: #46bdc6;
-  border-color: #37393f;
-  color: #fff;
-}
-
-.artboard-tools > div {
-  @apply transition-all duration-300 ease-in-out cursor-pointer relative;
-
-  border-bottom: 1px dashed #37393f;
-}
-
-.artboard-tools > div > div {
-  @apply absolute -left-36 text-right w-32 top-1/2 pr-2 rounded-sm;
-
-  background-color: #000;
-  color: #cfd2d9;
-  font-size: 12px;
-  line-height: 18px;
-  margin-top: -8px;
-
-  display: none;
-}
-
-.artboard-tools > div:hover > div {
-  display: block;
-}
-
-.artboard-tools > div:last-child {
-  border-bottom: none;
-}
-
-.node-label {
-  @apply absolute left-0 right-0 -bottom-5 rounded-sm text-center;
-
-  background-color: #101010;
-  color: #fff;
-  font-size: 8px;
-  line-height: 16px;
-  height: 16px;
-  text-overflow: ellipsis;
+    background-color: #101010;
+    color: #fff;
+    font-size: 8px;
+    line-height: 16px;
+    height: 16px;
+    text-overflow: ellipsis;
+  }
 }

@@ -1,6 +1,5 @@
 import { Edge, Elements, isNode, Node } from 'react-flow-renderer';
 import { ISchema } from '../interface';
-import { RelationKind } from '../interface/relation.interface';
 
 let offsetX = 0;
 
@@ -41,42 +40,26 @@ export class SchemaSerializer {
       elements.push(node);
 
       for (const relation of schema.relations) {
-        let sourceHandle: string;
-        let targetHandle: string;
+        if (relation.kind.match('belong')) {
+          let sourceHandle: string = `sh-${relation.localField}`;
+          let targetHandle: string = `th-${relation.remoteField}`;
 
-        switch (relation.kind) {
-          case RelationKind.HAS_ONE:
-            sourceHandle = 'has-one';
-            targetHandle = 'belongs-to-one';
-            break;
-          case RelationKind.HAS_MANY:
-            sourceHandle = 'has-many';
-            targetHandle = 'belongs-to-many';
-            break;
-          case RelationKind.BELONGS_TO_ONE:
-            sourceHandle = 'belongs-to-one';
-            targetHandle = 'has-one';
-            break;
-          case RelationKind.BELONGS_TO_MANY:
-            sourceHandle = 'belongs-to-many';
-            targetHandle = 'has-many';
-            break;
+          const edge: Edge = {
+            id: `${nodeID}.relation.${relation.name}`,
+            type: 'smoothstep',
+            source: nodeID,
+            target: relation.target,
+            sourceHandle,
+            targetHandle,
+            data: {
+              relation,
+            },
+
+            animated: !!relation.kind.match('one'),
+          };
+
+          elements.push(edge);
         }
-
-        const edge: Edge = {
-          id: `${nodeID}.relation.${relation.name}`,
-          type: 'smoothstep',
-          source: nodeID,
-          target: relation.target,
-          sourceHandle,
-          targetHandle,
-          data: {
-            relation,
-          },
-          animated: !!relation.kind.match('has'),
-        };
-
-        elements.push(edge);
       }
     }
 

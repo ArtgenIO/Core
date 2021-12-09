@@ -2,8 +2,6 @@ import { Button, Divider, Drawer, Form, Input, Select, Tooltip } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { useResetRecoilState } from 'recoil';
-import { pageDrawerAtom } from '../../../../admin/admin.atoms';
 import { FieldType, IField, ISchema } from '../../../../schema';
 
 type InputLinkedProps = {
@@ -35,12 +33,13 @@ export default function SchemaEditorFieldTunerComponent({
   fieldKey: idx,
   schema,
   setSchema,
+  onClose,
 }: {
   fieldKey: number;
   schema: ISchema;
   setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
+  onClose: Dispatch<SetStateAction<number>>;
 }) {
-  const resetPageDrawler = useResetRecoilState(pageDrawerAtom);
   const [form] = Form.useForm<IField>();
   const [refLinked, setRefLinked] = useState(true);
   const [clmLinked, setClmLinked] = useState(true);
@@ -113,9 +112,9 @@ export default function SchemaEditorFieldTunerComponent({
   return (
     <ErrorBoundary>
       <Drawer
-        width="420px"
+        width="30%"
         visible={visisble}
-        onClose={() => resetPageDrawler()}
+        onClose={() => onClose(null)}
         title={null}
       >
         <Form

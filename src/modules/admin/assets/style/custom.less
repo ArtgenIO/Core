@@ -17,6 +17,9 @@
 .text-error {
   color: @error-color;
 }
+.ag-text-white {
+  color: @text-color;
+}
 
 .bg-dark {
   background-color: @ag-dark;
@@ -76,4 +79,15 @@
 
 .br-error {
   border-color: @error-color;
+}
+
+.gray-scroll {
+  @apply scrollbar scrollbar-thumb-gray-600 scrollbar-track-gray-400 scrollbar-w-2;
+}
+
+.compact {
+  .ant-menu-item {
+    line-height: 26px;
+    height: 26px;
+  }
 }

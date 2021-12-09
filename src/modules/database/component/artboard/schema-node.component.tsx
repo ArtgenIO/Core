@@ -1,85 +1,92 @@
-import { Tooltip } from 'antd';
 import React, { Dispatch, SetStateAction } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
-import { FieldTag, ISchema } from '../../../schema';
-import { isPrimary } from '../../../schema/util/field-tools';
+import Icon from '../../../admin/component/icon.component';
+import { FieldTag, IField, ISchema } from '../../../schema';
+import { FieldTool } from '../../../schema/util/field-tools';
 
-export const createSchemaNode =
-  (dblClickHandler: Dispatch<SetStateAction<unknown>>) =>
-  (props: NodeProps<{ schema: ISchema }>) => {
+const isRelationSource = (s: ISchema, f: IField): boolean => {
+  return s.relations.some(
+    rel => rel.kind.match('belong') && rel.localField == f.reference,
+  );
+};
+
+const isRelationTarget = (
+  schemas: ISchema[],
+  target: ISchema,
+  field: IField,
+): boolean => {
+  return schemas.some(remote =>
+    remote.relations.some(
+      rel =>
+        rel.kind.match('belong') &&
+        rel.target == target.reference &&
+        rel.remoteField == field.reference,
+    ),
+  );
+};
+
+export const createSchemaNode = (
+  schemas: ISchema[],
+  dblClickHandler: Dispatch<SetStateAction<unknown>>,
+) => {
+  return (props: NodeProps<{ schema: ISchema }>) => {
     return (
       <div
-        className="node-component"
+        className="schema-node"
         key={`${props.id}-node`}
         onDoubleClick={() => dblClickHandler(props.id)}
       >
-        <Handle
-          isConnectable
-          className="relation-handle"
-          key={`${props.id}.has-one`}
-          type="target"
-          position={Position.Right}
-          id="has-one"
-        />
-
-        <Handle
-          isConnectable
-          className="relation-handle"
-          key={`${props.id}.belongs-to-one`}
-          type="source"
-          position={Position.Left}
-          id="belongs-to-one"
-        />
-
-        <div key="title" className="node-label">
-          {props.data.schema.title ?? 'Missing Label'}
+        <div key="name" className="table-name">
+          {props.data.schema.tableName}
         </div>
-        <div key="icon" className="text-center node-content relative">
-          <img
-            src={`/assets/icons/table.svg`}
-            width="48"
-            height="48"
-            draggable={false}
-          />
+
+        <div key="title" className="table-title">
+          <div className="inline-block">{props.data.schema.title}</div>
         </div>
-        <div key="field" className="fields flex flex-wrap">
-          {props.data.schema.fields.slice(0, 8).map(f => (
-            <Tooltip key={`label-${f.reference}`} title={f.title}>
-              <div className="schema-field">
-                {isPrimary(f) ? (
-                  <span key="primary" className="material-icons-outlined">
-                    key
-                  </span>
+
+        <table key="fields" className="fields mb-2 w-full">
+          {props.data.schema.fields.map(f => (
+            <tr>
+              <td className="w-4/6 column relative">
+                {isRelationTarget(schemas, props.data.schema, f) ? (
+                  <Handle
+                    className="target-handle"
+                    key={`${props.id}.rel-target.${f.reference}`}
+                    type="target"
+                    position={Position.Left}
+                    id={`th-${f.reference}`}
+                  />
                 ) : undefined}
+
+                {f.columnName}
+              </td>
+              <td className="w-1/6 text-center type">{f.type}</td>
+              <td className="w-1/6 text-right icon relative">
+                {FieldTool.isPrimary(f) ? <Icon id="key" /> : undefined}
                 {f.tags.includes(FieldTag.CREATED) ? (
-                  <span key="created" className="material-icons-outlined">
-                    event_available
-                  </span>
+                  <Icon id="event_available" />
                 ) : undefined}
                 {f.tags.includes(FieldTag.UPDATED) ? (
-                  <span key="updated" className="material-icons-outlined">
-                    edit_calendar
-                  </span>
+                  <Icon id="edit_calendar" />
                 ) : undefined}
                 {f.tags.includes(FieldTag.TAGS) ? (
-                  <span key="tags" className="material-icons-outlined">
-                    sell
-                  </span>
+                  <Icon id="sell" />
                 ) : undefined}
-              </div>
-            </Tooltip>
-          ))}
-        </div>
 
-        <div key="relations" className="relations flex flex-wrap">
-          {props.data.schema.relations.slice(0, 4).map(r => (
-            <Tooltip key={`rel-tool-${r.name}`} title={`${r.kind} » ${r.name}`}>
-              <div className={'schema-relation ' + r.kind}>
-                <span className="material-icons-outlined">share</span>
-              </div>
-            </Tooltip>
+                {isRelationSource(props.data.schema, f) ? (
+                  <Handle
+                    className="source-handle"
+                    key={`${props.id}.rel-source.${f.reference}`}
+                    type="source"
+                    position={Position.Right}
+                    id={`sh-${f.reference}`}
+                  />
+                ) : undefined}
+              </td>
+            </tr>
           ))}
-        </div>
+        </table>
       </div>
     );
   };
+};

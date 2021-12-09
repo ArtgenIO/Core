@@ -10,23 +10,24 @@ import ReactFlow, {
   OnLoadParams,
   ReactFlowProvider,
 } from 'react-flow-renderer';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
+import '../../../admin/assets/artboard.less';
 import { useHttpClientOld } from '../../../admin/library/http-client';
 import { routeCrudAPI } from '../../../content/util/schema-url';
 import { ISchema } from '../../../schema';
 import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
 import { createEmptySchema } from '../../../schema/util/get-new-schema';
 import { createLayouOrganizer } from '../../../schema/util/layout-organizer';
-import './artboard.component.less';
 import DatabaseNameComponent from './name.component';
 import DatabaseSchemaEditorComponent from './schema-editor.component';
 import { createSchemaNode } from './schema-node.component';
+import './schemaboard.component.less';
 import DatabaseToolsComponent from './tools.component';
 
 export default function DatabaseArtboardComponent() {
   // Router
   const httpClient = useHttpClientOld();
-  const databaseName = useParams<{ database: string }>().database;
+  const { ref } = useParams();
   const apiReadUrl =
     routeCrudAPI({
       database: 'main',
@@ -34,7 +35,7 @@ export default function DatabaseArtboardComponent() {
     }) +
     new QueryBuilder()
       .top(1000)
-      .filter(f => f.filterExpression('database', 'eq', databaseName))
+      .filter(f => f.filterExpression('database', 'eq', ref))
       .toQuery();
 
   // Artboard state
@@ -43,7 +44,7 @@ export default function DatabaseArtboardComponent() {
   const [elements, setElements] = useState<Elements>([]);
   const [openedNode, setOpenedNode] = useState<string>(null);
   const [selectedNode, setSelectedNode] = useState<string>(null);
-  const [savedState, setSavedState] = useState<ISchema[]>(null);
+  const [savedState, setSavedState] = useState<ISchema[]>([]);
 
   const layoutOrganizer = createLayouOrganizer();
 
@@ -56,7 +57,7 @@ export default function DatabaseArtboardComponent() {
       );
       setSavedState(response.data);
     })();
-  }, [databaseName]);
+  }, [ref]);
 
   const doSave = async () => {
     const currentState = SchemaSerializer.fromElements(
@@ -99,7 +100,7 @@ export default function DatabaseArtboardComponent() {
                 new QueryBuilder()
                   .top(1)
                   .filter(f => {
-                    f.filterExpression('database', 'eq', databaseName);
+                    f.filterExpression('database', 'eq', ref);
                     f.filterExpression('reference', 'eq', schema.reference);
 
                     return f;
@@ -132,7 +133,7 @@ export default function DatabaseArtboardComponent() {
             new QueryBuilder()
               .top(1)
               .filter(f => {
-                f.filterExpression('database', 'eq', databaseName);
+                f.filterExpression('database', 'eq', ref);
                 f.filterExpression('reference', 'eq', deleted.reference);
 
                 return f;
@@ -159,7 +160,7 @@ export default function DatabaseArtboardComponent() {
       flowInstance.getElements(),
     );
 
-    currentState.push(createEmptySchema(databaseName));
+    currentState.push(createEmptySchema(ref));
 
     setElements(SchemaSerializer.toElements(currentState));
     flowInstance.fitView();
@@ -170,6 +171,10 @@ export default function DatabaseArtboardComponent() {
     setSelectedNode(null);
   };
 
+  if (!savedState.length) {
+    return <h1>Loading</h1>;
+  }
+
   return (
     <>
       <div className="h-screen bg-dark">
@@ -179,7 +184,7 @@ export default function DatabaseArtboardComponent() {
               elements={elements}
               onLoad={(instance: OnLoadParams) => setFlowInstance(instance)}
               nodeTypes={{
-                schema: createSchemaNode(setOpenedNode),
+                schema: createSchemaNode(savedState, setOpenedNode),
               }}
               defaultZoom={1.2}
               onSelectionChange={selections => {
@@ -198,7 +203,7 @@ export default function DatabaseArtboardComponent() {
                 size={0.5}
                 color="#37393f"
               />
-              <DatabaseNameComponent name={databaseName} />
+              <DatabaseNameComponent name={ref} />
               <DatabaseSchemaEditorComponent
                 flowInstance={flowInstance}
                 openedNode={openedNode}

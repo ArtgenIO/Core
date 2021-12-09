@@ -2,19 +2,22 @@ import dagre from 'dagre/dist/dagre.js';
 import { Elements, isNode, Position } from 'react-flow-renderer';
 
 export const createLayouOrganizer = (
-  nodeWidth: number = 120,
-  nodeHeight: number = 164,
+  nodeWidth: number = 300,
+  nodeHeight: number = 220,
 ) => {
   const planner = new dagre.graphlib.Graph();
   planner.setDefaultEdgeLabel(() => ({}));
 
-  return (elements: Elements, direction = 'RL'): Elements => {
-    const isHorizontal = direction === 'RL';
+  return (elements: Elements, direction = 'LR'): Elements => {
+    const isHorizontal = direction === 'LR';
     planner.setGraph({ rankdir: direction });
 
     elements.forEach(el => {
       if (isNode(el)) {
-        planner.setNode(el.id, { width: nodeWidth, height: nodeHeight });
+        planner.setNode(el.id, {
+          width: nodeWidth,
+          height: el.data.schema.fields.length * 26 + 40,
+        });
       } else {
         planner.setEdge(el.source, el.target);
       }
@@ -32,8 +35,8 @@ export const createLayouOrganizer = (
         // to notify react flow about the change. Moreover we are shifting the dagre node position
         // (anchor=center center) to the top left so it matches the react flow node anchor point (top left).
         el.position = {
-          x: 200 + nodeWithPosition.x - nodeWidth / 2 + Math.random() / 1000,
-          y: 60 + nodeWithPosition.y - nodeHeight / 2,
+          x: nodeWithPosition.x + Math.random() / 1000,
+          y: nodeWithPosition.y,
         };
       }
 

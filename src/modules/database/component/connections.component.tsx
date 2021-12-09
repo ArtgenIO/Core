@@ -1,8 +1,6 @@
 import {
-  BorderInnerOutlined,
   DatabaseOutlined,
   DeleteOutlined,
-  EditOutlined,
   FileAddOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
@@ -18,18 +16,18 @@ import {
   Tooltip,
 } from 'antd';
 import { QueryBuilder } from 'odata-query-builder';
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ADMIN_URL } from '../../admin/admin.constants';
+import React, { useState } from 'react';
 import PageHeader from '../../admin/layout/PageHeader';
 import PageWithHeader from '../../admin/layout/PageWithHeader';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { routeCrudAPI } from '../../content/util/schema-url';
 import { IDatabase } from '../interface';
+import DatabaseAddComponent from './connect.component';
 
-export default function DatabaseListComponent() {
+export default function ConnectionsComponent() {
   const client = useHttpClientOld();
+  const [showConnect, setShowConnect] = useState(false);
   const [{ data: databases, loading, error }, refetch] = useHttpClient<
     IDatabase[]
   >(
@@ -50,18 +48,17 @@ export default function DatabaseListComponent() {
     <PageWithHeader
       header={
         <PageHeader
-          title="Databases"
+          title="Connections"
           actions={
-            <Link key="create" to={`${ADMIN_URL}/database/connect`}>
-              <Button
-                className="test--connect-btn"
-                type="primary"
-                ghost
-                icon={<FileAddOutlined />}
-              >
-                Connect Database
-              </Button>
-            </Link>
+            <Button
+              className="test--connect-btn"
+              type="primary"
+              ghost
+              icon={<FileAddOutlined />}
+              onClick={() => setShowConnect(true)}
+            >
+              Create Connection
+            </Button>
           }
         />
       }
@@ -96,24 +93,6 @@ export default function DatabaseListComponent() {
                 }
               />
 
-              <Link to={`/admin/database/${db.name}/edit`}>
-                <Tooltip title="Edit Connection Details" placement="leftBottom">
-                  <Button
-                    icon={<EditOutlined />}
-                    className="rounded-md mr-1 hover:text-green-500 hover:border-green-500 hidden"
-                  ></Button>
-                </Tooltip>
-              </Link>
-
-              <Link to={`/admin/database/artboard/${db.name}`}>
-                <Tooltip title="Open Artboard" placement="leftBottom">
-                  <Button
-                    icon={<BorderInnerOutlined />}
-                    className="rounded-md mr-1 hover:text-blue-500 hover:border-blue-500"
-                  ></Button>
-                </Tooltip>
-              </Link>
-
               <Popconfirm
                 title="Are You sure to delete this database?"
                 className="test--delete-db"
@@ -146,6 +125,14 @@ export default function DatabaseListComponent() {
           )}
         ></List>
       </Skeleton>
+      {showConnect ? (
+        <DatabaseAddComponent
+          onClose={() => {
+            setShowConnect(false);
+            refetch();
+          }}
+        />
+      ) : undefined}
     </PageWithHeader>
   );
 }

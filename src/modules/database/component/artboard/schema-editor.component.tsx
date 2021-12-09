@@ -1,4 +1,4 @@
-import { Modal, Typography } from 'antd';
+import { Drawer, Typography } from 'antd';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Elements, isNode, Node, OnLoadParams } from 'react-flow-renderer';
 import { ISchema } from '../../../schema';
@@ -43,9 +43,8 @@ export default function DatabaseSchemaEditorComponent({
   }
 
   return (
-    <Modal
-      centered
-      width="70%"
+    <Drawer
+      width="60%"
       title={
         <Typography.Title style={{ marginBottom: 0 }}>
           {schema.title}
@@ -55,7 +54,7 @@ export default function DatabaseSchemaEditorComponent({
       closable
       maskClosable
       footer={null}
-      onCancel={() => {
+      onClose={() => {
         setOpenedNode(null);
 
         setElements(() => {
@@ -71,6 +70,6 @@ export default function DatabaseSchemaEditorComponent({
       }}
     >
       <SchemaEditorFrameComponent schema={schema} setSchema={setSchema} />
-    </Modal>
+    </Drawer>
   );
 }

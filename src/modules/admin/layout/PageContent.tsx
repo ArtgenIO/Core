@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import React, { lazy, Suspense } from 'react';
-import { Route, Switch, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { ADMIN_URL } from '../admin.constants';
 import DashboardPage from '../component/dashboard.component';
 import Route404 from '../route/404.route';
@@ -10,58 +10,38 @@ import PageWrapper from './PageWrapper';
 const { Content } = Layout;
 
 export default function PageContent() {
-  const location = useLocation();
+  const Workflow = lazy(() => import('../../flow/components/index.component'));
+
+  const Database = lazy(
+    () => import('../../database/component/_router.component'),
+  );
+
+  const Contents = lazy(
+    () => import('../../content/component/index.component'),
+  );
+
+  const Page = lazy(() => import('../../page/component/index.component'));
+
+  const Insight = lazy(() => import('../../insight/component/index.component'));
+
+  const Ext = lazy(() => import('../../blueprint/component/_router.component'));
 
   return (
-    <Content className="overflow-y-auto overflow-x-hidden h-screen scrollbar scrollbar-thumb-gray-600 scrollbar-track-gray-400 wave-bg scrollbar-w-2">
+    <Content className="overflow-y-auto overflow-x-hidden h-screen gray-scroll">
       <PageWrapper>
         <Suspense fallback={<PageLoading />}>
-          <Switch location={location}>
-            <Route
-              exact
-              path={`${ADMIN_URL}(/index.html)?`}
-              component={DashboardPage}
-            />
-            <Route
-              path={`${ADMIN_URL}/workflow`}
-              component={lazy(
-                () => import('../../flow/components/index.component'),
-              )}
-            />
-            <Route
-              path={`${ADMIN_URL}/database`}
-              component={lazy(
-                () => import('../../database/component/_router.component'),
-              )}
-            />
-            <Route
-              path={`${ADMIN_URL}/content`}
-              component={lazy(
-                () => import('../../content/component/index.component'),
-              )}
-            />
-            <Route
-              path={`${ADMIN_URL}/page`}
-              component={lazy(
-                () => import('../../page/component/index.component'),
-              )}
-            />
-            <Route
-              path={`${ADMIN_URL}/analytics`}
-              component={lazy(
-                () => import('../../insight/component/index.component'),
-              )}
-            />
-            <Route
-              path={`${ADMIN_URL}/ext`}
-              component={lazy(
-                () => import('../../blueprint/component/_router.component'),
-              )}
-            />
+          <Routes>
+            <Route path={`${ADMIN_URL}`} element={<DashboardPage />} />
+            <Route path={`${ADMIN_URL}/workflow/*`} element={<Workflow />} />
+            <Route path={`${ADMIN_URL}/database/*`} element={<Database />} />
+            <Route path={`${ADMIN_URL}/content/*`} element={<Contents />} />
+            <Route path={`${ADMIN_URL}/page/*`} element={<Page />} />
+            <Route path={`${ADMIN_URL}/insight/*`} element={<Insight />} />
+            <Route path={`${ADMIN_URL}/ext/*`} element={<Ext />} />
 
             {/* Hygen insert routes above */}
-            <Route path="*" component={Route404} />
-          </Switch>
+            <Route path="*" element={<Route404 />} />
+          </Routes>
         </Suspense>
       </PageWrapper>
     </Content>
