@@ -5,9 +5,9 @@ export interface IDatabase {
   title: string;
 
   /**
-   * Readonly unique name, used as an identifier.
+   * Readonly unique ref use in code and UI level as identifier.
    */
-  readonly name: string;
+  readonly ref: string;
 
   /**
    * Connection URL, with protocol and credentials if needed.

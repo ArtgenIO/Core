@@ -21,7 +21,7 @@ export default function PageHeader(props: Props) {
           ? {
               shape: 'square',
               size: 'large',
-              className: 'bg-light-dark',
+              className: 'bg-midnight-700',
               ...props.avatar,
             }
           : undefined

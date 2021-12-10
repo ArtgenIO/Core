@@ -28,7 +28,7 @@ describe(DatabaseConnection.name, () => {
 
   test('should read the database name as link name', async () => {
     const connection = await create();
-    expect(connection.database.name).toBe('test');
+    expect(connection.database.ref).toBe('test');
   });
 
   test('Propagate the close call to the connection', async () => {

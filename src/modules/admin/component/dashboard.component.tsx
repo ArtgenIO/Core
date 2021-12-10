@@ -1,15 +1,10 @@
-import {
-  AppstoreAddOutlined,
-  EllipsisOutlined,
-  ReloadOutlined,
-  SmileOutlined,
-} from '@ant-design/icons';
+import { GithubFilled, MediumOutlined, SmileOutlined } from '@ant-design/icons';
 import { Alert, Button } from 'antd';
 import { useEffect } from 'react';
 import GridLayout from 'react-grid-layout';
 import { useRecoilState } from 'recoil';
-import PageHeader from '../layout/PageHeader';
-import PageWithHeader from '../layout/PageWithHeader';
+import PageHeader from '../layout/page-header.component';
+import PageWithHeader from '../layout/page-with-header.component';
 import { dashboarGridAtom } from './dashboard.atoms';
 import './dashboard.component.less';
 
@@ -33,17 +28,18 @@ export default function DashboardPage() {
           title="Dashboard"
           actions={
             <>
-              <Button key="add" icon={<AppstoreAddOutlined />}>
-                Add Chart
-              </Button>
-              <Button key="refresh" icon={<ReloadOutlined />}>
-                Refresh
-              </Button>
-              <Button
-                key="configure"
-                icon={<EllipsisOutlined />}
-                ghost
-              ></Button>
+              <a
+                key="github"
+                href="https://github.com/ArtgenIO/Core"
+                target="_blank"
+              >
+                <Button icon={<GithubFilled />}>Star it on Github ❤️</Button>
+              </a>
+              <a key="blog" href="https://blog.artgen.io/" target="_blank">
+                <Button key="refresh" icon={<MediumOutlined />}>
+                  Read more in our blog
+                </Button>
+              </a>
             </>
           }
         />
@@ -71,21 +67,21 @@ export default function DashboardPage() {
       <GridLayout
         className="text-center"
         layout={gridState}
-        cols={16}
+        cols={14}
         rowHeight={80}
-        width={window.innerWidth - 80}
+        width={window.innerWidth - 100}
         onLayoutChange={onLayoutChange}
       >
-        <div key="a" className="bg-lightest-dark">
+        <div key="a" className="bg-midnight-600">
           Placeholder
         </div>
-        <div key="b" className="bg-lightest-dark">
+        <div key="b" className="bg-midnight-600">
           Placeholder
         </div>
-        <div key="c" className="bg-lightest-dark">
+        <div key="c" className="bg-midnight-600">
           Placeholder
         </div>
-        <div className="bg-lightest-dark" key="d">
+        <div className="bg-midnight-600" key="d">
           Placeholder
         </div>
       </GridLayout>

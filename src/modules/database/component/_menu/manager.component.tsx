@@ -59,7 +59,7 @@ export default function ManagerMenuComponent() {
 
   return (
     <MenuBlock title="Database Manager">
-      <Menu theme="dark" className="compact" selectedKeys={selected}>
+      <Menu className="compact" selectedKeys={selected}>
         {elements.map(e => (
           <Menu.Item key={e.key} icon={<Icon id={e.icon} />}>
             <Link to={e.path}>{e.title}</Link>

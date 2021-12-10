@@ -40,7 +40,7 @@ describe(DatabaseConnectionService.name, () => {
       const connection = await service.create(
         {
           title: 'Test Database',
-          name: 'test',
+          ref: 'test',
           dsn,
         },
         [],
@@ -48,7 +48,7 @@ describe(DatabaseConnectionService.name, () => {
 
       expect(connection).toBeInstanceOf(MockConnection);
       expect(associateMock).toHaveBeenCalled();
-      expect(service.findOne('test').database.name).toBe('test');
+      expect(service.findOne('test').database.ref).toBe('test');
       expect(service.findOne('test').database.title).toBe('Test Database');
     });
   });

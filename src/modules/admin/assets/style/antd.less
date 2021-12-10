@@ -1,0 +1,76 @@
+@import 'antd/lib/style/themes/dark.less';
+@import 'antd/dist/antd.less';
+
+// All variables ~
+// https://github.com/ant-design/ant-design/blob/master/components/style/themes/default.less
+
+@primary-color: #46bdc6;
+@link-color: #46bdc6;
+@info-color: #46bdc6;
+@success-color: #c7f464;
+@warning-color: #ff6b6b;
+@error-color: #c44d58;
+@text-color: #b5b9c2;
+
+@layout-body-background: transparent;
+
+.ant-page-header-heading-title {
+  @apply font-header font-normal text-4xl text-midnight-100;
+}
+
+.depth-2.ant-layout-sider {
+  @apply border-midnight-600 bg-midnight-750;
+
+  border-width: 0 1px 0 0;
+  border-style: solid;
+}
+
+/* Remove menu coloring, so we can use the sider's background as color */
+.ant-menu {
+  background: none;
+}
+
+.ant-menu-vertical .ant-menu-item {
+  @apply shadow-transparent bg-transparent;
+
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.ant-menu-vertical .ant-menu-item:not(:last-child) {
+  margin-bottom: 0;
+}
+
+.ant-menu-inline,
+.ant-menu-vertical,
+.ant-menu-vertical-left {
+  border-right: none;
+}
+
+.depth-1 {
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    @apply shadow-primary-400 bg-transparent transition-all duration-300 ease-in;
+
+    box-shadow: inset 3px 0px 0px;
+  }
+}
+
+.depth-2 {
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    @apply shadow-primary-400 bg-transparent transition-all duration-300 ease-in;
+
+    box-shadow: inset 3px 0px 0px;
+  }
+}
+
+.ant-list {
+  @apply bg-midnight-750;
+}
+
+.ant-list-item:hover {
+  @apply bg-midnight-700 transition-colors duration-300 ease-in-out;
+}
+
+.ant-list-bordered {
+  @apply border-midnight-600;
+}

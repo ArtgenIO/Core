@@ -27,7 +27,7 @@ export default function AuthLayoutComponent() {
           &nbsp;for help.
         </div>
       </div>
-      <div className="right-panel">
+      <div className="right-panel relative pt-8">
         <div className="mobile-panel">
           <div className="cover" />
         </div>

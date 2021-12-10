@@ -80,7 +80,7 @@ export default function SchemaEditorFieldsComponent({
                 <Avatar
                   shape="square"
                   size="large"
-                  className="bg-dark"
+                  className="bg-midnight-800"
                   icon={<DatabaseOutlined />}
                 />
               }

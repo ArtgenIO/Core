@@ -66,7 +66,7 @@ export default function OfflineExtensions() {
                 <Avatar
                   shape="square"
                   size="large"
-                  className="bg-dark text-green-400"
+                  className="bg-midnight-800 text-green-400"
                   icon={<AppstoreOutlined />}
                 />
               }

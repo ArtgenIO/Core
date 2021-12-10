@@ -39,7 +39,7 @@ export class DatabaseConnectionService {
     ]);
 
     // Store the connection early, we may call on it with the schema manager.
-    this.connections.set(database.name, connection);
+    this.connections.set(database.ref, connection);
 
     // Runs the synchornization on association.
     await connection.associate(schemas);
@@ -70,7 +70,7 @@ export class DatabaseConnectionService {
         return knex({
           client: 'sqlite',
           connection: {
-            filename: dsn.substr(7),
+            filename: dsn.substring(7),
           },
         });
       case 'postgres':

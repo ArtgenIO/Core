@@ -105,6 +105,7 @@
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@heroicons/react": "^1.0.5",
     "@nivo/core": "^0.74.0",
     "@nivo/line": "^0.74.0",
     "@react-spring/web": "^9.3.0",

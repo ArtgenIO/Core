@@ -4,8 +4,8 @@ import { Route, Routes } from 'react-router-dom';
 import { ADMIN_URL } from '../admin.constants';
 import DashboardPage from '../component/dashboard.component';
 import Route404 from '../route/404.route';
-import PageLoading from './PageLoading';
-import PageWrapper from './PageWrapper';
+import PageLoading from './page-loading.component';
+import PageWrapper from './page-wrapper.component';
 
 const { Content } = Layout;
 

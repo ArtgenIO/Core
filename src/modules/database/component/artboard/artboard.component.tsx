@@ -11,7 +11,6 @@ import ReactFlow, {
   ReactFlowProvider,
 } from 'react-flow-renderer';
 import { useParams } from 'react-router-dom';
-import '../../../admin/assets/artboard.less';
 import { useHttpClientOld } from '../../../admin/library/http-client';
 import { routeCrudAPI } from '../../../content/util/schema-url';
 import { ISchema } from '../../../schema';
@@ -177,7 +176,7 @@ export default function DatabaseArtboardComponent() {
 
   return (
     <>
-      <div className="h-screen bg-dark">
+      <div className="h-screen bg-midnight-800">
         <ReactFlowProvider>
           <div className="w-full h-full" ref={flowWrapper}>
             <ReactFlow

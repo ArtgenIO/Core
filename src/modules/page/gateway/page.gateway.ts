@@ -32,16 +32,20 @@ export class PageGateway implements IHttpGateway {
 
     const routes = await this.service.loadRoutes();
 
+    httpServer.get('/', (req, rep) => {
+      rep.redirect('/admin');
+    });
+
     for (const page of routes) {
       httpServer.get(
-        page.path,
+        '/pd' + page.path,
         async (req: FastifyRequest, res: FastifyReply): Promise<string> => {
           res.header('content-type', 'text/html');
           return this.service.getHtml(page.id);
         },
       );
       this.logger.info(
-        'Page [%s] registered at [GET][%s]',
+        'Page [%s] registered at [GET][/pd%s]',
         page.title,
         page.path,
       );

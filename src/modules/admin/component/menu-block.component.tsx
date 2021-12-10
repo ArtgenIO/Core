@@ -8,11 +8,9 @@ type Props = PropsWithChildren<{
 
 export default function MenuBlock({ title, style, children }: Props) {
   return (
-    <div>
-      <div className="menu-block" style={style}>
-        {title}
-      </div>
-      {children}
+    <div className="menu-block">
+      <header style={style}>{title}</header>
+      <section>{children}</section>
     </div>
   );
 }

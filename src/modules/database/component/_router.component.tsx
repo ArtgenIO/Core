@@ -37,7 +37,7 @@ export default function DatabaseRouterComponent() {
       new QueryBuilder()
         .top(5000)
         .select(
-          'title,name,schemas/title,schemas/reference,schemas/database,schemas/fields',
+          'title,ref,schemas/title,schemas/reference,schemas/database,schemas/fields',
         )
         .toQuery(),
     {
@@ -50,21 +50,21 @@ export default function DatabaseRouterComponent() {
       setTree(
         databases.map(db => ({
           title: db.title,
-          key: db.name,
+          key: db.ref,
           children: db.schemas
             .sort((a, b) => (a.title > b.title ? 1 : -1))
             .map(s => ({
               title: s.title,
-              key: `${db.name}-${s.reference}`,
+              key: `${db.ref}-${s.reference}`,
               children: s.fields.map(f => ({
                 title: f.title,
-                key: `${db.name}-${s.reference}-${f.reference}`,
+                key: `${db.ref}-${s.reference}-${f.reference}`,
                 selectable: true,
                 isLeaf: true,
               })),
               //icon: <TableOutlined />,
             })) as TreeDataNode[],
-          className: 'test--db-name',
+          className: 'test--db-ref',
           icon: <DatabaseOutlined />,
           isLeaf: false,
         })),
@@ -83,10 +83,7 @@ export default function DatabaseRouterComponent() {
 
   return (
     <Layout hasSider>
-      <Sider
-        width={220}
-        className="h-screen sider-2nd overflow-auto gray-scroll"
-      >
+      <Sider width={220} className="h-screen depth-2 overflow-auto gray-scroll">
         <MenuBlock title="Database Explorer" style={{ marginTop: -1 }}>
           <div className="px-2 py-2">
             <Input
@@ -115,7 +112,7 @@ export default function DatabaseRouterComponent() {
         </MenuBlock>
         <ManagerMenuComponent />
         <MenuBlock title="Schemantic Generator">
-          <Menu theme="dark" className="compact">
+          <Menu className="compact">
             <Menu.Item key="from-csv" icon={<Icon id="transform" />}>
               From CSV
             </Menu.Item>

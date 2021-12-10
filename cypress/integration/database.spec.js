@@ -8,7 +8,7 @@ describe('Database Manager', () => {
   });
 
   it('should list the main database', () => {
-    cy.get('.test--db-name').should('contain.text', 'Main');
+    cy.get('.test--db-ref').should('contain.text', 'Main');
   });
 
   it('should show a connect button', () => {
@@ -19,12 +19,12 @@ describe('Database Manager', () => {
     cy.get('.test--connect-btn').click();
 
     cy.get('.test--db-title').should('exist').type('Test Cypress');
-    cy.get('.test--db-name').should('exist').type('testmem');
+    cy.get('.test--db-ref').should('exist').type('testmem');
     cy.get('.test--db-dsn').should('exist').type('sqlite:./test-cy.db');
     cy.get('.test--connect-sub').should('exist').click();
 
     cy.get('.test--connected').should('exist');
-    cy.get('.test--db-name').should('contain.text', 'Test Cypress');
+    cy.get('.test--db-ref').should('contain.text', 'Test Cypress');
   });
 
   it('should delete the new database', () => {

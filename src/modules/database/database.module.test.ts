@@ -22,10 +22,10 @@ describe(DatabaseModule.name, () => {
     const connections = await kernel.get(DatabaseConnectionService);
     expect(connections.findAll().length).toBe(1);
 
-    // It's named main
+    // It's ref main
     const connection = connections.findOne('main');
     expect(connection).toBeInstanceOf(DatabaseConnection);
-    expect(connection.database.name).toBe('main');
+    expect(connection.database.ref).toBe('main');
 
     // Schemas are connected to the main database
     const schemas = connection.getSchemas();

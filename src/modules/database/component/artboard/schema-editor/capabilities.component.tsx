@@ -45,7 +45,7 @@ export default function SchemaEditorCapabilitiesComponent({
             title="Identifiable"
             description="Makes the table identifiable with an universal unique identifier (UUID) this allows the faster creation of records even in cluster mode."
             avatar={
-              <span className="material-icons-outlined bg-dark behavior-option">
+              <span className="material-icons-outlined bg-midnight-800 behavior-option">
                 key
               </span>
             }
@@ -86,7 +86,7 @@ export default function SchemaEditorCapabilitiesComponent({
             title="Tag Logic"
             description="You can build advanced logic with the built in tag engine, this eradicates the need for a lot of extra field."
             avatar={
-              <span className="material-icons-outlined bg-dark behavior-option">
+              <span className="material-icons-outlined bg-midnight-800 behavior-option">
                 local_offer
               </span>
             }
@@ -124,7 +124,7 @@ export default function SchemaEditorCapabilitiesComponent({
             title="Creation Time Tracking"
             description="Track when each new record are created, useful for analytics and logic building."
             avatar={
-              <span className="material-icons-outlined bg-dark behavior-option">
+              <span className="material-icons-outlined bg-midnight-800 behavior-option">
                 event_available
               </span>
             }
@@ -161,7 +161,7 @@ export default function SchemaEditorCapabilitiesComponent({
             title="Last Update Time Tracking"
             description="Track when each record was last changed."
             avatar={
-              <span className="material-icons-outlined bg-dark behavior-option">
+              <span className="material-icons-outlined bg-midnight-800 behavior-option">
                 edit_calendar
               </span>
             }
@@ -198,7 +198,7 @@ export default function SchemaEditorCapabilitiesComponent({
             title="Soft Deleting"
             description="Prevents accidental data loss, and provides a recoverability to every row in the schema."
             avatar={
-              <span className="material-icons-outlined bg-dark behavior-option">
+              <span className="material-icons-outlined bg-midnight-800 behavior-option">
                 folder_delete
               </span>
             }
@@ -235,7 +235,7 @@ export default function SchemaEditorCapabilitiesComponent({
             title="Overwrite Protection"
             description="Protection against accidental overwriting, this allows multiple people to edit the data in the same time."
             avatar={
-              <span className="material-icons-outlined bg-dark behavior-option">
+              <span className="material-icons-outlined bg-midnight-800 behavior-option">
                 lock_clock
               </span>
             }

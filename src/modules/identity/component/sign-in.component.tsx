@@ -33,6 +33,7 @@ export default function SignInComponent() {
           icon: <UnlockOutlined className="text-green-400" />,
           message: 'Authentication Successful!',
           description: 'Welcome, Artisan!, have a wondeful day <3',
+          placement: 'bottomRight',
         });
 
         setJwt(response.data.accessToken);
@@ -42,16 +43,17 @@ export default function SignInComponent() {
           icon: <MehOutlined className="text-red-400" />,
           message: 'Authentication Failed!',
           description: 'Please check your credentials',
+          placement: 'bottomRight',
         });
       });
   };
 
   return (
     <>
+      <h1 className="header">Artgen Core</h1>
       <h1 className="w-full content-center">
         <div className="logo"></div>
       </h1>
-      <h1 className="mb-4 w-full content-center text-5xl brand">Artgen Core</h1>
 
       <Alert
         type="info"
@@ -80,7 +82,7 @@ export default function SignInComponent() {
           ]}
         >
           <Input
-            className="test--email-address bg-dark"
+            className="test--email-address bg-midnight-800"
             placeholder="example@artgen.io"
             type="email"
             autoFocus
@@ -93,7 +95,7 @@ export default function SignInComponent() {
           rules={[{ required: true, message: 'Please input your password!' }]}
         >
           <Input.Password
-            className="test--password bg-dark"
+            className="test--password bg-midnight-800"
             placeholder="********"
           />
         </Form.Item>

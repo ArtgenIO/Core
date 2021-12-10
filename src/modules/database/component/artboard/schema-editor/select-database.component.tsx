@@ -76,8 +76,8 @@ export default function SelectDatabaseComponent({
         >
           {databases
             ? databases.map(db => (
-                <Select.Option key={db.name} value={db.name}>
-                  {startCase(db.name)}
+                <Select.Option key={db.ref} value={db.ref}>
+                  {startCase(db.ref)}
                 </Select.Option>
               ))
             : undefined}

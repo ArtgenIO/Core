@@ -17,8 +17,8 @@ import {
 } from 'antd';
 import { QueryBuilder } from 'odata-query-builder';
 import React, { useState } from 'react';
-import PageHeader from '../../admin/layout/PageHeader';
-import PageWithHeader from '../../admin/layout/PageWithHeader';
+import PageHeader from '../../admin/layout/page-header.component';
+import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { routeCrudAPI } from '../../content/util/schema-url';
@@ -65,7 +65,7 @@ export default function ConnectionsComponent() {
     >
       <Skeleton loading={loading}>
         <Alert
-          message="Artgen can manage multiple database connection at once, so You can just connect your existing database, or add new ones to use for different workloads."
+          message="Your Artgen system can manage multiple database connection at once, so You can just connect your existing database, or add new ones to use for different workloads."
           type="info"
           className="mb-8"
           showIcon
@@ -82,12 +82,12 @@ export default function ConnectionsComponent() {
                   <Avatar
                     shape="square"
                     size="large"
-                    className="bg-dark"
+                    className="bg-midnight-800"
                     icon={<DatabaseOutlined />}
                   />
                 }
                 title={
-                  <span className="text-xl font-thin test--db-name">
+                  <span className="text-xl font-thin test--db-ref">
                     {db.title}
                   </span>
                 }
@@ -102,10 +102,10 @@ export default function ConnectionsComponent() {
                 icon={<QuestionCircleOutlined />}
                 onConfirm={() => {
                   client
-                    .delete(`/api/rest/main/database/${db.name}`)
+                    .delete(`/api/rest/main/database/${db.ref}`)
                     .then(() => {
                       notification.success({
-                        message: `Database [${db.name}] deleted`,
+                        message: `Database [${db.ref}] deleted`,
                         className: 'test--db-deleted-not',
                       });
 
@@ -116,7 +116,7 @@ export default function ConnectionsComponent() {
                 <Tooltip title="Delete database" placement="leftBottom">
                   <Button
                     icon={<DeleteOutlined />}
-                    data-db-delete={db.name}
+                    data-db-delete={db.ref}
                     className="rounded-md hover:text-red-500 hover:border-red-500"
                   ></Button>
                 </Tooltip>

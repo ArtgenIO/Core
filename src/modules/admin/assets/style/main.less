@@ -1,0 +1,23 @@
+@import './antd.less';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply text-midnight-100 bg-midnight-800 min-h-screen;
+
+  overflow-x: hidden;
+  font-weight: 100;
+
+  background-image: url('../../assets/img/squares.svg');
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: 1920px 180px;
+}
+
+@import './artboard.less';
+@import './artgen.less';

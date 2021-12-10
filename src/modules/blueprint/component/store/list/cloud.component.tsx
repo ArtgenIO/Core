@@ -44,7 +44,7 @@ export default function CloudExtensions() {
                 <Avatar
                   shape="square"
                   size="large"
-                  className="bg-dark text-blue-400"
+                  className="bg-midnight-800 text-blue-400"
                   icon={<AppstoreAddOutlined />}
                 />
               }

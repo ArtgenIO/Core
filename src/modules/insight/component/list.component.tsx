@@ -2,8 +2,8 @@ import { FileAddOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { v4 } from 'uuid';
-import PageHeader from '../../admin/layout/PageHeader';
-import PageWithHeader from '../../admin/layout/PageWithHeader';
+import PageHeader from '../../admin/layout/page-header.component';
+import PageWithHeader from '../../admin/layout/page-with-header.component';
 
 export default function AnalyticsListComponent() {
   return (

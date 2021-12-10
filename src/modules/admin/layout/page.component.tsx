@@ -1,8 +1,8 @@
 import { Layout } from 'antd';
 import AuthenticationWrapperComponent from '../../identity/component/wrapper.component';
-import NavSide from './NavSide';
-import PageContent from './PageContent';
-import PageDrawer from './PageDrawer';
+import NavSide from './nav-side.component';
+import PageContent from './page-content.component';
+import PageDrawer from './page-drawer.component';
 
 export default function PageComponent() {
   return (

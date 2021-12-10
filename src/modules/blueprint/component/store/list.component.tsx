@@ -2,8 +2,8 @@ import { DownloadOutlined, FileAddOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import PageHeader from '../../../admin/layout/PageHeader';
-import PageWithHeader from '../../../admin/layout/PageWithHeader';
+import PageHeader from '../../../admin/layout/page-header.component';
+import PageWithHeader from '../../../admin/layout/page-with-header.component';
 import CloudExtensions from './list/cloud.component';
 import OfflineExtensions from './list/offline.component';
 

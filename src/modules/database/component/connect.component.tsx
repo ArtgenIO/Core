@@ -43,7 +43,7 @@ export default function DatabaseAddComponent({
         </Form.Item>
 
         <Form.Item label="Reference" name="name">
-          <Input className="test--db-name" required />
+          <Input className="test--db-ref" required />
         </Form.Item>
 
         <Form.Item label="DSN" name="dsn">

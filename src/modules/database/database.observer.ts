@@ -57,16 +57,16 @@ export class DatabaseObserver {
 
   @On('crud.main.Database.deleted')
   async handleDatabaseDelete(database: IDatabase) {
-    this.logger.warn('Database [%s] deleted', database.name);
+    this.logger.warn('Database [%s] deleted', database.ref);
 
     try {
-      const link = this.connections.findOne(database.name);
+      const link = this.connections.findOne(database.ref);
 
       if (link) {
         await link.close();
       }
 
-      this.logger.info('Link [%s] closed', database.name);
+      this.logger.info('Link [%s] closed', database.ref);
 
       // Refresh the schema cache
       await this.schemaService.findAll();

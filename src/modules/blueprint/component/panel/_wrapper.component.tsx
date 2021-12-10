@@ -61,7 +61,7 @@ export default function ExtensionPanelWrapper() {
 
   return (
     <Layout hasSider>
-      <Sider collapsible={false} width={200} className="h-screen sider-2nd">
+      <Sider collapsible={false} width={200} className="h-screen">
         <div className="pt-2 -mb-2 px-2">
           <Input placeholder="Search content..." prefix={<SearchOutlined />} />
         </div>

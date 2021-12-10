@@ -150,7 +150,7 @@ export default function WorkflowArtboardComponent() {
 
   return (
     <>
-      <div className="h-screen bg-dark">
+      <div className="h-screen bg-midnight-800">
         <Skeleton loading={isLoading}>
           <ReactFlowProvider>
             <div className="w-full h-full" ref={flowWrapper}>

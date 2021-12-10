@@ -1,7 +1,7 @@
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import '../assets/main.less';
-import PageComponent from '../layout/Page';
+import '../assets/style/main.less';
+import PageComponent from '../layout/page.component';
 
 export default function Root() {
   return (

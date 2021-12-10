@@ -34,16 +34,17 @@ export default function AuthenticationWrapperComponent({
       if (expires > 0) {
         setIsAuthenticated(true);
 
-        if (expires > 5000) {
+        if (expires > 30_000) {
           setWarningTimeout(
             setTimeout(() => {
               notification.warn({
                 message: 'Authentication Expires Soon!',
                 icon: <FieldTimeOutlined className="text-yellow-500" />,
                 description:
-                  'Your authentication token will expire in 5 seconds, the browser will display the sign in form...',
+                  'Your authentication token will expire in 30 seconds, the browser will display the sign in form...',
+                placement: 'bottomRight',
               });
-            }, expires - 5000),
+            }, expires - 30_000),
           );
         }
 
@@ -58,6 +59,7 @@ export default function AuthenticationWrapperComponent({
         icon: <LockOutlined className="text-red-400" />,
         description:
           'Please verify Your identity, to access the requested page.',
+        placement: 'bottomRight',
       });
     }
 

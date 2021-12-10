@@ -501,7 +501,7 @@ export class DatabaseSynchronizer {
    */
   protected async toSchema(tableName: string): Promise<ISchema> {
     // Prepare an empty schema for the findings.
-    const schema = createEmptySchema(this.connection.database.name);
+    const schema = createEmptySchema(this.connection.database.ref);
 
     // Configure the meta, and known facts.
     schema.reference = upperFirst(snakeCase(tableName));

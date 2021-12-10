@@ -52,10 +52,10 @@ export class DatabaseService {
 
     // Map schemas to databases.
     for (const database of databases) {
-      const associations = schemas.filter(s => s.database === database.name);
+      const associations = schemas.filter(s => s.database === database.ref);
 
       // Connection does not exists yet, load up with the schemas.
-      if (database.name !== 'main') {
+      if (database.ref !== 'main') {
         updates.push(
           this.connections
             .create(database, associations)
@@ -84,7 +84,7 @@ export class DatabaseService {
           c
             .close()
             .then(() =>
-              this.logger.info('Connection [%s] closed', c.database.name),
+              this.logger.info('Connection [%s] closed', c.database.ref),
             ),
         ),
     );
@@ -96,7 +96,7 @@ export class DatabaseService {
   async synchronize(link: IDatabaseConnection) {
     const model = this.schemaSvc.getModel<DatabaseModel>('main', 'Database');
 
-    let record = await model.query().findById(link.database.name);
+    let record = await model.query().findById(link.database.ref);
 
     if (!record) {
       record = await model.query().insertAndFetch(link.database);
@@ -124,7 +124,7 @@ export class DatabaseService {
   getMainDatabase(): IDatabase {
     return {
       title: 'Main',
-      name: 'main',
+      ref: 'main',
       dsn: process.env.ARTGEN_DATABASE_DSN,
     };
   }

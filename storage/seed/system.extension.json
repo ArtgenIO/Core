@@ -87,9 +87,9 @@
           "args": {}
         },
         {
-          "reference": "name",
-          "columnName": "name",
-          "title": "Name",
+          "reference": "ref",
+          "columnName": "ref",
+          "title": "Reference",
           "type": "text",
           "tags": [
             "primary"
@@ -101,9 +101,7 @@
           "columnName": "dsn",
           "title": "Data Source Name (DSN)",
           "type": "text",
-          "tags": [
-            "unique"
-          ],
+          "tags": [],
           "args": {}
         }
       ],
@@ -114,7 +112,7 @@
           "kind": "has-many",
           "name": "schemas",
           "target": "Schema",
-          "localField": "name",
+          "localField": "ref",
           "remoteField": "database"
         }
       ],
@@ -330,7 +328,7 @@
           "name": "db",
           "target": "Database",
           "localField": "database",
-          "remoteField": "name"
+          "remoteField": "ref"
         }
       ],
       "tags": [
@@ -493,7 +491,7 @@
           "name": "ofDatabase",
           "target": "Database",
           "localField": "database",
-          "remoteField": "name"
+          "remoteField": "ref"
         }
       ],
       "tags": [

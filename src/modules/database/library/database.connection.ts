@@ -36,11 +36,11 @@ export class DatabaseConnection implements IDatabaseConnection {
     readonly dialect: Dialect,
   ) {
     this.logger = this.logger.child({
-      scope: `Connection:${this.database.name}`,
+      scope: `Connection:${this.database.ref}`,
     });
 
     this.synchornizer = new DatabaseSynchronizer(
-      this.logger.child({ scope: `Synchronizer:${this.database.name}` }),
+      this.logger.child({ scope: `Synchronizer:${this.database.ref}` }),
       this,
     );
   }
@@ -51,7 +51,7 @@ export class DatabaseConnection implements IDatabaseConnection {
     }
 
     throw new Exception(
-      `Model [${reference}] is not associated with the [${this.database.name}] database`,
+      `Model [${reference}] is not associated with the [${this.database.ref}] database`,
     );
   }
 
@@ -61,7 +61,7 @@ export class DatabaseConnection implements IDatabaseConnection {
     }
 
     throw new Exception(
-      `Schema [${reference}] is not associated with the [${this.database.name}] database`,
+      `Schema [${reference}] is not associated with the [${this.database.ref}] database`,
     );
   }
 

@@ -2,8 +2,8 @@ import { Button, Form, Input, message, Select } from 'antd';
 import { startCase } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
-import PageHeader from '../../../admin/layout/PageHeader';
-import PageWithHeader from '../../../admin/layout/PageWithHeader';
+import PageHeader from '../../../admin/layout/page-header.component';
+import PageWithHeader from '../../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../../admin/library/http-client';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import { routeCrudAPI } from '../../../content/util/schema-url';
@@ -78,8 +78,8 @@ export default function ImportExtension() {
           <Form.Item label="Import into Database" name="database">
             <Select placeholder="Select a target database">
               {databases.map(db => (
-                <Select.Option key={db.name} value={db.name}>
-                  {startCase(db.name)}
+                <Select.Option key={db.ref} value={db.ref}>
+                  {startCase(db.ref)}
                 </Select.Option>
               ))}
             </Select>
