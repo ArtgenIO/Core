@@ -84,7 +84,7 @@ export default function DatabaseRouterComponent() {
   return (
     <Layout hasSider>
       <Sider width={220} className="h-screen depth-2 overflow-auto gray-scroll">
-        <MenuBlock title="Database Explorer" style={{ marginTop: -1 }}>
+        <MenuBlock title="Database Explorer" className="-mb-1">
           <div className="px-2 py-2">
             <Input
               placeholder="Schemantic Search..."
@@ -92,11 +92,12 @@ export default function DatabaseRouterComponent() {
               size="small"
             />
           </div>
-          <Divider className="mt-0 mb-1" />
+          <Divider className="my-0" />
 
           {tree.length ? (
             <Tree.DirectoryTree
               treeData={tree}
+              defaultExpandedKeys={[]}
               onSelect={selected => {
                 if (selected.length) {
                   const [ref] = selected[0].toString().split('-');

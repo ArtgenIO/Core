@@ -26,7 +26,7 @@ export default function PageHeader(props: Props) {
             }
           : undefined
       }
-      className="mb-4"
+      className="mb-0"
     ></PH>
   );
 }

@@ -63,14 +63,13 @@ export default function ConnectionsComponent() {
         />
       }
     >
+      <Alert
+        message="Your Artgen system can manage multiple database connection at once, so You can just connect your existing database, or add new ones to use for different workloads."
+        type="info"
+        className="mb-8"
+        showIcon
+      />
       <Skeleton loading={loading}>
-        <Alert
-          message="Your Artgen system can manage multiple database connection at once, so You can just connect your existing database, or add new ones to use for different workloads."
-          type="info"
-          className="mb-8"
-          showIcon
-        />
-
         <List
           bordered
           size="large"

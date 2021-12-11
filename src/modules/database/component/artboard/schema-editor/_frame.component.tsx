@@ -17,7 +17,7 @@ export default function SchemaEditorFrameComponent({
   setSchema,
 }: Props) {
   return (
-    <Tabs tabPosition="left" size="large" style={{ minHeight: 600 }}>
+    <Tabs tabPosition="left" size="middle">
       <Tabs.TabPane key="naming" tab="Naming">
         <SchemaEditorNamingComponent schema={schema} setSchema={setSchema} />
       </Tabs.TabPane>

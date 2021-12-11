@@ -57,9 +57,13 @@
 
 .depth-2 {
   .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    @apply shadow-primary-400 bg-transparent transition-all duration-300 ease-in;
+    @apply bg-primary-500 shadow-white text-white transition-all duration-300 ease-in;
 
     box-shadow: inset 3px 0px 0px;
+  }
+
+  .ant-menu-item-selected a {
+    @apply text-white;
   }
 }
 
@@ -73,4 +77,23 @@
 
 .ant-list-bordered {
   @apply border-midnight-600;
+}
+
+.ant-drawer-content {
+  @apply border-midnight-600;
+
+  border-style: solid;
+  border-width: 0 0 0 1px;
+
+  .ant-drawer-header {
+    @apply bg-midnight-900 py-1 border-midnight-600 pl-4;
+  }
+
+  .ant-drawer-title {
+    @apply font-header font-normal text-3xl pt-1;
+  }
+
+  .ant-drawer-body {
+    @apply py-4 px-2 bg-midnight-700;
+  }
 }

@@ -1,4 +1,4 @@
-import { Drawer, Typography } from 'antd';
+import { Drawer } from 'antd';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Elements, isNode, Node, OnLoadParams } from 'react-flow-renderer';
 import { ISchema } from '../../../schema';
@@ -44,12 +44,8 @@ export default function DatabaseSchemaEditorComponent({
 
   return (
     <Drawer
-      width="60%"
-      title={
-        <Typography.Title style={{ marginBottom: 0 }}>
-          {schema.title}
-        </Typography.Title>
-      }
+      width="50%"
+      title={<span>{schema.title}</span>}
       visible
       closable
       maskClosable
