@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+import { IDatabase } from '..';
 import { IKernel, Kernel } from '../../../app/kernel';
 import { DatabaseModule } from '../database.module';
 import { DatabaseConnection } from './database.connection';
@@ -15,9 +16,10 @@ describe(DatabaseConnection.name, () => {
     return app.create(DatabaseConnection, [
       connection as Partial<Knex> as any,
       {
-        name: 'test',
+        title: 'test',
+        ref: 'test',
         dsn: 'sqlite::memory:',
-      },
+      } as IDatabase,
       'sqlite',
     ]);
   };

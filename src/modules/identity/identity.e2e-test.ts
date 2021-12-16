@@ -124,8 +124,6 @@ describe('Identity (e2e)', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json()).toHaveProperty('name');
-      expect(response.json().name).toBe('main');
     });
   });
 
@@ -211,8 +209,6 @@ describe('Identity (e2e)', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json()).toHaveProperty('name');
-      expect(response.json().name).toBe('main');
     });
 
     test('should accept the access key (header)', async () => {
@@ -227,8 +223,6 @@ describe('Identity (e2e)', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json()).toHaveProperty('name');
-      expect(response.json().name).toBe('main');
     });
 
     test('should be able to read the access key', async () => {

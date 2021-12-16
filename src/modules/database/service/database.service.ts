@@ -125,7 +125,7 @@ export class DatabaseService {
     return {
       title: 'Main',
       ref: 'main',
-      dsn: process.env.ARTGEN_DATABASE_DSN,
+      dsn: process.env.ARTGEN_DATABASE_DSN ?? 'sqlite::memory:',
     };
   }
 }

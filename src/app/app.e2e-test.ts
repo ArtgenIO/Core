@@ -20,15 +20,14 @@ describe('Application (e2e)', () => {
 
   afterAll(async () => await app.stop());
 
-  test('should server the [home] page', async () => {
+  test('should redirect the [home] page', async () => {
     const srv = await getServer();
 
     const response = await srv.inject({
       url: '/',
     });
 
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toMatch(/html/);
+    expect(response.statusCode).toBe(302);
   });
 
   test('should serve the [admin] page', async () => {
@@ -108,9 +107,6 @@ describe('Application (e2e)', () => {
       });
 
       expect(response.statusCode).toBe(200);
-      expect(response.json()).toHaveProperty('name');
-      expect(response.json()).toHaveProperty('dsn');
-      expect(response.json().name).toBe('main');
     });
 
     // Need to have some transformer to handle this JSON hacks, simply can't store JSON encoded string with most of the driver.
