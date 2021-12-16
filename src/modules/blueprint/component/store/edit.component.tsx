@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../../admin/library/http-client';
@@ -9,8 +9,8 @@ import { IBlueprint } from '../../interface/extension.interface';
 import ExtensionEdiorComponent from './_editor.component';
 
 export default function EditExtension() {
-  const history = useHistory();
-  const params = useParams<{ id: string }>();
+  const history = useNavigate();
+  const params: { id: string } = useParams();
   const client = useHttpClientOld();
 
   const [extension, setExtension] = useState<IBlueprint>(null);
@@ -39,7 +39,7 @@ export default function EditExtension() {
             client
               .patch(`/api/rest/main/extension/${extension.id}`, extension)
               .then(() => message.success('Extension updated!'))
-              .then(() => history.push('/admin/ext/store'));
+              .then(() => history('/admin/ext/store'));
           }}
         />
       </div>

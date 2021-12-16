@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, useLocation } from 'react-router';
+import { Route, Routes, useLocation } from 'react-router';
 import CreateExtension from './create.component';
 import EditExtension from './edit.component';
 import ImportExtension from './import.component';
@@ -10,12 +10,12 @@ export default function ExtensionStoreRouter() {
   const base = '/admin/ext/store';
 
   return (
-    <Switch location={location}>
-      <Route exact path={base} component={ExtensionStoreList}></Route>
-      <Route exact path={`${base}/create`} component={CreateExtension}></Route>
-      <Route exact path={`${base}/import`} component={ImportExtension}></Route>
-      <Route path={`${base}/:id/install`} component={ImportExtension}></Route>
-      <Route exact path={`${base}/:id`} component={EditExtension} />
-    </Switch>
+    <Routes location={location}>
+      <Route path={base} element={<ExtensionStoreList />} />
+      <Route path={`${base}/create`} element={<CreateExtension />} />
+      <Route path={`${base}/import`} element={<ImportExtension />} />
+      <Route path={`${base}/:id/install`} element={<ImportExtension />} />
+      <Route path={`${base}/:id`} element={<EditExtension />} />
+    </Routes>
   );
 }

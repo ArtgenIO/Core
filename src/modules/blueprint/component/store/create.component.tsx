@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { v4 } from 'uuid';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
@@ -9,7 +9,7 @@ import { IBlueprint } from '../../interface/extension.interface';
 import ExtensionEdiorComponent from './_editor.component';
 
 export default function CreateExtension() {
-  const history = useHistory();
+  const redirect = useNavigate();
   const client = useHttpClientOld();
 
   const [extension, setExtension] = useState<IBlueprint>({
@@ -33,7 +33,7 @@ export default function CreateExtension() {
             client
               .post('/api/rest/main/extension', extension)
               .then(() => message.success('Extension saved!'))
-              .then(() => history.push('/admin/ext/store'));
+              .then(() => redirect('/admin/ext/store'));
           }}
         />
       </div>

@@ -1,7 +1,7 @@
 import { Button, Form, Input, message, Select } from 'antd';
 import { startCase } from 'lodash';
 import { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../../admin/library/http-client';
@@ -15,8 +15,8 @@ type FormData = {
 };
 
 export default function ImportExtension() {
-  const params = useParams<{ id?: string }>();
-  const history = useHistory();
+  const params: { id?: string } = useParams();
+  const history = useNavigate();
   const client = useHttpClientOld();
 
   const [waitForSource, setWaitForSource] = useState(true);
@@ -68,7 +68,7 @@ export default function ImportExtension() {
               })
               .then(() => {
                 message.success('Extension imported');
-                history.push('/admin/ext/store');
+                history('/admin/ext/store');
               })
               .catch(() => {
                 message.error('Could not import extension');

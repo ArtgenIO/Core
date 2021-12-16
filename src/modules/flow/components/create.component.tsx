@@ -1,7 +1,7 @@
 import { FileAddOutlined, PartitionOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message } from 'antd';
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
@@ -9,7 +9,7 @@ import { useHttpClientOld } from '../../admin/library/http-client';
 import { ILogic } from '../interface/workflow.interface';
 
 export default function CreateWorkflowComponent() {
-  const history = useHistory();
+  const redirect = useNavigate();
   const httpClient = useHttpClientOld();
 
   const sendRequest = async (data: Omit<ILogic, 'id'>) => {
@@ -52,7 +52,7 @@ export default function CreateWorkflowComponent() {
               nodes: [],
               edges: [],
             }).then(id => {
-              history.push(`/admin/workflow/artboard/${id}`);
+              redirect(`/admin/workflow/artboard/${id}`);
               message.success('Workflow ready!');
             });
           }}

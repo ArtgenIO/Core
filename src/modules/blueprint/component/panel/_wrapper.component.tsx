@@ -8,7 +8,7 @@ import {
 import { Divider, Input, Layout, Menu } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import { useEffect, useState } from 'react';
-import { Route, Switch, useLocation, useParams } from 'react-router';
+import { Route, Routes, useLocation, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import CrudReadComponent from '../../../content/component/read.component';
@@ -17,7 +17,7 @@ import { IBlueprint } from '../../interface/extension.interface';
 
 export default function ExtensionPanelWrapper() {
   const location = useLocation();
-  const params = useParams<{ id: string }>();
+  const params: { id: string } = useParams();
   const base = `/admin/ext/${params.id}`;
 
   const [selectedMenu, setSelectedMenu] = useState([]);
@@ -106,16 +106,16 @@ export default function ExtensionPanelWrapper() {
       </Sider>
 
       <Layout>
-        <Switch location={location}>
+        <Routes location={location}>
           <Route
             path={`${base}/workflows`}
-            component={WorkflowListComponent}
+            element={<WorkflowListComponent />}
           ></Route>
           <Route
             path={`${base}/contents/:database/:reference`}
-            component={CrudReadComponent}
+            element={<CrudReadComponent />}
           ></Route>
-        </Switch>
+        </Routes>
       </Layout>
     </Layout>
   );

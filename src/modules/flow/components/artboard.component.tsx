@@ -43,7 +43,7 @@ export default function WorkflowArtboardComponent() {
   const setPageDrawer = useSetRecoilState(pageDrawerAtom);
   const resetPageDrawerState = useResetRecoilState(pageDrawerAtom);
   // Router
-  const workflowId = useParams<{ id: string }>().id;
+  const workflowId: string = useParams().id;
   const httpClient = useHttpClientOld();
 
   // Local state

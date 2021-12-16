@@ -3,7 +3,7 @@ import Form from '@rjsf/antd';
 import { Button, message, Skeleton } from 'antd';
 import { QueryBuilder } from 'odata-query-builder';
 import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
@@ -20,10 +20,10 @@ interface RouteParams {
 }
 
 export default function CrudCreateComponent() {
-  const history = useHistory();
+  const redirect = useNavigate();
   const httpClient = useHttpClientOld();
 
-  const route = useParams<RouteParams>();
+  const route: RouteParams = useParams();
   const [formSchema, setFormSchema] = useState({});
 
   // Load schema
@@ -54,7 +54,7 @@ export default function CrudCreateComponent() {
       await httpClient.post<any>(routeCrudAPI(schemas[0]), form.formData);
       message.success(`New record created!`);
 
-      history.push(routeCrudUI(schemas[0]));
+      redirect(routeCrudUI(schemas[0]));
     } catch (error) {
       message.error(`Error while creating the record!`);
       console.error(error);

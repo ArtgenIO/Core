@@ -3,7 +3,7 @@ import Form from '@rjsf/antd';
 import { Button, message, Skeleton } from 'antd';
 import { QueryBuilder } from 'odata-query-builder';
 import { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
@@ -21,11 +21,11 @@ interface RouteParams {
 }
 
 export default function CrudUpdateComponent() {
-  const history = useHistory();
+  const redirect = useNavigate();
   const location = useLocation();
   const httpClient = useHttpClientOld();
 
-  const route = useParams<RouteParams>();
+  const route: RouteParams = useParams();
   const [formSchema, setFormSchema] = useState({});
   const APIURL = routeCrudAPI(route) + location.search;
 
@@ -63,7 +63,7 @@ export default function CrudUpdateComponent() {
 
       message.success(`Record has been updated!`);
       // Go back to the read index
-      history.push(routeCrudUI(route));
+      redirect(routeCrudUI(route));
     } catch (error) {
       message.error(`An error occured while we tried to update the record`);
     }

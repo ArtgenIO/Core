@@ -17,7 +17,7 @@ type Route = {
 };
 
 export default function PageEditorComponent() {
-  const route = useParams<Route>();
+  const route: Route = useParams();
   const [editor, setEditor] = useState(null);
   const httpClient = useHttpClientOld();
 

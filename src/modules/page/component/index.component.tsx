@@ -3,7 +3,7 @@ import { Divider, Input, Layout, Menu, Skeleton } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import { QueryBuilder } from 'odata-query-builder';
 import { useEffect, useState } from 'react';
-import { Route, Switch, useHistory, useLocation } from 'react-router';
+import { Route, Routes, useLocation, useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { routeCrudAPI } from '../../content/util/schema-url';
@@ -12,7 +12,7 @@ import PageEditorComponent from './editor.component';
 
 export default function PageIndexComponent() {
   const location = useLocation();
-  const history = useHistory();
+  const redirect = useNavigate();
   const [search, setSearch] = useState<string>(null);
 
   const [{ data: pages, loading, error }] = useHttpClient<IPage[]>(
@@ -67,7 +67,7 @@ export default function PageIndexComponent() {
                   const match = pages.filter(menuFilter);
 
                   if (match.length === 1) {
-                    history.push('TODO');
+                    redirect('TODO');
                   }
                 }
               }}
@@ -97,12 +97,12 @@ export default function PageIndexComponent() {
         </Sider>
 
         <Layout>
-          <Switch location={location}>
+          <Routes>
             <Route
               path="/admin/page/:id"
-              component={PageEditorComponent}
+              element={<PageEditorComponent />}
             ></Route>
-          </Switch>
+          </Routes>
         </Layout>
       </Layout>
     </Skeleton>

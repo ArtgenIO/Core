@@ -3,7 +3,7 @@ import { Divider, Input, Layout, Menu } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import { QueryBuilder } from 'odata-query-builder';
 import { useState } from 'react';
-import { Route, Switch, useHistory, useLocation } from 'react-router';
+import { Route, Routes, useLocation, useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
@@ -14,7 +14,7 @@ import CrudUpdateComponent from './update.component';
 
 export default function CrudIndexComponent() {
   const location = useLocation();
-  const history = useHistory();
+  const redirect = useNavigate();
   const [search, setSearch] = useState<string>(null);
 
   const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
@@ -32,7 +32,7 @@ export default function CrudIndexComponent() {
   if (!loading) {
     if (schemas.length) {
       if (location.pathname === '/admin/content') {
-        history.push(routeCrudUI(schemas[0]));
+        redirect(routeCrudUI(schemas[0]));
       }
     }
   }
@@ -67,7 +67,7 @@ export default function CrudIndexComponent() {
                 const match = schemas.filter(menuFilter);
 
                 if (match.length === 1) {
-                  history.push(routeCrudUI(match[0]));
+                  redirect(routeCrudUI(match[0]));
                 }
               }
             }}
@@ -95,20 +95,20 @@ export default function CrudIndexComponent() {
       </Sider>
 
       <Layout>
-        <Switch location={location}>
+        <Routes>
           <Route
             path="/admin/content/:database/:reference/update"
-            component={CrudUpdateComponent}
+            element={<CrudUpdateComponent />}
           ></Route>
           <Route
             path="/admin/content/:database/:reference/create"
-            component={CrudCreateComponent}
+            element={<CrudCreateComponent />}
           ></Route>
           <Route
             path="/admin/content/:database/:reference"
-            component={CrudReadComponent}
+            element={<CrudReadComponent />}
           ></Route>
-        </Switch>
+        </Routes>
       </Layout>
     </Layout>
   );

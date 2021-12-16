@@ -1,4 +1,4 @@
-import { Route, Switch, useLocation } from 'react-router';
+import { Route, Routes, useLocation } from 'react-router';
 import AnalyticsEditorComponent from './editor.component';
 import AnalyticsListComponent from './list.component';
 
@@ -7,13 +7,12 @@ export default function AnalyticsIndexComponent() {
   const baseURL = '/admin/analytics';
 
   return (
-    <Switch location={location}>
-      <Route exact path={baseURL} component={AnalyticsListComponent}></Route>
+    <Routes>
+      <Route path={baseURL} element={<AnalyticsListComponent />}></Route>
       <Route
-        exact
         path={`${baseURL}/:id/editor`}
-        component={AnalyticsEditorComponent}
+        element={<AnalyticsEditorComponent />}
       ></Route>
-    </Switch>
+    </Routes>
   );
 }
