@@ -64,7 +64,7 @@ export default function DatabaseRouterComponent() {
               })),
               //icon: <TableOutlined />,
             })) as TreeDataNode[],
-          className: 'test--db-ref',
+          className: 'test--db-list-ref',
           icon: <DatabaseOutlined />,
           isLeaf: false,
         })),

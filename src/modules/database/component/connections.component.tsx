@@ -86,7 +86,7 @@ export default function ConnectionsComponent() {
                   />
                 }
                 title={
-                  <span className="text-xl font-thin test--db-ref">
+                  <span className="text-xl font-thin test--db-rct">
                     {db.title}
                   </span>
                 }

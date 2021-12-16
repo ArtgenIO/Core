@@ -110,7 +110,7 @@ export class ODataService {
         }
         // Load from relation
         else {
-          const rel = s.substr(0, s.indexOf('/'));
+          const rel = s.substring(0, s.indexOf('/'));
 
           if (relationNames.includes(rel)) {
             q.withGraphFetched(rel);
