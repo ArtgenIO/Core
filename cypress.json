@@ -1,5 +1,3 @@
 {
-  "video": false,
-  "screenshot": false,
-  "baseUrl": "http://localhost:7200"
+  "video": false
 }
