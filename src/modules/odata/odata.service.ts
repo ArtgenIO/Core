@@ -1,6 +1,6 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { merge, pick } from 'lodash';
-import { Model, ModelClass } from 'objection';
+import { Model, ModelClass, Operator, QueryBuilder } from 'objection';
 import parser from 'odata-parser';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { ILogger, Inject, Logger } from '../../app/container';
@@ -73,8 +73,46 @@ export class ODataService {
     return result;
   }
 
+  protected tOperator(op: string): Operator {
+    if (op === 'eq') {
+      return '=';
+    }
+
+    throw new Exception(`Unknown [${op}] operator`);
+  }
+
+  protected toConditions(q: QueryBuilder<any>, $filter: any) {
+    //console.log('$filter', $filter);
+
+    if ($filter.type == 'eq') {
+      q.where(
+        $filter.left.name,
+        this.tOperator($filter.type),
+        $filter.right.value,
+      );
+    } else if ($filter.type == 'and') {
+      const s = this;
+
+      q.andWhere(function () {
+        s.toConditions(this, $filter.left);
+        s.toConditions(this, $filter.right);
+      });
+    } else if ($filter.type == 'or') {
+      const s = this;
+
+      q.orWhere(function () {
+        s.toConditions(this, $filter.left);
+        s.toConditions(this, $filter.right);
+      });
+    }
+  }
+
   protected runQuery(model: ModelClass<Model>, schema: ISchema, ast: any) {
     const q = model.query();
+
+    if (ast?.$filter) {
+      this.toConditions(q, ast.$filter);
+    }
 
     if (ast?.$top) {
       q.limit(parseInt(ast.$top, 10));
@@ -127,7 +165,11 @@ export class ODataService {
       }
 
       if (fieldSelection.size) {
-        q.select(Array.from(fieldSelection.values()));
+        q.select(
+          Array.from(fieldSelection.values()).map(
+            fRef => schema.fields.find(f => f.reference == fRef).columnName,
+          ),
+        );
       }
 
       if (eagerSelection.size) {
@@ -167,7 +209,7 @@ export class ODataService {
         },
         filters,
       ),
-      ['$top', '$skip', '$select'],
+      ['$top', '$skip', '$select', '$filter'],
     ) as ParsedUrlQueryInput;
 
     // Convert it into string (the parser only accepts it in this format)
@@ -178,7 +220,7 @@ export class ODataService {
       const ast = parser.parse(qs);
       // console.log({ ast });
       const q = this.runQuery(model, schema, ast);
-      // console.log(q.toKnexQuery().toQuery());
+      console.log(q.toKnexQuery().toQuery());
 
       const records = await q;
 

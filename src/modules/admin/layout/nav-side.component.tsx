@@ -1,7 +1,9 @@
 import {
+  BarsOutlined,
   DatabaseOutlined,
   HomeOutlined,
   LogoutOutlined,
+  PartitionOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, notification } from 'antd';
 import { snakeCase } from 'lodash';
@@ -25,6 +27,16 @@ const menuItems: IMenuItem[] = [
     icon: <HomeOutlined />,
     path: ADMIN_URL,
     title: 'Dashboard',
+  },
+  {
+    icon: <BarsOutlined />,
+    path: ADMIN_URL + '/content',
+    title: 'Content',
+  },
+  {
+    icon: <PartitionOutlined />,
+    path: ADMIN_URL + '/flow',
+    title: 'Flow',
   },
   {
     icon: <DatabaseOutlined />,

@@ -68,7 +68,7 @@ export default function WorkflowListComponent() {
             icon: <PartitionOutlined />,
           }}
           actions={
-            <Link key="create" to="/admin/workflow/create">
+            <Link key="create" to="/admin/flow/create">
               <Button type="primary" icon={<FileAddOutlined />}>
                 New Workflow
               </Button>
@@ -105,7 +105,7 @@ export default function WorkflowListComponent() {
                   icon={<BarChartOutlined />}
                   className="rounded-md mr-1 "
                 ></Button>
-                <Link to={`/admin/workflow/artboard/${row.id}`}>
+                <Link to={`/admin/flow/artboard/${row.id}`}>
                   <Button
                     icon={<EditOutlined />}
                     className="rounded-md mr-1 hover:text-green-500 hover:border-green-500"

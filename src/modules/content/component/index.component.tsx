@@ -97,15 +97,15 @@ export default function CrudIndexComponent() {
       <Layout>
         <Routes>
           <Route
-            path="/admin/content/:database/:reference/update"
+            path=":database/:reference/update"
             element={<CrudUpdateComponent />}
           ></Route>
           <Route
-            path="/admin/content/:database/:reference/create"
+            path=":database/:reference/create"
             element={<CrudCreateComponent />}
           ></Route>
           <Route
-            path="/admin/content/:database/:reference"
+            path=":database/:reference"
             element={<CrudReadComponent />}
           ></Route>
         </Routes>
