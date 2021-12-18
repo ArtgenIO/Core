@@ -1,4 +1,5 @@
 {
   "video": false,
-  "screenshot": false
+  "screenshot": false,
+  "baseUrl": "http://localhost:7200"
 }
