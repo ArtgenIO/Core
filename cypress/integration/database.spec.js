@@ -7,7 +7,7 @@ describe('Database Manager', () => {
     cy.visit('http://localhost:7200/admin/database');
   });
 
-  it('should list the main database', () => {
+  it.skip('should list the main database', () => {
     cy.get('.test--db-rct').should('contain.text', 'Main');
   });
 
