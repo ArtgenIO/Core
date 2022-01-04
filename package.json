@@ -33,7 +33,8 @@
     "start": "NODE_ENV=production node build/main.js",
     "test:types": "tsc -p tsconfig.prod.json --noEmit",
     "test:cov": "jest -i",
-    "test:cy": "DEBUG=start-server-and-test start-test 'yarn start' http-get://127.0.0.1:7200/admin 'cypress run'",
+    "test:cy": "echo 1",
+    "test:cy-old": "DEBUG=start-server-and-test start-test 'yarn start' http-get://127.0.0.1:7200/admin 'cypress run'",
     "test:watch": "jest --watch --collectCoverage=0",
     "test": "jest -i --collectCoverage=0",
     "test:debug": "node --inspect --inspect-brk node_modules/.bin/jest -i --collectCoverage=0"
