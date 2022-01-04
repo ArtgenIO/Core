@@ -1,3 +1,9 @@
+### Version 0.1.13
+
+- Remove the Cypress tests until the random fail is not patched
+- New UI design for the database editor
+- Experimenting with ARM releases for fellow raspy users
+
 ### Version 0.1.0
 
 - Use homebrew table sync for better control
