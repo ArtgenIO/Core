@@ -40,7 +40,7 @@ interface RouteParams {
 
 export default function CrudReadComponent() {
   const httpClient = useHttpClientOld();
-  const route: RouteParams = useParams();
+  const route = useParams() as unknown as RouteParams;
 
   // Load schema
   const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<ISchema[]>(

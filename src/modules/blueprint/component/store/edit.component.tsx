@@ -10,7 +10,7 @@ import ExtensionEdiorComponent from './_editor.component';
 
 export default function EditExtension() {
   const history = useNavigate();
-  const params: { id: string } = useParams();
+  const params: Partial<{ id: string }> = useParams();
   const client = useHttpClientOld();
 
   const [extension, setExtension] = useState<IBlueprint>(null);

@@ -23,7 +23,7 @@ export default function CrudCreateComponent() {
   const redirect = useNavigate();
   const httpClient = useHttpClientOld();
 
-  const route: RouteParams = useParams();
+  const route: Partial<RouteParams> = useParams();
   const [formSchema, setFormSchema] = useState({});
 
   // Load schema

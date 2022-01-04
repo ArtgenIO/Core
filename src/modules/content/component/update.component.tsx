@@ -25,7 +25,7 @@ export default function CrudUpdateComponent() {
   const location = useLocation();
   const httpClient = useHttpClientOld();
 
-  const route: RouteParams = useParams();
+  const route = useParams() as unknown as RouteParams;
   const [formSchema, setFormSchema] = useState({});
   const APIURL = routeCrudAPI(route) + location.search;
 

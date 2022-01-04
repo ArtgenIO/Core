@@ -17,7 +17,7 @@ import { IBlueprint } from '../../interface/extension.interface';
 
 export default function ExtensionPanelWrapper() {
   const location = useLocation();
-  const params: { id: string } = useParams();
+  const params: Partial<{ id: string }> = useParams();
   const base = `/admin/ext/${params.id}`;
 
   const [selectedMenu, setSelectedMenu] = useState([]);
