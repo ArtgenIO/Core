@@ -69,6 +69,9 @@ jobs:
         env:
           ARTGEN_DATABASE_DSN: mariadb://artgen:artgen@localhost:3306/artgen
 
+      - name: Run build
+        run: yarn build
+
       - name: Run UI tests (MariaDB)
         run: yarn test:cy
         env:
@@ -109,6 +112,9 @@ jobs:
         env:
           ARTGEN_DATABASE_DSN: mysql://artgen:artgen@localhost:3306/artgen
 
+      - name: Run build
+        run: yarn build
+
       - name: Run UI tests (MySQL)
         run: yarn test:cy
         env:
@@ -136,6 +142,9 @@ jobs:
         run: yarn test
         env:
           ARTGEN_DATABASE_DSN: sqlite:./test-api.db
+
+      - name: Run build
+        run: yarn build
 
       - name: Run UI tests (SQLite)
         run: yarn test:cy
@@ -177,6 +186,9 @@ jobs:
         env:
           ARTGEN_DATABASE_DSN: postgres://artgen:artgen@localhost:5432/artgen
 
+      - name: Run build
+        run: yarn build
+
       - name: Run UI tests (PostgreSQL)
         run: yarn test:cy
         env:
@@ -207,13 +219,13 @@ jobs:
         env:
           ARTGEN_DATABASE_DSN: "sqlite::memory:"
 
+      - name: Run build
+        run: yarn build
+
       - name: Run UI tests
         run: yarn test:cy
         env:
           ARTGEN_DATABASE_DSN: "sqlite::memory:"
-
-      - name: Run build
-        run: yarn build
 
       - name: Collect coverage
         uses: coverallsapp/github-action@master

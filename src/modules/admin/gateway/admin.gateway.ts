@@ -36,6 +36,7 @@ export class AdminGateway implements IHttpGateway {
           instance.setNotFoundHandler((req, reply) => {
             this.logger.debug('Serving the index on 404 of [%s]', req.url);
 
+            reply.statusCode = 200;
             reply.headers({
               'content-type': 'text/html',
             });
