@@ -1,3 +1,6 @@
 {
-  "video": false
+  "video": false,
+  "watchForFileChanges": false,
+  "experimentalSourceRewriting": false,
+  "screenshotOnRunFailure": false
 }

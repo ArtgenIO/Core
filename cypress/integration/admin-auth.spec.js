@@ -2,7 +2,7 @@
 
 describe('admin authentication', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:7200/admin');
+    cy.visit('http://127.0.0.1:7200/admin');
   });
 
   it('display the default landing', () => {

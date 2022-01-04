@@ -142,7 +142,7 @@
     "antd": "^4.16.13",
     "autoprefixer": "^10.3.7",
     "axios-hooks": "^3.0.0",
-    "cypress": "^9.1.0",
+    "cypress": "8.5.0",
     "enquirer": "^2.3.6",
     "grapesjs": "^0.17.29",
     "grapesjs-blocks-basic": "^0.1.8",

@@ -4,7 +4,7 @@ describe('Database Manager', () => {
   before(() => {
     cy.login();
 
-    cy.visit('http://localhost:7200/admin/database');
+    cy.visit('http://127.0.0.1:7200/admin/database');
   });
 
   it.skip('should list the main database', () => {
