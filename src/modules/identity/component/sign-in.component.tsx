@@ -9,7 +9,6 @@ import {
   Tooltip,
 } from 'antd';
 import axios from 'axios';
-import React from 'react';
 import { useSetRecoilState } from 'recoil';
 import { jwtAtom } from '../../admin/admin.atoms';
 
@@ -54,10 +53,9 @@ export default function SignInComponent() {
       <h1 className="w-full content-center">
         <div className="logo"></div>
       </h1>
-
       <Alert
         type="info"
-        className="text-left mb-4"
+        className="text-left mb-4 mt-48 md:mt-4"
         message={
           <>
             Use <strong className="font-bold">demo@artgen.io</strong> with the
