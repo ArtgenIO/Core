@@ -45,6 +45,8 @@ export default function DatabaseArtboardComponent() {
   const [selectedNode, setSelectedNode] = useState<string>(null);
   const [savedState, setSavedState] = useState<ISchema[]>([]);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const layoutOrganizer = createLayouOrganizer();
 
   useEffect(() => {
@@ -55,6 +57,7 @@ export default function DatabaseArtboardComponent() {
         layoutOrganizer(SchemaSerializer.toElements(response.data)),
       );
       setSavedState(response.data);
+      setIsLoading(false);
     })();
   }, [ref]);
 
@@ -69,15 +72,9 @@ export default function DatabaseArtboardComponent() {
       // New schema create now
       if (!original) {
         await httpClient
-          .post(
-            toODataRoute({
-              database: 'main',
-              reference: 'Schema',
-            }),
-            schema,
-          )
+          .post('/api/rest/main/schema', schema)
           .then(() => {
-            //message.success(`Schema [${schema.reference}] created!`);
+            message.success(`Schema [${schema.reference}] created!`);
           })
           .catch(e => {
             message.error(`Schema [${schema.reference}] creating error!`);
@@ -92,23 +89,11 @@ export default function DatabaseArtboardComponent() {
         } else {
           await httpClient
             .patch(
-              toODataRoute({
-                database: 'main',
-                reference: 'Schema',
-              }) +
-                new QueryBuilder()
-                  .top(1)
-                  .filter(f => {
-                    f.filterExpression('database', 'eq', ref);
-                    f.filterExpression('reference', 'eq', schema.reference);
-
-                    return f;
-                  }, 'and')
-                  .toQuery(),
+              `/api/rest/main/schema/${schema.database}/${schema.reference}`,
               schema,
             )
             .then(() => {
-              //message.success(`Schema [${schema.reference}] updated!`);
+              message.success(`Schema [${schema.reference}] updated!`);
             })
             .catch(e => {
               message.error(`Schema [${schema.reference}] update error!`);
@@ -159,10 +144,14 @@ export default function DatabaseArtboardComponent() {
       flowInstance.getElements(),
     );
 
-    currentState.push(createEmptySchema(ref));
+    const newSchema = createEmptySchema(ref);
+
+    currentState.push(newSchema);
 
     setElements(SchemaSerializer.toElements(currentState));
     flowInstance.fitView();
+
+    setOpenedNode(newSchema.reference);
   };
 
   const doRemove = () => {
@@ -170,7 +159,7 @@ export default function DatabaseArtboardComponent() {
     setSelectedNode(null);
   };
 
-  if (!savedState.length) {
+  if (isLoading) {
     return <h1>Loading</h1>;
   }
 

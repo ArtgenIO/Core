@@ -1,5 +1,5 @@
 import { Form, Input, Tooltip, Typography } from 'antd';
-import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
+import { camelCase, cloneDeep, snakeCase } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ISchema } from '../../../../schema';
 
@@ -67,13 +67,13 @@ export default function SchemaEditorNamingComponent({
           if (keys.includes('title')) {
             if (refLinked) {
               form.setFieldsValue({
-                reference: upperFirst(camelCase(changedValues['title'])),
+                reference: camelCase(changedValues['title']),
               });
             }
 
             if (tblLinked) {
               form.setFieldsValue({
-                tableName: snakeCase(camelCase(changedValues['title'])),
+                tableName: snakeCase(changedValues['title']),
               });
             }
           }

@@ -1,7 +1,6 @@
 import { TableOutlined } from '@ant-design/icons';
 import Form from '@rjsf/antd';
 import { Button, message, Skeleton } from 'antd';
-import { QueryBuilder } from 'odata-query-builder';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
@@ -12,7 +11,11 @@ import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
 import { ContentAction } from '../interface/content-action.enum';
 import { schemaToJsonSchema } from '../util/schema-to-jsonschema';
-import { routeCrudUI, toODataRoute } from '../util/schema-url';
+import {
+  routeCrudUI,
+  toODataRoute,
+  toRestRecordRoute,
+} from '../util/schema-url';
 
 interface RouteParams {
   database: string;
@@ -30,16 +33,8 @@ export default function CrudUpdateComponent() {
   const APIURL = toODataRoute(route) + location.search;
 
   // Load schema
-  const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<ISchema[]>(
-    toODataRoute({ database: 'main', reference: 'Schema' }) +
-      new QueryBuilder()
-        .filter(f =>
-          f
-            .filterExpression('database', 'eq', route.database)
-            .filterExpression('reference', 'eq', route.reference),
-        )
-        .top(1)
-        .toQuery(),
+  const [{ data: schema, loading: iSchemaLoading }] = useHttpClient<ISchema>(
+    `/api/rest/main/schema/${route.database}/${route.reference}`,
   );
 
   // Load content
@@ -47,19 +42,19 @@ export default function CrudUpdateComponent() {
     useHttpClient<ISchema>(APIURL);
 
   useEffect(() => {
-    if (schemas && schemas.length) {
-      setFormSchema(schemaToJsonSchema(schemas[0], ContentAction.UPDATE));
+    if (schema) {
+      setFormSchema(schemaToJsonSchema(schema, ContentAction.UPDATE));
     }
     return () => {
       setFormSchema({});
     };
-  }, [schemas]);
+  }, [schema]);
 
   const handleSubmit = async (form: any) => {
     const data = form.formData;
 
     try {
-      await httpClient.patch<any>(APIURL, data);
+      await httpClient.patch<any>(toRestRecordRoute(schema, data), data);
 
       message.success(`Record has been updated!`);
       // Go back to the read index
@@ -74,7 +69,7 @@ export default function CrudUpdateComponent() {
       <PageWithHeader
         header={
           <PageHeader
-            title={`Update ${schemas ? schemas[0].title : '~'}`}
+            title={`Update ${schema ? schema.title : '~'}`}
             avatar={{
               icon: <TableOutlined />,
             }}

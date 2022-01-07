@@ -1,6 +1,6 @@
 import { Button, Divider, Drawer, Form, Input, Select, Tooltip } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
-import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
+import { camelCase, cloneDeep, snakeCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { FieldType, IField, ISchema } from '../../../../schema';
 
@@ -130,13 +130,13 @@ export default function SchemaEditorFieldTunerComponent({
             if (keys.includes('title')) {
               if (refLinked) {
                 form.setFieldsValue({
-                  reference: upperFirst(camelCase(changedValues['title'])),
+                  reference: camelCase(changedValues['title']),
                 });
               }
 
               if (clmLinked) {
                 form.setFieldsValue({
-                  columnName: snakeCase(camelCase(changedValues['title'])),
+                  columnName: snakeCase(changedValues['title']),
                 });
               }
             }

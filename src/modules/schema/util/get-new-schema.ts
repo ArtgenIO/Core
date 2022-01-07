@@ -4,7 +4,7 @@ export const createEmptySchema = (database: string): ISchema => ({
   database,
   title: 'New Schema',
   reference: 'newSchema',
-  tableName: 'newSchema',
+  tableName: 'new_schema',
   meta: {
     artboard: {
       position: {

@@ -8,7 +8,6 @@
   "config": {},
   "schemas": [
     {
-      "blueprintId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
       "database": "main",
       "reference": "Account",
       "title": "Accounts",
@@ -60,7 +59,6 @@
       ]
     },
     {
-      "blueprintId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
       "database": "main",
       "reference": "AccessKey",
       "title": "Access Keys",
@@ -115,7 +113,6 @@
   "workflows": [
     {
       "id": "51c0abf2-5924-4fdf-a920-a1b3487f6710",
-      "blueprintId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
       "name": "Authentication - Sign In",
       "nodes": [
         {
@@ -302,7 +299,6 @@
     },
     {
       "id": "ced473f0-522c-47db-a88c-f0f981d93f9e",
-      "blueprintId": "64dbcb4b-01fe-44dd-8d2b-286c6e248a81",
       "name": "Authentication - Sign Up",
       "nodes": [
         {
