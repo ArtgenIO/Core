@@ -8,7 +8,7 @@
   "config": {},
   "schemas": [
     {
-      "extensionId": "10000000-0000-0000-0000-000000000000",
+      "blueprintId": "10000000-0000-0000-0000-000000000000",
       "database": "main",
       "reference": "Workflow",
       "title": "Workflows",
@@ -25,8 +25,8 @@
           "args": {}
         },
         {
-          "reference": "extensionId",
-          "columnName": "extensionId",
+          "reference": "blueprintId",
+          "columnName": "blueprintId",
           "title": "Extension ID",
           "type": "uuid",
           "tags": [
@@ -72,7 +72,7 @@
       ]
     },
     {
-      "extensionId": "10000000-0000-0000-0000-000000000000",
+      "blueprintId": "10000000-0000-0000-0000-000000000000",
       "database": "main",
       "reference": "Database",
       "title": "Databases",
@@ -122,7 +122,7 @@
       ]
     },
     {
-      "extensionId": "10000000-0000-0000-0000-000000000000",
+      "blueprintId": "10000000-0000-0000-0000-000000000000",
       "database": "main",
       "reference": "Page",
       "title": "Pages",
@@ -139,8 +139,8 @@
           "args": {}
         },
         {
-          "reference": "extensionId",
-          "columnName": "extensionId",
+          "reference": "blueprintId",
+          "columnName": "blueprintId",
           "title": "Extension ID",
           "type": "uuid",
           "tags": [
@@ -211,7 +211,7 @@
       ]
     },
     {
-      "extensionId": "10000000-0000-0000-0000-000000000000",
+      "blueprintId": "10000000-0000-0000-0000-000000000000",
       "database": "main",
       "reference": "Schema",
       "title": "Schemas",
@@ -228,8 +228,8 @@
           "args": {}
         },
         {
-          "reference": "extensionId",
-          "columnName": "extensionId",
+          "reference": "blueprintId",
+          "columnName": "blueprintId",
           "title": "Extension ID",
           "type": "uuid",
           "tags": [
@@ -337,7 +337,7 @@
       ]
     },
     {
-      "extensionId": "10000000-0000-0000-0000-000000000000",
+      "blueprintId": "10000000-0000-0000-0000-000000000000",
       "database": "main",
       "title": "Key-Value Storage",
       "reference": "KeyValueStorage",
@@ -375,11 +375,11 @@
       ]
     },
     {
-      "extensionId": "10000000-0000-0000-0000-000000000000",
+      "blueprintId": "10000000-0000-0000-0000-000000000000",
       "database": "main",
-      "title": "Extensions",
-      "reference": "Extension",
-      "tableName": "__artgen_extensions",
+      "title": "Blueprints",
+      "reference": "Blueprint",
+      "tableName": "__artgen_blueprints",
       "fields": [
         {
           "title": "Identifier",
@@ -503,8 +503,8 @@
   "workflows": [
     {
       "id": "30d9c6a9-3d0d-424d-ab5e-7ffe0ff7c840",
-      "extensionId": "10000000-0000-0000-0000-000000000000",
-      "name": "Extension Store - Proxy",
+      "blueprintId": "10000000-0000-0000-0000-000000000000",
+      "name": "Blueprint Store - Proxy",
       "nodes": [
         {
           "id": "trigger.http.1",
@@ -549,8 +549,8 @@
           ]
         },
         {
-          "id": "extension.import.1",
-          "type": "extension.import",
+          "id": "blueprint.import.1",
+          "type": "blueprint.import",
           "config": null,
           "title": "Call SVC",
           "position": [
@@ -632,7 +632,7 @@
           "id": "http.request.2",
           "type": "http.request",
           "config": null,
-          "title": "Read Extension",
+          "title": "Read Blueprint",
           "position": [
             547.7431997043435,
             721.4520508288837
@@ -667,14 +667,14 @@
         {
           "id": "24d01f7f-6427-489e-9ff5-374a44ed0eda",
           "sourceNodeId": "trigger.http.1",
-          "targetNodeId": "extension.import.1",
+          "targetNodeId": "blueprint.import.1",
           "sourceHandle": "request",
           "targetHandle": "import",
           "transform": "{{ $data.body | toJson }}"
         },
         {
           "id": "890c2a09-3494-4011-913a-45fe78f6d38d",
-          "sourceNodeId": "extension.import.1",
+          "sourceNodeId": "blueprint.import.1",
           "targetNodeId": "terminate.http.1",
           "sourceHandle": "error",
           "targetHandle": "response",
@@ -682,9 +682,9 @@
         },
         {
           "id": "6865fcce-3f1c-4242-8231-54bc7960786a",
-          "sourceNodeId": "extension.import.1",
+          "sourceNodeId": "blueprint.import.1",
           "targetNodeId": "terminate.http.2",
-          "sourceHandle": "extension",
+          "sourceHandle": "blueprint",
           "targetHandle": "response",
           "transform": ""
         },
@@ -740,7 +740,7 @@
     },
     {
       "id": "2ecfd7bd-d051-46d4-9e8e-a1229dd1857f",
-      "extensionId": "10000000-0000-0000-0000-000000000000",
+      "blueprintId": "10000000-0000-0000-0000-000000000000",
       "name": "Lambda - List",
       "nodes": [
         {

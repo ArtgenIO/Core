@@ -5,7 +5,7 @@ import { useHttpClient } from '../../../admin/library/use-http-client';
 import { toODataRoute } from '../../../content/util/schema-url';
 import { ILogic } from '../../../flow/interface';
 import { ISchema } from '../../../schema';
-import { IBlueprint } from '../../interface/extension.interface';
+import { IBlueprint } from '../../interface/blueprint.interface';
 
 type TransferItem = {
   key: string;
@@ -14,13 +14,13 @@ type TransferItem = {
 };
 
 type Props = {
-  extension: IBlueprint;
+  blueprint: IBlueprint;
   setExtension: Dispatch<SetStateAction<IBlueprint>>;
   onSave: () => void;
 };
 
 export default function ExtensionEdiorComponent({
-  extension,
+  blueprint: extension,
   setExtension,
   onSave,
 }: Props) {

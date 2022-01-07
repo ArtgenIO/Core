@@ -1,8 +1,8 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { IBlueprint } from '../../blueprint/interface/extension.interface';
-import { SystemBlueprintProvider } from '../../blueprint/provider/system-extension.provider';
+import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
+import { SystemBlueprintProvider } from '../../blueprint/provider/system-blueprint.provider';
 import { IDatabaseConnection } from '../../database/interface';
 import { DatabaseConnectionService } from '../../database/service/database-connection.service';
 import { ISchema } from '../interface/schema.interface';

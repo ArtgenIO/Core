@@ -47,7 +47,7 @@ This feature is still in heavy development, but the system is capable of mapping
 
 ### Feature Index
 
-- One Click Install Cloud Extensions
+- One Click Install Cloud Blueprints
 - Visual Data Modeller
 - Visual Workflow Engine
 - Drag and Drop UI Editor

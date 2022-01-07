@@ -5,8 +5,8 @@ import { SEED_DIR } from '../../app/globals';
 import { getErrorMessage } from '../../app/kernel';
 import { DatabaseConnectionService } from '../database/service/database-connection.service';
 import { RestService } from '../rest/rest.service';
-import { IBlueprint } from './interface/extension.interface';
-import { SystemBlueprintProvider } from './provider/system-extension.provider';
+import { IBlueprint } from './interface/blueprint.interface';
+import { SystemBlueprintProvider } from './provider/system-blueprint.provider';
 
 @Service()
 export class BlueprintService {
@@ -22,35 +22,35 @@ export class BlueprintService {
   ) {}
 
   async seed() {
-    const sysExists = await this.rest.read('main', 'Extension', {
+    const sysExists = await this.rest.read('main', 'Blueprint', {
       id: this.systemBlueprint.id,
     });
 
     if (!sysExists) {
-      await this.rest.create('main', 'Extension', this.systemBlueprint as any);
-      this.logger.info('Extension [system] installed');
+      await this.rest.create('main', 'Blueprint', this.systemBlueprint as any);
+      this.logger.info('Blueprint [system] installed');
 
-      // Install the identity extension too
+      // Install the identity blueprint too
       await this.importFromSource(
         'main',
         JSON.parse(
-          readFileSync(join(SEED_DIR, 'identity.extension.json')).toString(),
+          readFileSync(join(SEED_DIR, 'identity.blueprint.json')).toString(),
         ),
       );
     }
   }
 
-  async importFromSource(database: string, extension: IBlueprint) {
+  async importFromSource(database: string, blueprint: IBlueprint) {
     // Global db reference
-    extension.database = database;
+    blueprint.database = database;
 
     const link = this.connections.findOne(database);
 
     // Preload the schemas before they are injected one by one.
-    await link.associate(extension.schemas);
+    await link.associate(blueprint.schemas);
 
     // Replace the schema databases to the local db
-    for (const schema of extension.schemas) {
+    for (const schema of blueprint.schemas) {
       schema.database = database;
 
       await this.rest
@@ -58,7 +58,7 @@ export class BlueprintService {
         .then(() =>
           this.logger.info(
             'Schema [%s][%s] installed',
-            extension.title,
+            blueprint.title,
             schema.reference,
           ),
         )
@@ -70,13 +70,13 @@ export class BlueprintService {
     }
 
     // TODO find database references and replace them
-    for (const wf of extension.workflows) {
+    for (const wf of blueprint.workflows) {
       await this.rest
         .create('main', 'Workflow', wf as any)
         .then(() =>
           this.logger.info(
             'Workflow [%s][%s] installed',
-            extension.title,
+            blueprint.title,
             wf.id,
           ),
         )
@@ -87,10 +87,10 @@ export class BlueprintService {
         );
     }
 
-    // Save the extension
-    await this.rest.create('main', 'Extension', extension as any);
-    this.logger.info('Extension [%s] installed', extension.title);
+    // Save the blueprint
+    await this.rest.create('main', 'Blueprint', blueprint as any);
+    this.logger.info('Blueprint [%s] installed', blueprint.title);
 
-    return extension;
+    return blueprint;
   }
 }

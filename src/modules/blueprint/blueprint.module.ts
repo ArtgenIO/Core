@@ -2,12 +2,12 @@ import { IModule, Module } from '../../app/container';
 import { IKernel } from '../../app/kernel';
 import { BlueprintObserver } from './blueprint.observer';
 import { BlueprintService } from './blueprint.service';
-import { ExtensionImportLambda } from './lambda/import-ext.lambda';
-import { SystemBlueprintProvider } from './provider/system-extension.provider';
+import { BlueprintImportLambda } from './lambda/import-ext.lambda';
+import { SystemBlueprintProvider } from './provider/system-blueprint.provider';
 
 @Module({
   providers: [
-    ExtensionImportLambda,
+    BlueprintImportLambda,
     BlueprintService,
     BlueprintObserver,
     SystemBlueprintProvider,

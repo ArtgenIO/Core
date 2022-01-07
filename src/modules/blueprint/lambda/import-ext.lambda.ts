@@ -6,14 +6,14 @@ import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { BlueprintService } from '../blueprint.service';
-import { IBlueprint } from '../interface/extension.interface';
+import { IBlueprint } from '../interface/blueprint.interface';
 
 @Service({
   tags: 'lambda',
 })
 @Lambda({
-  type: 'extension.import',
-  description: 'Import an extension',
+  type: 'blueprint.import',
+  description: 'Import a blueprint',
   handles: [
     new InputHandleDTO('import', {
       type: 'object',
@@ -22,12 +22,12 @@ import { IBlueprint } from '../interface/extension.interface';
           title: 'Database name',
           type: 'string',
         },
-        extension: {
+        blueprint: {
           type: 'object',
         },
       },
     }),
-    new OutputHandleDTO('extension', {
+    new OutputHandleDTO('blueprint', {
       type: 'object',
     }),
     new OutputHandleDTO('error', {
@@ -44,7 +44,7 @@ import { IBlueprint } from '../interface/extension.interface';
     }),
   ],
 })
-export class ExtensionImportLambda implements ILambda {
+export class BlueprintImportLambda implements ILambda {
   constructor(
     @Logger()
     readonly logger: ILogger,
@@ -55,14 +55,14 @@ export class ExtensionImportLambda implements ILambda {
   async invoke(session: WorkflowSession) {
     const imp = session.getInput('import') as {
       database: string;
-      extension: IBlueprint;
+      blueprint: IBlueprint;
     };
 
     try {
       return {
-        extension: await this.extService.importFromSource(
+        blueprint: await this.extService.importFromSource(
           imp.database,
-          imp.extension,
+          imp.blueprint,
         ),
       };
     } catch (error) {

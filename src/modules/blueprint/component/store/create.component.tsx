@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../../admin/library/http-client';
-import { IBlueprint } from '../../interface/extension.interface';
+import { IBlueprint } from '../../interface/blueprint.interface';
 import ExtensionEdiorComponent from './_editor.component';
 
 export default function CreateExtension() {
@@ -27,7 +27,7 @@ export default function CreateExtension() {
     <PageWithHeader header={<PageHeader title="Create Extension" />}>
       <div className="content-box px-8 py-8 w-2/3">
         <ExtensionEdiorComponent
-          extension={extension}
+          blueprint={extension}
           setExtension={setExtension}
           onSave={() => {
             client

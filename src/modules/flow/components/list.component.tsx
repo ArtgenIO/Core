@@ -1,7 +1,5 @@
 import {
-  BarChartOutlined,
   DeleteOutlined,
-  EditOutlined,
   FileAddOutlined,
   FileOutlined,
   PartitionOutlined,
@@ -17,7 +15,7 @@ import {
   Skeleton,
 } from 'antd';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
@@ -28,6 +26,7 @@ export default function WorkflowListComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [workflows, setWorkflows] = useState<ILogic[]>([]);
   const httpClient = useHttpClientOld();
+  const navigate = useNavigate();
 
   const doDeleteWorkflow = async (id: string) => {
     const workflow = workflows.find(wf => wf.id === id);
@@ -84,7 +83,10 @@ export default function WorkflowListComponent() {
             dataSource={workflows}
             size="small"
             renderItem={row => (
-              <List.Item key={row.id}>
+              <List.Item
+                key={row.id}
+                onClick={() => navigate(`/admin/flow/artboard/${row.id}`)}
+              >
                 <List.Item.Meta
                   avatar={
                     <Avatar
@@ -101,16 +103,7 @@ export default function WorkflowListComponent() {
                   }
                   title={row.name}
                 />
-                <Button
-                  icon={<BarChartOutlined />}
-                  className="rounded-md mr-1 "
-                ></Button>
-                <Link to={`/admin/flow/artboard/${row.id}`}>
-                  <Button
-                    icon={<EditOutlined />}
-                    className="rounded-md mr-1 hover:text-green-500 hover:border-green-500"
-                  ></Button>
-                </Link>
+
                 <Popconfirm
                   title="Are You sure to delete this workflow?"
                   okText="Yes, delete"
@@ -121,6 +114,7 @@ export default function WorkflowListComponent() {
                 >
                   <Button
                     icon={<DeleteOutlined />}
+                    onClick={e => e.stopPropagation()}
                     className="rounded-md hover:text-red-500 hover:border-red-500"
                   ></Button>
                 </Popconfirm>

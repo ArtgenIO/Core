@@ -11,7 +11,7 @@ import {
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
-import { IBlueprint } from '../../../interface/extension.interface';
+import { IBlueprint } from '../../../interface/blueprint.interface';
 
 export default function CloudExtensions() {
   const base = '/admin/ext/store';

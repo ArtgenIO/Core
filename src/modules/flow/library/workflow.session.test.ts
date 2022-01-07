@@ -19,7 +19,12 @@ describe('WorkflowSession', () => {
     };
     const lambda = createLambdaService([]);
     const sessionId = 'testid';
-    const session = new WorkflowSession(lambda, testWf, sessionId);
+    const session = new WorkflowSession(
+      createLogger(),
+      lambda,
+      testWf,
+      sessionId,
+    );
 
     expect(session.id).toBe('testid');
     expect(session.workflow).toBe(testWf);

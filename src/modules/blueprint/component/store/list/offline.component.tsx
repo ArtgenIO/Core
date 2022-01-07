@@ -25,7 +25,7 @@ import { Link } from 'react-router-dom';
 import { useHttpClientOld } from '../../../../admin/library/http-client';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
 import { toODataRoute } from '../../../../content/util/schema-url';
-import { IBlueprint } from '../../../interface/extension.interface';
+import { IBlueprint } from '../../../interface/blueprint.interface';
 
 export default function OfflineExtensions() {
   const base = '/admin/ext/store';

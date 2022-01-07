@@ -3,6 +3,7 @@ import * as jsonSchemaInst from 'json-schema-instantiator';
 import isArray from 'lodash.isarray';
 import merge from 'lodash.merge';
 import nunjucks, { Environment } from 'nunjucks';
+import { ILogger } from '../../../app/container';
 import { ILambdaRecord } from '../../lambda/interface/record.interface';
 import { ITriggerConfig } from '../../lambda/interface/trigger-config.interface';
 import { ITriggerOutput } from '../../lambda/interface/trigger-output.interface';
@@ -42,6 +43,7 @@ export class WorkflowSession {
   protected stackTrace: string[] = [];
 
   constructor(
+    readonly logger: ILogger,
     readonly lambda: LambdaService,
     readonly workflow: ILogic,
     readonly id: string,
@@ -149,10 +151,9 @@ export class WorkflowSession {
       if (result) {
         return true;
       } else {
-        console.error('Schema', schema);
-        console.error('Data', data);
-        console.trace();
-        console.error('Errors', validator.errors);
+        this.logger.error('Schema', schema);
+        this.logger.error('Data', data);
+        this.logger.error('Errors', validator.errors);
       }
     } else {
       return true;
@@ -256,11 +257,11 @@ export class WorkflowSession {
       try {
         await this.invokeNode(triggerId);
       } catch (error) {
-        console.error('Uncaught trigger error!');
-        console.error('Workflow', this.workflow.name);
-        console.error('Stack Trace', this.stackTrace);
-        console.error('Input', this.ctx.$input);
-        console.error('Error', error);
+        this.logger.error('Uncaught trigger error!');
+        this.logger.error('Workflow', this.workflow.name);
+        this.logger.error('Stack Trace', this.stackTrace);
+        this.logger.error('Input', this.ctx.$input);
+        this.logger.error('Error', error);
       }
     }
     let response = config.response;
@@ -275,7 +276,7 @@ export class WorkflowSession {
       try {
         response = JSON.parse(response);
       } catch (error) {
-        console.error('Response is not a valid json', {
+        this.logger.error('Response is not a valid json %s', {
           error,
           response,
         });
@@ -311,7 +312,7 @@ export class WorkflowSession {
    */
   protected async invokeNode(nodeId: string): Promise<void> {
     this.stackTrace.push(nodeId);
-    console.debug(this.workflow.name, '->', nodeId);
+    this.logger.debug('Invoking [%s]', nodeId);
 
     // Resolve the lambda to the node type
     const lambda = this.getLambda(nodeId);
@@ -329,11 +330,11 @@ export class WorkflowSession {
     try {
       outputs = await lambda.handler.invoke(this);
     } catch (error) {
-      console.error('Uncaught lambda error!');
-      console.error('Workflow', this.workflow.name);
-      console.error('Stack Trace', this.stackTrace);
-      console.error('Input', this.ctx.$input);
-      console.error('Error', error);
+      this.logger.error('Uncaught lambda error!');
+      this.logger.error('Workflow', this.workflow.name);
+      this.logger.error('Stack Trace', this.stackTrace);
+      this.logger.error('Input', this.ctx.$input);
+      this.logger.error('Error', error);
 
       throw error;
     }
@@ -405,7 +406,7 @@ export class WorkflowSession {
               try {
                 targetInput = JSON.parse(targetInput);
               } catch (error) {
-                console.error('Invalid JSON format', {
+                this.logger.error('Invalid JSON format', {
                   node: targetNodeId,
                   handle: edge.targetHandle,
                   value: targetInput,

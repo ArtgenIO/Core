@@ -1,10 +1,11 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { Divider, Input, Layout, Menu } from 'antd';
+import { Input, Layout, Menu } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import { QueryBuilder } from 'odata-query-builder';
 import { useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
+import MenuBlock from '../../admin/component/menu-block.component';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
 import { routeCrudUI, toODataRoute } from '../util/schema-url';
@@ -31,6 +32,8 @@ export default function CrudIndexComponent() {
 
   if (!loading) {
     if (schemas.length) {
+      schemas.sort((a, b) => (a.title > b.title ? 1 : -1));
+
       if (location.pathname === '/admin/content') {
         redirect(routeCrudUI(schemas[0]));
       }
@@ -56,8 +59,12 @@ export default function CrudIndexComponent() {
 
   return (
     <Layout hasSider>
-      <Sider collapsible={false} width={200} className="h-screen sider-2nd">
-        <div className="pt-2 -mb-2 px-2">
+      <Sider
+        collapsible={false}
+        width={200}
+        className="h-screen depth-2 overflow-auto gray-scroll"
+      >
+        <div className="pt-4 mb-2 px-2">
           <Input
             placeholder="Search content..."
             prefix={<SearchOutlined />}
@@ -73,25 +80,25 @@ export default function CrudIndexComponent() {
             }}
           />
         </div>
-        <Divider />
-        <Menu
-          key="menus"
-          className="menu -mt-2"
-          theme="dark"
-          defaultSelectedKeys={[]}
-          mode="inline"
-          triggerSubMenuAction="hover"
-        >
-          {schemas
-            ? schemas.filter(menuFilter).map((schema, k) => {
-                return (
-                  <Menu.Item key={`schema-${k}`}>
-                    <Link to={routeCrudUI(schema)}>{schema.title}</Link>
-                  </Menu.Item>
-                );
-              })
-            : undefined}
-        </Menu>
+        <MenuBlock title="Content Explorer">
+          <Menu
+            key="menus"
+            className="compact"
+            defaultSelectedKeys={[]}
+            mode="inline"
+            triggerSubMenuAction="hover"
+          >
+            {schemas
+              ? schemas.filter(menuFilter).map((schema, k) => {
+                  return (
+                    <Menu.Item key={`schema-${k}`}>
+                      <Link to={routeCrudUI(schema)}>{schema.title}</Link>
+                    </Menu.Item>
+                  );
+                })
+              : undefined}
+          </Menu>
+        </MenuBlock>
       </Sider>
 
       <Layout>

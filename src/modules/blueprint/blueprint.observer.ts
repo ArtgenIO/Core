@@ -1,7 +1,7 @@
 import { ILogger, Inject, Logger } from '../../app/container';
 import { Observer, On } from '../event';
 import { RestService } from '../rest/rest.service';
-import { IBlueprint } from './interface/extension.interface';
+import { IBlueprint } from './interface/blueprint.interface';
 
 @Observer()
 export class BlueprintObserver {
@@ -14,7 +14,7 @@ export class BlueprintObserver {
 
   @On('crud.main.Blueprint.deleted')
   async handleBlueprintDelete(bp: IBlueprint) {
-    this.logger.warn('Extension deletion detected!');
+    this.logger.warn('Blueprint deletion detected!');
 
     for (const wf of bp.workflows) {
       await this.rest

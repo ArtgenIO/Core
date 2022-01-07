@@ -1,6 +1,6 @@
 import {
-  BarsOutlined,
   DatabaseOutlined,
+  FileTextOutlined,
   HomeOutlined,
   LogoutOutlined,
   PartitionOutlined,
@@ -29,7 +29,7 @@ const menuItems: IMenuItem[] = [
     title: 'Dashboard',
   },
   {
-    icon: <BarsOutlined />,
+    icon: <FileTextOutlined />,
     path: ADMIN_URL + '/content',
     title: 'Content',
   },

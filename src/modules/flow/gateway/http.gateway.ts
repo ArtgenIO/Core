@@ -2,13 +2,14 @@ import {
   FastifyInstance,
   FastifyReply,
   FastifyRequest,
+  RouteHandlerMethod,
   RouteShorthandOptions,
 } from 'fastify';
-import { Authenticator } from 'fastify-passport';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
+import { getErrorMessage } from '../../../app/kernel';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
 import { HttpTriggerConfig } from '../../http/lambda/http-trigger.lambda';
-import { STRATEGY_CONFIG } from '../../identity/util/strategy.config';
+import { AuthenticationHandlerProvider } from '../../identity/provider/authentication-handler.provider';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { FlowService } from '../service/workflow.service';
 
@@ -23,11 +24,13 @@ export class LogicHttpGateway implements IHttpGateway {
     readonly workflow: FlowService,
     @Inject(LambdaService)
     readonly node: LambdaService,
-    @Inject(Authenticator)
-    readonly authenticator: Authenticator,
+    @Inject(AuthenticationHandlerProvider)
+    readonly authHandler: RouteHandlerMethod,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
+    const preHandler = this.authHandler;
+
     for (const workflow of await this.workflow.findAll()) {
       const triggers = workflow.nodes.filter(t => t.type === 'trigger.http');
 
@@ -77,21 +80,13 @@ export class LogicHttpGateway implements IHttpGateway {
           }
         }
 
-        let preHandlers = [];
         const swaggerSecurity = [];
         const isProtected = routeConfig.authentication == 'protected';
 
         if (isProtected) {
-          // const strategies = [];
-          // strategies.push();
-
           swaggerSecurity.push({
             jwt: [],
           });
-
-          preHandlers.push(
-            this.authenticator.authenticate(['token', 'jwt'], STRATEGY_CONFIG),
-          );
         }
 
         const method = routeConfig.method.toLowerCase();
@@ -102,7 +97,7 @@ export class LogicHttpGateway implements IHttpGateway {
             params: paramSchema,
             security: swaggerSecurity,
           },
-          preHandler: preHandlers,
+          preHandler: isProtected ? preHandler : null,
         };
 
         httpServer[method](
@@ -151,6 +146,8 @@ export class LogicHttpGateway implements IHttpGateway {
               return response.data;
             } catch (error) {
               reply.statusCode = 400;
+
+              this.logger.warn(getErrorMessage(error));
 
               return {
                 statusCode: 400,

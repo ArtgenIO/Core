@@ -20,16 +20,16 @@ const elements: IMenuItem[] = [
     path: 'databases',
   },
   {
-    key: 'import',
-    icon: 'file_upload',
-    title: 'Import Schemantic',
-    path: 'import',
-  },
-  {
     key: 'backup',
     icon: 'settings_backup_restore',
     title: 'Backup',
     path: 'backup',
+  },
+  {
+    key: 'import',
+    icon: 'file_upload',
+    title: 'Import Schemantic',
+    path: 'import',
   },
 ];
 

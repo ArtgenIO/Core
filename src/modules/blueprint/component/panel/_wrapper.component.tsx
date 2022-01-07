@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import CrudReadComponent from '../../../content/component/read.component';
 import WorkflowListComponent from '../../../flow/components/list.component';
-import { IBlueprint } from '../../interface/extension.interface';
+import { IBlueprint } from '../../interface/blueprint.interface';
 
 export default function ExtensionPanelWrapper() {
   const location = useLocation();

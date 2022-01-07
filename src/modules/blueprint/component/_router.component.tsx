@@ -2,8 +2,8 @@ import { Route, Routes } from 'react-router';
 import ExtensionPanelWrapper from './panel/_wrapper.component';
 import ExtensionStoreRouter from './store/_router.component';
 
-export default function ExtensionsRouter() {
-  const base = '/admin/ext';
+export default function BlueprintRouter() {
+  const base = '/admin/blueprint';
 
   return (
     <Routes>

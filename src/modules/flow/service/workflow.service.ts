@@ -1,8 +1,8 @@
 import { Model } from 'objection';
 import { v4 } from 'uuid';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { IBlueprint } from '../../blueprint/interface/extension.interface';
-import { SystemBlueprintProvider } from '../../blueprint/provider/system-extension.provider';
+import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
+import { SystemBlueprintProvider } from '../../blueprint/provider/system-blueprint.provider';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { SchemaService } from '../../schema/service/schema.service';
 import { ILogic } from '../interface/workflow.interface';
@@ -56,7 +56,12 @@ export class FlowService {
       actionId = v4();
     }
 
-    return new WorkflowSession(this.lambda, workflow.$toJson(), actionId);
+    return new WorkflowSession(
+      this.logger.child({ scope: `Workflow.${workflowId}` }),
+      this.lambda,
+      workflow.$toJson(),
+      actionId,
+    );
   }
 
   async createWorkflow(workflow: Omit<ILogic, 'id'>): Promise<ILogic> {
