@@ -32,7 +32,7 @@ export default function DatabaseConnectComponent({
 
   return (
     <Drawer
-      width={450}
+      width="33%"
       visible={true}
       title="Connect Database"
       onClose={onClose}

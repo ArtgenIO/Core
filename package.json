@@ -145,6 +145,7 @@
     "axios-hooks": "^3.0.0",
     "cypress": "8.5.0",
     "enquirer": "^2.3.6",
+    "file-saver": "^2.0.5",
     "grapesjs": "^0.17.29",
     "grapesjs-blocks-basic": "^0.1.8",
     "grapesjs-preset-webpage": "^0.1.11",

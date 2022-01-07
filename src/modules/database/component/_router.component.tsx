@@ -18,7 +18,6 @@ import { ISchema } from '../../schema';
 import { IDatabase } from '../interface';
 import DatabaseArtboardComponent from './artboard/artboard.component';
 import DatabaseListComponent from './databases/list.component';
-import ExportDatabaseSchemantic from './export.component';
 import ManagerMenuComponent from './_menu/manager.component';
 
 type DatabaseWithSchemas = IDatabase & {
@@ -134,7 +133,6 @@ export default function DatabaseRouterComponent() {
             path="artboard/:ref"
             element={<DatabaseArtboardComponent />}
           ></Route>
-          <Route path="export" element={<ExportDatabaseSchemantic />}></Route>
           <Route
             path="/"
             element={<Navigate to={`${base}/databases`} />}

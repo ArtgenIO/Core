@@ -1,6 +1,7 @@
 import {
   DatabaseOutlined,
   DeleteOutlined,
+  DownloadOutlined,
   FileAddOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
@@ -25,6 +26,7 @@ import { toODataRoute } from '../../../content/util/schema-url';
 import { IDatabase } from '../../interface';
 import DatabaseConnectComponent from './connect.component';
 import DatabaseEditComponent from './edit.component';
+import DatabaseExportComponent from './export.component';
 
 export default function DatabaseListComponent() {
   const client = useHttpClientOld();
@@ -32,6 +34,7 @@ export default function DatabaseListComponent() {
   // Local state
   const [showConnect, setShowConnect] = useState(false);
   const [showEditor, setShowEditor] = useState<string>(null);
+  const [showExport, setShowExport] = useState<IDatabase>(null);
   const [databases, setDatabases] = useState<IDatabase[]>([]);
 
   const [{ data, loading, error }] = useHttpClient<IDatabase[]>(
@@ -96,6 +99,20 @@ export default function DatabaseListComponent() {
                 title={<span className="text-xl test--db-rct">{db.title}</span>}
               />
 
+              <Tooltip
+                title="Export database schemantic"
+                placement="leftBottom"
+              >
+                <Button
+                  icon={<DownloadOutlined />}
+                  className="rounded-md hover:text-teal-500 hover:border-teal-500 mr-1"
+                  onClick={e => {
+                    setShowExport(db);
+                    e.stopPropagation();
+                  }}
+                ></Button>
+              </Tooltip>
+
               <Popconfirm
                 title="Are You sure to delete this database connection?"
                 className="test--delete-db"
@@ -144,6 +161,13 @@ export default function DatabaseListComponent() {
           database={databases.find(db => db.ref == showEditor)}
           setDatabases={setDatabases}
           onClose={() => setShowEditor(null)}
+        />
+      ) : undefined}
+
+      {showExport ? (
+        <DatabaseExportComponent
+          database={showExport}
+          onClose={() => setShowExport(null)}
         />
       ) : undefined}
     </PageWithHeader>
