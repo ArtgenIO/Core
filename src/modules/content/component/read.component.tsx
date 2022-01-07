@@ -28,9 +28,9 @@ import { FieldType, ISchema } from '../../schema';
 import { isPrimary } from '../../schema/util/field-tools';
 import { ContentAction } from '../interface/content-action.enum';
 import {
-  routeCrudAPI,
   routeCrudRecordAPI,
   routeCrudRecordUI,
+  toODataRoute,
 } from '../util/schema-url';
 
 interface RouteParams {
@@ -44,7 +44,7 @@ export default function CrudReadComponent() {
 
   // Load schema
   const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<ISchema[]>(
-    routeCrudAPI({ database: 'main', reference: 'Schema' }) +
+    toODataRoute({ database: 'main', reference: 'Schema' }) +
       new QueryBuilder()
         .filter(f =>
           f
@@ -58,7 +58,7 @@ export default function CrudReadComponent() {
   // Load content
   const [{ data: content, loading: isContentLoading }, refetch] = useHttpClient<
     object[]
-  >(routeCrudAPI(route) + new QueryBuilder().top(10_000).toQuery(), {
+  >(toODataRoute(route) + new QueryBuilder().top(10_000).toQuery(), {
     useCache: false,
   });
 

@@ -7,7 +7,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
-import { routeCrudAPI, routeCrudUI } from '../util/schema-url';
+import { routeCrudUI, toODataRoute } from '../util/schema-url';
 import CrudCreateComponent from './create.component';
 import CrudReadComponent from './read.component';
 import CrudUpdateComponent from './update.component';
@@ -18,7 +18,7 @@ export default function CrudIndexComponent() {
   const [search, setSearch] = useState<string>(null);
 
   const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
-    routeCrudAPI({ database: 'main', reference: 'Schema' }) +
+    toODataRoute({ database: 'main', reference: 'Schema' }) +
       new QueryBuilder()
         .select('database,reference,title,tableName,tags')
         .orderBy('title')

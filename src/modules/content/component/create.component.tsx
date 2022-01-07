@@ -12,7 +12,7 @@ import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
 import { ContentAction } from '../interface/content-action.enum';
 import { schemaToJsonSchema } from '../util/schema-to-jsonschema';
-import { routeCrudAPI, routeCrudUI } from '../util/schema-url';
+import { routeCrudUI, toODataRoute } from '../util/schema-url';
 
 interface RouteParams {
   database: string;
@@ -28,7 +28,7 @@ export default function CrudCreateComponent() {
 
   // Load schema
   const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<ISchema[]>(
-    routeCrudAPI({ database: 'main', reference: 'Schema' }) +
+    toODataRoute({ database: 'main', reference: 'Schema' }) +
       new QueryBuilder()
         .filter(f =>
           f
@@ -51,7 +51,7 @@ export default function CrudCreateComponent() {
 
   const doCreate = async (form: any) => {
     try {
-      await httpClient.post<any>(routeCrudAPI(schemas[0]), form.formData);
+      await httpClient.post<any>(toODataRoute(schemas[0]), form.formData);
       message.success(`New record created!`);
 
       redirect(routeCrudUI(schemas[0]));

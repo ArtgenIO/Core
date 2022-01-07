@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { routeCrudAPI } from '../../content/util/schema-url';
+import { toODataRoute } from '../../content/util/schema-url';
 import { IPage } from '../interface/page.interface';
 import PageEditorComponent from './editor.component';
 
@@ -16,7 +16,7 @@ export default function PageIndexComponent() {
   const [search, setSearch] = useState<string>(null);
 
   const [{ data: pages, loading, error }] = useHttpClient<IPage[]>(
-    routeCrudAPI({ database: 'main', reference: 'Page' }) +
+    toODataRoute({ database: 'main', reference: 'Page' }) +
       new QueryBuilder()
         .select('id,title,domain,path,tags')
         .orderBy('id')

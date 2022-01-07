@@ -24,7 +24,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useHttpClientOld } from '../../../../admin/library/http-client';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
-import { routeCrudAPI } from '../../../../content/util/schema-url';
+import { toODataRoute } from '../../../../content/util/schema-url';
 import { IBlueprint } from '../../../interface/extension.interface';
 
 export default function OfflineExtensions() {
@@ -36,7 +36,7 @@ export default function OfflineExtensions() {
   const [{ data: extensions, loading, error }, refetch] = useHttpClient<
     IBlueprint[]
   >(
-    routeCrudAPI({ database: 'main', reference: 'Extension' }) +
+    toODataRoute({ database: 'main', reference: 'Extension' }) +
       new QueryBuilder().top(100).toQuery(),
   );
 

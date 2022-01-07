@@ -21,7 +21,7 @@ import { Link } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
-import { routeCrudAPI } from '../../content/util/schema-url';
+import { toODataRoute } from '../../content/util/schema-url';
 import { ILogic } from '../interface/workflow.interface';
 
 export default function WorkflowListComponent() {
@@ -52,7 +52,7 @@ export default function WorkflowListComponent() {
 
   useEffect(() => {
     httpClient
-      .get<ILogic[]>(routeCrudAPI({ database: 'main', reference: 'Workflow' }))
+      .get<ILogic[]>(toODataRoute({ database: 'main', reference: 'Workflow' }))
       .then(response => {
         setWorkflows(response.data);
         setIsLoading(false);

@@ -26,7 +26,7 @@ const routeFilterOne = (
 export const routeCrudUI = (schema: Pick<ISchema, 'database' | 'reference'>) =>
   `/admin/content/${schema.database}/${schema.reference}`;
 
-export const routeCrudAPI = (schema: Pick<ISchema, 'database' | 'reference'>) =>
+export const toODataRoute = (schema: Pick<ISchema, 'database' | 'reference'>) =>
   `/api/odata/${kebabCase(schema.database)}/${kebabCase(schema.reference)}`;
 
 /**

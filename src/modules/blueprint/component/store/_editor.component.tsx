@@ -2,7 +2,7 @@ import { Button, Divider, Form, Input, Select, Transfer } from 'antd';
 import { startCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import { routeCrudAPI } from '../../../content/util/schema-url';
+import { toODataRoute } from '../../../content/util/schema-url';
 import { ILogic } from '../../../flow/interface';
 import { ISchema } from '../../../schema';
 import { IBlueprint } from '../../interface/extension.interface';
@@ -45,7 +45,7 @@ export default function ExtensionEdiorComponent({
   const [{ data: schemasReply, loading: schemasLoading }] = useHttpClient<
     ISchema[]
   >(
-    routeCrudAPI({
+    toODataRoute({
       database: 'main',
       reference: 'Schema',
     }),
@@ -54,7 +54,7 @@ export default function ExtensionEdiorComponent({
   const [{ data: workflowReply, loading: workflowLoading }] = useHttpClient<
     ILogic[]
   >(
-    routeCrudAPI({
+    toODataRoute({
       database: 'main',
       reference: 'Workflow',
     }),

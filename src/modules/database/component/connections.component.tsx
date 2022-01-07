@@ -21,17 +21,19 @@ import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { routeCrudAPI } from '../../content/util/schema-url';
+import { toODataRoute } from '../../content/util/schema-url';
 import { IDatabase } from '../interface';
-import DatabaseAddComponent from './connect.component';
+import ConnectComponent from './connect.component';
+import EditComponent from './edit.component';
 
 export default function ConnectionsComponent() {
   const client = useHttpClientOld();
   const [showConnect, setShowConnect] = useState(false);
+  const [showEdit, setShowEdit] = useState<string>(null);
   const [{ data: databases, loading, error }, refetch] = useHttpClient<
     IDatabase[]
   >(
-    routeCrudAPI({ database: 'main', reference: 'Database' }) +
+    toODataRoute({ database: 'main', reference: 'Database' }) +
       new QueryBuilder().top(100).toQuery(),
     {
       useCache: false,
@@ -75,7 +77,7 @@ export default function ConnectionsComponent() {
           size="large"
           dataSource={databases}
           renderItem={(db, k) => (
-            <List.Item key={`db-${k}`}>
+            <List.Item key={`db-${k}`} onClick={() => setShowEdit(db.ref)}>
               <List.Item.Meta
                 avatar={
                   <Avatar
@@ -85,15 +87,11 @@ export default function ConnectionsComponent() {
                     icon={<DatabaseOutlined />}
                   />
                 }
-                title={
-                  <span className="text-xl font-thin test--db-rct">
-                    {db.title}
-                  </span>
-                }
+                title={<span className="text-xl test--db-rct">{db.title}</span>}
               />
 
               <Popconfirm
-                title="Are You sure to delete this database?"
+                title="Are You sure to delete this database connection?"
                 className="test--delete-db"
                 okText="Yes, delete it"
                 cancelText="No"
@@ -125,9 +123,18 @@ export default function ConnectionsComponent() {
         ></List>
       </Skeleton>
       {showConnect ? (
-        <DatabaseAddComponent
+        <ConnectComponent
           onClose={() => {
             setShowConnect(false);
+            refetch();
+          }}
+        />
+      ) : undefined}
+      {showEdit ? (
+        <EditComponent
+          connection={databases.find(db => db.ref == showEdit)}
+          onClose={() => {
+            setShowEdit(null);
             refetch();
           }}
         />

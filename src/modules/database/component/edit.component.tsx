@@ -2,21 +2,29 @@ import { Button, Drawer, Form, Input, message, notification } from 'antd';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { IDatabase } from '../interface';
 
-export default function ConnectComponent({ onClose }: { onClose: () => void }) {
+type Props = {
+  onClose: () => void;
+  connection: IDatabase;
+};
+
+export default function EditComponent({ onClose, connection }: Props) {
   const httpClient = useHttpClientOld();
 
-  const doCreateDatabase = async (formValues: IDatabase) => {
+  const doUpdateDatabase = async (values: IDatabase) => {
     try {
-      await httpClient.post<IDatabase>('/api/rest/main/database', formValues);
+      await httpClient.patch<IDatabase>(
+        `/api/rest/main/database/${values.ref}`,
+        values,
+      );
 
       notification.success({
-        message: 'New database added!',
-        className: 'test--connected',
+        message: 'Connection updated!',
+        className: 'test--updated',
       });
 
       onClose();
     } catch (error) {
-      message.error(`Could not connect the database`);
+      message.error(`Could not update the connection`);
     }
   };
 
@@ -24,15 +32,16 @@ export default function ConnectComponent({ onClose }: { onClose: () => void }) {
     <Drawer
       width={450}
       visible={true}
-      title="Connect Database"
+      title="Edit Connection"
       onClose={onClose}
     >
       <Form
         layout="vertical"
         name="database"
         onFinish={(formValues: IDatabase) => {
-          doCreateDatabase(formValues);
+          doUpdateDatabase(formValues);
         }}
+        initialValues={connection}
         onFinishFailed={() => message.error('Failed to validate')}
       >
         <Form.Item label="Title" name="title">

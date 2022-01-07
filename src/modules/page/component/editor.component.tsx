@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { routeCrudAPI } from '../../content/util/schema-url';
+import { toODataRoute } from '../../content/util/schema-url';
 import { IPage } from '../interface/page.interface';
 import './editor.component.less';
 
@@ -23,7 +23,7 @@ export default function PageEditorComponent() {
 
   // Load schema
   const storeURL =
-    routeCrudAPI({ database: 'main', reference: 'Page' }) +
+    toODataRoute({ database: 'main', reference: 'Page' }) +
     new QueryBuilder()
       .filter(f => f.filterExpression('id', 'eq', route.id))
       .top(1)

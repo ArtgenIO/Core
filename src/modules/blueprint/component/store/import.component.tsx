@@ -6,7 +6,7 @@ import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../../admin/library/http-client';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import { routeCrudAPI } from '../../../content/util/schema-url';
+import { toODataRoute } from '../../../content/util/schema-url';
 import { IDatabase } from '../../../database/interface';
 
 type FormData = {
@@ -22,7 +22,7 @@ export default function ImportExtension() {
   const [waitForSource, setWaitForSource] = useState(true);
   const [source, setSource] = useState('');
   const [{ data: databases, loading }] = useHttpClient<IDatabase[]>(
-    routeCrudAPI({
+    toODataRoute({
       database: 'main',
       reference: 'Database',
     }),

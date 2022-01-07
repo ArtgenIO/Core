@@ -12,7 +12,7 @@ import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
 import { ContentAction } from '../interface/content-action.enum';
 import { schemaToJsonSchema } from '../util/schema-to-jsonschema';
-import { routeCrudAPI, routeCrudUI } from '../util/schema-url';
+import { routeCrudUI, toODataRoute } from '../util/schema-url';
 
 interface RouteParams {
   database: string;
@@ -27,11 +27,11 @@ export default function CrudUpdateComponent() {
 
   const route = useParams() as unknown as RouteParams;
   const [formSchema, setFormSchema] = useState({});
-  const APIURL = routeCrudAPI(route) + location.search;
+  const APIURL = toODataRoute(route) + location.search;
 
   // Load schema
   const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<ISchema[]>(
-    routeCrudAPI({ database: 'main', reference: 'Schema' }) +
+    toODataRoute({ database: 'main', reference: 'Schema' }) +
       new QueryBuilder()
         .filter(f =>
           f

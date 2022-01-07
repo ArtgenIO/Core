@@ -12,7 +12,7 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { useParams } from 'react-router-dom';
 import { useHttpClientOld } from '../../../admin/library/http-client';
-import { routeCrudAPI } from '../../../content/util/schema-url';
+import { toODataRoute } from '../../../content/util/schema-url';
 import { ISchema } from '../../../schema';
 import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
 import { createEmptySchema } from '../../../schema/util/get-new-schema';
@@ -28,7 +28,7 @@ export default function DatabaseArtboardComponent() {
   const httpClient = useHttpClientOld();
   const { ref } = useParams();
   const apiReadUrl =
-    routeCrudAPI({
+    toODataRoute({
       database: 'main',
       reference: 'Schema',
     }) +
@@ -70,7 +70,7 @@ export default function DatabaseArtboardComponent() {
       if (!original) {
         await httpClient
           .post(
-            routeCrudAPI({
+            toODataRoute({
               database: 'main',
               reference: 'Schema',
             }),
@@ -92,7 +92,7 @@ export default function DatabaseArtboardComponent() {
         } else {
           await httpClient
             .patch(
-              routeCrudAPI({
+              toODataRoute({
                 database: 'main',
                 reference: 'Schema',
               }) +
@@ -125,7 +125,7 @@ export default function DatabaseArtboardComponent() {
     for (const deleted of deletedRefs) {
       await httpClient
         .delete(
-          routeCrudAPI({
+          toODataRoute({
             database: 'main',
             reference: 'Schema',
           }) +
