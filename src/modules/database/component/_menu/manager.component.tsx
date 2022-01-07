@@ -14,10 +14,10 @@ type IMenuItem = {
 
 const elements: IMenuItem[] = [
   {
-    key: 'connections',
+    key: 'databases',
     icon: 'subject',
-    title: 'Connections',
-    path: 'connections',
+    title: 'Databases',
+    path: 'databases',
   },
   {
     key: 'export',

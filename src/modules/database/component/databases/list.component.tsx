@@ -16,29 +16,35 @@ import {
   Tooltip,
 } from 'antd';
 import { QueryBuilder } from 'odata-query-builder';
-import React, { useState } from 'react';
-import PageHeader from '../../admin/layout/page-header.component';
-import PageWithHeader from '../../admin/layout/page-with-header.component';
-import { useHttpClientOld } from '../../admin/library/http-client';
-import { useHttpClient } from '../../admin/library/use-http-client';
-import { toODataRoute } from '../../content/util/schema-url';
-import { IDatabase } from '../interface';
-import ConnectComponent from './connect.component';
-import EditComponent from './edit.component';
+import React, { useEffect, useState } from 'react';
+import PageHeader from '../../../admin/layout/page-header.component';
+import PageWithHeader from '../../../admin/layout/page-with-header.component';
+import { useHttpClientOld } from '../../../admin/library/http-client';
+import { useHttpClient } from '../../../admin/library/use-http-client';
+import { toODataRoute } from '../../../content/util/schema-url';
+import { IDatabase } from '../../interface';
+import DatabaseConnectComponent from './connect.component';
+import DatabaseEditComponent from './edit.component';
 
-export default function ConnectionsComponent() {
+export default function DatabaseListComponent() {
   const client = useHttpClientOld();
+
+  // Local state
   const [showConnect, setShowConnect] = useState(false);
-  const [showEdit, setShowEdit] = useState<string>(null);
-  const [{ data: databases, loading, error }, refetch] = useHttpClient<
-    IDatabase[]
-  >(
+  const [showEditor, setShowEditor] = useState<string>(null);
+  const [databases, setDatabases] = useState<IDatabase[]>([]);
+
+  const [{ data, loading, error }] = useHttpClient<IDatabase[]>(
     toODataRoute({ database: 'main', reference: 'Database' }) +
       new QueryBuilder().top(100).toQuery(),
     {
       useCache: false,
     },
   );
+
+  useEffect(() => {
+    setDatabases(data);
+  }, [data]);
 
   if (error) {
     return (
@@ -50,7 +56,7 @@ export default function ConnectionsComponent() {
     <PageWithHeader
       header={
         <PageHeader
-          title="Connections"
+          title="Databases"
           actions={
             <Button
               className="test--connect-btn"
@@ -59,7 +65,7 @@ export default function ConnectionsComponent() {
               icon={<FileAddOutlined />}
               onClick={() => setShowConnect(true)}
             >
-              Create Connection
+              Connect Database
             </Button>
           }
         />
@@ -71,13 +77,13 @@ export default function ConnectionsComponent() {
         className="mb-8"
         showIcon
       />
-      <Skeleton loading={loading}>
+      <Skeleton loading={loading} active>
         <List
           bordered
           size="large"
           dataSource={databases}
           renderItem={(db, k) => (
-            <List.Item key={`db-${k}`} onClick={() => setShowEdit(db.ref)}>
+            <List.Item key={`db-${k}`} onClick={() => setShowEditor(db.ref)}>
               <List.Item.Meta
                 avatar={
                   <Avatar
@@ -97,7 +103,7 @@ export default function ConnectionsComponent() {
                 cancelText="No"
                 placement="left"
                 icon={<QuestionCircleOutlined />}
-                onConfirm={() => {
+                onConfirm={e => {
                   client
                     .delete(`/api/rest/main/database/${db.ref}`)
                     .then(() => {
@@ -106,8 +112,10 @@ export default function ConnectionsComponent() {
                         className: 'test--db-deleted-not',
                       });
 
-                      refetch();
+                      setDatabases(dbs => dbs.filter(r => r.ref != db.ref));
                     });
+
+                  e.stopPropagation();
                 }}
               >
                 <Tooltip title="Delete database" placement="leftBottom">
@@ -115,6 +123,7 @@ export default function ConnectionsComponent() {
                     icon={<DeleteOutlined />}
                     data-db-delete={db.ref}
                     className="rounded-md hover:text-red-500 hover:border-red-500"
+                    onClick={e => e.stopPropagation()}
                   ></Button>
                 </Tooltip>
               </Popconfirm>
@@ -122,21 +131,19 @@ export default function ConnectionsComponent() {
           )}
         ></List>
       </Skeleton>
+
       {showConnect ? (
-        <ConnectComponent
-          onClose={() => {
-            setShowConnect(false);
-            refetch();
-          }}
+        <DatabaseConnectComponent
+          setDatabases={setDatabases}
+          onClose={() => setShowConnect(false)}
         />
       ) : undefined}
-      {showEdit ? (
-        <EditComponent
-          connection={databases.find(db => db.ref == showEdit)}
-          onClose={() => {
-            setShowEdit(null);
-            refetch();
-          }}
+
+      {showEditor ? (
+        <DatabaseEditComponent
+          database={databases.find(db => db.ref == showEditor)}
+          setDatabases={setDatabases}
+          onClose={() => setShowEditor(null)}
         />
       ) : undefined}
     </PageWithHeader>

@@ -17,7 +17,7 @@ import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
 import { IDatabase } from '../interface';
 import DatabaseArtboardComponent from './artboard/artboard.component';
-import ConnectionsComponent from './connections.component';
+import DatabaseListComponent from './databases/list.component';
 import ExportDatabaseSchemantic from './export.component';
 import ManagerMenuComponent from './_menu/manager.component';
 
@@ -30,7 +30,7 @@ export default function DatabaseRouterComponent() {
   const navigate = useNavigate();
   const [tree, setTree] = useState<TreeDataNode[]>([]);
 
-  const [{ data: databases, loading, error }, refetch] = useHttpClient<
+  const [{ data: databases, loading, error }] = useHttpClient<
     DatabaseWithSchemas[]
   >(
     '/api/odata/main/database' +
@@ -129,7 +129,7 @@ export default function DatabaseRouterComponent() {
 
       <Layout>
         <Routes>
-          <Route path="connections" element={<ConnectionsComponent />}></Route>
+          <Route path="databases" element={<DatabaseListComponent />}></Route>
           <Route
             path="artboard/:ref"
             element={<DatabaseArtboardComponent />}
@@ -137,7 +137,7 @@ export default function DatabaseRouterComponent() {
           <Route path="export" element={<ExportDatabaseSchemantic />}></Route>
           <Route
             path="/"
-            element={<Navigate to={`${base}/connections`} />}
+            element={<Navigate to={`${base}/databases`} />}
           ></Route>
         </Routes>
       </Layout>

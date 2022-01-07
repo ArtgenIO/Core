@@ -1,30 +1,32 @@
 import { Button, Drawer, Form, Input, message, notification } from 'antd';
-import { useHttpClientOld } from '../../admin/library/http-client';
-import { IDatabase } from '../interface';
+import { Dispatch, SetStateAction } from 'react';
+import { useHttpClientOld } from '../../../admin/library/http-client';
+import { IDatabase } from '../../interface';
 
 type Props = {
   onClose: () => void;
-  connection: IDatabase;
+  setDatabases: Dispatch<SetStateAction<IDatabase[]>>;
 };
 
-export default function EditComponent({ onClose, connection }: Props) {
+export default function DatabaseConnectComponent({
+  onClose,
+  setDatabases,
+}: Props) {
   const httpClient = useHttpClientOld();
 
-  const doUpdateDatabase = async (values: IDatabase) => {
+  const doCreateDatabase = async (formValues: IDatabase) => {
     try {
-      await httpClient.patch<IDatabase>(
-        `/api/rest/main/database/${values.ref}`,
-        values,
-      );
+      await httpClient.post<IDatabase>('/api/rest/main/database', formValues);
 
       notification.success({
-        message: 'Connection updated!',
-        className: 'test--updated',
+        message: 'New database added!',
+        className: 'test--connected',
       });
 
+      setDatabases(databases => databases.concat(formValues));
       onClose();
     } catch (error) {
-      message.error(`Could not update the connection`);
+      message.error(`Could not connect the database`);
     }
   };
 
@@ -32,16 +34,15 @@ export default function EditComponent({ onClose, connection }: Props) {
     <Drawer
       width={450}
       visible={true}
-      title="Edit Connection"
+      title="Connect Database"
       onClose={onClose}
     >
       <Form
         layout="vertical"
         name="database"
         onFinish={(formValues: IDatabase) => {
-          doUpdateDatabase(formValues);
+          doCreateDatabase(formValues);
         }}
-        initialValues={connection}
         onFinishFailed={() => message.error('Failed to validate')}
       >
         <Form.Item label="Title" name="title">
