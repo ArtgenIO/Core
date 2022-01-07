@@ -62,7 +62,7 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --ignore-engines
 
       - name: Run API tests (MariaDB)
         run:  yarn test
@@ -105,7 +105,7 @@ jobs:
           cache: yarn
 
       - name: Install development dependencies
-        run: yarn install
+        run: yarn install --ignore-engines
 
       - name: Run API tests (MySQL)
         run: yarn test
@@ -136,7 +136,7 @@ jobs:
           cache: yarn
 
       - name: Install development dependencies
-        run: yarn install
+        run: yarn install --ignore-engines
 
       - name: Run API tests (SQLite)
         run: yarn test
@@ -179,7 +179,7 @@ jobs:
           cache: yarn
 
       - name: Install development dependencies
-        run: yarn install
+        run: yarn install --ignore-engines
 
       - name: Run API tests (PostgreSQL)
         run: yarn test
@@ -209,7 +209,7 @@ jobs:
           cache: yarn
 
       - name: Install development dependencies
-        run: yarn install
+        run: yarn install --ignore-engines
 
       - name: Run type checking
         run: yarn test:types

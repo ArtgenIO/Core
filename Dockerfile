@@ -5,7 +5,7 @@ COPY package.json package.json
 COPY yarn.lock yarn.lock
 
 ENV NODE_ENV=development
-RUN ["yarn", "install", "--frozen-lockfile"]
+RUN ["yarn", "install", "--frozen-lockfile", "--ignore-engines"]
 
 COPY . .
 ENV NODE_ENV=production
@@ -28,7 +28,7 @@ COPY --from=builder /temp/yarn.lock yarn.lock
 ENV NODE_ENV=production
 ENV PORT=7200
 
-RUN ["yarn", "install", "--frozen-lockfile", "--production"]
+RUN ["yarn", "install", "--frozen-lockfile", "--production", "--ignore-engines"]
 
 USER node
 
