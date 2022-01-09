@@ -10,6 +10,10 @@ type Input = {
   url: string;
 };
 
+type Config = {
+  userAgent: string;
+};
+
 @Service({
   tags: 'lambda',
 })
@@ -37,20 +41,33 @@ type Input = {
         message: {
           type: 'string',
         },
-        code: {
-          type: 'number',
-        },
+        code: {},
       },
       required: ['message', 'code'],
     }),
   ],
+  config: {
+    type: 'object',
+    properties: {
+      userAgent: {
+        type: 'string',
+        default: 'Artgen HTTP Request Lambda 1.0',
+      },
+    },
+    required: ['userAgent'],
+  },
 })
 export class HttpRequestLambda implements ILambda {
   async invoke(ctx: WorkflowSession) {
     const target = ctx.getInput('target') as Input;
+    const config = ctx.getConfig<Config>();
 
     try {
-      const response = await axios.get(target.url);
+      const response = await axios.get(target.url, {
+        headers: {
+          'user-agent': config.userAgent.toString(),
+        },
+      });
 
       return {
         result: {
