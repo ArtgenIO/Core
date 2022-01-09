@@ -15,7 +15,7 @@ export class UpgradeScheduler {
   }
 
   @Job({
-    timing: '* * */12 0',
+    timing: '0 */12 * * *',
   })
   async checkUpgrade() {
     const shouldUpgade = await this.service.shouldUpgrade();

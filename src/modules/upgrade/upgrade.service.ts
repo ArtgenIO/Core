@@ -15,9 +15,10 @@ export class UpgradeService {
   ) {}
 
   async shouldUpgrade(): Promise<boolean> {
+    const localVersion = await this.getLocalVersion();
+
     return (
-      semver(await this.getUpstreamVersion(), await this.getLocalVersion()) ===
-      1
+      semver(await this.getUpstreamVersion(localVersion), localVersion) === 1
     );
   }
 
@@ -25,10 +26,10 @@ export class UpgradeService {
     return (await readFile(join(ROOT_DIR, 'version'))).toString();
   }
 
-  async getUpstreamVersion(): Promise<string> {
+  async getUpstreamVersion(localVersion: string): Promise<string> {
     try {
       const reply = await axios.get(
-        `https://artgen.cloud/version?channel=${CHANNEL}`,
+        `https://artgen.cloud/version?channel=${CHANNEL}&uptime=${process.uptime()}&local-version=${localVersion}`,
         {
           timeout: 10000,
         },
