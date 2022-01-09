@@ -30,7 +30,12 @@ export class LogLambda implements ILambda {
       scope: `workflow:${ctx.workflow.id}`,
     });
     const level = ctx.getConfig();
+    let msg = ctx.getInput('message');
 
-    instance.log(level as string, '%s', ctx.getInput('message'));
+    if (typeof msg === 'object') {
+      msg = JSON.stringify(msg, null, 2);
+    }
+
+    instance.log(level as string, '%s', msg);
   }
 }

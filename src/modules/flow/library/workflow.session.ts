@@ -151,9 +151,9 @@ export class WorkflowSession {
       if (result) {
         return true;
       } else {
-        this.logger.error('Schema', schema);
-        this.logger.error('Data', data);
-        this.logger.error('Errors', validator.errors);
+        this.logger.error('Schema [%s]', schema);
+        this.logger.error('Data [%s]', data);
+        this.logger.error('Errors [%s]', validator.errors);
       }
     } else {
       return true;
@@ -258,10 +258,10 @@ export class WorkflowSession {
         await this.invokeNode(triggerId);
       } catch (error) {
         this.logger.error('Uncaught trigger error!');
-        this.logger.error('Workflow', this.workflow.name);
-        this.logger.error('Stack Trace', this.stackTrace);
-        this.logger.error('Input', this.ctx.$input);
-        this.logger.error('Error', error);
+        this.logger.error('Workflow [%s]', this.workflow.name);
+        this.logger.error('Stack Trace [%s]', this.stackTrace);
+        this.logger.error('Input [%s]', this.ctx.$input);
+        this.logger.error('Error [%s]', error);
       }
     }
     let response = config.response;

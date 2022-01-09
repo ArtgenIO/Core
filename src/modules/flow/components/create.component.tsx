@@ -52,7 +52,7 @@ export default function CreateWorkflowComponent() {
               nodes: [],
               edges: [],
             }).then(id => {
-              redirect(`/admin/workflow/artboard/${id}`);
+              redirect(`/admin/flow/artboard/${id}`);
               message.success('Workflow ready!');
             });
           }}

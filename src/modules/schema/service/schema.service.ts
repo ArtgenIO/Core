@@ -91,6 +91,10 @@ export class SchemaService {
     return this.connections.findOne(database).getModel<T>(schema);
   }
 
+  getSchema(database: string, schema: string): ISchema {
+    return this.connections.findOne(database).getSchema(schema);
+  }
+
   findByDatabase(database: string) {
     return this.registry.filter(s => s.database === database);
   }
