@@ -378,17 +378,21 @@ export class DatabaseSynchronizer {
     }
 
     if (f.defaultValue !== undefined) {
-      const defType = typeof f.defaultValue;
+      if (f.defaultValue === null) {
+        col.defaultTo(null);
+      } else {
+        const defType = typeof f.defaultValue;
 
-      switch (defType) {
-        case 'boolean':
-        case 'number':
-        case 'string':
-          col.defaultTo(f.defaultValue as string);
-          break;
-        case 'object':
-          col.defaultTo(JSON.stringify(f.defaultValue));
-          break;
+        switch (defType) {
+          case 'boolean':
+          case 'number':
+          case 'string':
+            col.defaultTo(f.defaultValue as string);
+            break;
+          case 'object':
+            col.defaultTo(JSON.stringify(f.defaultValue));
+            break;
+        }
       }
     }
 

@@ -61,7 +61,7 @@ export class RestService {
   ): Promise<unknown> {
     // Load the model
     const model = this.schema.getModel(database, reference);
-    const schema = this.schema.findOne(database, reference);
+    const schema = this.schema.getSchema(database, reference);
     const pks = schema.fields.filter(isPrimary).map(f => f.reference);
 
     // Create query configuration from the OData filters.

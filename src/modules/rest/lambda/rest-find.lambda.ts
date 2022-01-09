@@ -14,6 +14,7 @@ type Config = {
   conditions?: { field: string; operator: string; value: any }[];
   offset: number;
   limit?: number;
+  failOnEmpty: boolean;
 };
 
 @Service({
@@ -95,6 +96,11 @@ type Config = {
                   type: 'number',
                   default: 0,
                 },
+                {
+                  title: 'Null',
+                  type: 'null',
+                  default: null,
+                },
               ],
             },
           },
@@ -109,6 +115,12 @@ type Config = {
         title: 'Limit',
         type: 'number',
         default: null,
+      },
+
+      failOnEmpty: {
+        type: 'boolean',
+        title: 'Fail on Empty',
+        default: true,
       },
     },
     required: ['database', 'schema', 'offset'],
@@ -158,9 +170,18 @@ export class RestFindLambda implements ILambda {
         q.limit(config.limit);
       }
 
-      return {
-        records: (await q).map(r => r.$toJson()),
-      };
+      const records = (await q).map(r => r.$toJson());
+
+      if (config.failOnEmpty && !records.length) {
+        return {
+          error: {
+            message: 'Empty',
+            code: 0,
+          },
+        };
+      }
+
+      return { records };
     } catch (error) {
       return {
         error: {

@@ -6,6 +6,7 @@ import { ContentAction } from '../interface/content-action.enum';
 export const schemaToJsonSchema = (
   schema: ISchema,
   action: ContentAction,
+  forForm: boolean = false,
 ): JSONSchema7Definition => {
   const jschema: JSONSchema7Definition = {
     type: 'object',
@@ -80,6 +81,13 @@ export const schemaToJsonSchema = (
         fieldDef.enum = field.args.values;
       } else {
         fieldDef.enum = [];
+      }
+    }
+
+    if (field.tags.includes(FieldTag.NULLABLE)) {
+      if (forForm) {
+        fieldDef.type = [fieldDef.type as any, 'null'];
+      } else {
       }
     }
 

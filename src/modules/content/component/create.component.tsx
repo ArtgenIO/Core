@@ -41,7 +41,7 @@ export default function CrudCreateComponent() {
 
   useEffect(() => {
     if (schemas && schemas.length) {
-      setFormSchema(schemaToJsonSchema(schemas[0], ContentAction.CREATE));
+      setFormSchema(schemaToJsonSchema(schemas[0], ContentAction.CREATE, true));
     }
 
     return () => {

@@ -2,7 +2,7 @@ import { Button, Divider, Drawer, Form, Input, Select, Tooltip } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { camelCase, cloneDeep, snakeCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { FieldType, IField, ISchema } from '../../../../schema';
+import { FieldTag, FieldType, IField, ISchema } from '../../../../schema';
 
 type InputLinkedProps = {
   isLinked: boolean;
@@ -53,7 +53,13 @@ export default function SchemaEditorFieldTunerComponent({
   useEffect(() => {
     setType(schema.fields[idx].type);
 
-    form.setFieldsValue(schema.fields[idx]);
+    const fClone = cloneDeep(schema.fields[idx]);
+
+    if (fClone.defaultValue === null) {
+      fClone.defaultValue = 'null';
+    }
+
+    form.setFieldsValue(fClone);
 
     return () => {};
   }, [idx]);
@@ -76,7 +82,6 @@ export default function SchemaEditorFieldTunerComponent({
         reference: form.getFieldValue('reference'),
         title: form.getFieldValue('title'),
         columnName: form.getFieldValue('columnName'),
-        defaultValue: dv === 'null' ? null : dv,
         type,
         args: {
           ...currentField.args,
@@ -84,6 +89,16 @@ export default function SchemaEditorFieldTunerComponent({
         },
         tags: form.getFieldValue('tags'),
       };
+
+      if (dv === 'null') {
+        newField.defaultValue = null;
+
+        if (!newField.tags.includes(FieldTag.NULLABLE)) {
+          newField.tags.push(FieldTag.NULLABLE);
+        }
+      } else if (dv !== null) {
+        newField.defaultValue = dv;
+      }
 
       update.fields.splice(idx, 1, newField);
 
@@ -99,11 +114,6 @@ export default function SchemaEditorFieldTunerComponent({
         });
       }
     } else {
-      form.setFieldsValue({
-        args: {
-          values: [],
-        },
-      });
     }
 
     setType(form.getFieldValue('type'));

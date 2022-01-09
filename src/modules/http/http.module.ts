@@ -5,6 +5,7 @@ import { BlueprintModule } from '../blueprint/blueprint.module';
 import { FlowModule } from '../flow/flow.module';
 import { PageModule } from '../page/page.module';
 import { HttpObserver } from './http.observer';
+import { DnsQueryLambda } from './lambda/dns-query.lambda';
 import { HttpRequestLambda } from './lambda/http-request.lambda';
 import { HttpTerminateLambda } from './lambda/http-terminate.lambda';
 import { HttpTriggerLambda } from './lambda/http-trigger.lambda';
@@ -19,6 +20,7 @@ import { HttpService } from './service/http.service';
     HttpTriggerLambda,
     HttpRequestLambda,
     HttpTerminateLambda,
+    DnsQueryLambda,
     HttpServerProvider,
   ],
 })
