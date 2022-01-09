@@ -1,4 +1,12 @@
-### Version 0.1.13
+### Version 0.1.6
+
+- CRON based flow trigger
+- Fix the upgrade checker's spam
+- Flow now logs with a localized logger for easier debug
+- Flow engine initialized in context session
+- Lotsa small bug fix while working toward the 0.2.x milestone
+
+### Version 0.1.3
 
 - Remove the Cypress tests until the random fail is not patched
 - New UI design for the database editor
