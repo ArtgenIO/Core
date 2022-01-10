@@ -30,6 +30,7 @@ export class HttpService {
   }
 
   async startServer(): Promise<void> {
+    const startedAt = Date.now();
     let stopPromise: any = null;
 
     if (this.isHttpStarted) {
@@ -70,7 +71,11 @@ export class HttpService {
       await this.httpServer.listen(port, '0.0.0.0');
     }
 
-    this.logger.info('HTTP server listening at [0.0.0.0:%d]', port);
+    this.logger.info(
+      'HTTP server listening at [0.0.0.0:%d] build time [%dms]',
+      port,
+      Date.now() - startedAt,
+    );
   }
 
   async stopServer() {

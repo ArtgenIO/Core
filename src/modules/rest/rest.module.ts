@@ -1,6 +1,7 @@
 import { Module } from '../../app/container';
 import { moduleRef } from '../../app/container/module-ref';
 import { SchemaModule } from '../schema/schema.module';
+import { RestCreateLambda } from './lambda/rest-create.lambda';
 import { RestFindLambda } from './lambda/rest-find.lambda';
 import { RestListLambda } from './lambda/rest-list.lambda';
 import { RestReadLambda } from './lambda/rest-read.lambda';
@@ -13,10 +14,11 @@ import { RestService } from './rest.service';
   providers: [
     RestService,
     RestGateway,
-    RestListLambda,
+    RestCreateLambda,
     RestReadLambda,
-    RestFindLambda,
     RestUpdateLambda,
+    RestFindLambda,
+    RestListLambda,
   ],
 })
 export class RestModule {}

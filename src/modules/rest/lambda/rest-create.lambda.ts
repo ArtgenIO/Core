@@ -6,7 +6,7 @@ import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import { ContentService } from '../service/content.service';
+import { RestService } from '../rest.service';
 
 type Config = {
   database: string;
@@ -17,7 +17,7 @@ type Config = {
   tags: 'lambda',
 })
 @Lambda({
-  type: 'content.create',
+  type: 'rest.create',
   description: 'Create a new recrod',
   icon: 'db.insert.png',
   handles: [
@@ -56,10 +56,10 @@ type Config = {
     required: ['database', 'schema'],
   },
 })
-export class ContentCreateLambda implements ILambda {
+export class RestCreateLambda implements ILambda {
   constructor(
-    @Inject(ContentService)
-    readonly service: ContentService,
+    @Inject(RestService)
+    readonly service: RestService,
   ) {}
 
   async invoke(session: WorkflowSession) {

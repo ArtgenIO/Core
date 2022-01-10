@@ -23,6 +23,8 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
       disableRequestLogging: true,
       genReqId: v4 as () => string,
       trustProxy: true,
+      ignoreTrailingSlash: true,
+      keepAliveTimeout: 1000,
     });
     this.logger.debug('Initiated');
 
