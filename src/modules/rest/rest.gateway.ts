@@ -5,6 +5,7 @@ import {
   RouteHandlerMethod,
 } from 'fastify';
 import { Inject, Service } from '../../app/container';
+import { IKernel, Kernel } from '../../app/kernel';
 import { ContentAction } from '../content/interface/content-action.enum';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
 import { AuthenticationHandlerProvider } from '../identity/provider/authentication-handler.provider';
@@ -20,13 +21,15 @@ export class RestGateway implements IHttpGateway {
     readonly service: RestService,
     @Inject(SchemaService)
     readonly schema: SchemaService,
-    @Inject(AuthenticationHandlerProvider)
-    readonly authHandler: RouteHandlerMethod,
+    @Inject(Kernel)
+    readonly kernel: IKernel,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
     const schemas = await this.schema.findAll();
-    const preHandler = this.authHandler;
+    const preHandler = await this.kernel.get<RouteHandlerMethod>(
+      AuthenticationHandlerProvider,
+    );
 
     for (const schema of schemas) {
       // Create action
