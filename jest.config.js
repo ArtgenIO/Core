@@ -13,7 +13,11 @@ const config = {
   // Coverage configuration
   collectCoverage: true,
   coverageReporters: ['lcov', 'text'],
-  collectCoverageFrom: ['./src/**/*.ts', '!./src/**/index.ts'],
+  collectCoverageFrom: [
+    './src/**/*.ts',
+    '!./src/**/index.ts',
+    '!./src/modules/admin/**/*.ts',
+  ],
   coverageThreshold: {
     global: {
       statements: 10,
