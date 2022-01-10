@@ -17,10 +17,10 @@ describe('Main', () => {
 
     @Module()
     class TestModule implements IModule {
-      async onStart() {}
+      async onBoot() {}
     }
 
-    TestModule.prototype.onStart = onStartMock;
+    TestModule.prototype.onBoot = onStartMock;
 
     try {
       await (await main([TestModule])).stop();

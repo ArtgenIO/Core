@@ -21,7 +21,7 @@ export class RpcModule implements IModule {
     protected logger: ILogger,
   ) {}
 
-  async onReady(kernel: IKernel): Promise<void> {
+  async onStart(kernel: IKernel): Promise<void> {
     await Promise.all([this.startRpcServer(kernel.context)]);
   }
 

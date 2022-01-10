@@ -30,7 +30,7 @@ export class HttpModule implements IModule {
     protected logger: ILogger,
   ) {}
 
-  async onReady(kernel: IKernel): Promise<void> {
+  async onStart(kernel: IKernel): Promise<void> {
     await Promise.all([(await kernel.get(HttpService)).startServer()]);
   }
 

@@ -14,7 +14,7 @@ import { SystemBlueprintProvider } from './provider/system-blueprint.provider';
   ],
 })
 export class BlueprintModule implements IModule {
-  async onStart(kernel: IKernel) {
+  async onBoot(kernel: IKernel) {
     await (await kernel.get(BlueprintService)).seed();
   }
 }

@@ -11,7 +11,7 @@ import { EventHandlerProvider } from './provider/event-handler.provider';
   providers: [EventHandlerProvider, EventService, EventTrigger],
 })
 export class EventModule implements IModule {
-  async onReady(kernel: IKernel) {
+  async onStart(kernel: IKernel) {
     (await kernel.get(EventService)).register(kernel);
   }
 

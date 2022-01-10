@@ -26,7 +26,7 @@ import { AuthenticationService } from './service/authentication.service';
   dependsOn: [moduleRef(() => SchemaModule), moduleRef(() => BlueprintModule)],
 })
 export class IdentityModule implements IModule {
-  async onReady(kernel: IKernel) {
+  async onStart(kernel: IKernel) {
     await (await kernel.get(AuthenticationService)).seed();
   }
 }

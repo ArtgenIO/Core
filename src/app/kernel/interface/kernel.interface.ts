@@ -8,17 +8,17 @@ export interface IKernel {
   readonly context: IContext;
 
   /**
-   * Global base logger, every injection uses a child context from this.
+   * Global base logger, every injection uses a child from this.
    */
   readonly logger: ILogger;
 
   /**
-   * Registers the kernel modules
+   * Registers kernel modules
    */
   register(modules: Constructor<IModule>[]): boolean;
 
   /**
-   * Start the kernel and invoke the modules
+   * Bootstrap the kernel and invoke the modules
    */
   boostrap(): Promise<boolean>;
 

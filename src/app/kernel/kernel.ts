@@ -60,28 +60,35 @@ export class Kernel implements IKernel {
   }
 
   /**
+   * Resolve the moduleRef, and validate the output, referencing is used to
+   * resolve circular dependencies, and the wrapper hides the concrete until
+   * the JS definition is parsed.
+   */
+  protected resolveRef(
+    module: ModuleConcrete,
+    lead: string,
+  ): Constructor<IModule> {
+    if (typeof module === 'object' && module?.resolve) {
+      module = module.resolve();
+    }
+
+    // Test for basic module expectations
+    if (typeof module !== 'function') {
+      throw new Exception(
+        `Could not register module [${
+          (module as unknown as Constructor<IModule>)?.name ?? module
+        }] referenced by [${lead}]!`,
+      );
+    }
+
+    return module;
+  }
+
+  /**
    * Register modules in the dependency container and module load graph.
    */
-  protected discover(modules: ModuleConcrete[], by: string = '__kernel__') {
-    // Resolve the forward ref, and validate the output.
-    const resolve = (module: ModuleConcrete): Constructor<IModule> => {
-      if (typeof module === 'object' && module?.resolve) {
-        module = module.resolve();
-      }
-
-      // Test for basic module expectations
-      if (typeof module !== 'function') {
-        throw new Exception(
-          `Could not register module [${
-            (module as unknown as Constructor<IModule>)?.name ?? module
-          }] referenced by [${by}]!`,
-        );
-      }
-
-      return module;
-    };
-
-    for (let module of modules.map(resolve)) {
+  protected discover(modules: ModuleConcrete[], lead: string = '__kernel__') {
+    for (let module of modules.map(m => this.resolveRef(m, lead))) {
       const name = module.name;
       const key = `module.${name}`;
 
@@ -90,7 +97,7 @@ export class Kernel implements IKernel {
         if (!this.moduleGraph.hasNode(key)) {
           this.moduleGraph.addNode(key);
 
-          this.logger.debug('Discovered [%s] module by [%s]', name, by);
+          this.logger.debug('Discovered [%s] module by [%s]', name, lead);
         }
 
         // Bind the instance for hook executions
@@ -107,6 +114,7 @@ export class Kernel implements IKernel {
             module,
           );
 
+          // Import sub modules
           if (meta.imports) {
             this.discover(meta.imports, name);
           }
@@ -115,16 +123,16 @@ export class Kernel implements IKernel {
           if (meta.dependsOn) {
             this.discover(meta.dependsOn, name);
 
-            for (let dependency of meta.dependsOn.map(resolve)) {
-              const dependencyKey = `module.${dependency.name}`;
+            for (let dep of meta.dependsOn.map(m => this.resolveRef(m, lead))) {
+              const depKey = `module.${dep.name}`;
 
               this.logger.debug(
                 'Module [%s] is dependent of the [%s] module',
                 name,
-                dependency.name,
+                dep.name,
               );
 
-              this.moduleGraph.addDependency(key, dependencyKey);
+              this.moduleGraph.addDependency(key, depKey);
             }
           }
 
@@ -147,7 +155,6 @@ export class Kernel implements IKernel {
               } else {
                 // Simplified object binding.
                 // This allows us to use the @Inject(MyService) syntax
-
                 this.context.add(
                   new Binding(provider.name).toAlias(binding.key),
                 );
@@ -161,7 +168,9 @@ export class Kernel implements IKernel {
             }
           }
         } else {
-          throw new Error(`Module [${name}] is missing the @Module decorator`);
+          throw new Exception(
+            `Module [${name}] is missing the @Module decorator`,
+          );
         }
       }
     }
@@ -171,15 +180,15 @@ export class Kernel implements IKernel {
    * @inheritdoc
    */
   register(modules: Constructor<IModule>[]): boolean {
-    this.logger.debug('Bootstrap sequence initialized...');
+    this.logger.debug('Discovery started...');
 
     try {
       this.discover(modules);
-      this.logger.info('Bootstrap sequence successful!');
+      this.logger.info('Discovery successful!');
 
       return true;
     } catch (error) {
-      this.logger.error('Bootstrap sequence failed!');
+      this.logger.error('Discovery failed!');
       this.logger.error(getErrorMessage(error));
 
       return false;
@@ -189,20 +198,20 @@ export class Kernel implements IKernel {
   /**
    * Start the module with a timeout in case the module loops or waits too long
    */
-  protected async doStartModule(
-    binding: Readonly<Binding<any>>,
+  protected async doBootModule(
+    binding: Binding<Constructor<IModule>>,
     module: IModule,
   ): Promise<void> {
+    const value = binding.source.value as Constructor<IModule>;
+
     // Check for start hook
-    if (module.onStart) {
+    if (module.onBoot) {
       await timeout(
         module
-          .onStart(this)
-          .then(() =>
-            this.logger.debug('Module [%s] started', binding.source.value.name),
-          ),
+          .onBoot(this)
+          .then(() => this.logger.debug('Module [%s] started', value.name)),
         60_000,
-        `Module [${binding.source.value.name}] could not finish it's startup in 60 seconds`,
+        `Module [${value.name}] could not finish it's boot in 60 seconds`,
       );
     }
   }
@@ -211,34 +220,32 @@ export class Kernel implements IKernel {
    * @inheritdoc
    */
   async boostrap(): Promise<boolean> {
-    this.logger.debug('Startup request received');
-    this.logger.debug('Invoking the module startup sequence...');
+    this.logger.debug('Boostrap request received');
+    this.logger.debug('Invoking the module bootstrap sequence...');
 
     try {
       const dependencies = this.moduleGraph.overallOrder(false);
 
       for (const key of dependencies) {
-        const binding = this.context.getBinding(key);
+        const binding = this.context.getBinding<Constructor<IModule>>(key);
 
         await this.context
           .get<IModule>(binding.key)
-          .then(module => this.doStartModule(binding, module));
+          .then(module => this.doBootModule(binding, module));
       }
     } catch (error) {
-      this.logger.error('Startup sequence failed!');
+      this.logger.error('Bootstrap sequence failed!');
       this.logger.error(getErrorMessage(error));
       console.error(error);
 
       // Initiate a graceful shutdown so the modules
       // can still close their handles.
-      try {
-        await this.stop();
-      } catch (error) {}
+      await this.stop();
 
       return false;
     }
 
-    this.logger.info("Startup sequence successful. Let's do this!");
+    this.logger.info("Bootstrap successful. Let's do this!");
 
     return true;
   }
@@ -247,52 +254,60 @@ export class Kernel implements IKernel {
    * @inheritdoc
    */
   async start() {
-    // Propagate the onReady event, so the modules can register their handles.
-    // Unlike the on start event, this does not have to be in any order.
+    const processes = [];
+
+    // Propagate the onStart event, so the modules can register their late handles.
+    // Unlike the on boot event, this does not have to be in any specific order.
     for (const binding of this.context.findByTag<any>('module')) {
       const module: IModule = await binding.getValue(this.context);
 
-      if (module?.onReady) {
-        await module
-          .onReady(this)
-          .then(() =>
-            this.logger.debug(
-              'Module [%s] is ready',
-              binding.source.value.name,
-            ),
-          )
-          .catch(e =>
-            this.logger
-              .warn(
-                'Module [%s] had an unhandled exception in the ready hook',
+      if (module?.onStart) {
+        processes.push(
+          module
+            .onStart(this)
+            .then(() =>
+              this.logger.debug(
+                'Module [%s] started',
                 binding.source.value.name,
-              )
-              .warn(getErrorMessage(e)),
-          );
+              ),
+            )
+            .catch(e =>
+              this.logger
+                .warn(
+                  'Module [%s] had an unhandled exception in the start hook',
+                  binding.source.value.name,
+                )
+                .warn(getErrorMessage(e)),
+            ),
+        );
       }
     }
+
+    await Promise.all(processes);
+
+    this.logger.info('Startup procedure is finished, application is ready!');
   }
 
   /**
    * Stop the module with a timeout in case the module loops or waits too long
    */
   protected async doStopModule(
-    binding: Readonly<Binding<any>>,
+    binding: Readonly<Binding<Constructor<IModule>>>,
     module: IModule,
   ): Promise<void> {
+    const value = binding.source.value as Constructor<IModule>;
+
     // Check for stop hook
     if (module.onStop) {
       await timeout(
         module
           .onStop(this)
-          .then(() =>
-            this.logger.debug('Module [%s] stopped', binding.source.value.name),
-          ),
+          .then(() => this.logger.debug('Module [%s] stopped', value.name)),
         10_000,
-        `Module [${binding.source.value.name}] could not finish it's shutdown in 10 seconds`,
+        `Module [${value.name}] could not finish it's shutdown in 10 seconds`,
       );
     } else {
-      this.logger.debug('Module [%s] stopped', binding.source.value.name);
+      this.logger.debug('Module [%s] stopped', value.name);
     }
   }
 
@@ -303,24 +318,29 @@ export class Kernel implements IKernel {
     this.logger.debug('Shutdown request received');
     this.logger.debug('Invoking the graceful shutdown sequence...');
 
-    try {
-      const dependencies = this.moduleGraph.overallOrder(false).reverse();
+    const dependencies = this.moduleGraph.overallOrder(false).reverse();
+    let dirty = false;
 
-      for (const key of dependencies) {
-        const binding = this.context.getBinding(key);
-        await this.context
-          .get<IModule>(binding.key)
-          .then(module => this.doStopModule(binding, module));
-      }
-      this.logger.info('Shutdown sequence successful! See You <3');
+    for (const key of dependencies) {
+      const binding = this.context.getBinding(key);
 
-      return true;
-    } catch (error) {
-      this.logger.error('Shutdown sequence failed!');
-      this.logger.error(getErrorMessage(error));
+      await this.context.get<IModule>(binding.key).then(module =>
+        this.doStopModule(binding, module).catch(e => {
+          this.logger
+            .warn(
+              'Module [%s] had an unhandled exception in the stop hook',
+              binding.source.value.name,
+            )
+            .warn(getErrorMessage(e));
 
-      return false;
+          dirty = true;
+        }),
+      );
     }
+
+    this.logger.info('Shutdown sequence successful! See You <3');
+
+    return !dirty;
   }
 
   /**

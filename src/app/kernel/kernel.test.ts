@@ -3,70 +3,66 @@ import { IModule, Inject, Module, Service } from '../container';
 import { IKernel } from './interface/kernel.interface';
 import { Kernel } from './kernel';
 
-describe('Kernel', () => {
+describe(Kernel.name, () => {
   describe('Initialization', () => {
     test('should construct without error', () => {
       expect(() => new Kernel()).not.toThrow();
     });
 
     test('should create a valid logger', () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
 
-      expect(app).toHaveProperty('logger');
-      expect(app.logger).toHaveProperty('debug');
-      expect(app.logger).toHaveProperty('info');
-      expect(app.logger).toHaveProperty('warn');
-      expect(app.logger).toHaveProperty('error');
+      expect(kernel).toHaveProperty('logger');
+      expect(kernel.logger).toHaveProperty('debug');
+      expect(kernel.logger).toHaveProperty('info');
+      expect(kernel.logger).toHaveProperty('warn');
+      expect(kernel.logger).toHaveProperty('error');
     });
 
-    test('should register the "Kernel" context', () => {
-      const app = new Kernel();
+    test('should register the main context', () => {
+      const kernel = new Kernel();
 
-      expect(app).toHaveProperty('context');
-      expect(app.context).toBeInstanceOf(Context);
+      expect(kernel).toHaveProperty('context');
+      expect(kernel.context).toBeInstanceOf(Context);
     });
 
-    test('should register the "Kernel" in the context', () => {
+    test('should register the kernel in the context', () => {
       expect(new Kernel().context.contains('Kernel')).toBe(true);
     });
   });
 
-  describe('Bootstrapping', () => {
+  describe('Register', () => {
     test('should proceed even if no module is registered', () => {
-      const app = new Kernel();
-
-      expect(app.register([])).toBe(true);
+      expect(new Kernel().register([])).toBe(true);
     });
 
-    test('should fail when an invalid type is registered', () => {
-      const app = new Kernel();
+    test('should fail when an invalid module is registered', () => {
+      const kernel = new Kernel();
       const nonModules: any[] = [{}, '', 2, true];
 
       for (const subject of nonModules) {
-        expect(app.register([subject])).toBe(false);
+        expect(kernel.register([subject])).toBe(false);
       }
     });
 
     test('should fail when a non module class included', () => {
-      const app = new Kernel();
-
       class NotAModule {}
 
-      expect(app.register([NotAModule])).toBe(false);
+      expect(new Kernel().register([NotAModule])).toBe(false);
     });
 
     test('should register a blank module', () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
 
       @Module()
       class BlankModule {}
 
-      expect(app.register([BlankModule])).toBe(true);
-      expect(app.context.contains('module.BlankModule')).toBe(true);
+      expect(kernel.register([BlankModule])).toBe(true);
+      expect(kernel.context.contains('module.BlankModule')).toBe(true);
     });
 
     test('should register module providers', () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
 
       @Service()
       class ServiceA {}
@@ -78,13 +74,13 @@ describe('Kernel', () => {
       })
       class TestModule {}
 
-      expect(app.register([TestModule])).toBe(true);
-      expect(app.context.contains('classes.ServiceA')).toBe(true);
-      expect(app.context.contains('classes.ServiceB')).toBe(true);
+      expect(kernel.register([TestModule])).toBe(true);
+      expect(kernel.context.contains('classes.ServiceA')).toBe(true);
+      expect(kernel.context.contains('classes.ServiceB')).toBe(true);
     });
 
     test('should register submodule providers', () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
 
       @Service()
       class ServiceA {}
@@ -110,19 +106,19 @@ describe('Kernel', () => {
       })
       class TopModule {}
 
-      expect(app.register([TopModule])).toBe(true);
+      expect(kernel.register([TopModule])).toBe(true);
 
-      expect(app.context.contains('classes.ServiceA')).toBe(true);
-      expect(app.context.contains('classes.SubServiceA')).toBe(true);
-      expect(app.context.contains('classes.SubSubServiceA')).toBe(true);
+      expect(kernel.context.contains('classes.ServiceA')).toBe(true);
+      expect(kernel.context.contains('classes.SubServiceA')).toBe(true);
+      expect(kernel.context.contains('classes.SubSubServiceA')).toBe(true);
 
-      expect(app.context.contains('module.TopModule')).toBe(true);
-      expect(app.context.contains('module.SubModule')).toBe(true);
-      expect(app.context.contains('module.SubSubModule')).toBe(true);
+      expect(kernel.context.contains('module.TopModule')).toBe(true);
+      expect(kernel.context.contains('module.SubModule')).toBe(true);
+      expect(kernel.context.contains('module.SubSubModule')).toBe(true);
     });
 
     test('should resolve services by their class', () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
 
       @Service()
       class ServiceA {}
@@ -140,10 +136,10 @@ describe('Kernel', () => {
       })
       class TestModule {}
 
-      expect(app.register([TestModule])).toBe(true);
+      expect(kernel.register([TestModule])).toBe(true);
 
-      const serviceA = app.context.getSync<ServiceA>(ServiceA.name);
-      const serviceB = app.context.getSync<ServiceB>(ServiceB.name);
+      const serviceA = kernel.context.getSync<ServiceA>(ServiceA.name);
+      const serviceB = kernel.context.getSync<ServiceB>(ServiceB.name);
 
       expect(serviceA).toBeInstanceOf(ServiceA);
       expect(serviceB).toBeInstanceOf(ServiceB);
@@ -153,7 +149,7 @@ describe('Kernel', () => {
     });
 
     test('should resolve provider values by their product', () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
 
       class Product {}
 
@@ -169,63 +165,60 @@ describe('Kernel', () => {
       })
       class TestModule {}
 
-      expect(app.register([TestModule])).toBe(true);
-
-      const product = app.context.getSync<Product>(Product.name);
-
+      expect(kernel.register([TestModule])).toBe(true);
+      const product = kernel.context.getSync<Product>(Product.name);
       expect(product).toBeInstanceOf(Product);
     });
   });
 
-  describe('Starting', () => {
-    test('should start without modules', async () => {
-      const app = new Kernel();
-      app.register([]);
+  describe('Bootstrap', () => {
+    test('should bootstrap without modules', async () => {
+      const kernel = new Kernel();
+      kernel.register([]);
 
-      expect(await app.boostrap()).toBe(true);
+      expect(await kernel.boostrap()).toBe(true);
     });
 
     test('should invoke the onStart hook', async () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
       const startMock = jest.fn();
 
       @Module({})
       class StartMeModule implements IModule {
-        async onStart(app: IKernel) {
+        async onBoot(app: IKernel) {
           startMock(app);
         }
       }
 
-      app.register([StartMeModule]);
+      kernel.register([StartMeModule]);
 
-      expect(await app.boostrap()).toBe(true);
+      expect(await kernel.boostrap()).toBe(true);
       expect(startMock).toHaveBeenCalled();
       expect(startMock).toHaveBeenCalledTimes(1);
-      expect(startMock).toHaveBeenCalledWith(app);
+      expect(startMock).toHaveBeenCalledWith(kernel);
     });
 
     test('should fail on erroring start', async () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
 
       @Module({})
       class BadModule implements IModule {
-        async onStart(app: IKernel) {
+        async onBoot(app: IKernel) {
           throw new Error('Stop it');
         }
       }
 
-      app.register([BadModule]);
-
-      expect(await app.boostrap()).toBe(false);
+      kernel.register([BadModule]);
+      expect(await kernel.boostrap()).toBe(false);
     });
 
     test('should call the onStop when the start failing', async () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
       const stopMock = jest.fn();
 
       @Module({})
       class BadModule implements IModule {
-        async onStart(app: IKernel) {
+        async onBoot(app: IKernel) {
           throw new Error('Stop it');
         }
 
@@ -234,21 +227,21 @@ describe('Kernel', () => {
         }
       }
 
-      app.register([BadModule]);
+      kernel.register([BadModule]);
 
-      expect(await app.boostrap()).toBe(false);
+      expect(await kernel.boostrap()).toBe(false);
       expect(stopMock).toHaveBeenCalled();
       expect(stopMock).toHaveBeenCalledTimes(1);
-      expect(stopMock).toHaveBeenCalledWith(app);
+      expect(stopMock).toHaveBeenCalledWith(kernel);
     });
 
     test('should start modules in dependency order', async () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
       const order: string[] = [];
 
       @Module()
       class FirstModule implements IModule {
-        async onStart() {
+        async onBoot() {
           order.push('first');
         }
       }
@@ -257,7 +250,7 @@ describe('Kernel', () => {
         dependsOn: [FirstModule],
       })
       class SecondModule implements IModule {
-        async onStart() {
+        async onBoot() {
           order.push('second');
         }
       }
@@ -266,21 +259,21 @@ describe('Kernel', () => {
         dependsOn: [SecondModule],
       })
       class ThirdModule implements IModule {
-        async onStart() {
+        async onBoot() {
           order.push('third');
         }
       }
 
       @Module({})
       class ForthModule implements IModule {
-        async onStart() {
+        async onBoot() {
           order.push('forth');
         }
       }
 
-      app.register([ForthModule, ThirdModule, SecondModule, FirstModule]);
+      kernel.register([ForthModule, ThirdModule, SecondModule, FirstModule]);
 
-      expect(await app.boostrap()).toBe(true);
+      expect(await kernel.boostrap()).toBe(true);
       expect(order).toStrictEqual(['forth', 'first', 'second', 'third']);
     });
 
@@ -292,20 +285,19 @@ describe('Kernel', () => {
 
   describe('Stopping', () => {
     test('should complete the shutdown', async () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
 
       @Module({})
       class BadModule implements IModule {
         async onStop(app: IKernel) {}
       }
 
-      app.register([BadModule]);
-
-      expect(await app.stop()).toBe(true);
+      kernel.register([BadModule]);
+      expect(await kernel.stop()).toBe(true);
     });
 
     test('should fail the shutdown', async () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
 
       @Module({})
       class BadModule implements IModule {
@@ -314,37 +306,12 @@ describe('Kernel', () => {
         }
       }
 
-      app.register([BadModule]);
-
-      expect(await app.stop()).toBe(false);
+      kernel.register([BadModule]);
+      expect(await kernel.stop()).toBe(false);
     });
-
-    // Something is off with this version, I get exit code 130 and
-    // cannot see why, the log stream dies when I try to open a new promise
-    // Seems like it's a one off problem.
-    test.skip('should timeout the bad onStop', async () => {
-      const app = new Kernel();
-
-      @Module({})
-      class BadModule implements IModule {
-        async onStop(app: IKernel) {
-          await new Promise(hang => {});
-        }
-      }
-
-      app.register([BadModule]);
-      const stop = app.stop();
-
-      jest.advanceTimersByTime(15_000);
-
-      expect(await stop).toBe(false);
-    });
-
-    // See above
-    test.skip('should kill the modules with a global timeout', () => {});
 
     test('should stop modules in reverse dependency order', async () => {
-      const app = new Kernel();
+      const kernel = new Kernel();
       const order: string[] = [];
 
       @Module()
@@ -379,13 +346,94 @@ describe('Kernel', () => {
         }
       }
 
-      app.register([ForthModule, ThirdModule, SecondModule, FirstModule]);
+      kernel.register([ForthModule, ThirdModule, SecondModule, FirstModule]);
 
-      expect(await app.boostrap()).toBe(true);
-      expect(await app.stop()).toBe(true);
+      expect(await kernel.boostrap()).toBe(true);
+      expect(await kernel.stop()).toBe(true);
       expect(order).toStrictEqual(
         ['forth', 'first', 'second', 'third'].reverse(),
       );
+    });
+  });
+
+  describe('Get', () => {
+    test('should resolve injections', async () => {
+      const kernel = new Kernel();
+
+      @Service()
+      class ServiceA {}
+
+      @Module({
+        providers: [ServiceA],
+      })
+      class ModuleA {}
+
+      kernel.register([ModuleA]);
+
+      expect(await kernel.get(ServiceA)).toBeInstanceOf(ServiceA);
+    });
+  });
+
+  describe('Replace', () => {
+    test('should replace the injection', async () => {
+      const kernel = new Kernel();
+      const key = 'classes.ServiceA';
+
+      @Service()
+      class ServiceA {}
+
+      @Service()
+      class MockServiceA {}
+
+      @Module({
+        providers: [ServiceA],
+      })
+      class ModuleA {}
+
+      kernel.register([ModuleA]);
+      expect(kernel.context.contains(key));
+
+      const original = await kernel.get(ServiceA);
+      // Replace the already resolved value.
+      kernel.replace(ServiceA, MockServiceA);
+      // Reresolve the original key
+      const mock = await kernel.get(ServiceA);
+
+      expect(original).toBeInstanceOf(ServiceA);
+      expect(mock).toBeInstanceOf(MockServiceA);
+    });
+  });
+
+  describe('Create', () => {
+    test('should create partially injected class instance', async () => {
+      const kernel = new Kernel();
+
+      @Service()
+      class ServiceB {}
+
+      @Service()
+      class ServiceA {
+        constructor(
+          @Inject(ServiceB)
+          readonly inst: ServiceB,
+          readonly p1: number,
+          readonly p2: number,
+        ) {}
+      }
+
+      @Module({
+        providers: [ServiceA, ServiceB],
+      })
+      class ModuleA {}
+
+      kernel.register([ModuleA]);
+
+      const svc = await kernel.create(ServiceA, [5, 21]);
+
+      expect(svc).toBeInstanceOf(ServiceA);
+      expect(svc.inst).toBeInstanceOf(ServiceB);
+      expect(svc.p1).toBe(5);
+      expect(svc.p2).toBe(21);
     });
   });
 });

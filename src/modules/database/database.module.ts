@@ -18,7 +18,7 @@ import { DatabaseService } from './service/database.service';
   ],
 })
 export class DatabaseModule implements IModule {
-  async onStart(kernel: IKernel): Promise<void> {
+  async onBoot(kernel: IKernel): Promise<void> {
     await (await kernel.get(DatabaseService)).bootstrap();
   }
 
