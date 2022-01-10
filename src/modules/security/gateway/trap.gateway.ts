@@ -3,7 +3,7 @@ import { ILogger, Logger, Service } from '../../../app/container';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
 
 const WPTrapPaths = ['/wp-login.php', '/wp-admin'];
-const OCTrapPaths = ['/admin/config-dist.php', '/config-dist.php'];
+const OCTrapPaths = ['/config-dist.php'];
 
 @Service({
   tags: 'http:gateway',
@@ -20,7 +20,7 @@ export class TrapGateway implements IHttpGateway {
       res: FastifyReply,
     ): Promise<string> => {
       this.logger.info('Trap triggered [%s]', req.ip);
-      res.header['X-Artgen-Security'] = 'Violated';
+      res.header('X-Artgen-Security', 'violated');
 
       return 'Match made in heaven <3';
     };

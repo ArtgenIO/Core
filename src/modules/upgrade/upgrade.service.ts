@@ -15,6 +15,10 @@ export class UpgradeService {
   ) {}
 
   async shouldUpgrade(): Promise<boolean> {
+    if (process.env.NODE_ENV !== 'production') {
+      return false;
+    }
+
     const localVersion = await this.getLocalVersion();
 
     return (

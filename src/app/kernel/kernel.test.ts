@@ -1,4 +1,4 @@
-import { Context, Provider } from '@loopback/context';
+import { Context, Provider, ValueOrPromise } from '@loopback/context';
 import { IModule, Inject, Module, Service } from '../container';
 import { IKernel } from './interface/kernel.interface';
 import { Kernel } from './kernel';
@@ -179,23 +179,23 @@ describe(Kernel.name, () => {
       expect(await kernel.boostrap()).toBe(true);
     });
 
-    test('should invoke the onStart hook', async () => {
+    test('should invoke the onBoot hook', async () => {
       const kernel = new Kernel();
-      const startMock = jest.fn();
+      const bootMock = jest.fn();
 
       @Module({})
       class StartMeModule implements IModule {
         async onBoot(app: IKernel) {
-          startMock(app);
+          bootMock(app);
         }
       }
 
       kernel.register([StartMeModule]);
 
       expect(await kernel.boostrap()).toBe(true);
-      expect(startMock).toHaveBeenCalled();
-      expect(startMock).toHaveBeenCalledTimes(1);
-      expect(startMock).toHaveBeenCalledWith(kernel);
+      expect(bootMock).toHaveBeenCalled();
+      expect(bootMock).toHaveBeenCalledTimes(1);
+      expect(bootMock).toHaveBeenCalledWith(kernel);
     });
 
     test('should fail on erroring start', async () => {
@@ -281,6 +281,44 @@ describe(Kernel.name, () => {
     // Submodule first, or main module first? I get it, propagating down, but I had a lot of trouble with this in the past
     // when you wana load functionality with a submodule, but the dependencies are too tight and causes circular locks.
     test.skip('should load leaf nodes first if they have no dependency', () => {});
+  });
+
+  describe('Starting', () => {
+    test('should invoke the onStart hook', async () => {
+      const kernel = new Kernel();
+      const startMock = jest.fn();
+
+      @Module({})
+      class StartMeModule implements IModule {
+        async onStart(app: IKernel) {
+          startMock(app);
+        }
+      }
+
+      kernel.register([StartMeModule]);
+      await kernel.boostrap();
+      await kernel.start();
+
+      expect(startMock).toHaveBeenCalled();
+      expect(startMock).toHaveBeenCalledTimes(1);
+      expect(startMock).toHaveBeenCalledWith(kernel);
+    });
+
+    test('should ignore the onStart error', async () => {
+      const kernel = new Kernel();
+
+      @Module({})
+      class StartMeModule implements IModule {
+        async onStart(app: IKernel) {
+          throw 'This is going to be logged but thats all!';
+        }
+      }
+
+      kernel.register([StartMeModule]);
+      await kernel.boostrap();
+
+      expect(async () => await kernel.start()).not.toThrow();
+    });
   });
 
   describe('Stopping', () => {
@@ -401,6 +439,61 @@ describe(Kernel.name, () => {
 
       expect(original).toBeInstanceOf(ServiceA);
       expect(mock).toBeInstanceOf(MockServiceA);
+    });
+
+    test('should fail on non existent', () => {
+      const kernel = new Kernel();
+
+      expect(() => kernel.replace('a', 'b')).toThrow();
+    });
+
+    test('should replace constants', async () => {
+      const kernel = new Kernel();
+      kernel.context.bind('a').to('b');
+      kernel.replace('a', 'c');
+
+      expect(await kernel.get('a')).toBe('c');
+    });
+
+    test('should replace dynamic value', async () => {
+      const kernel = new Kernel();
+      kernel.context.bind('a').toDynamicValue(() => 'b');
+      kernel.replace('a', () => 'c');
+
+      expect(await kernel.get('a')).toBe('c');
+    });
+
+    test('should replace provider value', async () => {
+      const kernel = new Kernel();
+
+      class ProductA {}
+
+      @Service(ProductA)
+      class ProviderA implements Provider<ProductA> {
+        value(): ValueOrPromise<ProductA> {
+          return new ProductA();
+        }
+      }
+
+      class ProductB {}
+
+      @Service(ProductB)
+      class ProviderB implements Provider<ProductB> {
+        value(): ValueOrPromise<ProductB> {
+          return new ProductB();
+        }
+      }
+
+      @Module({
+        providers: [ProviderA],
+      })
+      class ModuleA {}
+
+      kernel.register([ModuleA]);
+      kernel.replace(ProductA, ProviderB);
+
+      expect(await kernel.get(ProductA)).toBeInstanceOf(ProductB);
+      expect(await kernel.get('providers.ProviderA')).toBeInstanceOf(ProductB);
     });
   });
 

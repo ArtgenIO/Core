@@ -164,4 +164,20 @@ describe('Application (e2e)', () => {
       expect(readback.json()).toStrictEqual(payload);
     });
   });
+
+  describe('Security', () => {
+    test.each(['/wp-login.php', '/wp-admin', '/config-dist.php'])(
+      'should respond to [%s] trap URL',
+      async (url: string) => {
+        const srv = await getServer();
+
+        const response = await srv.inject({
+          url,
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.headers['x-artgen-security']).toBe('violated');
+      },
+    );
+  });
 });

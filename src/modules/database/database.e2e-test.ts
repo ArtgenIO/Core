@@ -96,6 +96,6 @@ describe('Database E2E', () => {
     expect(mod4Changes).toBeGreaterThanOrEqual(1);
 
     // Clean up
-    //await connection.synchornizer.deleteTable(ref).catch(e => {});
+    await connection.synchornizer.deleteTable(ref).catch(e => {});
   });
 });
