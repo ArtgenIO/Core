@@ -1,5 +1,5 @@
 import { Service } from '../../../app/container';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../decorator/lambda.decorator';
 import { InputHandleDTO } from '../dto/input-handle.dto';
 import { OutputHandleDTO } from '../dto/output-handle.dto';
@@ -79,7 +79,7 @@ type Config = {
   },
 })
 export class IfLambda implements ILambda {
-  async invoke(session: WorkflowSession) {
+  async invoke(session: FlowSession) {
     const subject = session.getInput('subject');
     const { operator, against, negate } = session.getConfig<Config>();
     let result: boolean;

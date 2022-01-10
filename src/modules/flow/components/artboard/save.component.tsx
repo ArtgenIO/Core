@@ -4,30 +4,29 @@ import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useHttpClientOld } from '../../../admin/library/http-client';
 import {
+  flowAtom,
+  flowChangedAtom,
   flowInstanceAtom,
-  workflowAtom,
-  workflowChangedAtom,
 } from '../../atom/artboard.atoms';
-import { ILogic } from '../../interface/workflow.interface';
-import { serializeWorkflow } from '../../util/serialize-workflow';
+import { IFlow } from '../../interface/flow.interface';
+import { serializeFlow } from '../../util/serialize-flow';
 
-const SAVING_NOTIFICATION = 'saving-workflow';
+const SAVING_NOTIFICATION = 'saving-flow';
 
 export default function ArtboardSave() {
   const httpClient = useHttpClientOld();
-  const workflow = useRecoilValue(workflowAtom);
+  const flow = useRecoilValue(flowAtom);
   const flowInstance = useRecoilValue(flowInstanceAtom);
-  const [isWorkflowChanged, setIsWorkflowChanged] =
-    useRecoilState(workflowChangedAtom);
+  const [isFlowChanged, setIsFlowChanged] = useRecoilState(flowChangedAtom);
 
-  const doSaveWorkflow = () => {
-    const serializedWorkflow: ILogic = serializeWorkflow(
-      workflow,
+  const doSaveFlow = () => {
+    const serializedFlow: IFlow = serializeFlow(
+      flow,
       flowInstance.getElements(),
     );
 
     httpClient
-      .patch(`/api/rest/main/workflow/${workflow.id}`, serializedWorkflow)
+      .patch(`/api/rest/main/flow/${flow.id}`, serializedFlow)
       .then(() => {
         notification.success({
           key: SAVING_NOTIFICATION,
@@ -35,12 +34,12 @@ export default function ArtboardSave() {
           placement: 'bottomRight',
         });
 
-        setIsWorkflowChanged(false);
+        setIsFlowChanged(false);
       })
       .catch(error => {
         notification.error({
           key: SAVING_NOTIFICATION,
-          message: 'Could not save workflow!',
+          message: 'Could not save flow!',
           description: error.message,
           placement: 'bottomRight',
         });
@@ -49,8 +48,8 @@ export default function ArtboardSave() {
 
   return (
     <div
-      onClick={() => doSaveWorkflow()}
-      className={isWorkflowChanged ? 'text-yellow-500' : ''}
+      onClick={() => doSaveFlow()}
+      className={isFlowChanged ? 'text-yellow-500' : ''}
     >
       <SaveOutlined />
       <div>Save Changes</div>

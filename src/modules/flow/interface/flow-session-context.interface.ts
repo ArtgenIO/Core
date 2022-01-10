@@ -1,4 +1,4 @@
-export interface IWorkflowSessionContext {
+export interface IFlowSessionContext {
   /**
    * Node input / output data through the execution chain
    */

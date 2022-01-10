@@ -20,7 +20,7 @@ export default function CreateExtension() {
     source: 'offline',
     config: {},
     schemas: [],
-    workflows: [],
+    flows: [],
   });
 
   return (

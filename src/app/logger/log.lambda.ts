@@ -1,4 +1,4 @@
-import { WorkflowSession } from '../../modules/flow/library/workflow.session';
+import { FlowSession } from '../../modules/flow/library/flow.session';
 import { Lambda } from '../../modules/lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../modules/lambda/dto/input-handle.dto';
 import { ILambda } from '../../modules/lambda/interface/lambda.interface';
@@ -25,9 +25,9 @@ export class LogLambda implements ILambda {
     readonly logger: ILogger,
   ) {}
 
-  async invoke(ctx: WorkflowSession) {
+  async invoke(ctx: FlowSession) {
     const instance = this.logger.child({
-      scope: `workflow:${ctx.workflow.id}`,
+      scope: `Flow:${ctx.flow.id.substring(0, 8)}`,
     });
     const level = ctx.getConfig();
     let msg = ctx.getInput('message');

@@ -1,4 +1,4 @@
-import { ILogic } from '../../flow/interface';
+import { IFlow } from '../../flow/interface';
 import { ISchema } from '../../schema';
 
 export interface IBlueprint {
@@ -43,7 +43,7 @@ export interface IBlueprint {
   schemas: ISchema[];
 
   /**
-   * Provided workflows
+   * Provided flows
    */
-  workflows: ILogic[];
+  flows: IFlow[];
 }

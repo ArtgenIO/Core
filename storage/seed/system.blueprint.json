@@ -9,9 +9,9 @@
   "schemas": [
     {
       "database": "main",
-      "reference": "Workflow",
-      "title": "Workflows",
-      "tableName": "__artgen_workflows",
+      "reference": "Flow",
+      "title": "Flows",
+      "tableName": "__artgen_flows",
       "fields": [
         {
           "reference": "id",
@@ -403,9 +403,9 @@
           "tags": []
         },
         {
-          "reference": "workflows",
-          "title": "Workflows",
-          "columnName": "workflows",
+          "reference": "flows",
+          "title": "Flows",
+          "columnName": "flows",
           "defaultValue": [],
           "type": "json",
           "args": {},
@@ -464,7 +464,7 @@
       ]
     }
   ],
-  "workflows": [
+  "flows": [
     {
       "id": "30d9c6a9-3d0d-424d-ab5e-7ffe0ff7c840",
       "name": "Blueprint Store - Proxy",

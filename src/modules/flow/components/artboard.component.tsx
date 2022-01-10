@@ -19,31 +19,31 @@ import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import {
   catalogCollapsedAtom,
   elementsAtom,
+  flowAtom,
+  flowChangedAtom,
   flowInstanceAtom,
   lambdaMetasAtom,
   selectedElementIdAtom,
   selectedNodeIdAtom,
-  workflowAtom,
-  workflowChangedAtom,
 } from '../atom/artboard.atoms';
 import { NodeFactory } from '../factory/node.factory';
-import { ILogic } from '../interface/workflow.interface';
+import { IFlow } from '../interface/flow.interface';
 import { createNode } from '../util/create-node';
-import { unserializeWorkflow } from '../util/unserialize-workflow';
+import { unserializeFlow } from '../util/unserialize-flow';
 import './artboard.component.less';
 import ArtboardCatalogComponent from './artboard/catalog.component';
 import ArtboardNodeConfigComponent from './artboard/config.component';
 import ArtboardEdgeConfigComponent from './artboard/edge-config.component';
 import CustomEdge from './artboard/edge.component';
-import WorkflowNameComponent from './artboard/name.component';
+import FlowNameComponent from './artboard/name.component';
 import ArtboardToolsComponent from './artboard/tools.component';
 
-export default function WorkflowArtboardComponent() {
+export default function FlowArtboardComponent() {
   // Page state
   const setPageDrawer = useSetRecoilState(pageDrawerAtom);
   const resetPageDrawerState = useResetRecoilState(pageDrawerAtom);
   // Router
-  const workflowId: string = useParams().id;
+  const flowId: string = useParams().id;
   const httpClient = useHttpClientOld();
 
   // Local state
@@ -52,13 +52,13 @@ export default function WorkflowArtboardComponent() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Artboard state
-  const setWorkflow = useSetRecoilState(workflowAtom);
+  const setFlow = useSetRecoilState(flowAtom);
   const [elements, setElements] = useRecoilState(elementsAtom);
   const [lambdaMetas, setLambdaMetas] = useRecoilState(lambdaMetasAtom);
   const [flowInstance, setFlowInstance] = useRecoilState(flowInstanceAtom);
   const setSelectedNodeId = useSetRecoilState(selectedNodeIdAtom);
   const setCatalogCollapsed = useSetRecoilState(catalogCollapsedAtom);
-  const setIsWorkflowChanged = useSetRecoilState(workflowChangedAtom);
+  const setIsFlowChanged = useSetRecoilState(flowChangedAtom);
   const setSelectedElementId = useSetRecoilState(selectedElementIdAtom);
 
   const onConnect = params =>
@@ -90,13 +90,13 @@ export default function WorkflowArtboardComponent() {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
 
-    setIsWorkflowChanged(true);
+    setIsFlowChanged(true);
   };
 
   const onDrop = (event: DragEvent) => {
     const bounds = flowWrapper.current.getBoundingClientRect();
 
-    setIsWorkflowChanged(true);
+    setIsFlowChanged(true);
 
     if (event.dataTransfer.getData('application/reactflow')) {
       event.preventDefault();
@@ -117,9 +117,7 @@ export default function WorkflowArtboardComponent() {
   useEffect(() => {
     (async () => {
       const nodes = await httpClient.get<ILambdaMeta[]>('/api/lambda');
-      const workflow = await httpClient.get<ILogic>(
-        `/api/rest/main/workflow/${workflowId}`,
-      );
+      const flow = await httpClient.get<IFlow>(`/api/rest/main/flow/${flowId}`);
 
       const customNodes: NodeTypesType = {};
       for (const node of nodes.data) {
@@ -130,23 +128,23 @@ export default function WorkflowArtboardComponent() {
       }
       setCustomNodes(customNodes);
       setLambdaMetas(nodes.data);
-      setWorkflow(workflow.data);
-      setElements(unserializeWorkflow(workflow.data));
+      setFlow(flow.data);
+      setElements(unserializeFlow(flow.data));
       setIsLoading(false);
 
       setPageDrawer(<ArtboardCatalogComponent />);
 
-      if (!workflow.data.nodes.length) {
+      if (!flow.data.nodes.length) {
         setCatalogCollapsed(false);
       }
     })();
 
     return () => {
-      setWorkflow(null);
+      setFlow(null);
       setElements([]);
       resetPageDrawerState();
     };
-  }, [workflowId]);
+  }, [flowId]);
 
   return (
     <>
@@ -171,7 +169,7 @@ export default function WorkflowArtboardComponent() {
                     setSelectedElementId(null);
                   }
                 }}
-                onChange={() => setIsWorkflowChanged(true)}
+                onChange={() => setIsFlowChanged(true)}
                 nodeTypes={customNodes}
                 defaultZoom={1.5}
                 edgeTypes={{
@@ -189,7 +187,7 @@ export default function WorkflowArtboardComponent() {
                 <ArtboardNodeConfigComponent />
                 <ArtboardEdgeConfigComponent />
                 <ArtboardToolsComponent />
-                <WorkflowNameComponent />
+                <FlowNameComponent />
               </ReactFlow>
             </div>
           </ReactFlowProvider>

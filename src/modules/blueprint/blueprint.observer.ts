@@ -1,6 +1,6 @@
 import { ILogger, Inject, Logger } from '../../app/container';
 import { Observer, On } from '../event';
-import { RestService } from '../rest/rest.service';
+import { RestService } from '../rest/service/rest.service';
 import { IBlueprint } from './interface/blueprint.interface';
 
 @Observer()
@@ -16,14 +16,14 @@ export class BlueprintObserver {
   async handleBlueprintDelete(bp: IBlueprint) {
     this.logger.warn('Blueprint deletion detected!');
 
-    for (const wf of bp.workflows) {
+    for (const wf of bp.flows) {
       await this.rest
-        .delete('main', 'Workflow', {
+        .delete('main', 'Flow', {
           id: wf.id,
         })
-        .then(() => this.logger.info('Associated workflow [%s] deleted', wf.id))
+        .then(() => this.logger.info('Associated flow [%s] deleted', wf.id))
         .catch(() =>
-          this.logger.error('Cloud not delete [%s] associated workflow', wf.id),
+          this.logger.error('Cloud not delete [%s] associated flow', wf.id),
         );
     }
 

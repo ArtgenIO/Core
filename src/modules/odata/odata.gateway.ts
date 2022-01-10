@@ -1,9 +1,9 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
 import { kebabCase } from 'lodash';
 import { Inject, Service } from '../../app/container';
-import { ContentAction } from '../content/interface/content-action.enum';
 import { schemaToJsonSchema } from '../content/util/schema-to-jsonschema';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
+import { CrudAction } from '../rest/interface/crud-action.enum';
 import { SchemaService } from '../schema/service/schema.service';
 import { IODataResult } from './interface/odata-result.interface';
 import { ODataService } from './odata.service';
@@ -35,7 +35,7 @@ export class ODataGateway implements IHttpGateway {
             tags: ['OData'],
             body: {
               type: 'array',
-              items: schemaToJsonSchema(schema, ContentAction.CREATE),
+              items: schemaToJsonSchema(schema, CrudAction.CREATE),
             },
           },
         },
@@ -73,7 +73,7 @@ export class ODataGateway implements IHttpGateway {
             tags: ['OData'],
             body: {
               type: 'array',
-              items: schemaToJsonSchema(schema, ContentAction.UPDATE),
+              items: schemaToJsonSchema(schema, CrudAction.UPDATE),
             },
           },
         },

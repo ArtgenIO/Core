@@ -78,8 +78,8 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
             description: 'Rest structured endpoints',
           },
           {
-            name: 'Workflow',
-            description: 'Workflow defined HTTP triggers',
+            name: 'Flow',
+            description: 'Flow defined HTTP triggers',
           },
         ],
       },

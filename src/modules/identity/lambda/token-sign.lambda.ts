@@ -1,6 +1,6 @@
 import { sign, SignOptions } from 'jsonwebtoken';
 import { Inject, Service } from '../../../app/container';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
@@ -43,7 +43,7 @@ export class TokenSignLambda implements ILambda {
     readonly authService: AuthenticationService,
   ) {}
 
-  async invoke(ctx: WorkflowSession) {
+  async invoke(ctx: FlowSession) {
     const config = ctx.getConfig<SignOptions>();
     const payload: IJwtPayload = {
       aid: ctx.getInput<string>('accountId'),

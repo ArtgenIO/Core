@@ -24,9 +24,9 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
 import {
   elementsAtom,
+  flowChangedAtom,
   lambdaMetasAtom,
   selectedNodeIdAtom,
-  workflowChangedAtom,
 } from '../../atom/artboard.atoms';
 import { CustomNode, CustomNodeData } from '../../interface/custom-node';
 
@@ -36,7 +36,7 @@ export default function ArtboardNodeConfigComponent() {
   const [selectedNodeId, setSelectedNodeId] =
     useRecoilState(selectedNodeIdAtom);
   const [elements, setElements] = useRecoilState(elementsAtom);
-  const setIsWorkflowChanged = useSetRecoilState(workflowChangedAtom);
+  const setIsFlowChanged = useSetRecoilState(flowChangedAtom);
 
   // Local state
   const [configValue, setConfigValue] = useState(null);
@@ -139,7 +139,7 @@ export default function ArtboardNodeConfigComponent() {
                         return newElements;
                       });
 
-                      setIsWorkflowChanged(true);
+                      setIsFlowChanged(true);
                     }}
                   />
                 </Descriptions.Item>
@@ -194,7 +194,7 @@ export default function ArtboardNodeConfigComponent() {
                   return newElements;
                 });
 
-                setIsWorkflowChanged(true);
+                setIsFlowChanged(true);
               }}
             >
               <></>

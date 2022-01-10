@@ -1,5 +1,5 @@
 import { Service } from '../../../app/container';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
@@ -37,7 +37,7 @@ import { ILambda } from '../../lambda/interface/lambda.interface';
   tags: 'lambda',
 })
 export class ValidatorLambda implements ILambda {
-  async invoke(ctx: WorkflowSession) {
+  async invoke(ctx: FlowSession) {
     if (ctx.getInput('subject') === 'a') {
       return {
         valid: true,

@@ -1,6 +1,6 @@
 import { inject } from '@loopback/context';
 import { IContext, Service } from '../../../app/container';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
@@ -42,7 +42,7 @@ export class HttpTerminateLambda implements ILambda {
     readonly ctx: IContext,
   ) {}
 
-  async invoke(session: WorkflowSession) {
+  async invoke(session: FlowSession) {
     const config = session.getConfig<IConfig>();
     const triggerId = session.initialTriggerId;
     const triggerNode = session.getContext().$nodes[triggerId]

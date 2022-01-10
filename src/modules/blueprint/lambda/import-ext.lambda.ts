@@ -1,6 +1,6 @@
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel/util/extract-error';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
@@ -52,7 +52,7 @@ export class BlueprintImportLambda implements ILambda {
     readonly extService: BlueprintService,
   ) {}
 
-  async invoke(session: WorkflowSession) {
+  async invoke(session: FlowSession) {
     const imp = session.getInput('import') as {
       database: string;
       blueprint: IBlueprint;

@@ -110,7 +110,7 @@
       ]
     }
   ],
-  "workflows": [
+  "flows": [
     {
       "id": "51c0abf2-5924-4fdf-a920-a1b3487f6710",
       "name": "Authentication - Sign In",

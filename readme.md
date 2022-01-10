@@ -49,13 +49,13 @@ This feature is still in heavy development, but the system is capable of mapping
 
 - One Click Install Cloud Blueprints
 - Visual Data Modeller
-- Visual Workflow Engine
+- Visual Flow Engine
 - Drag and Drop UI Editor
 - Rest API Generator
 - OData API Generator
 - Built In Customizable User Management
 - Customizable Dashboard (coming soon)
-- CRON Scheduled Workflows (coming soon)
+- CRON Scheduled Flows (coming soon)
 - GraphQL API generator (coming soon)
 - Chart / Analytics builder (under development)
 

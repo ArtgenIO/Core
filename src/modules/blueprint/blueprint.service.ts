@@ -4,7 +4,7 @@ import { ILogger, Inject, Logger, Service } from '../../app/container';
 import { SEED_DIR } from '../../app/globals';
 import { getErrorMessage } from '../../app/kernel';
 import { DatabaseConnectionService } from '../database/service/database-connection.service';
-import { RestService } from '../rest/rest.service';
+import { RestService } from '../rest/service/rest.service';
 import { IBlueprint } from './interface/blueprint.interface';
 import { SystemBlueprintProvider } from './provider/system-blueprint.provider';
 
@@ -70,19 +70,15 @@ export class BlueprintService {
     }
 
     // TODO find database references and replace them
-    for (const wf of blueprint.workflows) {
+    for (const wf of blueprint.flows) {
       await this.rest
-        .create('main', 'Workflow', wf as any)
+        .create('main', 'Flow', wf as any)
         .then(() =>
-          this.logger.info(
-            'Workflow [%s][%s] installed',
-            blueprint.title,
-            wf.id,
-          ),
+          this.logger.info('Flow [%s][%s] installed', blueprint.title, wf.id),
         )
         .catch(e =>
           this.logger
-            .warn('Could not create [%s] workflow', wf.id)
+            .warn('Could not create [%s] flow', wf.id)
             .warn(getErrorMessage(e)),
         );
     }

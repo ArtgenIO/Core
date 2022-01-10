@@ -1,5 +1,5 @@
 import { Service } from '../../../app/container';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
@@ -35,7 +35,7 @@ export type EventTriggerConfig = {
         type: 'string',
         title: 'Event Name',
         default: '*',
-        description: 'Event which triggers this workflow',
+        description: 'Event which triggers this flow',
       },
       ...JSCHEMA_TRIGGER,
     },
@@ -43,7 +43,7 @@ export type EventTriggerConfig = {
   },
 })
 export class EventTrigger implements ILambda {
-  async invoke(session: WorkflowSession) {
+  async invoke(session: FlowSession) {
     return {
       event: session.getContext().$trigger as {
         name: string;

@@ -1,5 +1,5 @@
 import { Service } from '../../../app/container';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../decorator/lambda.decorator';
 import { InputHandleDTO } from '../dto/input-handle.dto';
 import { OutputHandleDTO } from '../dto/output-handle.dto';
@@ -30,7 +30,7 @@ import { ILambda } from '../interface/lambda.interface';
   ],
 })
 export class LengthLambda implements ILambda {
-  async invoke(session: WorkflowSession) {
+  async invoke(session: FlowSession) {
     return {
       length: session.getInput<string | unknown[]>('subject').length,
     };

@@ -12,7 +12,7 @@ import { Route, Routes, useLocation, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import CrudReadComponent from '../../../content/component/read.component';
-import WorkflowListComponent from '../../../flow/components/list.component';
+import FlowListComponent from '../../../flow/components/list.component';
 import { IBlueprint } from '../../interface/blueprint.interface';
 
 export default function ExtensionPanelWrapper() {
@@ -28,8 +28,8 @@ export default function ExtensionPanelWrapper() {
   );
 
   useEffect(() => {
-    if (location.pathname.match(`${base}/workflows`)) {
-      setSelectedMenu(['workflows']);
+    if (location.pathname.match(`${base}/flows`)) {
+      setSelectedMenu(['flows']);
       setOpenedMenu([]);
     }
 
@@ -93,8 +93,8 @@ export default function ExtensionPanelWrapper() {
                   ))
               : undefined}
           </Menu.SubMenu>
-          <Menu.Item key="workflows" icon={<PartitionOutlined />}>
-            <Link to={`${base}/workflows`}>Workflows</Link>
+          <Menu.Item key="flows" icon={<PartitionOutlined />}>
+            <Link to={`${base}/flows`}>Flows</Link>
           </Menu.Item>
           <Menu.Item key="pages" icon={<LayoutOutlined />}>
             Pages
@@ -107,10 +107,7 @@ export default function ExtensionPanelWrapper() {
 
       <Layout>
         <Routes location={location}>
-          <Route
-            path={`${base}/workflows`}
-            element={<WorkflowListComponent />}
-          ></Route>
+          <Route path={`${base}/flows`} element={<FlowListComponent />}></Route>
           <Route
             path={`${base}/contents/:database/:reference`}
             element={<CrudReadComponent />}

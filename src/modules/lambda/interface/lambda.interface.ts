@@ -1,17 +1,17 @@
-import { ILogic } from '../../flow/interface/workflow.interface';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { IFlow } from '../../flow/interface/flow.interface';
+import { FlowSession } from '../../flow/library/flow.session';
 
 /**
  * Request executor, must be stateless so each invoking can be called without reinitialization
  */
 export interface ILambda {
   /**
-   * Lambda is being loaded with a serialized workflow.
+   * Lambda is being loaded with a serialized flow.
    */
-  onInit?(workflow: ILogic): Promise<void>;
+  onInit?(flow: IFlow): Promise<void>;
 
   /**
-   * Lambda is executed in a workflow session.
+   * Lambda is executed in a flow session.
    */
-  invoke(ctx: WorkflowSession): Promise<{ [handleId: string]: unknown } | void>;
+  invoke(ctx: FlowSession): Promise<{ [handleId: string]: unknown } | void>;
 }

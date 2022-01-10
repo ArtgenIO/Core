@@ -3,7 +3,7 @@ import schedule from 'node-schedule';
 import { JobParams, JOB_META_KEY } from '.';
 import { ILogger, Inject, Logger, Service } from '../../app/container';
 import { IKernel } from '../../app/kernel';
-import { FlowService } from '../flow/service/workflow.service';
+import { FlowService } from '../flow/service/flow.service';
 import { CronTriggerConfig } from './lambda/cron.trigger';
 
 @Service()
@@ -23,21 +23,19 @@ export class SchedulerService {
   }
 
   protected async registerFlows(kernel: IKernel) {
-    for (const workflow of await this.flowService.findAll()) {
-      const triggers = workflow.nodes.filter(t => t.type === 'trigger.cron');
+    for (const flow of await this.flowService.findAll()) {
+      const triggers = flow.nodes.filter(t => t.type === 'trigger.cron');
 
       for (const trigger of triggers) {
-        const name = workflow.id + '::' + trigger.id;
+        const name = flow.id + '::' + trigger.id;
         const timing = (trigger.config as CronTriggerConfig).pattern;
 
         const job = schedule.scheduleJob(name, timing, async () => {
-          const session = await this.flowService.createWorkflowSession(
-            workflow.id,
-          );
+          const session = await this.flowService.createSession(flow.id);
 
           this.logger.info(
             'CRON flow invoked [%s] with [%s] as session identifier',
-            workflow.id,
+            flow.id,
             session.id,
           );
           session.trigger(trigger.id, {});

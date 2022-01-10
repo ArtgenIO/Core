@@ -1,15 +1,15 @@
 import { Elements, OnLoadParams } from 'react-flow-renderer';
 import { atom } from 'recoil';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
-import { ILogic } from '../interface/workflow.interface';
+import { IFlow } from '../interface/flow.interface';
 
 export const lambdaMetasAtom = atom<ILambdaMeta[]>({
   key: 'lambdaMetas',
   default: [],
 });
 
-export const workflowAtom = atom<ILogic>({
-  key: 'workflow',
+export const flowAtom = atom<IFlow>({
+  key: 'flow',
   default: null,
 });
 
@@ -43,7 +43,7 @@ export const catalogCollapsedAtom = atom<boolean>({
   default: true,
 });
 
-export const workflowChangedAtom = atom<boolean>({
-  key: 'workflowChanged',
+export const flowChangedAtom = atom<boolean>({
+  key: 'flowChanged',
   default: false,
 });

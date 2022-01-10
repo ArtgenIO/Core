@@ -1,17 +1,17 @@
 import { createLogger } from 'winston';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
-import { IWorkflowSessionContext } from '../interface';
-import { ILogic } from '../interface/workflow.interface';
-import { WorkflowSession } from './workflow.session';
+import { IFlowSessionContext } from '../interface';
+import { IFlow } from '../interface/flow.interface';
+import { FlowSession } from './flow.session';
 
 const createLambdaService = (lambdas: ILambda[]) => {
   return new LambdaService(createLogger(), lambdas);
 };
 
-describe('WorkflowSession', () => {
+describe(FlowSession.name, () => {
   test('should construct', () => {
-    const testWf: ILogic = {
+    const testWf: IFlow = {
       id: 'testid',
       name: 'testname',
       nodes: [],
@@ -19,21 +19,16 @@ describe('WorkflowSession', () => {
     };
     const lambda = createLambdaService([]);
     const sessionId = 'testid';
-    const session = new WorkflowSession(
-      createLogger(),
-      lambda,
-      testWf,
-      sessionId,
-    );
+    const session = new FlowSession(createLogger(), lambda, testWf, sessionId);
 
     expect(session.id).toBe('testid');
-    expect(session.workflow).toBe(testWf);
+    expect(session.flow).toBe(testWf);
     expect(session.getContext()).toStrictEqual({
       $nodes: {},
       $trigger: {},
       $output: {},
       $input: {},
       $final: null,
-    } as IWorkflowSessionContext);
+    } as IFlowSessionContext);
   });
 });

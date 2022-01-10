@@ -62,20 +62,19 @@ export class AdminGateway implements IHttpGateway {
       this.viteServer = await vite.createServer(viteConfig);
       // eslint-disable-next-line
       const middie = import('middie');
+      const middlewares = this.viteServer.middlewares;
 
       await httpServer.register(middie);
-      httpServer.use('/admin', this.viteServer.middlewares);
+      httpServer.use('/admin', middlewares);
 
       this.logger.info('Vite build [Admin] registered at [GET][/admin]');
     }
   }
 
   async deregister() {
-    if (this.viteServer) {
-      if (this.viteServer?.close) {
-        this.logger.debug('Closing the Vite dev server');
-        await this.viteServer.close();
-      }
+    if (this.viteServer && this.viteServer?.close) {
+      this.logger.debug('Closing the Vite dev server');
+      await this.viteServer.close();
     }
   }
 }

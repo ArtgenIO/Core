@@ -1,6 +1,6 @@
 import { compare } from 'bcrypt';
 import { Service } from '../../../app/container';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
@@ -44,7 +44,7 @@ type Input = {
   ],
 })
 export class HashCompareLambda implements ILambda {
-  async invoke(ctx: WorkflowSession) {
+  async invoke(ctx: FlowSession) {
     const { hash, plain } = ctx.getInput<Input>('elements');
     const result = await compare(plain, hash);
 

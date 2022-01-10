@@ -1,13 +1,10 @@
 import { Elements, isEdge, isNode } from 'react-flow-renderer';
-import { ILogic } from '../interface';
+import { IFlow } from '../interface';
 import { serializeEdge } from './serialize-edge';
 import { serializeNode } from './serialize-node';
 
-export const serializeWorkflow = (
-  original: ILogic,
-  elements: Elements,
-): ILogic => {
-  const serialized: ILogic = {
+export const serializeFlow = (original: IFlow, elements: Elements): IFlow => {
+  const serialized: IFlow = {
     id: original.id,
     name: original.name,
     nodes: elements.filter(isNode).map(serializeNode),

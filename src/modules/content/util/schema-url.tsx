@@ -1,8 +1,8 @@
 import kebabCase from 'lodash.kebabcase';
 import { QueryBuilder } from 'odata-query-builder';
+import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { FieldTag, ISchema } from '../../schema';
 import { FieldTool } from '../../schema/util/field-tools';
-import { ContentAction } from '../interface/content-action.enum';
 
 const routeFilterOne = (
   schema: Partial<ISchema>,
@@ -57,7 +57,7 @@ export const toRestRecordRoute = (
 export const routeCrudRecordUI = (
   schema: Partial<ISchema>,
   record: Record<string, unknown>,
-  action: ContentAction,
+  action: CrudAction,
 ) => {
   return `/admin/content/${schema.database}/${
     schema.reference

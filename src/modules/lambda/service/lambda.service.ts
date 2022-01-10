@@ -35,7 +35,7 @@ export class LambdaService {
           handler: handler,
         });
 
-        this.logger.info('Lambda [%s] loaded', meta.type);
+        this.logger.info('Lambda [%s] registered', meta.type);
       } else {
         this.logger.warn(
           'Lambda [%s] has no metadata!',

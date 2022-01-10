@@ -3,7 +3,7 @@ import { ILambdaHandle } from './handle.interface';
 
 export interface ILambdaMeta {
   /**
-   * Primary key used to register and manage lambdas in workflows
+   * Primary key used to register and manage lambdas in flows
    */
   type: string;
 

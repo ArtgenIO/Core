@@ -8,15 +8,15 @@ import { ILambdaRecord } from '../../lambda/interface/record.interface';
 import { ITriggerConfig } from '../../lambda/interface/trigger-config.interface';
 import { ITriggerOutput } from '../../lambda/interface/trigger-output.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
-import { IWorkflowSessionContext } from '../interface/workflow-session-context.interface';
-import { ILogic } from '../interface/workflow.interface';
+import { IFlowSessionContext } from '../interface/flow-session-context.interface';
+import { IFlow } from '../interface/flow.interface';
 import isJSON = require('is-json');
 
-export class WorkflowSession {
+export class FlowSession {
   /**
    * Execution context for data travel
    */
-  protected ctx: IWorkflowSessionContext;
+  protected ctx: IFlowSessionContext;
 
   initialTriggerId: string;
 
@@ -45,7 +45,7 @@ export class WorkflowSession {
   constructor(
     readonly logger: ILogger,
     readonly lambda: LambdaService,
-    readonly workflow: ILogic,
+    readonly flow: IFlow,
     readonly id: string,
   ) {
     this.ctx = this.createContext();
@@ -67,8 +67,8 @@ export class WorkflowSession {
   /**
    * Initialize a context with every key prepared for the runtime changes
    */
-  protected createContext(): IWorkflowSessionContext {
-    const ctx: IWorkflowSessionContext = {
+  protected createContext(): IFlowSessionContext {
+    const ctx: IFlowSessionContext = {
       $nodes: {},
       $trigger: {},
       $output: {},
@@ -76,7 +76,7 @@ export class WorkflowSession {
       $final: null,
     };
 
-    for (const node of this.workflow.nodes) {
+    for (const node of this.flow.nodes) {
       const nodeId = node.id;
 
       ctx.$nodes[nodeId] = {
@@ -103,11 +103,11 @@ export class WorkflowSession {
    * Get the lambda by mapping back to the node type
    */
   protected getLambda(nodeId: string): ILambdaRecord {
-    const serialized = this.workflow.nodes.find(node => node.id === nodeId);
+    const serialized = this.flow.nodes.find(node => node.id === nodeId);
 
     if (!serialized) {
       throw new Error(
-        `Node [${nodeId}] is not part of the [${this.workflow.id}] workflow!`,
+        `Node [${nodeId}] is not part of the [${this.flow.id}] flow!`,
       );
     }
 
@@ -258,7 +258,7 @@ export class WorkflowSession {
         await this.invokeNode(triggerId);
       } catch (error) {
         this.logger.error('Uncaught trigger error!');
-        this.logger.error('Workflow [%s]', this.workflow.name);
+        this.logger.error('Flow [%s]', this.flow.name);
         this.logger.error('Stack Trace [%s]', this.stackTrace);
         this.logger.error('Input [%s]', this.ctx.$input);
         this.logger.error('Error [%s]', error);
@@ -308,7 +308,7 @@ export class WorkflowSession {
   }
 
   /**
-   * Invoke the node in the workflow
+   * Invoke the node in the flow
    */
   protected async invokeNode(nodeId: string): Promise<void> {
     this.stackTrace.push(nodeId);
@@ -331,7 +331,7 @@ export class WorkflowSession {
       outputs = await lambda.handler.invoke(this);
     } catch (error) {
       this.logger.error('Uncaught lambda error!');
-      this.logger.error('Workflow', this.workflow.name);
+      this.logger.error('Flow', this.flow.id.substring(0, 8));
       this.logger.error('Stack Trace', this.stackTrace);
       this.logger.error('Input', this.ctx.$input);
       this.logger.error('Error', error);
@@ -353,9 +353,7 @@ export class WorkflowSession {
     }
 
     // Get the connected edges
-    const edges = this.workflow.edges.filter(
-      edge => edge.sourceNodeId === nodeId,
-    );
+    const edges = this.flow.edges.filter(edge => edge.sourceNodeId === nodeId);
 
     const chains = [];
 

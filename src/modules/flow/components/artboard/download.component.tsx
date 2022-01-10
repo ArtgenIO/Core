@@ -2,27 +2,27 @@ import { CloudDownloadOutlined } from '@ant-design/icons';
 import { Input, Modal } from 'antd';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { flowInstanceAtom, workflowAtom } from '../../atom/artboard.atoms';
-import { ILogic } from '../../interface/workflow.interface';
-import { serializeWorkflow } from '../../util/serialize-workflow';
+import { flowAtom, flowInstanceAtom } from '../../atom/artboard.atoms';
+import { IFlow } from '../../interface/flow.interface';
+import { serializeFlow } from '../../util/serialize-flow';
 
 export default function ArtboardDownload() {
-  const workflow = useRecoilValue(workflowAtom);
+  const flow = useRecoilValue(flowAtom);
   const flowInstance = useRecoilValue(flowInstanceAtom);
   const [source, setSource] = useState<string>('');
 
-  const doDownloadWorkflow = () => {
-    const serializedWorkflow: ILogic = serializeWorkflow(
-      workflow,
+  const doDownloadFlow = () => {
+    const serializedFlow: IFlow = serializeFlow(
+      flow,
       flowInstance.getElements(),
     );
 
-    setSource(JSON.stringify(serializedWorkflow, null, 2));
+    setSource(JSON.stringify(serializedFlow, null, 2));
   };
 
   return (
     <>
-      <div onClick={() => doDownloadWorkflow()} className="rounded-b-md">
+      <div onClick={() => doDownloadFlow()} className="rounded-b-md">
         <CloudDownloadOutlined />
         <div>Download as JSON</div>
       </div>
@@ -31,7 +31,7 @@ export default function ArtboardDownload() {
         width="50%"
         title={
           <>
-            <CloudDownloadOutlined /> Serialized Workflow
+            <CloudDownloadOutlined /> Serialized Flow
           </>
         }
         visible={!!source.length}

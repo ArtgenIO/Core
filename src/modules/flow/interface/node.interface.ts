@@ -1,6 +1,6 @@
 export interface INode {
   /**
-   * Unique ID for each workflow
+   * Unique ID for each flow
    */
   readonly id: string;
 

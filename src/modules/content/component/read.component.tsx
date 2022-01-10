@@ -1,4 +1,5 @@
 import {
+  DatabaseOutlined,
   DeleteOutlined,
   EditOutlined,
   FileAddOutlined,
@@ -13,7 +14,6 @@ import {
   Skeleton,
   Table,
   TableColumnsType,
-  Tabs,
   Tag,
 } from 'antd';
 import { ColumnType } from 'antd/lib/table';
@@ -24,9 +24,9 @@ import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
+import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { FieldType, ISchema } from '../../schema';
 import { isPrimary } from '../../schema/util/field-tools';
-import { ContentAction } from '../interface/content-action.enum';
 import {
   routeCrudRecordAPI,
   routeCrudRecordUI,
@@ -129,7 +129,7 @@ export default function CrudReadComponent() {
           return (
             <span key={`actions-${idx}`}>
               <Link
-                to={routeCrudRecordUI(schemas[0], record, ContentAction.UPDATE)}
+                to={routeCrudRecordUI(schemas[0], record, CrudAction.UPDATE)}
                 key={`editl-${idx}`}
               >
                 <Button
@@ -186,29 +186,37 @@ export default function CrudReadComponent() {
             }}
             actions={
               schemas ? (
-                <Link
-                  key="create"
-                  to={`/admin/content/${route.database}/${route.reference}/create`}
-                >
-                  <Button type="primary" icon={<FileAddOutlined />}>
-                    Create
-                  </Button>
-                </Link>
+                <>
+                  <Link
+                    key="create"
+                    to={`/admin/content/${route.database}/${route.reference}/create`}
+                  >
+                    <Button type="primary" icon={<FileAddOutlined />}>
+                      Create New
+                    </Button>
+                  </Link>
+                  <Link
+                    key="edit"
+                    to={`/admin/database/artboard/${route.database}`}
+                  >
+                    <Button type="ghost" icon={<DatabaseOutlined />}>
+                      Edit Schema
+                    </Button>
+                  </Link>
+                </>
               ) : undefined
-            }
-            footer={
-              <Tabs defaultActiveKey="1">
-                <Tabs.TabPane tab="Content" key="1" />
-                <Tabs.TabPane tab="Workflows" key="2" />
-                <Tabs.TabPane tab="Integrations" key="3" />
-                <Tabs.TabPane tab="Endpoints" key="4" />
-              </Tabs>
             }
           />
         }
       >
         <Skeleton active loading={isContentLoading}>
-          <Table dataSource={content} columns={columns} size="small" />
+          <Table
+            dataSource={content}
+            columns={columns}
+            size="small"
+            showHeader
+            bordered
+          />
         </Skeleton>
       </PageWithHeader>
     </>

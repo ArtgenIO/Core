@@ -2,7 +2,8 @@ import { assert } from 'console';
 import { IKernel, Kernel } from '../../app/kernel';
 import { RestGateway } from './rest.gateway';
 import { RestModule } from './rest.module';
-import { RestService } from './rest.service';
+import { OpenApiService } from './service/openapi.service';
+import { RestService } from './service/rest.service';
 
 describe(RestModule.name, () => {
   let kernel: IKernel;
@@ -19,5 +20,9 @@ describe(RestModule.name, () => {
 
   test('should register the gateway', async () => {
     expect(await kernel.get(RestGateway)).toBeTruthy();
+  });
+
+  test('should register the OpenAPI service', async () => {
+    expect(await kernel.get(OpenApiService)).toBeTruthy();
   });
 });

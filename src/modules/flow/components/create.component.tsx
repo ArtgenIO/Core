@@ -6,17 +6,14 @@ import { Link } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
-import { ILogic } from '../interface/workflow.interface';
+import { IFlow } from '../interface/flow.interface';
 
-export default function CreateWorkflowComponent() {
+export default function CreateFlowComponent() {
   const redirect = useNavigate();
   const httpClient = useHttpClientOld();
 
-  const sendRequest = async (data: Omit<ILogic, 'id'>) => {
-    const response = await httpClient.post<ILogic>(
-      '/api/rest/main/workflow',
-      data,
-    );
+  const sendRequest = async (data: Omit<IFlow, 'id'>) => {
+    const response = await httpClient.post<IFlow>('/api/rest/main/flow', data);
 
     return response.data.id;
   };
@@ -25,12 +22,12 @@ export default function CreateWorkflowComponent() {
     <PageWithHeader
       header={
         <PageHeader
-          title="Workflows"
+          title="Flows"
           avatar={{
             icon: <PartitionOutlined />,
           }}
           actions={
-            <Link key="create" to="/admin/workflow/create">
+            <Link key="create" to="/admin/flow/create">
               <Button type="primary" icon={<FileAddOutlined />}>
                 New Template
               </Button>
@@ -41,7 +38,7 @@ export default function CreateWorkflowComponent() {
     >
       <div>
         <Form
-          name="workflow"
+          name="flow"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
@@ -53,12 +50,12 @@ export default function CreateWorkflowComponent() {
               edges: [],
             }).then(id => {
               redirect(`/admin/flow/artboard/${id}`);
-              message.success('Workflow ready!');
+              message.success('Flow ready!');
             });
           }}
           onFinishFailed={() => message.error('Failed to validate')}
         >
-          <h1>Choose a workflow template</h1>
+          <h1>Choose a flow template</h1>
 
           <Form.Item
             label="Name"

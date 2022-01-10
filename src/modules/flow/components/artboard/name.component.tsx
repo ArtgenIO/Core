@@ -2,10 +2,10 @@ import { EditOutlined } from '@ant-design/icons';
 import { Input, message } from 'antd';
 import React from 'react';
 import { useRecoilState } from 'recoil';
-import { workflowAtom } from '../../atom/artboard.atoms';
+import { flowAtom } from '../../atom/artboard.atoms';
 
-export default function WorkflowNameComponent() {
-  const [workflow, setWorkflow] = useRecoilState(workflowAtom);
+export default function FlowNameComponent() {
+  const [flow, setFlow] = useRecoilState(flowAtom);
 
   return (
     <div className="absolute top-3 left-3 z-10 flex">
@@ -14,16 +14,16 @@ export default function WorkflowNameComponent() {
       </div>
       <div>
         <Input
-          defaultValue={workflow ? workflow.name : 'Loading...'}
+          defaultValue={flow ? flow.name : 'Loading...'}
           bordered={false}
-          placeholder="Workflow name"
+          placeholder="Flow name"
           required
           className="text-3xl"
           style={{ lineHeight: '3rem' }}
           onBlur={event => {
-            setWorkflow(wf => {
+            setFlow(wf => {
               if (wf.name != event.target.value) {
-                message.info('Workflow name changed', 1);
+                message.info('Flow name changed', 1);
               } else {
                 return wf;
               }

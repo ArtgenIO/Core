@@ -1,7 +1,7 @@
 import { ISchema } from '..';
 import { Inject, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel/util/extract-error';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
@@ -32,7 +32,7 @@ export class CreateSchemaLambda implements ILambda {
     readonly svc: SchemaService,
   ) {}
 
-  async invoke(sess: WorkflowSession) {
+  async invoke(sess: FlowSession) {
     const schema = sess.getInput('schema') as ISchema;
 
     try {

@@ -3,7 +3,7 @@ import { startCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import { toODataRoute } from '../../../content/util/schema-url';
-import { ILogic } from '../../../flow/interface';
+import { IFlow } from '../../../flow/interface';
 import { ISchema } from '../../../schema';
 import { IBlueprint } from '../../interface/blueprint.interface';
 
@@ -29,7 +29,7 @@ export default function ExtensionEdiorComponent({
   }
 
   const [schemas, setSchemas] = useState<TransferItem[]>([]);
-  const [workflows, setWorkflows] = useState<TransferItem[]>([]);
+  const [flows, setFlows] = useState<TransferItem[]>([]);
   const [databases, setDatabases] = useState<string[]>([]);
   const [selectedDatabase, setSelectedDatabase] = useState<string>(
     extension.database,
@@ -38,8 +38,8 @@ export default function ExtensionEdiorComponent({
   const [selectedSchemas, setSelectedSchemas] = useState<string[]>(
     extension.schemas.map(s => s.reference),
   );
-  const [selectedWorkflows, setSelectedWorkflows] = useState<string[]>(
-    extension.workflows.map(wf => wf.id),
+  const [selectedFlows, setSelectedFlows] = useState<string[]>(
+    extension.flows.map(wf => wf.id),
   );
 
   const [{ data: schemasReply, loading: schemasLoading }] = useHttpClient<
@@ -51,12 +51,10 @@ export default function ExtensionEdiorComponent({
     }),
   );
 
-  const [{ data: workflowReply, loading: workflowLoading }] = useHttpClient<
-    ILogic[]
-  >(
+  const [{ data: flowReply, loading: flowLoading }] = useHttpClient<IFlow[]>(
     toODataRoute({
       database: 'main',
-      reference: 'Workflow',
+      reference: 'Flow',
     }),
   );
 
@@ -70,15 +68,13 @@ export default function ExtensionEdiorComponent({
         );
       }
 
-      if (workflowReply) {
-        ext.workflows = workflowReply.filter(wf =>
-          selectedWorkflows.includes(wf.id),
-        );
+      if (flowReply) {
+        ext.flows = flowReply.filter(wf => selectedFlows.includes(wf.id));
       }
 
       return ext;
     });
-  }, [selectedSchemas, selectedWorkflows, selectedDatabase]);
+  }, [selectedSchemas, selectedFlows, selectedDatabase]);
 
   useEffect(() => {
     if (schemasReply) {
@@ -95,16 +91,16 @@ export default function ExtensionEdiorComponent({
   }, [schemasReply]);
 
   useEffect(() => {
-    if (workflowReply) {
-      setWorkflows(
-        workflowReply.map(wf => ({
+    if (flowReply) {
+      setFlows(
+        flowReply.map(wf => ({
           title: wf.name,
           key: wf.id,
           description: wf.name,
         })),
       );
     }
-  }, [workflowReply]);
+  }, [flowReply]);
 
   useEffect(() => {
     if (schemasReply) {
@@ -133,7 +129,7 @@ export default function ExtensionEdiorComponent({
     }
   }, [selectedDatabase, schemasReply]);
 
-  if (schemasLoading || workflowLoading || !schemas) {
+  if (schemasLoading || flowLoading || !schemas) {
     return <h1>Loading...</h1>;
   }
 
@@ -202,12 +198,12 @@ export default function ExtensionEdiorComponent({
       <Divider />
 
       <Transfer
-        dataSource={workflows}
+        dataSource={flows}
         titles={['Available', 'Selected']}
-        targetKeys={selectedWorkflows}
+        targetKeys={selectedFlows}
         render={item => item.title}
         pagination
-        onChange={selected => setSelectedWorkflows(selected)}
+        onChange={selected => setSelectedFlows(selected)}
       />
 
       <Form.Item>

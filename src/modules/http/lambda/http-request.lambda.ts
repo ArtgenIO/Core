@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { Service } from '../../../app/container';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
@@ -58,7 +58,7 @@ type Config = {
   },
 })
 export class HttpRequestLambda implements ILambda {
-  async invoke(ctx: WorkflowSession) {
+  async invoke(ctx: FlowSession) {
     const target = ctx.getInput('target') as Input;
     const config = ctx.getConfig<Config>();
 

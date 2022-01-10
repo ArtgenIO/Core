@@ -6,11 +6,12 @@ import {
 } from 'fastify';
 import { Inject, Service } from '../../app/container';
 import { IKernel, Kernel } from '../../app/kernel';
-import { ContentAction } from '../content/interface/content-action.enum';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
 import { AuthenticationHandlerProvider } from '../identity/provider/authentication-handler.provider';
 import { SchemaService } from '../schema/service/schema.service';
-import { RestService } from './rest.service';
+import { CrudAction } from './interface/crud-action.enum';
+import { OpenApiService } from './service/openapi.service';
+import { RestService } from './service/rest.service';
 
 @Service({
   tags: 'http:gateway',
@@ -18,7 +19,9 @@ import { RestService } from './rest.service';
 export class RestGateway implements IHttpGateway {
   constructor(
     @Inject(RestService)
-    readonly service: RestService,
+    readonly rest: RestService,
+    @Inject(OpenApiService)
+    readonly openApi: OpenApiService,
     @Inject(SchemaService)
     readonly schema: SchemaService,
     @Inject(Kernel)
@@ -34,17 +37,14 @@ export class RestGateway implements IHttpGateway {
     for (const schema of schemas) {
       // Create action
       httpServer.post(
-        this.service.getResourceURL(schema),
+        this.openApi.getResourceURL(schema),
         {
-          schema: this.service.buildOpenApiDefinition(
-            schema,
-            ContentAction.CREATE,
-          ),
+          schema: this.openApi.toJsonSchema(schema, CrudAction.CREATE),
           preHandler,
         },
         async (req: FastifyRequest, reply: FastifyReply): Promise<unknown> => {
           try {
-            const response = await this.service.create(
+            const response = await this.rest.create(
               schema.database,
               schema.reference,
               req.body as any,
@@ -52,7 +52,7 @@ export class RestGateway implements IHttpGateway {
 
             reply.statusCode = 201;
 
-            return JSON.parse(JSON.stringify(response)); // TODO: need to convert the date into string before responding
+            return response;
           } catch (error) {
             reply.statusCode = 400;
 
@@ -66,26 +66,23 @@ export class RestGateway implements IHttpGateway {
 
       // Read action
       httpServer.get(
-        this.service.getRecordURL(schema),
+        this.openApi.getRecordURL(schema),
         {
-          schema: this.service.buildOpenApiDefinition(
-            schema,
-            ContentAction.READ,
-          ),
+          schema: this.openApi.toJsonSchema(schema, CrudAction.READ),
           preHandler,
         },
         async (
           request: FastifyRequest<{ Params: Record<string, string> }>,
           reply: FastifyReply,
         ): Promise<unknown> => {
-          const record = await this.service.read(
+          const record = await this.rest.read(
             schema.database,
             schema.reference,
             request.params,
           );
 
           if (record) {
-            return JSON.parse(JSON.stringify(record));
+            return record;
           }
 
           // Handle the 404 error
@@ -100,12 +97,9 @@ export class RestGateway implements IHttpGateway {
 
       // Update
       httpServer.patch(
-        this.service.getRecordURL(schema),
+        this.openApi.getRecordURL(schema),
         {
-          schema: this.service.buildOpenApiDefinition(
-            schema,
-            ContentAction.UPDATE,
-          ),
+          schema: this.openApi.toJsonSchema(schema, CrudAction.UPDATE),
           preHandler,
         },
         async (
@@ -116,7 +110,7 @@ export class RestGateway implements IHttpGateway {
           reply: FastifyReply,
         ): Promise<unknown> => {
           try {
-            const record = await this.service.update(
+            const record = await this.rest.update(
               schema.database,
               schema.reference,
               req.params,
@@ -124,7 +118,7 @@ export class RestGateway implements IHttpGateway {
             );
 
             if (record) {
-              return JSON.parse(JSON.stringify(record));
+              return record;
             }
 
             // Handle the 404 error
@@ -147,12 +141,9 @@ export class RestGateway implements IHttpGateway {
 
       // Delete
       httpServer.delete(
-        this.service.getRecordURL(schema),
+        this.openApi.getRecordURL(schema),
         {
-          schema: this.service.buildOpenApiDefinition(
-            schema,
-            ContentAction.DELETE,
-          ),
+          schema: this.openApi.toJsonSchema(schema, CrudAction.DELETE),
           preHandler,
         },
         async (
@@ -160,14 +151,14 @@ export class RestGateway implements IHttpGateway {
           reply: FastifyReply,
         ): Promise<unknown> => {
           try {
-            const record = await this.service.delete(
+            const record = await this.rest.delete(
               schema.database,
               schema.reference,
               req.params,
             );
 
             if (record) {
-              return JSON.parse(JSON.stringify(record));
+              return record;
             }
 
             // Handle the 404 error

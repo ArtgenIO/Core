@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import { OnParams, ON_META_KEY } from '.';
 import { ILogger, Inject, Logger } from '../../app/container';
 import { IKernel } from '../../app/kernel';
-import { FlowService } from '../flow/service/workflow.service';
+import { FlowService } from '../flow/service/flow.service';
 import { EventTriggerConfig } from './lambda/event.trigger';
 
 export class EventService {
@@ -46,21 +46,19 @@ export class EventService {
       }
     }
 
-    // Register workflows
+    // Register flow
     const flowService = await this.kernel.get(FlowService);
-    const workflows = await flowService.findAll();
+    const flows = await flowService.findAll();
 
-    for (const workflow of workflows) {
-      const trigger = workflow.nodes.find(
-        node => node.type === 'trigger.event',
-      );
+    for (const flow of flows) {
+      const trigger = flow.nodes.find(node => node.type === 'trigger.event');
 
       if (trigger) {
         const config = trigger.config as EventTriggerConfig;
 
         this.logger.info(
           'EventHook [%s][%s] listening for [%s] event',
-          workflow.id,
+          flow.id,
           trigger.id,
           config.eventName,
         );
@@ -68,10 +66,7 @@ export class EventService {
         this.bus.on(config.eventName, async (eventData: unknown) => {
           const startAt = Date.now();
           const eventId = v4();
-          const session = await flowService.createWorkflowSession(
-            workflow.id,
-            eventId,
-          );
+          const session = await flowService.createSession(flow.id, eventId);
 
           const response = await session.trigger(trigger.id, {
             name: config.eventName,

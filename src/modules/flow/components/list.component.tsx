@@ -20,24 +20,24 @@ import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { toODataRoute } from '../../content/util/schema-url';
-import { ILogic } from '../interface/workflow.interface';
+import { IFlow } from '../interface/flow.interface';
 
-export default function WorkflowListComponent() {
+export default function FlowListComponent() {
   const [isLoading, setIsLoading] = useState(true);
-  const [workflows, setWorkflows] = useState<ILogic[]>([]);
+  const [flows, setFlows] = useState<IFlow[]>([]);
   const httpClient = useHttpClientOld();
   const navigate = useNavigate();
 
-  const doDeleteWorkflow = async (id: string) => {
-    const workflow = workflows.find(wf => wf.id === id);
+  const doDeleteFlow = async (id: string) => {
+    const flow = flows.find(wf => wf.id === id);
 
-    if (workflow) {
+    if (flow) {
       try {
-        await httpClient.delete(`/api/rest/main/workflow/${id}`);
+        await httpClient.delete(`/api/rest/main/flow/${id}`);
 
-        setWorkflows(wfs => wfs.filter(wf => wf.id !== id));
+        setFlows(wfs => wfs.filter(wf => wf.id !== id));
 
-        message.success(`Workflow [${workflow.name}] has been deleted`, 3);
+        message.success(`Flow [${flow.name}] has been deleted`, 3);
       } catch (error: any) {
         message.error(
           `Server error: ${typeof error === 'string' ? error : error?.message}`,
@@ -51,9 +51,9 @@ export default function WorkflowListComponent() {
 
   useEffect(() => {
     httpClient
-      .get<ILogic[]>(toODataRoute({ database: 'main', reference: 'Workflow' }))
+      .get<IFlow[]>(toODataRoute({ database: 'main', reference: 'Flow' }))
       .then(response => {
-        setWorkflows(response.data);
+        setFlows(response.data);
         setIsLoading(false);
       });
   }, []);
@@ -62,14 +62,14 @@ export default function WorkflowListComponent() {
     <PageWithHeader
       header={
         <PageHeader
-          title="Workflows"
+          title="Flows"
           avatar={{
             icon: <PartitionOutlined />,
           }}
           actions={
             <Link key="create" to="/admin/flow/create">
               <Button type="primary" icon={<FileAddOutlined />}>
-                New Workflow
+                New Flow
               </Button>
             </Link>
           }
@@ -77,10 +77,10 @@ export default function WorkflowListComponent() {
       }
     >
       <Skeleton active loading={isLoading}>
-        {workflows.length ? (
+        {flows.length ? (
           <List
             bordered
-            dataSource={workflows}
+            dataSource={flows}
             size="small"
             renderItem={row => (
               <List.Item
@@ -105,12 +105,12 @@ export default function WorkflowListComponent() {
                 />
 
                 <Popconfirm
-                  title="Are You sure to delete this workflow?"
+                  title="Are You sure to delete this flow?"
                   okText="Yes, delete"
                   cancelText="No"
                   placement="left"
                   icon={<QuestionCircleOutlined />}
-                  onConfirm={() => doDeleteWorkflow(row.id)}
+                  onConfirm={() => doDeleteFlow(row.id)}
                 >
                   <Button
                     icon={<DeleteOutlined />}

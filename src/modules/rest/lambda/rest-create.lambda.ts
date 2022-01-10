@@ -1,12 +1,12 @@
 import { genSaltSync, hashSync } from 'bcrypt';
 import { Inject, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel';
-import { WorkflowSession } from '../../flow/library/workflow.session';
+import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import { RestService } from '../rest.service';
+import { RestService } from '../service/rest.service';
 
 type Config = {
   database: string;
@@ -62,7 +62,7 @@ export class RestCreateLambda implements ILambda {
     readonly service: RestService,
   ) {}
 
-  async invoke(session: WorkflowSession) {
+  async invoke(session: FlowSession) {
     const input = session.getInput('record') as any;
     const config = session.getConfig() as Config;
 

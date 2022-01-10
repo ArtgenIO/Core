@@ -7,12 +7,14 @@ import { RestListLambda } from './lambda/rest-list.lambda';
 import { RestReadLambda } from './lambda/rest-read.lambda';
 import { RestUpdateLambda } from './lambda/rest-update.lambda';
 import { RestGateway } from './rest.gateway';
-import { RestService } from './rest.service';
+import { OpenApiService } from './service/openapi.service';
+import { RestService } from './service/rest.service';
 
 @Module({
   imports: [moduleRef(() => SchemaModule)],
   providers: [
     RestService,
+    OpenApiService,
     RestGateway,
     RestCreateLambda,
     RestReadLambda,

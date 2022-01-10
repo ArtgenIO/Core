@@ -3,7 +3,7 @@ import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import { CustomNode } from '../interface/custom-node';
 import { createNode } from './create-node';
 
-describe('Workflow Node Creator', () => {
+describe('Flow Node Creator', () => {
   test('should create a node from a lambda meta', () => {
     const meta: ILambdaMeta = {
       type: 'test.node',

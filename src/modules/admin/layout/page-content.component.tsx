@@ -10,7 +10,7 @@ import PageWrapper from './page-wrapper.component';
 const { Content } = Layout;
 
 export default function PageContent() {
-  const Workflow = lazy(() => import('../../flow/components/index.component'));
+  const Flow = lazy(() => import('../../flow/components/index.component'));
 
   const Database = lazy(
     () => import('../../database/component/_router.component'),
@@ -32,7 +32,7 @@ export default function PageContent() {
         <Suspense fallback={<PageLoading />}>
           <Routes>
             <Route path={`${ADMIN_URL}`} element={<DashboardPage />} />
-            <Route path={`${ADMIN_URL}/flow/*`} element={<Workflow />} />
+            <Route path={`${ADMIN_URL}/flow/*`} element={<Flow />} />
             <Route path={`${ADMIN_URL}/database/*`} element={<Database />} />
             <Route path={`${ADMIN_URL}/content/*`} element={<Contents />} />
             <Route path={`${ADMIN_URL}/page/*`} element={<Page />} />

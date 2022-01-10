@@ -1,7 +1,7 @@
 import { IEdge } from './edge.interface';
 import { INode } from './node.interface';
 
-export interface ILogic {
+export interface IFlow {
   /**
    * UUID generated when initialized
    */

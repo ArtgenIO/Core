@@ -15,8 +15,8 @@ import { ArrowHeadType, Edge } from 'react-flow-renderer';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   elementsAtom,
+  flowChangedAtom,
   selectedEdgeIdAtom,
-  workflowChangedAtom,
 } from '../../atom/artboard.atoms';
 
 export default function ArtboardEdgeConfigComponent() {
@@ -24,7 +24,7 @@ export default function ArtboardEdgeConfigComponent() {
   const [selectedEdgeId, setSelectedEdgeId] =
     useRecoilState(selectedEdgeIdAtom);
   const [elements, setElements] = useRecoilState(elementsAtom);
-  const setIsWorkflowChanged = useSetRecoilState(workflowChangedAtom);
+  const setIsFlowChanged = useSetRecoilState(flowChangedAtom);
 
   const onDeleteEdge = (edgeId: string) => {
     setElements(els => {
@@ -128,7 +128,7 @@ export default function ArtboardEdgeConfigComponent() {
               });
 
               // Close
-              setIsWorkflowChanged(true);
+              setIsFlowChanged(true);
             }}
           >
             <Form.Item label="Transformation" name="transform">

@@ -8,8 +8,8 @@ import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
+import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { ISchema } from '../../schema';
-import { ContentAction } from '../interface/content-action.enum';
 import { schemaToJsonSchema } from '../util/schema-to-jsonschema';
 import {
   routeCrudUI,
@@ -43,7 +43,7 @@ export default function CrudUpdateComponent() {
 
   useEffect(() => {
     if (schema) {
-      setFormSchema(schemaToJsonSchema(schema, ContentAction.UPDATE));
+      setFormSchema(schemaToJsonSchema(schema, CrudAction.UPDATE));
     }
     return () => {
       setFormSchema({});

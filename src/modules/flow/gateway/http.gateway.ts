@@ -11,7 +11,7 @@ import { IHttpGateway } from '../../http/interface/http-gateway.interface';
 import { HttpTriggerConfig } from '../../http/lambda/http-trigger.lambda';
 import { AuthenticationHandlerProvider } from '../../identity/provider/authentication-handler.provider';
 import { LambdaService } from '../../lambda/service/lambda.service';
-import { FlowService } from '../service/workflow.service';
+import { FlowService } from '../service/flow.service';
 
 @Service({
   tags: 'http:gateway',
@@ -21,7 +21,7 @@ export class LogicHttpGateway implements IHttpGateway {
     @Logger()
     readonly logger: ILogger,
     @Inject(FlowService)
-    readonly workflow: FlowService,
+    readonly flowSvc: FlowService,
     @Inject(LambdaService)
     readonly node: LambdaService,
     @Inject(AuthenticationHandlerProvider)
@@ -31,8 +31,8 @@ export class LogicHttpGateway implements IHttpGateway {
   async register(httpServer: FastifyInstance): Promise<void> {
     const preHandler = this.authHandler;
 
-    for (const workflow of await this.workflow.findAll()) {
-      const triggers = workflow.nodes.filter(t => t.type === 'trigger.http');
+    for (const flow of await this.flowSvc.findAll()) {
+      const triggers = flow.nodes.filter(t => t.type === 'trigger.http');
 
       for (const trigger of triggers) {
         const routeConfig: Partial<HttpTriggerConfig> = {
@@ -59,7 +59,7 @@ export class LogicHttpGateway implements IHttpGateway {
 
         this.logger.info(
           'WebHook [%s][%s] registered to [%s][%s]',
-          workflow.id,
+          flow.id.substring(0, 8),
           trigger.id,
           routeConfig.method,
           routeConfig.path,
@@ -92,8 +92,8 @@ export class LogicHttpGateway implements IHttpGateway {
         const method = routeConfig.method.toLowerCase();
         const options: RouteShorthandOptions = {
           schema: {
-            tags: ['Workflow'],
-            description: `Invokes the [${workflow.id}/${trigger.id}] node`,
+            tags: ['Flow'],
+            description: `Invokes the [${flow.id}/${trigger.id}] node`,
             params: paramSchema,
             security: swaggerSecurity,
           },
@@ -105,8 +105,8 @@ export class LogicHttpGateway implements IHttpGateway {
           options,
           async (request: FastifyRequest, reply: FastifyReply) => {
             const startAt = Date.now();
-            const session = await this.workflow.createWorkflowSession(
-              workflow.id,
+            const session = await this.flowSvc.createSession(
+              flow.id,
               request.id,
             );
             try {
