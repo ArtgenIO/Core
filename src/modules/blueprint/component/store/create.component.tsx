@@ -21,6 +21,7 @@ export default function CreateExtension() {
     config: {},
     schemas: [],
     flows: [],
+    content: {},
   });
 
   return (
