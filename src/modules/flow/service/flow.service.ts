@@ -1,8 +1,6 @@
 import { Model } from 'objection';
 import { v4 } from 'uuid';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
-import { SystemBlueprintProvider } from '../../blueprint/provider/system-blueprint.provider';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IFlow } from '../interface/flow.interface';
@@ -19,22 +17,7 @@ export class FlowService {
     readonly lambda: LambdaService,
     @Inject(SchemaService)
     readonly schema: SchemaService,
-    @Inject(SystemBlueprintProvider)
-    readonly sysExt: IBlueprint,
   ) {}
-
-  async seed(): Promise<void> {
-    for (const wf of this.sysExt.flows) {
-      const exists = await this.schema
-        .getModel('main', 'Flow')
-        .query()
-        .findById(wf.id);
-
-      if (!exists) {
-        await this.createFlow(wf);
-      }
-    }
-  }
 
   async findAll(): Promise<IFlow[]> {
     return (await this.schema.getModel<FlowModel>('main', 'Flow').query()).map(

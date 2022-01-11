@@ -11,8 +11,17 @@ export class HttpObserver {
     readonly service: HttpService,
   ) {}
 
-  @On('crud.main.Schema.*')
-  async handleSchemaCreate() {
+  @On('crud.main.Schema.*', {
+    debounce: 500,
+  })
+  async handleSchemaChange() {
+    this.service.updateUpstream();
+  }
+
+  @On('crud.main.Page.*', {
+    debounce: 500,
+  })
+  async handlePageChange() {
     this.service.updateUpstream();
   }
 }

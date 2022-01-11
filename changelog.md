@@ -1,3 +1,14 @@
+### Version 0.1.8
+
+- Smarter blueprint handling
+- Faster boot time
+- Content level modules
+- Health check like service
+- Delete the temp landing page seed
+- Faster reaction to schema changes
+- Fix null conversion on the REST API
+- Protect OData routes with authentication validator
+
 ### Version 0.1.7
 
 - Seamless HTTP restarts

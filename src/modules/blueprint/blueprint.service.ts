@@ -8,6 +8,8 @@ import { RestService } from '../rest/service/rest.service';
 import { IBlueprint } from './interface/blueprint.interface';
 import { SystemBlueprintProvider } from './provider/system-blueprint.provider';
 
+type R = Record<string, unknown>;
+
 @Service()
 export class BlueprintService {
   constructor(
@@ -27,11 +29,10 @@ export class BlueprintService {
     });
 
     if (!sysExists) {
-      await this.rest.create('main', 'Blueprint', this.systemBlueprint as any);
-      this.logger.info('Blueprint [system] installed');
+      await this.install('main', this.systemBlueprint);
 
       // Install the identity blueprint too
-      await this.importFromSource(
+      await this.install(
         'main',
         JSON.parse(
           readFileSync(join(SEED_DIR, 'identity.blueprint.json')).toString(),
@@ -40,52 +41,110 @@ export class BlueprintService {
     }
   }
 
-  async importFromSource(database: string, blueprint: IBlueprint) {
+  async install(database: string, blueprint: IBlueprint) {
     // Global db reference
     blueprint.database = database;
 
     const link = this.connections.findOne(database);
 
     // Preload the schemas before they are injected one by one.
-    await link.associate(blueprint.schemas);
+    if (blueprint?.schemas && blueprint.schemas.length) {
+      await link.associate(blueprint.schemas);
 
-    // Replace the schema databases to the local db
-    for (const schema of blueprint.schemas) {
-      schema.database = database;
+      // Replace the schema databases to the local db
+      for (const schema of blueprint.schemas) {
+        schema.database = database;
 
-      await this.rest
-        .create('main', 'Schema', schema as any)
-        .then(() =>
-          this.logger.info(
-            'Schema [%s][%s] installed',
+        const isExists = await this.rest.read('main', 'Schema', schema);
+
+        if (!isExists) {
+          await this.rest
+            .create('main', 'Schema', schema)
+            .then(() =>
+              this.logger.info(
+                'Schema [%s][%s] installed',
+                blueprint.title,
+                schema.reference,
+              ),
+            )
+            .catch(e =>
+              this.logger
+                .warn(
+                  'Could not create [%s][%s] schema',
+                  blueprint.title,
+                  schema.reference,
+                )
+                .warn(getErrorMessage(e)),
+            );
+        } else {
+          this.logger.debug(
+            'Schema [%s][%s] already exists',
             blueprint.title,
             schema.reference,
-          ),
-        )
-        .catch(e =>
-          this.logger
-            .warn('Could not create [%s] schema', schema.reference)
-            .warn(getErrorMessage(e)),
-        );
+          );
+        }
+      }
     }
 
-    // TODO find database references and replace them
-    for (const wf of blueprint.flows) {
-      await this.rest
-        .create('main', 'Flow', wf as any)
-        .then(() =>
-          this.logger.info('Flow [%s][%s] installed', blueprint.title, wf.id),
-        )
-        .catch(e =>
-          this.logger
-            .warn('Could not create [%s] flow', wf.id)
-            .warn(getErrorMessage(e)),
+    for (const flow of blueprint.flows) {
+      const isExists = await this.rest.read('main', 'Flow', flow);
+
+      if (!isExists) {
+        await this.rest
+          .create('main', 'Flow', flow as unknown as R)
+          .then(() =>
+            this.logger.info(
+              'Flow [%s][%s] installed',
+              blueprint.title,
+              flow.id,
+            ),
+          )
+          .catch(e =>
+            this.logger.warn(
+              'Could not create [%s][%s] flow [%s]',
+              blueprint.title,
+              flow.id,
+              getErrorMessage(e),
+            ),
+          );
+      } else {
+        this.logger.debug(
+          'Flow [%s][%s] already exists',
+          blueprint.title,
+          flow.id,
         );
+      }
     }
 
-    // Save the blueprint
-    await this.rest.create('main', 'Blueprint', blueprint as any);
-    this.logger.info('Blueprint [%s] installed', blueprint.title);
+    if (blueprint?.content) {
+      for (const schema in blueprint.content) {
+        if (Object.prototype.hasOwnProperty.call(blueprint.content, schema)) {
+          const rows = blueprint.content[schema];
+
+          for (const row of rows) {
+            const isExists = await this.rest.read('main', schema, row);
+
+            if (!isExists) {
+              await this.rest.create(database, schema, row);
+            }
+          }
+        }
+      }
+    }
+
+    const isBlueprintExists = await this.rest.read(
+      'main',
+      'Blueprint',
+      blueprint,
+    );
+
+    if (!isBlueprintExists) {
+      await this.rest.create('main', 'Blueprint', blueprint);
+
+      this.logger.info('Blueprint [%s] installed', blueprint.title);
+    } else {
+      this.logger.info('Blueprint [%s] updated', blueprint.title);
+    }
 
     return blueprint;
   }

@@ -40,6 +40,13 @@ export interface IBlueprint {
   /**
    * Provided schemas
    */
+  content: {
+    [schema: string]: Record<string, unknown>[];
+  };
+
+  /**
+   * Provided schemas
+   */
   schemas: ISchema[];
 
   /**

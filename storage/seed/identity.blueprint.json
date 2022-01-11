@@ -11,6 +11,7 @@
       "database": "main",
       "reference": "Account",
       "title": "Accounts",
+      "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
       "tableName": "__identity_accounts",
       "fields": [
         {
@@ -62,6 +63,7 @@
       "database": "main",
       "reference": "AccessKey",
       "title": "Access Keys",
+      "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
       "tableName": "__identity_access_keys",
       "fields": [
         {
@@ -409,5 +411,16 @@
         }
       ]
     }
-  ]
+  ],
+  "content": {
+    "Module": [
+      {
+        "id": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
+        "name": "Identity",
+        "tags": [
+          "system"
+        ]
+      }
+    ]
+  }
 }

@@ -38,14 +38,14 @@ export class PageGateway implements IHttpGateway {
 
     for (const page of routes) {
       httpServer.get(
-        '/pd' + page.path,
+        '/' + page.path,
         async (req: FastifyRequest, res: FastifyReply): Promise<string> => {
           res.header('content-type', 'text/html');
           return this.service.getHtml(page.id);
         },
       );
       this.logger.info(
-        'Page [%s] registered at [GET][/pd%s]',
+        'Page [%s] registered at [GET][/%s]',
         page.title,
         page.path,
       );

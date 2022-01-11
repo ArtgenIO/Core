@@ -5,7 +5,7 @@ import { getErrorMessage } from '../../../app/kernel';
 import { SchemaService } from '../../schema/service/schema.service';
 import { isManagedField, isPrimary } from '../../schema/util/field-tools';
 
-type SchemaInput = Record<string, unknown>;
+type Row = Record<string, unknown> | object;
 
 /**
  * Provides CRUD functions with OData filtering and query compositions.
@@ -23,11 +23,7 @@ export class RestService {
   /**
    * Create single record.
    */
-  async create(
-    database: string,
-    reference: string,
-    input: SchemaInput,
-  ): Promise<unknown> {
+  async create(database: string, reference: string, input: Row): Promise<Row> {
     // Load the model
     const model = this.schema.getModel(database, reference);
     const event = `crud.${database}.${reference}.created`;
@@ -52,7 +48,7 @@ export class RestService {
     database: string,
     reference: string,
     filterKeys: object,
-  ): Promise<unknown> {
+  ): Promise<Row | null> {
     // Load the model
     const model = this.schema.getModel(database, reference);
     const schema = this.schema.getSchema(database, reference);
@@ -77,7 +73,7 @@ export class RestService {
   /**
    * Read multiple record.
    */
-  async list(database: string, reference: string): Promise<SchemaInput[]> {
+  async list(database: string, reference: string): Promise<Row[]> {
     // Load the model
     const model = this.schema.getModel(database, reference);
     const records = await model.query();
@@ -96,8 +92,8 @@ export class RestService {
     database: string,
     reference: string,
     idValues: Record<string, string>,
-    input: object,
-  ): Promise<SchemaInput | null> {
+    input: Row,
+  ): Promise<Row | null> {
     // Define the event key.
     const event = `crud.${database}.${reference}.updated`;
     // Load the model
@@ -157,7 +153,7 @@ export class RestService {
     database: string,
     reference: string,
     idValues: Record<string, string>,
-  ): Promise<SchemaInput | null> {
+  ): Promise<Row | null> {
     // Define the event key.
     const event = `crud.${database}.${reference}.deleted`;
     // Get the model

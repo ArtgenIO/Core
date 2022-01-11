@@ -21,7 +21,7 @@ export default function CrudIndexComponent() {
   const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
     toODataRoute({ database: 'main', reference: 'Schema' }) +
       new QueryBuilder()
-        .select('database,reference,title,tableName,tags')
+        .select('database,reference,title,tableName,tags,module')
         .orderBy('title')
         .top(1000)
         .toQuery(),

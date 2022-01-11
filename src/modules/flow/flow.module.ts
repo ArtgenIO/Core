@@ -1,6 +1,5 @@
 import { IModule, Module } from '../../app/container';
 import { moduleRef } from '../../app/container/module-ref';
-import { IKernel } from '../../app/kernel';
 import { DatabaseModule } from '../database/database.module';
 import { IdentityModule } from '../identity/identity.module';
 import { LambdaModule } from '../lambda/lambda.module';
@@ -13,8 +12,4 @@ import { FlowService } from './service/flow.service';
   dependsOn: [IdentityModule, moduleRef(() => DatabaseModule)],
   providers: [FlowService, LogicHttpGateway, FlowRpcGateway],
 })
-export class FlowModule implements IModule {
-  async onStart(kernel: IKernel) {
-    await (await kernel.get(FlowService)).seed();
-  }
-}
+export class FlowModule implements IModule {}

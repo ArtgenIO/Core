@@ -15,8 +15,6 @@ export class SchemaScheduler {
     timing: '0 * * * * *',
   })
   async refreshRegistry() {
-    this.logger.debug('Registry cache reloading...');
-
     await this.service.findAll();
   }
 }

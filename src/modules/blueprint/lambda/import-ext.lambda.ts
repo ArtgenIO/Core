@@ -60,10 +60,7 @@ export class BlueprintImportLambda implements ILambda {
 
     try {
       return {
-        blueprint: await this.extService.importFromSource(
-          imp.database,
-          imp.blueprint,
-        ),
+        blueprint: await this.extService.install(imp.database, imp.blueprint),
       };
     } catch (error) {
       return {
