@@ -9,6 +9,8 @@ const CHANNEL = 'stable';
 
 @Service()
 export class UpgradeService {
+  protected version: string;
+
   constructor(
     @Logger()
     readonly logger: ILogger,
@@ -27,7 +29,11 @@ export class UpgradeService {
   }
 
   async getLocalVersion(): Promise<string> {
-    return (await readFile(join(ROOT_DIR, 'version'))).toString();
+    if (!this.version) {
+      this.version = (await readFile(join(ROOT_DIR, 'version'))).toString();
+    }
+
+    return this.version;
   }
 
   async getUpstreamVersion(localVersion: string): Promise<string> {

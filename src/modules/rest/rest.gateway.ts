@@ -39,7 +39,7 @@ export class RestGateway implements IHttpGateway {
       httpServer.post(
         this.openApi.getResourceURL(schema),
         {
-          schema: this.openApi.toJsonSchema(schema, CrudAction.CREATE),
+          schema: this.openApi.toFastifySchema(schema, CrudAction.CREATE),
           preHandler,
         },
         async (req: FastifyRequest, reply: FastifyReply): Promise<unknown> => {
@@ -69,7 +69,7 @@ export class RestGateway implements IHttpGateway {
       httpServer.get(
         this.openApi.getRecordURL(schema),
         {
-          schema: this.openApi.toJsonSchema(schema, CrudAction.READ),
+          schema: this.openApi.toFastifySchema(schema, CrudAction.READ),
           preHandler,
         },
         async (
@@ -101,7 +101,7 @@ export class RestGateway implements IHttpGateway {
       httpServer.patch(
         this.openApi.getRecordURL(schema),
         {
-          schema: this.openApi.toJsonSchema(schema, CrudAction.UPDATE),
+          schema: this.openApi.toFastifySchema(schema, CrudAction.UPDATE),
           preHandler,
         },
         async (
@@ -146,7 +146,7 @@ export class RestGateway implements IHttpGateway {
       httpServer.delete(
         this.openApi.getRecordURL(schema),
         {
-          schema: this.openApi.toJsonSchema(schema, CrudAction.DELETE),
+          schema: this.openApi.toFastifySchema(schema, CrudAction.DELETE),
           preHandler,
         },
         async (

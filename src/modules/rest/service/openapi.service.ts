@@ -1,15 +1,65 @@
 import { FastifySchema } from 'fastify';
 import { JSONSchema7Definition, JSONSchema7Object } from 'json-schema';
 import { kebabCase } from 'lodash';
-import { Service } from '../../../app/container';
-import { schemaToJsonSchema } from '../../content/util/schema-to-jsonschema';
-import { ISchema } from '../../schema';
-import { isPrimary } from '../../schema/util/field-tools';
+import { OpenAPIV3 } from 'openapi-types';
+import { Inject, Service } from '../../../app/container';
+import { FieldType, ISchema } from '../../schema';
+import { FieldTool, isPrimary } from '../../schema/util/field-tools';
+import { UpgradeService } from '../../upgrade/upgrade.service';
 import { CrudAction } from '../interface/crud-action.enum';
 
 @Service()
 export class OpenApiService {
-  constructor() {}
+  constructor(
+    @Inject(UpgradeService)
+    readonly upgradeService: UpgradeService,
+  ) {}
+
+  async getDocument(): Promise<Partial<OpenAPIV3.Document>> {
+    return {
+      info: {
+        title: 'Artgen Core - API',
+        description: 'Http Upstream Server Documentation',
+        version: await this.upgradeService.getLocalVersion(),
+      },
+      components: {
+        securitySchemes: {
+          jwt: {
+            type: 'http',
+            scheme: 'bearer',
+            description:
+              'Json Web Token transported in the Authentication headers',
+          },
+          accessKeyQuery: {
+            type: 'apiKey',
+            in: 'query',
+            name: 'access-key',
+            description: 'Access Key identification in the query param',
+          },
+          accessKeyHeader: {
+            type: 'apiKey',
+            in: 'header',
+            name: 'X-Access-Key',
+            description: 'Access Key identification in the HTTP header',
+          },
+        },
+      },
+      tags: [
+        {
+          name: 'Rest',
+          description: 'Rest structured endpoints',
+        },
+        {
+          name: 'OData',
+          description: 'OData backed endpoints',
+        },
+        {
+          name: 'Flow',
+          description: 'Flow defined HTTP triggers',
+        },
+      ],
+    };
+  }
 
   getResourceURL(schema: ISchema): string {
     return `/api/rest/${kebabCase(schema.database)}/${kebabCase(
@@ -25,7 +75,7 @@ export class OpenApiService {
     return this.getResourceURL(schema) + record;
   }
 
-  toJsonSchema(schema: ISchema, action: CrudAction): FastifySchema {
+  toFastifySchema(schema: ISchema, action: CrudAction): FastifySchema {
     const definition: FastifySchema = {
       tags: ['Rest'],
       security: [
@@ -45,9 +95,9 @@ export class OpenApiService {
         definition.response[400] = this.getBadRequestResponseSchema();
         definition.response[201] = {
           description: 'Created',
-          ...(schemaToJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
+          ...(this.getJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
         };
-        definition.body = schemaToJsonSchema(schema, CrudAction.CREATE);
+        definition.body = this.getJsonSchema(schema, CrudAction.CREATE);
         break;
 
       case CrudAction.READ:
@@ -55,7 +105,7 @@ export class OpenApiService {
         definition.response[404] = this.getNotFoundResponseSchema();
         definition.response[200] = {
           description: 'OK',
-          ...(schemaToJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
+          ...(this.getJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
         };
         definition.params = this.getUrlParamsSchema(schema);
         break;
@@ -65,9 +115,9 @@ export class OpenApiService {
         definition.response[404] = this.getNotFoundResponseSchema();
         definition.response[200] = {
           description: 'OK',
-          ...(schemaToJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
+          ...(this.getJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
         };
-        definition.body = schemaToJsonSchema(schema, CrudAction.CREATE);
+        definition.body = this.getJsonSchema(schema, CrudAction.CREATE);
         definition.params = this.getUrlParamsSchema(schema);
         break;
 
@@ -76,13 +126,113 @@ export class OpenApiService {
         definition.response[404] = this.getNotFoundResponseSchema();
         definition.response[200] = {
           description: 'OK',
-          ...(schemaToJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
+          ...(this.getJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
         };
         definition.params = this.getUrlParamsSchema(schema);
         break;
     }
 
     return definition;
+  }
+
+  getJsonSchema(schema: ISchema, action: CrudAction): JSONSchema7Definition {
+    const jschema: JSONSchema7Definition = {
+      type: 'object',
+      properties: {},
+      required: [],
+    };
+
+    const mode =
+      action === CrudAction.CREATE || action === CrudAction.UPDATE
+        ? 'write'
+        : 'read';
+
+    for (const field of schema.fields) {
+      if (mode === 'write') {
+        // Primary UUID is auto generated
+        if (FieldTool.isAutoGenerated(field) && action === CrudAction.CREATE) {
+          continue;
+        }
+
+        // Created At / Updated At / Deleted At field is auto managed
+        if (FieldTool.isCapability(field)) {
+          continue;
+        }
+      }
+
+      const isNullable = FieldTool.isNullable(field);
+
+      const fieldDef: JSONSchema7Definition = {
+        title: field.title,
+        readOnly: FieldTool.isAutoGenerated(field) && mode === 'write',
+        default: field.defaultValue as any,
+      };
+
+      switch (field.type) {
+        case FieldType.BOOLEAN:
+          fieldDef.type = 'boolean';
+          break;
+        case FieldType.BIGINT:
+        case FieldType.TINYINT:
+        case FieldType.SMALLINT:
+        case FieldType.MEDIUMINT:
+        case FieldType.FLOAT:
+        case FieldType.REAL:
+        case FieldType.DOUBLE:
+        case FieldType.DECIMAL:
+        case FieldType.INTEGER:
+          fieldDef.type = 'number';
+          break;
+        case FieldType.JSON:
+        case FieldType.JSONB:
+          fieldDef.oneOf = [
+            {
+              type: 'object',
+            },
+            {
+              type: 'array',
+            },
+            {
+              type: 'string',
+            },
+            {
+              type: 'number',
+            },
+          ];
+
+          if (isNullable) {
+            for (const one of fieldDef.oneOf) {
+              one['nullable'] = true;
+            }
+          }
+          break;
+        default:
+          fieldDef.type = 'string';
+      }
+
+      if (field.type === FieldType.ENUM) {
+        if (field.args?.values) {
+          fieldDef.enum = field.args.values;
+        } else {
+          fieldDef.enum = [];
+        }
+      }
+
+      if (isNullable) {
+        if (fieldDef.type) {
+          fieldDef['nullable'] = true;
+        }
+      }
+
+      jschema.properties[field.reference] = fieldDef;
+
+      // Required if not nullable, or does not have defaultValue
+      if (!isNullable && !FieldTool.hasDefaultValue(field)) {
+        jschema.required.push(field.reference);
+      }
+    }
+
+    return jschema;
   }
 
   protected getUrlParamsSchema(schema: ISchema): JSONSchema7Definition {

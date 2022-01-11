@@ -5,14 +5,17 @@ import FastifyHttpErrorsEnhancedPlugin from 'fastify-http-errors-enhanced';
 import FastifySecureSessionPlugin from 'fastify-secure-session';
 import OpenAPIPlugin from 'fastify-swagger';
 import { v4 } from 'uuid';
-import { ILogger, Logger, Service } from '../../../app/container';
+import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel';
+import { OpenApiService } from '../../rest/service/openapi.service';
 
 @Service()
 export class HttpUpstreamProvider implements Provider<FastifyInstance> {
   constructor(
     @Logger()
     protected readonly logger: ILogger,
+    @Inject(OpenApiService)
+    protected openApiSvc: OpenApiService,
   ) {}
 
   async value(): Promise<FastifyInstance> {
@@ -37,49 +40,7 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
     await server.register(OpenAPIPlugin, {
       routePrefix: '/api/docs',
       mode: 'dynamic',
-      openapi: {
-        info: {
-          title: 'Artgen Core - API',
-          description: 'Http Upstream Server Documentation',
-          version: `RV42`,
-        },
-        components: {
-          securitySchemes: {
-            jwt: {
-              type: 'http',
-              scheme: 'bearer',
-              description:
-                'Json Web Token transported in the Authentication headers',
-            },
-            accessKeyQuery: {
-              type: 'apiKey',
-              in: 'query',
-              name: 'access-key',
-              description: 'Access Key identification in the query param',
-            },
-            accessKeyHeader: {
-              type: 'apiKey',
-              in: 'header',
-              name: 'X-Access-Key',
-              description: 'Access Key identification in the HTTP header',
-            },
-          },
-        },
-        tags: [
-          {
-            name: 'Rest',
-            description: 'Rest structured endpoints',
-          },
-          {
-            name: 'OData',
-            description: 'OData backed endpoints',
-          },
-          {
-            name: 'Flow',
-            description: 'Flow defined HTTP triggers',
-          },
-        ],
-      },
+      openapi: await this.openApiSvc.getDocument(),
       uiConfig: {
         displayRequestDuration: true,
         docExpansion: 'none',
