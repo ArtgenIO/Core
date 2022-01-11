@@ -2,13 +2,14 @@ import { FastifyInstance } from 'fastify';
 import { decode } from 'jsonwebtoken';
 import { AppModule } from '../../app/app.module';
 import { IKernel, Kernel } from '../../app/kernel';
+import { HttpUpstreamProvider } from '../http/provider/http-upstream.provider';
 import { IJwtPayload } from './interface/jwt-payload.interface';
 
 describe('Identity (e2e)', () => {
   let app: IKernel;
 
   const getServer = (): Promise<FastifyInstance> =>
-    app.context.get('providers.HttpUpstreamProvider');
+    app.context.get('providers.' + HttpUpstreamProvider.name);
 
   beforeAll(async () => {
     app = new Kernel();

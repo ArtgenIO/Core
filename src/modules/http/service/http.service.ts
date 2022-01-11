@@ -9,16 +9,14 @@ import {
 } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel';
 import { IHttpGateway } from '../interface/http-gateway.interface';
+import { HttpUpstreamProvider } from '../provider/http-upstream.provider';
 
 @Service()
 export class HttpService {
   protected isServerStarted = false;
   protected upstream: FastifyInstance;
-
-  /**
-   * Used ports
-   */
-  protected ports: number[] = [];
+  protected upstreamId: number = 0;
+  protected bootstrapped = false;
 
   constructor(
     @Logger()
@@ -27,9 +25,7 @@ export class HttpService {
     readonly proxy: FastifyInstance,
     @inject.context()
     readonly ctx: IContext,
-  ) {
-    this.ports.push(this.getDefaultPort());
-  }
+  ) {}
 
   protected getDefaultPort(): number {
     return parseInt(
@@ -49,6 +45,7 @@ export class HttpService {
 
     this.proxy.addHook('onRequest', (request, reply, done) => {
       if (this.upstream) {
+        this.logger.debug('Proxy [%s][%s]', request.method, request.url);
         this.upstream.routing(request.raw, reply.hijack().raw);
       }
 
@@ -69,21 +66,29 @@ export class HttpService {
     this.logger.info('Proxy server listening at [%s:%d]', porxyAddr, proxyPort);
   }
 
+  /**
+   * Update the upstream server
+   */
   updateUpstream() {
-    this.createUpstream();
+    // Only propagate when the first upstream is online.
+    if (this.bootstrapped) {
+      this.createUpstream();
+    }
   }
 
   async createUpstream(): Promise<void> {
     const startedAt = Date.now();
+    const id = ++this.upstreamId;
     // Refresh the binding
-    this.ctx.getBinding('providers.HttpUpstreamProvider').refresh(this.ctx);
+    this.ctx
+      .getBinding('providers.' + HttpUpstreamProvider.name)
+      .refresh(this.ctx);
 
     const upstream = await this.ctx.get<FastifyInstance>(
-      'providers.HttpUpstreamProvider',
+      'providers.' + HttpUpstreamProvider.name,
     );
 
-    this.logger.info('Upstream server is starting');
-    this.isServerStarted = true;
+    this.logger.info('Upstream [%s] starting', id);
 
     await Promise.all(
       this.ctx
@@ -93,57 +98,34 @@ export class HttpService {
         ),
     );
 
-    const upstreamAddr = '127.0.0.1';
-    const upstreamPort = this.acquirePort();
-
     upstream.addHook('onClose', () => {
-      this.releasePort(upstreamPort);
-
-      this.logger.info('Upstream stopped [%s:%d]', upstreamAddr, upstreamPort);
+      this.logger.info('Downstream [%s] closed', id);
     });
 
     upstream.addHook('onReady', () => {
       this.logger.info(
-        'Upstream server listening at [%s:%d] build time [%dms]',
-        upstreamAddr,
-        upstreamPort,
+        'Upstream [%s] ready, prepared in [%d] ms',
+        id,
         Date.now() - startedAt,
       );
     });
 
-    upstream.addHook('onTimeout', (req, rep, done) => {
-      this.logger.debug('Upstream onTimeout', req.body);
-      done();
-    });
-
     if (process.env.NODE_ENV !== 'test') {
-      await upstream.listen(upstreamPort, upstreamAddr);
+      await upstream.listen(0);
     }
 
+    // Existing downstream
     if (this.upstream) {
       this.upstream.close();
     }
 
+    // Swap reference
     this.upstream = upstream;
-  }
 
-  protected acquirePort(): number {
-    let port = this.getDefaultPort();
-
-    while (this.ports.includes(port)) {
-      port++;
+    // First upstream is ready.
+    if (!this.bootstrapped) {
+      this.bootstrapped = true;
     }
-
-    this.logger.debug('Port [%d] locked', port);
-    this.ports.push(port);
-
-    return port;
-  }
-
-  protected releasePort(port: number) {
-    this.ports = this.ports.filter(p => p !== port);
-
-    this.logger.debug('Port [%d] unlocked', port);
   }
 
   async stopServer() {

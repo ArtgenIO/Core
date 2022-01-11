@@ -14,8 +14,7 @@ export class HttpProxyProvider implements Provider<FastifyInstance> {
   async value(): Promise<FastifyInstance> {
     const proxy = fastify({
       logger: {
-        level: 'debug',
-        prettyPrint: true,
+        level: 'warn',
       },
       disableRequestLogging: true,
       genReqId: v4 as () => string,

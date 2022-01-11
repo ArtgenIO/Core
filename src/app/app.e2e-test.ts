@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify';
+import { HttpUpstreamProvider } from '../modules/http/provider/http-upstream.provider';
 import { AppModule } from './app.module';
 import { IKernel, Kernel } from './kernel';
 
@@ -6,7 +7,7 @@ describe('Application (e2e)', () => {
   let app: IKernel;
 
   const getServer = (): Promise<FastifyInstance> =>
-    app.context.get('providers.HttpUpstreamProvider');
+    app.context.get('providers.' + HttpUpstreamProvider.name);
 
   beforeAll(async () => {
     app = new Kernel();

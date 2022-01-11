@@ -51,8 +51,9 @@ export class RestGateway implements IHttpGateway {
             );
 
             reply.statusCode = 201;
+            reply.header('content-type', 'application/json');
 
-            return response;
+            return JSON.stringify(response);
           } catch (error) {
             reply.statusCode = 400;
 
@@ -82,7 +83,8 @@ export class RestGateway implements IHttpGateway {
           );
 
           if (record) {
-            return record;
+            reply.header('content-type', 'application/json');
+            return JSON.stringify(record);
           }
 
           // Handle the 404 error
@@ -118,7 +120,8 @@ export class RestGateway implements IHttpGateway {
             );
 
             if (record) {
-              return record;
+              reply.header('content-type', 'application/json');
+              return JSON.stringify(record);
             }
 
             // Handle the 404 error
@@ -158,7 +161,8 @@ export class RestGateway implements IHttpGateway {
             );
 
             if (record) {
-              return record;
+              reply.header('content-type', 'application/json');
+              return JSON.stringify(record);
             }
 
             // Handle the 404 error
