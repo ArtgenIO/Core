@@ -1,3 +1,9 @@
+### Version 0.1.7
+
+- Seamless HTTP restarts
+- Proxified HTTP upstream servers
+- Fix JSON Schema type bugs in the rest service
+
 ### Version 0.1.6
 
 - CRON based flow trigger

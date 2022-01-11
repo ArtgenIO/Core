@@ -38,9 +38,9 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
       mode: 'dynamic',
       openapi: {
         info: {
-          title: 'Artgen API',
-          description: 'Http Server Documentation',
-          version: `RV1`,
+          title: 'Artgen Core - API',
+          description: 'Http Upstream Server Documentation',
+          version: `RV42`,
         },
         components: {
           securitySchemes: {
@@ -54,22 +54,24 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
               type: 'apiKey',
               in: 'query',
               name: 'access-key',
+              description: 'Access Key identification in the query param',
             },
             accessKeyHeader: {
               type: 'apiKey',
               in: 'header',
               name: 'X-Access-Key',
+              description: 'Access Key identification in the HTTP header',
             },
           },
         },
         tags: [
           {
-            name: 'OData',
-            description: 'OData backed endpoints',
-          },
-          {
             name: 'Rest',
             description: 'Rest structured endpoints',
+          },
+          {
+            name: 'OData',
+            description: 'OData backed endpoints',
           },
           {
             name: 'Flow',
