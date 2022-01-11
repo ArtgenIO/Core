@@ -42,6 +42,8 @@ export class EventService {
           }
 
           event['on'](mdata.event, handler, mdata.options);
+
+          this.logger.debug('Event handler [%s] registered', mdata.event);
         }
       }
     }

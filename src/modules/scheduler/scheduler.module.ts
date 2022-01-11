@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import { ILogger, Logger, Module } from '../../app/container';
+import { IModule, Module } from '../../app/container';
 import { IKernel } from '../../app/kernel';
 import { CronTriggerLambda } from './lambda/cron.trigger';
 import { SchedulerService } from './scheduler.service';
@@ -7,13 +7,9 @@ import { SchedulerService } from './scheduler.service';
 @Module({
   providers: [SchedulerService, CronTriggerLambda],
 })
-export class SchedulerModule {
-  constructor(
-    @Logger()
-    readonly logger: ILogger,
-  ) {}
-
-  async onReady(kernel: IKernel) {
+export class SchedulerModule implements IModule {
+  async onStart(kernel: IKernel) {
+    console.log('READY?'.repeat(10));
     await (await kernel.get(SchedulerService)).register(kernel);
   }
 

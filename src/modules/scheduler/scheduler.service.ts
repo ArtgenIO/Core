@@ -23,6 +23,8 @@ export class SchedulerService {
   }
 
   protected async registerFlows(kernel: IKernel) {
+    this.logger.debug('Registering flows');
+
     for (const flow of await this.flowService.findAll()) {
       const triggers = flow.nodes.filter(t => t.type === 'trigger.cron');
 
@@ -52,6 +54,8 @@ export class SchedulerService {
   }
 
   protected async registerDecorators(kernel: IKernel) {
+    this.logger.debug('Registering decorators');
+
     for (const key of kernel.context.findByTag<Constructor<unknown>>(
       'scheduler',
     )) {

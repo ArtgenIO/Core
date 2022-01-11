@@ -6,6 +6,7 @@ import FastifySecureSessionPlugin from 'fastify-secure-session';
 import OpenAPIPlugin from 'fastify-swagger';
 import { v4 } from 'uuid';
 import { ILogger, Logger, Service } from '../../../app/container';
+import { getErrorMessage } from '../../../app/kernel';
 
 @Service()
 export class HttpUpstreamProvider implements Provider<FastifyInstance> {
@@ -102,6 +103,17 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
         0x374, 0x037,
       ]),
       cookieName: '__artgen_session',
+    });
+
+    server.addHook('onError', (req, rep, error, done) => {
+      this.logger.error(
+        'Request [%s][%s] error [%s]',
+        req.method,
+        req.url,
+        getErrorMessage(error),
+      );
+
+      done();
     });
 
     return server;

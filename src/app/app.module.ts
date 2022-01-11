@@ -23,12 +23,13 @@ import { LogLambda } from './logger/log.lambda';
 @Module({
   imports: [
     AdminModule,
-    IdentityModule,
+    BlueprintModule,
     ContentModule,
     DatabaseModule,
     EventModule,
-    BlueprintModule,
+    FlowModule,
     HttpModule,
+    IdentityModule,
     LambdaModule,
     ODataModule,
     PageModule,
@@ -39,7 +40,6 @@ import { LogLambda } from './logger/log.lambda';
     SecurityModule,
     TransformerModule,
     UpgradeModule,
-    FlowModule,
     ValidatorModule,
   ],
   providers: [LogLambda],

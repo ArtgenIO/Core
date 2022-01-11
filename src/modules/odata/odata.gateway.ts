@@ -1,8 +1,10 @@
-import { FastifyInstance, FastifyRequest } from 'fastify';
+import { FastifyInstance, FastifyRequest, RouteHandlerMethod } from 'fastify';
 import { kebabCase } from 'lodash';
 import { Inject, Service } from '../../app/container';
+import { IKernel, Kernel } from '../../app/kernel';
 import { schemaToJsonSchema } from '../content/util/schema-to-jsonschema';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
+import { AuthenticationHandlerProvider } from '../identity/provider/authentication-handler.provider';
 import { CrudAction } from '../rest/interface/crud-action.enum';
 import { SchemaService } from '../schema/service/schema.service';
 import { IODataResult } from './interface/odata-result.interface';
@@ -17,10 +19,15 @@ export class ODataGateway implements IHttpGateway {
     readonly service: ODataService,
     @Inject(SchemaService)
     readonly schema: SchemaService,
+    @Inject(Kernel)
+    readonly kernel: IKernel,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
     const schemas = await this.schema.findAll();
+    const preHandler = await this.kernel.get<RouteHandlerMethod>(
+      AuthenticationHandlerProvider,
+    );
 
     for (const schema of schemas) {
       const url = `/api/odata/${kebabCase(schema.database)}/${kebabCase(
@@ -31,6 +38,7 @@ export class ODataGateway implements IHttpGateway {
       httpServer.post(
         url,
         {
+          preHandler,
           schema: {
             tags: ['OData'],
             body: {
@@ -52,6 +60,7 @@ export class ODataGateway implements IHttpGateway {
       httpServer.get(
         url,
         {
+          preHandler,
           schema: {
             tags: ['OData'],
           },
@@ -69,6 +78,7 @@ export class ODataGateway implements IHttpGateway {
       httpServer.patch(
         url,
         {
+          preHandler,
           schema: {
             tags: ['OData'],
             body: {
@@ -94,6 +104,7 @@ export class ODataGateway implements IHttpGateway {
       httpServer.delete(
         url,
         {
+          preHandler,
           schema: {
             tags: ['OData'],
           },

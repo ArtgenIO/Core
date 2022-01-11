@@ -37,6 +37,7 @@ export class HttpService {
   async startProxy() {
     this.proxy.all('/*', (req, rep) => {
       rep.statusCode = 500;
+      rep.header('refresh', 2);
       rep.send({
         status: 'degraded',
         uptime: process.uptime(),

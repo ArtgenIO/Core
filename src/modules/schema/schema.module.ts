@@ -6,6 +6,8 @@ import { EventModule } from '../event';
 import { CreateSchemaLambda } from './lambda/create.lambda';
 import { ReadSchemaLambda } from './lambda/read.lambda';
 import { UpdateSchemaLambda } from './lambda/update.lambda';
+import { SchemaObserver } from './schema.observer';
+import { SchemaScheduler } from './schema.scheduler';
 import { KeyValueService } from './service/key-value.service';
 import { SchemaService } from './service/schema.service';
 
@@ -18,6 +20,8 @@ import { SchemaService } from './service/schema.service';
     ReadSchemaLambda,
     SchemaService,
     UpdateSchemaLambda,
+    SchemaScheduler,
+    SchemaObserver,
   ],
 })
 export class SchemaModule {}
