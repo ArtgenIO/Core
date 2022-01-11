@@ -1,15 +1,14 @@
 import { Provider } from '@loopback/context';
 import fastify, { FastifyInstance } from 'fastify';
-import cors from 'fastify-cors';
-import formBody from 'fastify-formbody';
-import fastifyHttpErrorsEnhanced from 'fastify-http-errors-enhanced';
-import fastifySecureSession from 'fastify-secure-session';
-import swagger from 'fastify-swagger';
+import FormBodyPlugin from 'fastify-formbody';
+import FastifyHttpErrorsEnhancedPlugin from 'fastify-http-errors-enhanced';
+import FastifySecureSessionPlugin from 'fastify-secure-session';
+import OpenAPIPlugin from 'fastify-swagger';
 import { v4 } from 'uuid';
 import { ILogger, Logger, Service } from '../../../app/container';
 
 @Service()
-export class HttpServerProvider implements Provider<FastifyInstance> {
+export class HttpUpstreamProvider implements Provider<FastifyInstance> {
   constructor(
     @Logger()
     protected readonly logger: ILogger,
@@ -18,28 +17,24 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
   async value(): Promise<FastifyInstance> {
     const server = fastify({
       logger: {
-        level: 'warn',
+        level: 'debug',
+        prettyPrint: true,
       },
-      disableRequestLogging: true,
+      disableRequestLogging: false,
       genReqId: v4 as () => string,
       trustProxy: true,
       ignoreTrailingSlash: true,
-      keepAliveTimeout: 1000,
+      bodyLimit: 100 * 1024 * 1024,
+      keepAliveTimeout: 3_000,
+      connectionTimeout: 3_000,
+      pluginTimeout: 2_000,
     });
     this.logger.debug('Initiated');
 
-    await server.register(cors, {
-      origin: process.env.NODE_ENV === 'production' ? 'https://artgen.io' : '*',
-      credentials: true,
-      maxAge: 86400,
-      prefix: '/api',
-    });
-    this.logger.debug('Plugin [CORS] registered');
-
-    await server.register(formBody);
+    await server.register(FormBodyPlugin);
     this.logger.debug('Plugin [FormBody] registered');
 
-    await server.register(swagger, {
+    await server.register(OpenAPIPlugin, {
       routePrefix: '/api/docs',
       mode: 'dynamic',
       openapi: {
@@ -95,10 +90,10 @@ export class HttpServerProvider implements Provider<FastifyInstance> {
     });
     this.logger.debug('Plugin [Swagger] registered');
 
-    await server.register(fastifyHttpErrorsEnhanced);
+    await server.register(FastifyHttpErrorsEnhancedPlugin);
 
     // Not used, just here because a library makes a call on it even tho not using it.
-    await server.register(fastifySecureSession, {
+    await server.register(FastifySecureSessionPlugin, {
       key: Buffer.from([
         0x103, 0x132, 0x103, 0x010, 0x200, 0x017, 0x012, 0x345, 0x236, 0x235,
         0x202, 0x247, 0x357, 0x362, 0x074, 0x344, 0x016, 0x246, 0x004, 0x113,

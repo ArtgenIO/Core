@@ -6,9 +6,9 @@ import {
 } from '@loopback/context';
 import { IKernel } from '../../../app/kernel/interface/kernel.interface';
 import { Kernel } from '../../../app/kernel/kernel';
-import { HttpServerProvider } from './http.server';
+import { HttpUpstreamProvider } from './http-upstream.provider';
 
-describe('HTTPServerProvider', () => {
+describe(HttpUpstreamProvider.name, () => {
   let app: IKernel;
 
   beforeEach(() => {
@@ -16,24 +16,24 @@ describe('HTTPServerProvider', () => {
   });
 
   test('should be defined as a provider', () => {
-    const binding = createBindingFromClass(HttpServerProvider);
+    const binding = createBindingFromClass(HttpUpstreamProvider);
 
-    expect(binding.key).toBe('providers.HttpServerProvider');
+    expect(binding.key).toBe('providers.HttpUpstreamProvider');
     expect(binding.scope).toBe(BindingScope.SINGLETON);
   });
 
   test('should be a providier', () => {
-    expect(isProviderClass(HttpServerProvider)).toBe(true);
+    expect(isProviderClass(HttpUpstreamProvider)).toBe(true);
   });
 
   test('should be able to resolve it', async () => {
-    const instance = await instantiateClass(HttpServerProvider, app.context);
+    const instance = await instantiateClass(HttpUpstreamProvider, app.context);
 
-    expect(instance).toBeInstanceOf(HttpServerProvider);
+    expect(instance).toBeInstanceOf(HttpUpstreamProvider);
   });
 
   test('should provide a server instance', async () => {
-    const instance = await instantiateClass(HttpServerProvider, app.context);
+    const instance = await instantiateClass(HttpUpstreamProvider, app.context);
     const server = await instance.value();
 
     expect(server).toHaveProperty('register');
@@ -41,7 +41,7 @@ describe('HTTPServerProvider', () => {
   });
 
   test('should have a openapi registered', async () => {
-    const instance = await instantiateClass(HttpServerProvider, app.context);
+    const instance = await instantiateClass(HttpUpstreamProvider, app.context);
     const server = await instance.value();
 
     const response = await server.inject({

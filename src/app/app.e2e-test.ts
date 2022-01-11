@@ -6,7 +6,7 @@ describe('Application (e2e)', () => {
   let app: IKernel;
 
   const getServer = (): Promise<FastifyInstance> =>
-    app.context.get('providers.HttpServerProvider');
+    app.context.get('providers.HttpUpstreamProvider');
 
   beforeAll(async () => {
     app = new Kernel();

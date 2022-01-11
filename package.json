@@ -94,6 +94,7 @@
     "passport-unique-token": "^3.0.0",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
+    "pino-pretty": "^7.3.0",
     "point-of-view": "^4.15.1",
     "reflect-metadata": "^0.1.13",
     "semver-compare": "^1.0.0",

@@ -9,7 +9,8 @@ import { DnsQueryLambda } from './lambda/dns-query.lambda';
 import { HttpRequestLambda } from './lambda/http-request.lambda';
 import { HttpTerminateLambda } from './lambda/http-terminate.lambda';
 import { HttpTriggerLambda } from './lambda/http-trigger.lambda';
-import { HttpServerProvider } from './provider/http.server';
+import { HttpProxyProvider } from './provider/http-proxy.provider';
+import { HttpUpstreamProvider } from './provider/http-upstream.provider';
 import { HttpService } from './service/http.service';
 
 @Module({
@@ -21,7 +22,8 @@ import { HttpService } from './service/http.service';
     HttpRequestLambda,
     HttpTerminateLambda,
     DnsQueryLambda,
-    HttpServerProvider,
+    HttpUpstreamProvider,
+    HttpProxyProvider,
   ],
 })
 export class HttpModule implements IModule {
@@ -30,13 +32,19 @@ export class HttpModule implements IModule {
     protected logger: ILogger,
   ) {}
 
+  async onBoot(kernel: IKernel): Promise<void> {
+    const svc = await kernel.get(HttpService);
+    await svc.startProxy();
+  }
+
   async onStart(kernel: IKernel): Promise<void> {
-    await Promise.all([(await kernel.get(HttpService)).startServer()]);
+    const svc = await kernel.get(HttpService);
+    await svc.createUpstream();
   }
 
   async onStop(kernel: IKernel) {
     const http = await kernel.context.get<FastifyInstance>(
-      'providers.HttpServerProvider',
+      'providers.HttpProxyProvider',
     );
 
     // Deregister gateways.

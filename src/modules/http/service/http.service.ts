@@ -12,70 +12,138 @@ import { IHttpGateway } from '../interface/http-gateway.interface';
 
 @Service()
 export class HttpService {
-  protected isHttpStarted = false;
+  protected isServerStarted = false;
+  protected upstream: FastifyInstance;
+
+  /**
+   * Used ports
+   */
+  protected ports: number[] = [];
 
   constructor(
     @Logger()
     protected logger: ILogger,
-    @Inject('providers.HttpServerProvider')
-    protected httpServer: FastifyInstance,
+    @Inject('providers.HttpProxyProvider')
+    readonly proxy: FastifyInstance,
     @inject.context()
     readonly ctx: IContext,
-  ) {}
-
-  updateServer() {
-    if (this.isHttpStarted) {
-      this.startServer();
-    }
+  ) {
+    this.ports.push(this.getDefaultPort());
   }
 
-  async startServer(): Promise<void> {
-    const startedAt = Date.now();
-    let stopPromise: any = null;
+  protected getDefaultPort(): number {
+    return parseInt(
+      process.env.PORT ?? process.env.ARTGEN_HTTP_PORT ?? '7200',
+      10,
+    );
+  }
 
-    if (this.isHttpStarted) {
-      const oldServer = this.httpServer;
-      this.ctx.getBinding('providers.HttpServerProvider').refresh(this.ctx);
-      this.httpServer = await this.ctx.get('providers.HttpServerProvider');
+  async startProxy() {
+    this.proxy.all('/*', (req, rep) => {
+      rep.statusCode = 500;
+      rep.send({
+        status: 'degraded',
+        uptime: process.uptime(),
+      });
+    });
 
-      this.logger.info('Stopping the HTTP server...');
-      stopPromise = oldServer.close();
+    this.proxy.addHook('onRequest', (request, reply, done) => {
+      if (this.upstream) {
+        this.upstream.routing(request.raw, reply.hijack().raw);
+      }
+
+      done();
+    });
+
+    const porxyAddr = '0.0.0.0';
+    const proxyPort = this.getDefaultPort();
+
+    this.proxy.addHook('onClose', () => {
+      this.logger.info('Proxy stopped [%s:%d]', porxyAddr, proxyPort);
+    });
+
+    if (process.env.NODE_ENV !== 'test') {
+      await this.proxy.listen(proxyPort, porxyAddr);
     }
 
-    this.logger.info('HTTP server is starting');
-    this.isHttpStarted = true;
+    this.logger.info('Proxy server listening at [%s:%d]', porxyAddr, proxyPort);
+  }
+
+  updateUpstream() {
+    this.createUpstream();
+  }
+
+  async createUpstream(): Promise<void> {
+    const startedAt = Date.now();
+    // Refresh the binding
+    this.ctx.getBinding('providers.HttpUpstreamProvider').refresh(this.ctx);
+
+    const upstream = await this.ctx.get<FastifyInstance>(
+      'providers.HttpUpstreamProvider',
+    );
+
+    this.logger.info('Upstream server is starting');
+    this.isServerStarted = true;
 
     await Promise.all(
       this.ctx
         .findByTag('http:gateway')
         .map(async gateway =>
-          (
-            await this.ctx.get<IHttpGateway>(gateway.key)
-          ).register(this.httpServer),
+          (await this.ctx.get<IHttpGateway>(gateway.key)).register(upstream),
         ),
     );
 
-    let port = parseInt(process.env.ARTGEN_HTTP_PORT, 10);
+    const upstreamAddr = '127.0.0.1';
+    const upstreamPort = this.acquirePort();
 
-    // Heroku patch
-    if (process.env.PORT) {
-      port = parseInt(process.env.PORT, 10);
-    }
+    upstream.addHook('onClose', () => {
+      this.releasePort(upstreamPort);
 
-    if (stopPromise) {
-      await stopPromise;
-      this.logger.info('HTTP server is stopped');
-    }
+      this.logger.info('Upstream stopped [%s:%d]', upstreamAddr, upstreamPort);
+    });
+
+    upstream.addHook('onReady', () => {
+      this.logger.info(
+        'Upstream server listening at [%s:%d] build time [%dms]',
+        upstreamAddr,
+        upstreamPort,
+        Date.now() - startedAt,
+      );
+    });
+
+    upstream.addHook('onTimeout', (req, rep, done) => {
+      this.logger.debug('Upstream onTimeout', req.body);
+      done();
+    });
 
     if (process.env.NODE_ENV !== 'test') {
-      await this.httpServer.listen(port, '0.0.0.0');
+      await upstream.listen(upstreamPort, upstreamAddr);
     }
 
-    this.logger.info(
-      'HTTP server listening at [0.0.0.0:%d] build time [%dms]',
-      port,
-      Date.now() - startedAt,
-    );
+    if (this.upstream) {
+      this.upstream.close();
+    }
+
+    this.upstream = upstream;
+  }
+
+  protected acquirePort(): number {
+    let port = this.getDefaultPort();
+
+    while (this.ports.includes(port)) {
+      port++;
+    }
+
+    this.logger.debug('Port [%d] locked', port);
+    this.ports.push(port);
+
+    return port;
+  }
+
+  protected releasePort(port: number) {
+    this.ports = this.ports.filter(p => p !== port);
+
+    this.logger.debug('Port [%d] unlocked', port);
   }
 
   async stopServer() {

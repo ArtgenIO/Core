@@ -1,0 +1,36 @@
+import { Provider } from '@loopback/context';
+import fastify, { FastifyInstance } from 'fastify';
+import CORSPlugin from 'fastify-cors';
+import { v4 } from 'uuid';
+import { ILogger, Logger, Service } from '../../../app/container';
+
+@Service()
+export class HttpProxyProvider implements Provider<FastifyInstance> {
+  constructor(
+    @Logger()
+    protected readonly logger: ILogger,
+  ) {}
+
+  async value(): Promise<FastifyInstance> {
+    const proxy = fastify({
+      logger: {
+        level: 'debug',
+        prettyPrint: true,
+      },
+      disableRequestLogging: true,
+      genReqId: v4 as () => string,
+      trustProxy: true,
+      ignoreTrailingSlash: true,
+      bodyLimit: 100 * 1024 * 1024,
+      keepAliveTimeout: 3_000,
+      connectionTimeout: 3_000,
+      pluginTimeout: 2_000,
+    });
+    this.logger.debug('Initialized');
+
+    await proxy.register(CORSPlugin);
+    this.logger.debug('Plugin [CORS] registered');
+
+    return proxy;
+  }
+}
