@@ -6,6 +6,7 @@ import {
 } from '@loopback/context';
 import { IKernel } from '../../../app/kernel/interface/kernel.interface';
 import { Kernel } from '../../../app/kernel/kernel';
+import { RestModule } from '../../rest/rest.module';
 import { HttpUpstreamProvider } from './http-upstream.provider';
 
 describe(HttpUpstreamProvider.name, () => {
@@ -13,6 +14,7 @@ describe(HttpUpstreamProvider.name, () => {
 
   beforeEach(() => {
     app = new Kernel();
+    app.register([RestModule]);
   });
 
   test('should be defined as a provider', () => {

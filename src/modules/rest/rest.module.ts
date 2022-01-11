@@ -1,6 +1,7 @@
 import { Module } from '../../app/container';
 import { moduleRef } from '../../app/container/module-ref';
 import { SchemaModule } from '../schema/schema.module';
+import { UpgradeModule } from '../upgrade/upgrade.module';
 import { RestCreateLambda } from './lambda/rest-create.lambda';
 import { RestFindLambda } from './lambda/rest-find.lambda';
 import { RestListLambda } from './lambda/rest-list.lambda';
@@ -11,7 +12,7 @@ import { OpenApiService } from './service/openapi.service';
 import { RestService } from './service/rest.service';
 
 @Module({
-  imports: [moduleRef(() => SchemaModule)],
+  imports: [moduleRef(() => SchemaModule), UpgradeModule],
   providers: [
     RestService,
     OpenApiService,

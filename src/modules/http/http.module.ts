@@ -4,6 +4,7 @@ import { IKernel } from '../../app/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
 import { FlowModule } from '../flow/flow.module';
 import { PageModule } from '../page/page.module';
+import { RestModule } from '../rest/rest.module';
 import { HttpObserver } from './http.observer';
 import { DnsQueryLambda } from './lambda/dns-query.lambda';
 import { HttpRequestLambda } from './lambda/http-request.lambda';
@@ -14,7 +15,7 @@ import { HttpUpstreamProvider } from './provider/http-upstream.provider';
 import { HttpService } from './service/http.service';
 
 @Module({
-  dependsOn: [FlowModule, BlueprintModule, PageModule],
+  dependsOn: [FlowModule, BlueprintModule, PageModule, RestModule],
   providers: [
     HttpObserver,
     HttpService,
