@@ -9,7 +9,6 @@ import { SchedulerService } from './scheduler.service';
 })
 export class SchedulerModule implements IModule {
   async onStart(kernel: IKernel) {
-    console.log('READY?'.repeat(10));
     await (await kernel.get(SchedulerService)).register(kernel);
   }
 

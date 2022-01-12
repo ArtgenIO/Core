@@ -43,6 +43,9 @@ export class SchemaService {
       });
 
       if (!exists) {
+        // Module will be added later.
+        delete schema.moduleId;
+
         await model.query().insert(schema);
       }
 

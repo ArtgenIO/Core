@@ -2,6 +2,8 @@ import { IField } from './field.interface';
 import { IRelation } from './relation.interface';
 
 export interface ISchema {
+  moduleId?: string;
+
   /**
    * Non esential meta data, used by visual and other components for fancy works, haps!
    */

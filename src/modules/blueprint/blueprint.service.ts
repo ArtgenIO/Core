@@ -47,6 +47,23 @@ export class BlueprintService {
 
     const link = this.connections.findOne(database);
 
+    // TODO: split this into two phase, check if we create the schema for the data now, or can we inject data safely
+    if (blueprint?.content) {
+      for (const schema in blueprint.content) {
+        if (Object.prototype.hasOwnProperty.call(blueprint.content, schema)) {
+          const rows = blueprint.content[schema];
+
+          for (const row of rows) {
+            const isExists = await this.rest.read('main', schema, row);
+
+            if (!isExists) {
+              await this.rest.create(database, schema, row);
+            }
+          }
+        }
+      }
+    }
+
     // Preload the schemas before they are injected one by one.
     if (blueprint?.schemas && blueprint.schemas.length) {
       await link.associate(blueprint.schemas);
@@ -113,22 +130,6 @@ export class BlueprintService {
           blueprint.title,
           flow.id,
         );
-      }
-    }
-
-    if (blueprint?.content) {
-      for (const schema in blueprint.content) {
-        if (Object.prototype.hasOwnProperty.call(blueprint.content, schema)) {
-          const rows = blueprint.content[schema];
-
-          for (const row of rows) {
-            const isExists = await this.rest.read('main', schema, row);
-
-            if (!isExists) {
-              await this.rest.create(database, schema, row);
-            }
-          }
-        }
       }
     }
 
