@@ -29,13 +29,13 @@ export default function CreateFlowComponent({ onClose }: Props) {
         name="flow"
         initialValues={{ remember: true }}
         onFinish={fdata => {
-          message.info('Sending the WF data...');
           sendRequest({
             name: fdata.name,
             nodes: [],
             edges: [],
           }).then(id => {
             redirect(`/admin/flow/artboard/${id}`);
+            onClose();
             message.success('Flow ready!');
           });
         }}

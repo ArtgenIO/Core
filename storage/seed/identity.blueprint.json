@@ -115,7 +115,8 @@
   "flows": [
     {
       "id": "51c0abf2-5924-4fdf-a920-a1b3487f6710",
-      "name": "Authentication - Sign In",
+      "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
+      "name": "Sign In",
       "nodes": [
         {
           "id": "trigger.http.1",
@@ -301,7 +302,8 @@
     },
     {
       "id": "ced473f0-522c-47db-a88c-f0f981d93f9e",
-      "name": "Authentication - Sign Up",
+      "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
+      "name": "Sign Up",
       "nodes": [
         {
           "id": "auth.sign.in.44",

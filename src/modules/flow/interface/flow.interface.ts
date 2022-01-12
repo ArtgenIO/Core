@@ -8,6 +8,11 @@ export interface IFlow {
   readonly id: string;
 
   /**
+   * Content module's identifier
+   */
+  moduleId?: string;
+
+  /**
    * Human readable display name
    */
   name: string;

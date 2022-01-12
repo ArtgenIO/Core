@@ -65,7 +65,7 @@ export default function FlowListComponent() {
     <PageWithHeader
       header={
         <PageHeader
-          title="Flows"
+          title="Low Code - Flows"
           avatar={{
             icon: <PartitionOutlined />,
           }}

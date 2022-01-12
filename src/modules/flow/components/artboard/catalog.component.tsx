@@ -64,75 +64,73 @@ export default function ArtboardCatalogComponent() {
   };
 
   return (
-    <div>
-      <Sider
-        width="380px"
-        collapsible
-        reverseArrow={true}
-        collapsedWidth="0px"
-        trigger={null}
-        collapsed={isCollapsed}
-      >
-        <ErrorBoundary>
-          <PageHeader
-            title={
-              <span>
-                <MenuUnfoldOutlined className="mr-2" /> Catalog
-              </span>
-            }
-            ghost
-          ></PageHeader>
-          <div className="px-2">
-            <Search
-              onSearch={value => setSearch(value)}
-              allowClear
-              autoFocus={!isCollapsed}
-            />
-          </div>
-          <Divider />
-          <div style={{ width: '380px' }}>
-            <List
-              itemLayout="horizontal"
-              size="small"
-              dataSource={filterLambdas(search, lambdaMetas)}
-              renderItem={lambda => (
-                <List.Item
-                  key={lambda.type}
-                  onDragStart={event => onDragStart(event, lambda.type)}
-                  draggable
-                  onTouchStart={event => onDragStart(event, lambda.type)}
-                  actions={[
-                    <a
-                      className="text-green-400 text-xl"
-                      onClick={() => addNode(lambda)}
-                    >
-                      <PlusSquareOutlined />
-                    </a>,
-                  ]}
-                >
-                  <List.Item.Meta
-                    avatar={
-                      <Avatar
-                        src={`/assets/icons/${lambda.icon ?? 'lambda.png'}`}
-                        style={{ backgroundColor: '#cfd2d9' }}
-                        className="rounded-lg w-12 h-12 p-1"
-                      />
-                    }
-                    title={
-                      <span className="text-white">
-                        {startCase(lambda.type)}
-                      </span>
-                    }
-                    description={
-                      lambda.description ?? 'Does not have a description?!'
-                    }
-                  />
-                </List.Item>
-              )}
-            />
-          </div>
-        </ErrorBoundary>
-      </Sider>
-    </div>
+    <Sider
+      width="380px"
+      collapsible
+      reverseArrow={true}
+      collapsedWidth="0px"
+      trigger={null}
+      collapsed={isCollapsed}
+      className="h-screen gray-scroll bg-midnight-700"
+    >
+      <ErrorBoundary>
+        <PageHeader
+          title={
+            <span>
+              <MenuUnfoldOutlined className="mr-2" /> Catalog
+            </span>
+          }
+          ghost
+        ></PageHeader>
+        <div className="px-2">
+          <Search
+            onSearch={value => setSearch(value)}
+            allowClear
+            autoFocus={!isCollapsed}
+          />
+        </div>
+        <Divider />
+        <div style={{ width: '380px' }}>
+          <List
+            itemLayout="horizontal"
+            size="small"
+            dataSource={filterLambdas(search, lambdaMetas)}
+            renderItem={lambda => (
+              <List.Item
+                key={lambda.type}
+                onDragStart={event => onDragStart(event, lambda.type)}
+                draggable
+                onTouchStart={event => onDragStart(event, lambda.type)}
+                className="bg-midnight-700"
+                actions={[
+                  <a
+                    className="text-green-400 text-xl"
+                    onClick={() => addNode(lambda)}
+                  >
+                    <PlusSquareOutlined />
+                  </a>,
+                ]}
+              >
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      src={`/assets/icons/${lambda.icon ?? 'lambda.png'}`}
+                      style={{ backgroundColor: '#cfd2d9' }}
+                      className="rounded-lg w-12 h-12 p-1"
+                    />
+                  }
+                  title={
+                    <span className="text-white">{startCase(lambda.type)}</span>
+                  }
+                  description={
+                    lambda.description ?? 'Does not have a description?!'
+                  }
+                />
+              </List.Item>
+            )}
+          />
+        </div>
+      </ErrorBoundary>
+    </Sider>
   );
 }

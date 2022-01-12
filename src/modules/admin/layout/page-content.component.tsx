@@ -10,7 +10,7 @@ import PageWrapper from './page-wrapper.component';
 const { Content } = Layout;
 
 export default function PageContent() {
-  const Flow = lazy(() => import('../../flow/components/index.component'));
+  const Flow = lazy(() => import('../../flow/components/_router.component'));
 
   const Database = lazy(
     () => import('../../database/component/_router.component'),

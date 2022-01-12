@@ -25,6 +25,17 @@
           "args": {}
         },
         {
+          "reference": "moduleId",
+          "columnName": "moduleId",
+          "title": "Module ID",
+          "type": "uuid",
+          "tags": [
+            "nullable"
+          ],
+          "args": {},
+          "defaultValue": null
+        },
+        {
           "reference": "name",
           "columnName": "name",
           "title": "Name",
@@ -55,7 +66,15 @@
       ],
       "indices": [],
       "uniques": [],
-      "relations": [],
+      "relations": [
+        {
+          "kind": "belongs-to-one",
+          "name": "module",
+          "target": "Module",
+          "localField": "moduleId",
+          "remoteField": "id"
+        }
+      ],
       "tags": [
         "active",
         "system"
@@ -546,7 +565,8 @@
   "flows": [
     {
       "id": "30d9c6a9-3d0d-424d-ab5e-7ffe0ff7c840",
-      "name": "Blueprint Store - Proxy",
+      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "name": "Blueprint Proxy",
       "nodes": [
         {
           "id": "trigger.http.1",
@@ -782,7 +802,8 @@
     },
     {
       "id": "2ecfd7bd-d051-46d4-9e8e-a1229dd1857f",
-      "name": "Lambda - List",
+      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "name": "Lambdas",
       "nodes": [
         {
           "id": "lambda.read.184",
