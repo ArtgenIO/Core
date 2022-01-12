@@ -1,0 +1,25 @@
+.welcome-grid {
+  @apply grid grid-cols-3 gap-4;
+
+  > div:hover {
+    @apply bg-midnight-600 shadow-md;
+
+    > span {
+      @apply text-teal-400;
+    }
+  }
+
+  > div {
+    @apply bg-midnight-700 text-center p-12 rounded-lg transition-colors duration-300 ease-in-out cursor-pointer;
+
+    > span {
+      @apply block text-primary-500 mb-4 transition-colors duration-300;
+
+      font-size: 18rem;
+    }
+
+    > h1 {
+      @apply font-header text-4xl;
+    }
+  }
+}

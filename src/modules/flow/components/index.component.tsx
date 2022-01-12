@@ -9,7 +9,6 @@ export default function FlowPageComponent() {
   return (
     <Routes>
       <Route path="" element={<FlowListComponent />}></Route>
-      <Route path="create" element={<Create />}></Route>
       <Route path="artboard/:id" element={<Artboard />}></Route>
     </Routes>
   );

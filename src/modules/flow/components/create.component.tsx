@@ -1,14 +1,14 @@
-import { FileAddOutlined, PartitionOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message } from 'antd';
+import { Button, Drawer, Form, Input, message } from 'antd';
 import React from 'react';
 import { useNavigate } from 'react-router';
-import { Link } from 'react-router-dom';
-import PageHeader from '../../admin/layout/page-header.component';
-import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { IFlow } from '../interface/flow.interface';
 
-export default function CreateFlowComponent() {
+type Props = {
+  onClose: () => void;
+};
+
+export default function CreateFlowComponent({ onClose }: Props) {
   const redirect = useNavigate();
   const httpClient = useHttpClientOld();
 
@@ -19,76 +19,46 @@ export default function CreateFlowComponent() {
   };
 
   return (
-    <PageWithHeader
-      header={
-        <PageHeader
-          title="Flows"
-          avatar={{
-            icon: <PartitionOutlined />,
-          }}
-          actions={
-            <Link key="create" to="/admin/flow/create">
-              <Button type="primary" icon={<FileAddOutlined />}>
-                New Template
-              </Button>
-            </Link>
-          }
-        />
-      }
+    <Drawer
+      width="33%"
+      visible={true}
+      title={`Create New Flow`}
+      onClose={onClose}
     >
-      <div>
-        <Form
-          name="flow"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={fdata => {
-            message.info('Sending the WF data...');
-            sendRequest({
-              name: fdata.name,
-              nodes: [],
-              edges: [],
-            }).then(id => {
-              redirect(`/admin/flow/artboard/${id}`);
-              message.success('Flow ready!');
-            });
-          }}
-          onFinishFailed={() => message.error('Failed to validate')}
+      <Form
+        name="flow"
+        initialValues={{ remember: true }}
+        onFinish={fdata => {
+          message.info('Sending the WF data...');
+          sendRequest({
+            name: fdata.name,
+            nodes: [],
+            edges: [],
+          }).then(id => {
+            redirect(`/admin/flow/artboard/${id}`);
+            message.success('Flow ready!');
+          });
+        }}
+        onFinishFailed={() => message.error('Failed to validate')}
+        className="mx-2"
+      >
+        <Form.Item
+          label="Name"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: 'Please input a name!',
+            },
+          ]}
         >
-          <h1>Choose a flow template</h1>
+          <Input />
+        </Form.Item>
 
-          <Form.Item
-            label="Name"
-            name="name"
-            rules={[
-              {
-                required: true,
-                pattern: /^[a-zA-Z0-9\s]+$/,
-                message: 'Please input a name!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="Template" name="template">
-            <div>
-              <br />
-              [Blank]
-              <br />
-              [Create Resource]
-              <br />
-              [Read Resource]
-            </div>
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Create
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
-    </PageWithHeader>
+        <Button type="primary" htmlType="submit" block>
+          Create
+        </Button>
+      </Form>
+    </Drawer>
   );
 }

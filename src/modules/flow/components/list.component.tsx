@@ -15,18 +15,21 @@ import {
   Skeleton,
 } from 'antd';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { toODataRoute } from '../../content/util/schema-url';
 import { IFlow } from '../interface/flow.interface';
+import CreateFlowComponent from './create.component';
 
 export default function FlowListComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [flows, setFlows] = useState<IFlow[]>([]);
   const httpClient = useHttpClientOld();
   const navigate = useNavigate();
+
+  const [showCreate, setShowCreate] = useState<boolean>(false);
 
   const doDeleteFlow = async (id: string) => {
     const flow = flows.find(wf => wf.id === id);
@@ -67,11 +70,13 @@ export default function FlowListComponent() {
             icon: <PartitionOutlined />,
           }}
           actions={
-            <Link key="create" to="/admin/flow/create">
-              <Button type="primary" icon={<FileAddOutlined />}>
-                New Flow
-              </Button>
-            </Link>
+            <Button
+              onClick={() => setShowCreate(true)}
+              type="primary"
+              icon={<FileAddOutlined />}
+            >
+              New Flow
+            </Button>
           }
         />
       }
@@ -110,7 +115,10 @@ export default function FlowListComponent() {
                   cancelText="No"
                   placement="left"
                   icon={<QuestionCircleOutlined />}
-                  onConfirm={() => doDeleteFlow(row.id)}
+                  onConfirm={e => {
+                    doDeleteFlow(row.id);
+                    e.stopPropagation();
+                  }}
                 >
                   <Button
                     icon={<DeleteOutlined />}
@@ -125,6 +133,9 @@ export default function FlowListComponent() {
           <Empty />
         )}
       </Skeleton>
+      {showCreate ? (
+        <CreateFlowComponent onClose={() => setShowCreate(false)} />
+      ) : undefined}
     </PageWithHeader>
   );
 }

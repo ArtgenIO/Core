@@ -19,18 +19,6 @@ const elements: IMenuItem[] = [
     title: 'Databases',
     path: 'databases',
   },
-  {
-    key: 'backup',
-    icon: 'settings_backup_restore',
-    title: 'Backup',
-    path: 'backup',
-  },
-  {
-    key: 'import',
-    icon: 'file_upload',
-    title: 'Import Schemantic',
-    path: 'import',
-  },
 ];
 
 export default function ManagerMenuComponent() {
