@@ -1,5 +1,6 @@
 ### Version 0.1.9
 
+- Unifyed UI for the main content manager
 - Content modules on the UI
 - Simplified content editor
 - New content tree
