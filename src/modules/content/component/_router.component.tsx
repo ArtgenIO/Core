@@ -32,7 +32,9 @@ export default function ContentRouterComponent() {
       const modules: IContentModule[] = [];
       const tree: TreeDataNode[] = [];
 
-      for (const schema of schemas.filter(s => s.module)) {
+      for (const schema of schemas
+        .filter(s => s.module)
+        .sort((a, b) => (a.title > b.title ? 1 : -1))) {
         if (!modules.find(m => schema.module.id === m.id)) {
           modules.push(schema.module);
         }
@@ -46,6 +48,7 @@ export default function ContentRouterComponent() {
           children: schemas
             .filter(s => s.module)
             .filter(s => s.module.id == module.id)
+            .sort((a, b) => (a.title > b.title ? 1 : -1))
             .map(s => ({
               key: `s-${s.database}-${s.reference}`,
               title: s.title,

@@ -3,11 +3,13 @@ import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
 import { SystemBlueprintProvider } from '../../blueprint/provider/system-blueprint.provider';
+import { IContentModule } from '../../content/interface/content-module.interface';
 import { IDatabaseConnection } from '../../database/interface';
 import { DatabaseConnectionService } from '../../database/service/database-connection.service';
 import { ISchema } from '../interface/schema.interface';
 
 type SchemaModel = ISchema & Model;
+type ModuleModel = IContentModule & Model;
 
 @Service()
 export class SchemaService {
@@ -24,52 +26,58 @@ export class SchemaService {
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
     @Inject(SystemBlueprintProvider)
-    readonly sysExt: IBlueprint,
+    readonly systemBlueprint: IBlueprint,
   ) {}
 
   /**
-   * Synchronize the offline system schemas into the database, this allows the user
+   * Synchronize the offline schemas into the database, this allows the user
    * to extend on the system's behavior, the synchronizer will only ensure the
    * existence of the schema and does not overide it if its present.
    */
-  async synchronize(link: IDatabaseConnection) {
-    // Get the schema repository.
+  async persistSchemas(connection: IDatabaseConnection) {
     const model = this.getModel<SchemaModel>('main', 'Schema');
 
-    for (const schema of link.getSchemas()) {
-      const exists = await model.query().findOne({
+    // Main connection need to insert the "System" module first.
+    if (connection.database.ref === 'main') {
+      await this.upsertSystemModule();
+    }
+
+    for (const schema of connection.getSchemas()) {
+      const isSchemaExists = await model.query().findOne({
         database: schema.database,
         reference: schema.reference,
       });
 
-      if (!exists) {
-        // Module will be added later.
-        delete schema.moduleId;
-
+      if (!isSchemaExists) {
         await model.query().insert(schema);
       }
 
       // Check if it exists in the local cache.
-      const idx = this.registry.findIndex(
+      const registryIndex = this.registry.findIndex(
         s => s.database === schema.database && s.reference === schema.reference,
       );
 
-      if (idx !== -1) {
-        this.registry.splice(idx, 1, schema);
-      } else {
-        this.registry.push(schema);
+      if (registryIndex !== -1) {
+        this.registry.splice(registryIndex, 1);
       }
+
+      this.registry.push(schema);
     }
   }
 
   /**
-   * Responsible to load system schemas from JSON format.
-   * Isolated without any database dependency so, it
-   * can be used at bootstrap to load the system
-   * schemas from local disk.
+   * Ensure that the "System" module is inserted, otherwise the system resources could not link to it.
    */
-  getSystem(): ISchema[] {
-    return this.sysExt.schemas;
+  protected async upsertSystemModule(): Promise<void> {
+    const model = this.getModel<ModuleModel>('main', 'Module');
+    const record = this.systemBlueprint.content
+      .Module[0] as unknown as IContentModule;
+
+    const isExists = await model.query().findById(record.id);
+
+    if (!isExists) {
+      await model.query().insert(record);
+    }
   }
 
   /**

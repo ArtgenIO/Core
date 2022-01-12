@@ -27,7 +27,7 @@ export class DatabaseConnectionService {
   /**
    * Create a connection to the given database, and synchornize the given schemas to it.
    */
-  async create(
+  async connect(
     database: IDatabase,
     schemas: ISchema[],
   ): Promise<IDatabaseConnection> {

@@ -37,7 +37,7 @@ describe(DatabaseConnectionService.name, () => {
       MockConnection.prototype.associate = associateMock;
 
       const service = await kernel.get(DatabaseConnectionService);
-      const connection = await service.create(
+      const connection = await service.connect(
         {
           title: 'Test Database',
           ref: 'test',

@@ -1,6 +1,9 @@
-import { Model } from 'objection';
+import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel';
+import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
+import { SystemBlueprintProvider } from '../../blueprint/provider/system-blueprint.provider';
+import { ISchema } from '../../schema';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IDatabaseConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
@@ -14,9 +17,11 @@ export class DatabaseService {
     @Logger()
     protected logger: ILogger,
     @Inject(SchemaService)
-    readonly schemaSvc: SchemaService,
+    readonly schemaService: SchemaService,
     @Inject(DatabaseConnectionService)
-    readonly connections: DatabaseConnectionService,
+    readonly connectionService: DatabaseConnectionService,
+    @Inject(SystemBlueprintProvider)
+    readonly systemBlueprint: IBlueprint,
   ) {}
 
   /**
@@ -30,21 +35,21 @@ export class DatabaseService {
    * Custom connections may fail and those fails will be logged, but not breaking the system start.
    */
   async bootstrap() {
-    const connection = await this.connections.create(
+    const connection = await this.connectionService.connect(
       this.getMainDatabase(),
-      this.schemaSvc.getSystem(),
+      this.getSystemSchemas(),
     );
 
-    this.logger.debug('Synchronizing the system resources to the database');
+    this.logger.debug('Synchronizing schemas to the [main] database');
 
     // Ensure that the system schemas are available in the database.
-    await this.synchronize(connection);
-    await this.schemaSvc.synchronize(connection);
+    await this.upsertDatabase(connection.database);
+    await this.schemaService.persistSchemas(connection);
 
     this.logger.debug('Loading custom resources from the database');
 
     const [schemas, databases] = await Promise.all([
-      this.schemaSvc.findAll(),
+      this.schemaService.findAll(),
       this.findAll(),
     ]);
 
@@ -57,8 +62,8 @@ export class DatabaseService {
       // Connection does not exists yet, load up with the schemas.
       if (database.ref !== 'main') {
         updates.push(
-          this.connections
-            .create(database, associations)
+          this.connectionService
+            .connect(database, associations)
             .catch(e => this.logger.warn(getErrorMessage(e))),
         );
       }
@@ -78,7 +83,7 @@ export class DatabaseService {
    */
   async shutdown() {
     await Promise.all(
-      this.connections
+      this.connectionService
         .findAll()
         .map(c =>
           c
@@ -91,41 +96,48 @@ export class DatabaseService {
   }
 
   /**
-   * Synchronize a link's database into the database which stores the connections.
+   * Fetch the database connection records from the database.
    */
-  async synchronize(link: IDatabaseConnection) {
-    const model = this.schemaSvc.getModel<DatabaseModel>('main', 'Database');
+  async findAll(): Promise<IDatabase[]> {
+    return (await this.model.query()).map(db => db.$toJson());
+  }
 
-    let record = await model.query().findById(link.database.ref);
+  /**
+   * Upsert the database connection with the persistent database connections table.
+   */
+  protected async upsertDatabase(database: IDatabase): Promise<void> {
+    let record = await this.model.query().findById(database.ref);
 
     if (!record) {
-      record = await model.query().insertAndFetch(link.database);
+      await this.model.query().insertAndFetch(database);
     } else {
-      record = record.$set(link.database);
-
-      await record.$query().update();
+      await record.$set(database).$query().update();
     }
   }
 
   /**
-   * Fetch the newest schemas from the database, and use this opportunity to
-   * ensure the local cache is up to date.
+   * Shorthand to access the "Database" model.
+   * We cannot inject this, because it does not exists when the service is created.
    */
-  async findAll(): Promise<IDatabase[]> {
-    return (
-      await this.schemaSvc.getModel<DatabaseModel>('main', 'Database').query()
-    ).map(db => db.$toJson());
+  protected get model(): ModelClass<DatabaseModel> {
+    return this.schemaService.getModel<DatabaseModel>('main', 'Database');
   }
 
   /**
-   * Generates a database record based on the environment variables.
-   * Database type is auto extracted from the DSN.
+   * Generates a database record based on the ARTGEN_DATABASE_DSN environment.
    */
-  getMainDatabase(): IDatabase {
+  protected getMainDatabase(): IDatabase {
     return {
       title: 'Main',
       ref: 'main',
       dsn: process.env.ARTGEN_DATABASE_DSN ?? 'sqlite::memory:',
     };
+  }
+
+  /**
+   * Accessor to acquire the system's schemas from the packaged system blueprint.
+   */
+  protected getSystemSchemas(): ISchema[] {
+    return this.systemBlueprint.schemas;
   }
 }
