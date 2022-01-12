@@ -11,7 +11,6 @@ import { ISchema } from '../../schema';
 import { IContentModule } from '../interface/content-module.interface';
 import ContentListComponent from './list.component';
 import PlaceholderComponent from './placeholder.component';
-import CrudUpdateComponent from './update.component';
 
 type SchemaWithModule = ISchema & {
   module?: IContentModule;
@@ -116,10 +115,6 @@ export default function ContentRouterComponent() {
 
       <Layout>
         <Routes>
-          <Route
-            path=":database/:reference/update"
-            element={<CrudUpdateComponent />}
-          ></Route>
           <Route
             path=":database/:reference/list"
             element={<ContentListComponent />}

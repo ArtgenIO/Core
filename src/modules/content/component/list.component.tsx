@@ -9,13 +9,15 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
+import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
 import { IContentModule } from '../interface/content-module.interface';
 import { toODataRoute } from '../util/schema-url';
-import CrudCreateComponent from './create.component';
+import ContentCreateComponent from './create.component';
 import TableComponent from './table.component';
 import TitleComponent from './title.components';
+import ContentUpdateComponent from './update.component';
 
 type RouteParams = {
   database: string;
@@ -26,10 +28,14 @@ type SchemaWithModule = ISchema & {
   module?: IContentModule;
 };
 
+type Row = Record<string, unknown> | object;
+
 export default function ContentListComponent() {
   const route = useParams() as unknown as RouteParams;
+  const httpClient = useHttpClientOld();
 
-  const [showCreate, setShowCreate] = useState<SchemaWithModule>(null);
+  const [showCreate, setShowCreate] = useState<boolean>(false);
+  const [showEdit, setShowEdit] = useState<Row>(null);
   const [schema, setSchema] = useState<SchemaWithModule>(null);
   const [modules, setModules] = useState([]);
 
@@ -94,7 +100,7 @@ export default function ContentListComponent() {
                   <Button
                     key="create"
                     type="primary"
-                    onClick={() => setShowCreate(schema)}
+                    onClick={() => setShowCreate(true)}
                     icon={<FileAddOutlined />}
                   >
                     Create New
@@ -113,13 +119,25 @@ export default function ContentListComponent() {
           />
         }
       >
-        {schema ? <TableComponent schema={schema} /> : undefined}
+        {schema ? (
+          <TableComponent schema={schema} onEdit={setShowEdit} />
+        ) : undefined}
       </PageWithHeader>
       {showCreate ? (
-        <CrudCreateComponent
-          schema={showCreate}
+        <ContentCreateComponent
+          schema={schema}
           onClose={() => {
-            setShowCreate(null);
+            setShowCreate(false);
+          }}
+        />
+      ) : undefined}
+
+      {showEdit ? (
+        <ContentUpdateComponent
+          content={showEdit}
+          schema={schema}
+          onClose={() => {
+            setShowEdit(null);
           }}
         />
       ) : undefined}

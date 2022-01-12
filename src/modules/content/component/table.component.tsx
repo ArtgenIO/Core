@@ -2,10 +2,12 @@ import {
   DeleteOutlined,
   EditOutlined,
   QuestionCircleOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons';
 import {
   Button,
   Checkbox,
+  Divider,
   message,
   Popconfirm,
   Skeleton,
@@ -15,23 +17,20 @@ import {
 import { ColumnType } from 'antd/lib/table';
 import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { FieldType, ISchema } from '../../schema';
 import { isPrimary } from '../../schema/util/field-tools';
-import {
-  routeCrudRecordAPI,
-  routeCrudRecordUI,
-  toODataRoute,
-} from '../util/schema-url';
+import { routeCrudRecordAPI, toODataRoute } from '../util/schema-url';
 
 type Props = {
   schema: ISchema;
+  onEdit: (row: Row) => void;
 };
 
-export default function TableComponent({ schema }: Props) {
+type Row = Record<string, unknown> | object;
+
+export default function TableComponent({ schema, onEdit }: Props) {
   const httpClient = useHttpClientOld();
 
   // Load content
@@ -107,16 +106,13 @@ export default function TableComponent({ schema }: Props) {
         render: (text, record: Record<string, unknown>, idx) => {
           return (
             <span key={`actions-${idx}`}>
-              <Link
-                to={routeCrudRecordUI(schema, record, CrudAction.UPDATE)}
-                key={`editl-${idx}`}
-              >
-                <Button
-                  icon={<EditOutlined />}
-                  size="small"
-                  className="rounded-md hover:text-yellow-500 hover:border-yellow-500 mr-1"
-                ></Button>
-              </Link>
+              <Button
+                icon={<EditOutlined />}
+                key="edit"
+                size="small"
+                className="rounded-md hover:text-yellow-500 hover:border-yellow-500 mr-1"
+                onClick={() => onEdit(record)}
+              ></Button>
               <Popconfirm
                 title="Are You sure to delete the record?"
                 okText="Yes, delete"
@@ -142,14 +138,20 @@ export default function TableComponent({ schema }: Props) {
   }, [schema]);
 
   return (
-    <Skeleton active loading={isContentLoading}>
-      <Table
-        dataSource={content}
-        columns={columns}
-        size="small"
-        showHeader
-        bordered
-      />
-    </Skeleton>
+    <>
+      <Button icon={<ReloadOutlined />} onClick={() => refetch()}>
+        Reload
+      </Button>
+      <Skeleton active loading={isContentLoading}>
+        <Divider className="my-2" />
+        <Table
+          dataSource={content}
+          columns={columns}
+          size="small"
+          showHeader
+          bordered
+        />
+      </Skeleton>
+    </>
   );
 }

@@ -12,7 +12,7 @@ type Props = {
   onClose: () => void;
 };
 
-export default function CrudCreateComponent({ schema, onClose }: Props) {
+export default function ContentCreateComponent({ schema, onClose }: Props) {
   const httpClient = useHttpClientOld();
   const [formSchema, setFormSchema] = useState({});
 
@@ -38,7 +38,7 @@ export default function CrudCreateComponent({ schema, onClose }: Props) {
 
   return (
     <Drawer
-      width="33%"
+      width="40%"
       visible={true}
       title={`Create New ${schema.title}`}
       onClose={onClose}
