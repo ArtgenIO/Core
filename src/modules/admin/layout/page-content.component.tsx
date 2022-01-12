@@ -17,7 +17,7 @@ export default function PageContent() {
   );
 
   const Contents = lazy(
-    () => import('../../content/component/index.component'),
+    () => import('../../content/component/_router.component'),
   );
 
   const Page = lazy(() => import('../../page/component/index.component'));

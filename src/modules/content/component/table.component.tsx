@@ -1,10 +1,7 @@
 import {
-  DatabaseOutlined,
   DeleteOutlined,
   EditOutlined,
-  FileAddOutlined,
   QuestionCircleOutlined,
-  TableOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -14,14 +11,11 @@ import {
   Skeleton,
   Table,
   TableColumnsType,
-  Tag,
 } from 'antd';
 import { ColumnType } from 'antd/lib/table';
 import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import PageHeader from '../../admin/layout/page-header.component';
-import PageWithHeader from '../../admin/layout/page-with-header.component';
+import { Link } from 'react-router-dom';
 import { useHttpClientOld } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { CrudAction } from '../../rest/interface/crud-action.enum';
@@ -33,32 +27,17 @@ import {
   toODataRoute,
 } from '../util/schema-url';
 
-interface RouteParams {
-  database: string;
-  reference: string;
-}
+type Props = {
+  schema: ISchema;
+};
 
-export default function CrudReadComponent() {
+export default function TableComponent({ schema }: Props) {
   const httpClient = useHttpClientOld();
-  const route = useParams() as unknown as RouteParams;
-
-  // Load schema
-  const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<ISchema[]>(
-    toODataRoute({ database: 'main', reference: 'Schema' }) +
-      new QueryBuilder()
-        .filter(f =>
-          f
-            .filterExpression('database', 'eq', route.database)
-            .filterExpression('reference', 'eq', route.reference),
-        )
-        .top(1)
-        .toQuery(),
-  );
 
   // Load content
   const [{ data: content, loading: isContentLoading }, refetch] = useHttpClient<
     object[]
-  >(toODataRoute(route) + new QueryBuilder().top(10_000).toQuery(), {
+  >(toODataRoute(schema) + new QueryBuilder().top(1_000).toQuery(), {
     useCache: false,
   });
 
@@ -67,7 +46,7 @@ export default function CrudReadComponent() {
 
   const doDelete = async (record: Record<string, unknown>) => {
     try {
-      await httpClient.delete<any>(routeCrudRecordAPI(schemas[0], record));
+      await httpClient.delete<any>(routeCrudRecordAPI(schema, record));
 
       message.warning(`Record deleted`);
       refetch();
@@ -77,10 +56,10 @@ export default function CrudReadComponent() {
   };
 
   useEffect(() => {
-    if (schemas && schemas.length) {
+    if (schema) {
       const columnDef: TableColumnsType = [];
 
-      for (const field of schemas[0].fields) {
+      for (const field of schema.fields) {
         const fieldDef: ColumnType<any> = {
           key: field.reference,
           title: field.title,
@@ -88,7 +67,7 @@ export default function CrudReadComponent() {
         };
 
         // Render UUID with monospace
-        if (isPrimary(field) && field.type === FieldType.UUID) {
+        if (isPrimary(field) && field.type == FieldType.UUID) {
           fieldDef.render = (value, record, idx) => (
             <span key={`ids-${idx}`} style={{ fontFamily: 'monospace' }}>
               {value}
@@ -97,21 +76,21 @@ export default function CrudReadComponent() {
         }
 
         // Render boolean checkbox
-        if (field.type === FieldType.BOOLEAN) {
+        if (field.type == FieldType.BOOLEAN) {
           fieldDef.render = (value, record, idx) => (
             <Checkbox key={`cbox-${idx}`} checked={value} disabled></Checkbox>
           );
         }
 
         // Render JSON
-        if (field.type === FieldType.JSON) {
+        if (field.type == FieldType.JSON) {
           fieldDef.render = (value, record, idx) => (
             <code
               key={`code-${idx}`}
               className="bg-gray-700 p-1 rounded-md"
               style={{ fontSize: 11 }}
             >
-              {JSON.stringify(value).substr(0, 32)}
+              {JSON.stringify(value).substring(0, 16)}
             </code>
           );
         }
@@ -129,7 +108,7 @@ export default function CrudReadComponent() {
           return (
             <span key={`actions-${idx}`}>
               <Link
-                to={routeCrudRecordUI(schemas[0], record, CrudAction.UPDATE)}
+                to={routeCrudRecordUI(schema, record, CrudAction.UPDATE)}
                 key={`editl-${idx}`}
               >
                 <Button
@@ -160,65 +139,17 @@ export default function CrudReadComponent() {
 
       setColumns(columnDef);
     }
-
-    return () => {};
-  }, [schemas]);
+  }, [schema]);
 
   return (
-    <>
-      <PageWithHeader
-        header={
-          <PageHeader
-            title={
-              schemas ? (
-                <>
-                  {schemas[0].title}
-                  <span className="ml-4">
-                    {schemas[0].tags.map(t => (
-                      <Tag key={t}>{t}</Tag>
-                    ))}
-                  </span>
-                </>
-              ) : undefined
-            }
-            avatar={{
-              icon: <TableOutlined />,
-            }}
-            actions={
-              schemas ? (
-                <>
-                  <Link
-                    key="create"
-                    to={`/admin/content/${route.database}/${route.reference}/create`}
-                  >
-                    <Button type="primary" icon={<FileAddOutlined />}>
-                      Create New
-                    </Button>
-                  </Link>
-                  <Link
-                    key="edit"
-                    to={`/admin/database/artboard/${route.database}`}
-                  >
-                    <Button type="ghost" icon={<DatabaseOutlined />}>
-                      Edit Schema
-                    </Button>
-                  </Link>
-                </>
-              ) : undefined
-            }
-          />
-        }
-      >
-        <Skeleton active loading={isContentLoading}>
-          <Table
-            dataSource={content}
-            columns={columns}
-            size="small"
-            showHeader
-            bordered
-          />
-        </Skeleton>
-      </PageWithHeader>
-    </>
+    <Skeleton active loading={isContentLoading}>
+      <Table
+        dataSource={content}
+        columns={columns}
+        size="small"
+        showHeader
+        bordered
+      />
+    </Skeleton>
   );
 }

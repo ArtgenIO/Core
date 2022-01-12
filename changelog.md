@@ -1,3 +1,10 @@
+### Version 0.1.9
+
+- Content modules on the UI
+- Simplified content editor
+- New content tree
+- Schema editor starts to merge with the content screen
+
 ### Version 0.1.8
 
 - Smarter blueprint handling

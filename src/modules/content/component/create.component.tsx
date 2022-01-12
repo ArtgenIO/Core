@@ -1,60 +1,35 @@
-import { TableOutlined } from '@ant-design/icons';
 import Form from '@rjsf/antd';
-import { Button, message, Skeleton } from 'antd';
-import { QueryBuilder } from 'odata-query-builder';
+import { Button, Drawer, message } from 'antd';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useParams } from 'react-router-dom';
-import PageHeader from '../../admin/layout/page-header.component';
-import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientOld } from '../../admin/library/http-client';
-import { useHttpClient } from '../../admin/library/use-http-client';
 import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { ISchema } from '../../schema';
 import { schemaToJsonSchema } from '../util/schema-to-jsonschema';
-import { routeCrudUI, toODataRoute, toRestRoute } from '../util/schema-url';
+import { toRestRoute } from '../util/schema-url';
 
-interface RouteParams {
-  database: string;
-  reference: string;
-}
+type Props = {
+  schema: ISchema;
+  onClose: () => void;
+};
 
-export default function CrudCreateComponent() {
-  const redirect = useNavigate();
+export default function CrudCreateComponent({ schema, onClose }: Props) {
   const httpClient = useHttpClientOld();
-
-  const route: Partial<RouteParams> = useParams();
   const [formSchema, setFormSchema] = useState({});
 
-  // Load schema
-  const [{ data: schemas, loading: iSchemaLoading }] = useHttpClient<ISchema[]>(
-    toODataRoute({ database: 'main', reference: 'Schema' }) +
-      new QueryBuilder()
-        .filter(f =>
-          f
-            .filterExpression('database', 'eq', route.database)
-            .filterExpression('reference', 'eq', route.reference),
-        )
-        .top(1)
-        .toQuery(),
-  );
-
   useEffect(() => {
-    if (schemas && schemas.length) {
-      setFormSchema(schemaToJsonSchema(schemas[0], CrudAction.CREATE, true));
-    }
+    setFormSchema(schemaToJsonSchema(schema, CrudAction.CREATE, true));
 
     return () => {
       setFormSchema({});
     };
-  }, [schemas]);
+  }, [schema]);
 
   const doCreate = async (form: any) => {
     try {
-      await httpClient.post<any>(toRestRoute(schemas[0]), form.formData);
+      await httpClient.post<any>(toRestRoute(schema), form.formData);
       message.success(`New record created!`);
 
-      redirect(routeCrudUI(schemas[0]));
+      onClose();
     } catch (error) {
       message.error(`Error while creating the record!`);
       console.error(error);
@@ -62,25 +37,17 @@ export default function CrudCreateComponent() {
   };
 
   return (
-    <Skeleton loading={iSchemaLoading}>
-      <PageWithHeader
-        header={
-          <PageHeader
-            title={`Create New ${schemas ? schemas[0].title : '~'}`}
-            avatar={{
-              icon: <TableOutlined />,
-            }}
-          />
-        }
-      >
-        <div className="content-box px-24 py-12 w-2/3 mx-auto">
-          <Form schema={formSchema} onSubmit={form => doCreate(form)}>
-            <Button type="primary" htmlType="submit">
-              Create
-            </Button>
-          </Form>
-        </div>
-      </PageWithHeader>
-    </Skeleton>
+    <Drawer
+      width="33%"
+      visible={true}
+      title={`Create New ${schema.title}`}
+      onClose={onClose}
+    >
+      <Form schema={formSchema} onSubmit={form => doCreate(form)}>
+        <Button type="primary" htmlType="submit">
+          Create
+        </Button>
+      </Form>
+    </Drawer>
   );
 }

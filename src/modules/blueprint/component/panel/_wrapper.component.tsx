@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import CrudReadComponent from '../../../content/component/read.component';
+import ContentListComponent from '../../../content/component/list.component';
 import FlowListComponent from '../../../flow/components/list.component';
 import { IBlueprint } from '../../interface/blueprint.interface';
 
@@ -110,7 +110,7 @@ export default function ExtensionPanelWrapper() {
           <Route path={`${base}/flows`} element={<FlowListComponent />}></Route>
           <Route
             path={`${base}/contents/:database/:reference`}
-            element={<CrudReadComponent />}
+            element={<ContentListComponent />}
           ></Route>
         </Routes>
       </Layout>
