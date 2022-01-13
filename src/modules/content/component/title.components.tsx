@@ -1,7 +1,7 @@
 import { message, Select, Tag } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import { useEffect, useState } from 'react';
-import { useHttpClientOld } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/http-client';
 import { ISchema } from '../../schema';
 import { IContentModule } from '../interface/content-module.interface';
 
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function TitleComponent({ schema, modules }: Props) {
-  const httpClient = useHttpClientOld();
+  const httpClient = useHttpClientSimple();
   const [assignedModuleId, setAssignedModuleId] = useState(null);
 
   useEffect(() => {

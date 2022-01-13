@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
-import { useHttpClientOld } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
 import { IContentModule } from '../interface/content-module.interface';
@@ -32,7 +32,7 @@ type Row = Record<string, unknown> | object;
 
 export default function ContentListComponent() {
   const route = useParams() as unknown as RouteParams;
-  const httpClient = useHttpClientOld();
+  const httpClient = useHttpClientSimple();
 
   const [showCreate, setShowCreate] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<Row>(null);

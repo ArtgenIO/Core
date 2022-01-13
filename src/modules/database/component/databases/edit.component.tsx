@@ -1,6 +1,6 @@
 import { Button, Drawer, Form, Input, message, notification } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
-import { useHttpClientOld } from '../../../admin/library/http-client';
+import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { IDatabase } from '../../interface';
 
 type Props = {
@@ -14,7 +14,7 @@ export default function DatabaseEditComponent({
   setDatabases,
   database,
 }: Props) {
-  const httpClient = useHttpClientOld();
+  const httpClient = useHttpClientSimple();
 
   const doUpdateDatabase = async (formValues: IDatabase) => {
     try {

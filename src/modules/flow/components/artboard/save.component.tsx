@@ -2,7 +2,7 @@ import { SaveOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useHttpClientOld } from '../../../admin/library/http-client';
+import { useHttpClientSimple } from '../../../admin/library/http-client';
 import {
   flowAtom,
   flowChangedAtom,
@@ -14,7 +14,7 @@ import { serializeFlow } from '../../util/serialize-flow';
 const SAVING_NOTIFICATION = 'saving-flow';
 
 export default function ArtboardSave() {
-  const httpClient = useHttpClientOld();
+  const httpClient = useHttpClientSimple();
   const flow = useRecoilValue(flowAtom);
   const flowInstance = useRecoilValue(flowInstanceAtom);
   const [isFlowChanged, setIsFlowChanged] = useRecoilState(flowChangedAtom);

@@ -14,7 +14,7 @@ import { useParams } from 'react-router';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { pageDrawerAtom } from '../../admin/admin.atoms';
-import { useHttpClientOld } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/http-client';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import {
   catalogCollapsedAtom,
@@ -44,7 +44,7 @@ export default function FlowArtboardComponent() {
   const resetPageDrawerState = useResetRecoilState(pageDrawerAtom);
   // Router
   const flowId: string = useParams().id;
-  const httpClient = useHttpClientOld();
+  const httpClient = useHttpClientSimple();
 
   // Local state
   const flowWrapper = useRef(null);

@@ -1,11 +1,8 @@
 import { message } from 'antd';
 import axios, { AxiosRequestConfig } from 'axios';
 import { makeUseAxios, Options } from 'axios-hooks';
-import LRU from 'lru-cache';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { jwtAtom } from '../admin.atoms';
-
-const cache = new LRU({ max: 50 });
 
 export const useHttpClient = <Resp = any, Body = any, Err = any>(
   config: AxiosRequestConfig | string,
@@ -41,7 +38,7 @@ export const useHttpClient = <Resp = any, Body = any, Err = any>(
     },
   );
 
-  const useAxios = makeUseAxios({ ...options, axios: client, cache });
+  const useAxios = makeUseAxios({ ...options, axios: client, cache: null });
 
   return useAxios<Resp, Body, Err>(config, options);
 };

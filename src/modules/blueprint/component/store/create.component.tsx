@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router';
 import { v4 } from 'uuid';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
-import { useHttpClientOld } from '../../../admin/library/http-client';
+import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { IBlueprint } from '../../interface/blueprint.interface';
 import ExtensionEdiorComponent from './_editor.component';
 
 export default function CreateExtension() {
   const redirect = useNavigate();
-  const client = useHttpClientOld();
+  const client = useHttpClientSimple();
 
   const [extension, setExtension] = useState<IBlueprint>({
     id: v4(),

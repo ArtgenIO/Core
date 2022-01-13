@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { v4 } from 'uuid';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
-import { useHttpClientOld } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { toODataRoute } from '../../content/util/schema-url';
 import { ISchema } from '../../schema';
@@ -15,7 +15,7 @@ export default function AnalyticsEditorComponent() {
   const [schema, setSchema] = useState<ISchema>(null);
   const [chartType, setChartType] = useState('counter');
   const [result, setResult] = useState(0);
-  const client = useHttpClientOld();
+  const client = useHttpClientSimple();
 
   useEffect(() => {
     if (schema) {

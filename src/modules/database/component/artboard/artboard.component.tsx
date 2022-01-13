@@ -11,7 +11,7 @@ import ReactFlow, {
   ReactFlowProvider,
 } from 'react-flow-renderer';
 import { useParams } from 'react-router-dom';
-import { useHttpClientOld } from '../../../admin/library/http-client';
+import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toODataRoute } from '../../../content/util/schema-url';
 import { ISchema } from '../../../schema';
 import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
@@ -25,7 +25,7 @@ import DatabaseToolsComponent from './tools.component';
 
 export default function DatabaseArtboardComponent() {
   // Router
-  const httpClient = useHttpClientOld();
+  const httpClient = useHttpClientSimple();
   const { ref } = useParams();
   const apiReadUrl =
     toODataRoute({

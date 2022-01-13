@@ -49,7 +49,7 @@ export class BlueprintImportLambda implements ILambda {
     @Logger()
     readonly logger: ILogger,
     @Inject(BlueprintService)
-    readonly extService: BlueprintService,
+    readonly blueprintService: BlueprintService,
   ) {}
 
   async invoke(session: FlowSession) {
@@ -60,7 +60,10 @@ export class BlueprintImportLambda implements ILambda {
 
     try {
       return {
-        blueprint: await this.extService.install(imp.database, imp.blueprint),
+        blueprint: await this.blueprintService.install(
+          imp.database,
+          imp.blueprint,
+        ),
       };
     } catch (error) {
       return {

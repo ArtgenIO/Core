@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
-import { useHttpClientOld } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/http-client';
 import { toODataRoute } from '../../content/util/schema-url';
 import { IFlow } from '../interface/flow.interface';
 import CreateFlowComponent from './create.component';
@@ -26,7 +26,7 @@ import CreateFlowComponent from './create.component';
 export default function FlowListComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [flows, setFlows] = useState<IFlow[]>([]);
-  const httpClient = useHttpClientOld();
+  const httpClient = useHttpClientSimple();
   const navigate = useNavigate();
 
   const [showCreate, setShowCreate] = useState<boolean>(false);

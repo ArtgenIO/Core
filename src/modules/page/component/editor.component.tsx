@@ -6,7 +6,7 @@ import 'grapesjs/dist/css/grapes.min.css';
 import { QueryBuilder } from 'odata-query-builder';
 import { useState } from 'react';
 import { useParams } from 'react-router';
-import { useHttpClientOld } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { toODataRoute } from '../../content/util/schema-url';
 import { IPage } from '../interface/page.interface';
@@ -19,7 +19,7 @@ type Route = {
 export default function PageEditorComponent() {
   const route: Route = useParams();
   const [editor, setEditor] = useState(null);
-  const httpClient = useHttpClientOld();
+  const httpClient = useHttpClientSimple();
 
   // Load schema
   const storeURL =

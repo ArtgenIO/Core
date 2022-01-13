@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
-import { useHttpClientOld } from '../../../admin/library/http-client';
+import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import { IBlueprint } from '../../interface/blueprint.interface';
 import ExtensionEdiorComponent from './_editor.component';
@@ -11,7 +11,7 @@ import ExtensionEdiorComponent from './_editor.component';
 export default function EditExtension() {
   const history = useNavigate();
   const params: Partial<{ id: string }> = useParams();
-  const client = useHttpClientOld();
+  const client = useHttpClientSimple();
 
   const [extension, setExtension] = useState<IBlueprint>(null);
 

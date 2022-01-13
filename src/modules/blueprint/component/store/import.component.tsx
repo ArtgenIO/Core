@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
-import { useHttpClientOld } from '../../../admin/library/http-client';
+import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import { toODataRoute } from '../../../content/util/schema-url';
 import { IDatabase } from '../../../database/interface';
@@ -17,7 +17,7 @@ type FormData = {
 export default function ImportExtension() {
   const params: { id?: string } = useParams();
   const history = useNavigate();
-  const client = useHttpClientOld();
+  const client = useHttpClientSimple();
 
   const [waitForSource, setWaitForSource] = useState(true);
   const [source, setSource] = useState('');

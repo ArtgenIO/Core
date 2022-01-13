@@ -1,7 +1,7 @@
 import Form from '@rjsf/antd';
 import { Button, Drawer, message } from 'antd';
 import { useEffect, useState } from 'react';
-import { useHttpClientOld } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/http-client';
 import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { ISchema } from '../../schema';
 import { schemaToJsonSchema } from '../util/schema-to-jsonschema';
@@ -18,7 +18,7 @@ export default function ContentUpdateComponent({
   schema,
   onClose,
 }: Props) {
-  const httpClient = useHttpClientOld();
+  const httpClient = useHttpClientSimple();
   const [formSchema, setFormSchema] = useState({});
 
   useEffect(() => {

@@ -20,7 +20,7 @@ import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useState } from 'react';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
-import { useHttpClientOld } from '../../../admin/library/http-client';
+import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import { toODataRoute } from '../../../content/util/schema-url';
 import { IDatabase } from '../../interface';
@@ -29,7 +29,7 @@ import DatabaseEditComponent from './edit.component';
 import DatabaseExportComponent from './export.component';
 
 export default function DatabaseListComponent() {
-  const client = useHttpClientOld();
+  const client = useHttpClientSimple();
 
   // Local state
   const [showConnect, setShowConnect] = useState(false);

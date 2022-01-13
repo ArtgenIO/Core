@@ -17,7 +17,7 @@ import {
 import { ColumnType } from 'antd/lib/table';
 import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useState } from 'react';
-import { useHttpClientOld } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { FieldType, ISchema } from '../../schema';
 import { isPrimary } from '../../schema/util/field-tools';
@@ -31,7 +31,7 @@ type Props = {
 type Row = Record<string, unknown> | object;
 
 export default function TableComponent({ schema, onEdit }: Props) {
-  const httpClient = useHttpClientOld();
+  const httpClient = useHttpClientSimple();
 
   // Load content
   const [{ data: content, loading: isContentLoading }, refetch] = useHttpClient<
