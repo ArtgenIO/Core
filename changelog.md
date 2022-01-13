@@ -1,3 +1,11 @@
+### Version 0.1.10
+
+- Remove duplicated EPs
+- Fix JS error in the content list view
+- Delete a lot of dupe code
+- Improved OData support
+- Improved reactivity on schema changes
+
 ### Version 0.1.9
 
 - Unifyed UI for the main content manager
