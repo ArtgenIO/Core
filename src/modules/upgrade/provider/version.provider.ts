@@ -1,12 +1,12 @@
 import { Provider } from '@loopback/context';
-import { readFile } from 'fs/promises';
+import { readFileSync } from 'fs';
 import { join } from 'path';
 import { Service } from '../../../app/container';
 import { ROOT_DIR } from '../../../app/globals';
 
 @Service()
 export class VersionProvider implements Provider<string> {
-  async value(): Promise<string> {
-    return (await readFile(join(ROOT_DIR, 'version'))).toString();
+  value(): string {
+    return readFileSync(join(ROOT_DIR, 'version')).toString();
   }
 }
