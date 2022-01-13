@@ -13,11 +13,6 @@ type ModuleModel = IContentModule & Model;
 
 @Service()
 export class SchemaService {
-  /**
-   * In memory cache to access schemas.
-   */
-  registry: ISchema[] = [];
-
   constructor(
     @Logger()
     readonly logger: ILogger,
@@ -51,17 +46,6 @@ export class SchemaService {
       if (!isSchemaExists) {
         await model.query().insert(schema);
       }
-
-      // Check if it exists in the local cache.
-      const registryIndex = this.registry.findIndex(
-        s => s.database === schema.database && s.reference === schema.reference,
-      );
-
-      if (registryIndex !== -1) {
-        this.registry.splice(registryIndex, 1);
-      }
-
-      this.registry.push(schema);
     }
   }
 
@@ -84,12 +68,10 @@ export class SchemaService {
    * Fetch the newest schemas from the database, and use this opportunity to
    * ensure the local cache is up to date.
    */
-  async findAll(): Promise<ISchema[]> {
-    const schemas = await this.getModel<SchemaModel>('main', 'Schema').query();
-
-    this.registry = schemas.map(s => s.$toJson());
-
-    return this.registry;
+  async fetchAll(): Promise<ISchema[]> {
+    return (await this.getModel<SchemaModel>('main', 'Schema').query()).map(s =>
+      s.$toJson(),
+    );
   }
 
   /**
@@ -102,51 +84,7 @@ export class SchemaService {
     return this.connections.findOne(database).getModel<T>(schema);
   }
 
-  getSchema(database: string, schema: string): ISchema {
-    return this.connections.findOne(database).getSchema(schema);
-  }
-
-  findByDatabase(database: string) {
-    return this.registry.filter(s => s.database === database);
-  }
-
-  findOne(database: string, reference: string): ISchema {
-    return this.registry.find(
-      s => s.database === database && s.reference === reference,
-    );
-  }
-
-  async create(schema: ISchema) {
-    const model = this.getModel<SchemaModel>('main', 'Schema');
-    await model.query().insert(schema);
-
-    this.registry.push(schema);
-    this.event.emit('schema.created', schema);
-
-    return schema;
-  }
-
-  async update(update: ISchema) {
-    const model = this.getModel<SchemaModel>('main', 'Schema');
-    const record = await model.query().findOne({
-      database: update.database,
-      reference: update.reference,
-    });
-
-    record.$set(update);
-
-    await model.query().patch(record);
-
-    this.registry.splice(
-      this.registry.findIndex(
-        s => s.database === update.database && s.reference === update.reference,
-      ),
-      1,
-      record.$toJson(),
-    );
-
-    this.event.emit('schema.updated', record);
-
-    return record;
+  getSchema(database: string, reference: string): ISchema {
+    return this.connections.findOne(database).getSchema(reference);
   }
 }

@@ -198,7 +198,7 @@ export class ODataService {
   ): Promise<SchemaInput[]> {
     // Load the model
     const model = this.schema.getModel(database, reference);
-    const schema = this.schema.findOne(database, reference);
+    const schema = this.schema.getSchema(database, reference);
 
     // Merge with the defualts
     const options = pick(
@@ -244,7 +244,7 @@ export class ODataService {
     // Load the model
     const model = this.schema.getModel(database, reference);
     // Load the data schema
-    const schema = this.schema.findOne(database, reference);
+    const schema = this.schema.getSchema(database, reference);
     const primaryKeys = schema.fields.filter(isPrimary).map(f => f.reference);
     const result: IODataResult[] = [];
     const queryFilters = {};

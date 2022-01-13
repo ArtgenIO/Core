@@ -99,7 +99,7 @@ export class RestService {
     // Load the model
     const model = this.schema.getModel(database, reference);
     // Load the data schema
-    const schema = this.schema.findOne(database, reference);
+    const schema = this.schema.getSchema(database, reference);
 
     // Fetch the record
     const record = await model.query().findById(Object.values(idValues));

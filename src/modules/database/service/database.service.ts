@@ -49,7 +49,7 @@ export class DatabaseService {
     this.logger.debug('Loading custom resources from the database');
 
     const [schemas, databases] = await Promise.all([
-      this.schemaService.findAll(),
+      this.schemaService.fetchAll(),
       this.findAll(),
     ]);
 

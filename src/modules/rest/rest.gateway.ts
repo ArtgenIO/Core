@@ -29,7 +29,7 @@ export class RestGateway implements IHttpGateway {
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
-    const schemas = await this.schema.findAll();
+    const schemas = await this.schema.fetchAll();
     const preHandler = await this.kernel.get<RouteHandlerMethod>(
       AuthenticationHandlerProvider,
     );

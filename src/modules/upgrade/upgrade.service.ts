@@ -1,8 +1,6 @@
 import axios from 'axios';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
-import { ILogger, Logger, Service } from '../../app/container';
-import { ROOT_DIR } from '../../app/globals';
+import { ILogger, Inject, Logger, Service } from '../../app/container';
+import { VersionProvider } from './provider/version.provider';
 const semver = require('semver-compare');
 
 const CHANNEL = 'stable';
@@ -14,6 +12,8 @@ export class UpgradeService {
   constructor(
     @Logger()
     readonly logger: ILogger,
+    @Inject(VersionProvider)
+    readonly localVersion: string,
   ) {}
 
   async shouldUpgrade(): Promise<boolean> {
@@ -21,25 +21,15 @@ export class UpgradeService {
       return false;
     }
 
-    const localVersion = await this.getLocalVersion();
-
-    return (
-      semver(await this.getUpstreamVersion(localVersion), localVersion) === 1
-    );
+    return semver(await this.getUpstreamVersion(), this.localVersion) === 1;
   }
 
-  async getLocalVersion(): Promise<string> {
-    if (!this.version) {
-      this.version = (await readFile(join(ROOT_DIR, 'version'))).toString();
-    }
-
-    return this.version;
-  }
-
-  async getUpstreamVersion(localVersion: string): Promise<string> {
+  async getUpstreamVersion(): Promise<string> {
     try {
       const reply = await axios.get(
-        `https://artgen.cloud/version?channel=${CHANNEL}&uptime=${process.uptime()}&local-version=${localVersion}`,
+        `https://artgen.cloud/version?channel=${CHANNEL}&uptime=${process.uptime()}&local-version=${
+          this.localVersion
+        }`,
         {
           timeout: 10000,
         },
@@ -62,6 +52,6 @@ export class UpgradeService {
       this.logger.error('Error while fetching the version info');
     }
 
-    return this.getLocalVersion();
+    return this.localVersion;
   }
 }

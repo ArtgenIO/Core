@@ -40,7 +40,7 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
     await server.register(OpenAPIPlugin, {
       routePrefix: '/api/docs',
       mode: 'dynamic',
-      openapi: await this.openApiSvc.getDocument(),
+      openapi: this.openApiSvc.getDocument(),
       uiConfig: {
         displayRequestDuration: true,
         docExpansion: 'none',

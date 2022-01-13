@@ -138,7 +138,7 @@ export class LogicHttpGateway implements IHttpGateway {
 
               const elapsed = Date.now() - startAt;
               this.logger.info(
-                'WFSession [%s] executed in [%d] ms',
+                'FlowSession [%s] executed in [%d] ms',
                 session.id,
                 elapsed,
               );

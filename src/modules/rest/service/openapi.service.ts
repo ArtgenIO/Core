@@ -5,6 +5,7 @@ import { OpenAPIV3 } from 'openapi-types';
 import { Inject, Service } from '../../../app/container';
 import { FieldType, ISchema } from '../../schema';
 import { FieldTool, isPrimary } from '../../schema/util/field-tools';
+import { VersionProvider } from '../../upgrade/provider/version.provider';
 import { UpgradeService } from '../../upgrade/upgrade.service';
 import { CrudAction } from '../interface/crud-action.enum';
 
@@ -13,14 +14,16 @@ export class OpenApiService {
   constructor(
     @Inject(UpgradeService)
     readonly upgradeService: UpgradeService,
+    @Inject(VersionProvider)
+    readonly localVersion: string,
   ) {}
 
-  async getDocument(): Promise<Partial<OpenAPIV3.Document>> {
+  getDocument(): Partial<OpenAPIV3.Document> {
     return {
       info: {
         title: 'Artgen Core - API',
         description: 'Http Upstream Server Documentation',
-        version: await this.upgradeService.getLocalVersion(),
+        version: this.localVersion,
       },
       components: {
         securitySchemes: {

@@ -1,12 +1,10 @@
-import { ILogger, Inject, Logger } from '../../app/container';
+import { Inject } from '../../app/container';
 import { Observer, On } from '../event';
 import { HttpService } from './service/http.service';
 
 @Observer()
 export class HttpObserver {
   constructor(
-    @Logger()
-    readonly logger: ILogger,
     @Inject(HttpService)
     readonly service: HttpService,
   ) {}
@@ -14,14 +12,21 @@ export class HttpObserver {
   @On('crud.main.Schema.*', {
     debounce: 500,
   })
-  async handleSchemaChange() {
+  async onSchemaChange() {
     this.service.updateUpstream();
   }
 
   @On('crud.main.Page.*', {
     debounce: 500,
   })
-  async handlePageChange() {
+  async onPageChange() {
+    this.service.updateUpstream();
+  }
+
+  @On('crud.main.Flow.*', {
+    debounce: 500,
+  })
+  async onFlowChange() {
     this.service.updateUpstream();
   }
 }

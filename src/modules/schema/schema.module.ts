@@ -3,25 +3,12 @@ import { moduleRef } from '../../app/container/module-ref';
 import { BlueprintModule } from '../blueprint/blueprint.module';
 import { DatabaseModule } from '../database/database.module';
 import { EventModule } from '../event';
-import { CreateSchemaLambda } from './lambda/create.lambda';
-import { ReadSchemaLambda } from './lambda/read.lambda';
-import { UpdateSchemaLambda } from './lambda/update.lambda';
-import { SchemaObserver } from './schema.observer';
-import { SchemaScheduler } from './schema.scheduler';
 import { KeyValueService } from './service/key-value.service';
 import { SchemaService } from './service/schema.service';
 
 @Module({
   imports: [moduleRef(() => EventModule), moduleRef(() => BlueprintModule)],
   dependsOn: [moduleRef(() => DatabaseModule)],
-  providers: [
-    CreateSchemaLambda,
-    KeyValueService,
-    ReadSchemaLambda,
-    SchemaService,
-    UpdateSchemaLambda,
-    SchemaScheduler,
-    SchemaObserver,
-  ],
+  providers: [KeyValueService, SchemaService],
 })
 export class SchemaModule {}
