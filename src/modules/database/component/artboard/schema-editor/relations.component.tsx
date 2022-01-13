@@ -6,7 +6,7 @@ import { useResetRecoilState } from 'recoil';
 import { Exception } from '../../../../../app/exceptions/exception';
 import { pageDrawerAtom } from '../../../../admin/admin.atoms';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
-import { toODataRoute } from '../../../../content/util/schema-url';
+import { toRestRoute } from '../../../../content/util/schema-url';
 import { ISchema } from '../../../../schema';
 import { RelationKind } from '../../../../schema/interface/relation.interface';
 import { isPrimary } from '../../../../schema/util/field-tools';
@@ -28,7 +28,7 @@ export default function RelationsComponent({
   );
 
   const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
-    toODataRoute({ database: 'main', reference: 'Schema' }) +
+    toRestRoute({ database: 'main', reference: 'Schema' }) +
       new QueryBuilder()
         .top(1000)
         .filter(f => f.filterExpression('database', 'eq', schema.database))

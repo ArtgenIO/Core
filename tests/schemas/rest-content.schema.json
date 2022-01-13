@@ -1,0 +1,90 @@
+{
+  "database": "main",
+  "reference": "odataTest",
+  "tableName": "_test_odata_content",
+  "moduleId": null,
+  "fields": [
+    {
+      "title": "id",
+      "reference": "id",
+      "columnName": "id",
+      "type": "uuid",
+      "args": {},
+      "tags": [
+        "primary"
+      ]
+    },
+    {
+      "title": "Name",
+      "reference": "name",
+      "columnName": "_name_",
+      "type": "text",
+      "args": {},
+      "tags": [
+        "unique"
+      ]
+    },
+    {
+      "title": "Just ID",
+      "reference": "justId",
+      "columnName": "__just_____id",
+      "type": "uuid",
+      "args": {},
+      "tags": [
+        "nullable"
+      ],
+      "defaultValue": null
+    },
+    {
+      "title": "Date Field",
+      "reference": "dateField",
+      "columnName": "date_field",
+      "type": "timestamp",
+      "args": {},
+      "tags": [
+        "nullable"
+      ],
+      "defaultValue": null
+    },
+    {
+      "title": "Created Field",
+      "reference": "createdAt",
+      "columnName": "CReatedAT",
+      "type": "timestamp",
+      "args": {},
+      "tags": [
+        "created"
+      ]
+    },
+    {
+      "title": "Updated Field",
+      "reference": "updatedAt",
+      "columnName": "UPDATED_AT",
+      "type": "timestamp",
+      "args": {},
+      "tags": [
+        "updated"
+      ]
+    },
+    {
+      "title": "Enumerated Field",
+      "reference": "decision",
+      "columnName": "d_e_cis_ION",
+      "type": "enum",
+      "args": {
+        "values": [
+          "yes",
+          "no",
+          "maybe"
+        ]
+      },
+      "tags": [],
+      "defaultValue": "yes"
+    }
+  ],
+  "indices": [],
+  "relations": [],
+  "uniques": [],
+  "title": "Commons",
+  "tags": []
+}

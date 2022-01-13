@@ -31,7 +31,7 @@ export default function DatabaseRouterComponent() {
   const [{ data: databases, loading, error }] = useHttpClient<
     DatabaseWithSchemas[]
   >(
-    '/api/odata/main/database' +
+    '/api/rest/main/database' +
       new QueryBuilder()
         .top(5000)
         .select(

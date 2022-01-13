@@ -12,7 +12,7 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { useParams } from 'react-router-dom';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
-import { toODataRoute } from '../../../content/util/schema-url';
+import { toRestRoute } from '../../../content/util/schema-url';
 import { ISchema } from '../../../schema';
 import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
 import { createEmptySchema } from '../../../schema/util/get-new-schema';
@@ -28,7 +28,7 @@ export default function DatabaseArtboardComponent() {
   const httpClient = useHttpClientSimple();
   const { ref } = useParams();
   const apiReadUrl =
-    toODataRoute({
+    toRestRoute({
       database: 'main',
       reference: 'Schema',
     }) +
@@ -110,19 +110,10 @@ export default function DatabaseArtboardComponent() {
     for (const deleted of deletedRefs) {
       await httpClient
         .delete(
-          toODataRoute({
+          toRestRoute({
             database: 'main',
             reference: 'Schema',
-          }) +
-            new QueryBuilder()
-              .top(1)
-              .filter(f => {
-                f.filterExpression('database', 'eq', ref);
-                f.filterExpression('reference', 'eq', deleted.reference);
-
-                return f;
-              }, 'and')
-              .toQuery(),
+          }) + `${ref}/${deleted.reference}`,
         )
         .then(() => {
           // message.success(`Schema [${deleted.reference}] deleted!`);

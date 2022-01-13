@@ -2,7 +2,7 @@ import { Button, Divider, Form, Input, Select, Transfer } from 'antd';
 import { startCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import { toODataRoute } from '../../../content/util/schema-url';
+import { toRestRoute } from '../../../content/util/schema-url';
 import { IFlow } from '../../../flow/interface';
 import { ISchema } from '../../../schema';
 import { IBlueprint } from '../../interface/blueprint.interface';
@@ -45,14 +45,14 @@ export default function ExtensionEdiorComponent({
   const [{ data: schemasReply, loading: schemasLoading }] = useHttpClient<
     ISchema[]
   >(
-    toODataRoute({
+    toRestRoute({
       database: 'main',
       reference: 'Schema',
     }),
   );
 
   const [{ data: flowReply, loading: flowLoading }] = useHttpClient<IFlow[]>(
-    toODataRoute({
+    toRestRoute({
       database: 'main',
       reference: 'Flow',
     }),

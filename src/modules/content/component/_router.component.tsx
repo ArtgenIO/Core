@@ -64,7 +64,7 @@ export default function ContentRouterComponent() {
   const [tree, setTree] = useState<TreeDataNode[]>([]);
 
   const [{ data: schemas, loading, error }] = useHttpClient<SchemaWithModule[]>(
-    '/api/odata/main/schema' +
+    '/api/rest/main/schema' +
       new QueryBuilder().top(1_000).select('*,module').toQuery(),
     {
       useCache: false,

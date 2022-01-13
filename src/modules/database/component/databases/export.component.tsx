@@ -4,6 +4,7 @@ import { QueryBuilder } from 'odata-query-builder';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import { useHttpClient } from '../../../admin/library/use-http-client';
+import { toRestRoute } from '../../../content/util/schema-url';
 import { ISchema } from '../../../schema';
 import { IDatabase } from '../../interface';
 
@@ -18,7 +19,7 @@ type DatabaseWithSchemas = IDatabase & {
 
 export default function DatabaseExportComponent({ onClose, database }: Props) {
   const [{ data, loading, error }] = useHttpClient<DatabaseWithSchemas[]>(
-    '/api/odata/main/database' +
+    toRestRoute({ database: 'main', reference: 'Database' }) +
       new QueryBuilder()
         .top(1)
         .select('ref,schemas')

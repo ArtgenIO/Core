@@ -22,7 +22,7 @@ import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import { toODataRoute } from '../../../content/util/schema-url';
+import { toRestRoute } from '../../../content/util/schema-url';
 import { IDatabase } from '../../interface';
 import DatabaseConnectComponent from './connect.component';
 import DatabaseEditComponent from './edit.component';
@@ -38,7 +38,7 @@ export default function DatabaseListComponent() {
   const [databases, setDatabases] = useState<IDatabase[]>([]);
 
   const [{ data, loading, error }] = useHttpClient<IDatabase[]>(
-    toODataRoute({ database: 'main', reference: 'Database' }) +
+    toRestRoute({ database: 'main', reference: 'Database' }) +
       new QueryBuilder().top(100).toQuery(),
     {
       useCache: false,

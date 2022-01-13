@@ -8,7 +8,6 @@ import { HealthCheckModule } from '../modules/health-check/health-check.module';
 import { HttpModule } from '../modules/http/http.module';
 import { IdentityModule } from '../modules/identity/identity.module';
 import { LambdaModule } from '../modules/lambda/lambda.module';
-import { ODataModule } from '../modules/odata/odata.module';
 import { PageModule } from '../modules/page/page.module';
 import { RestModule } from '../modules/rest/rest.module';
 import { RpcModule } from '../modules/rpc/rpc.module';
@@ -33,7 +32,6 @@ import { LogLambda } from './logger/log.lambda';
     HttpModule,
     IdentityModule,
     LambdaModule,
-    ODataModule,
     PageModule,
     RestModule,
     RpcModule,

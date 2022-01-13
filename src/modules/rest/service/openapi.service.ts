@@ -53,10 +53,6 @@ export class OpenApiService {
           description: 'Rest structured endpoints',
         },
         {
-          name: 'OData',
-          description: 'OData backed endpoints',
-        },
-        {
           name: 'Flow',
           description: 'Flow defined HTTP triggers',
         },
@@ -113,6 +109,15 @@ export class OpenApiService {
         definition.params = this.getUrlParamsSchema(schema);
         break;
 
+      case CrudAction.FIND:
+        definition.response[400] = this.getBadRequestResponseSchema();
+        definition.response[404] = this.getNotFoundResponseSchema();
+        definition.response[200] = {
+          description: 'OK',
+          ...(this.getJsonSchema(schema, CrudAction.FIND) as JSONSchema7Object),
+        };
+        break;
+
       case CrudAction.UPDATE:
         definition.response[400] = this.getBadRequestResponseSchema();
         definition.response[404] = this.getNotFoundResponseSchema();
@@ -139,7 +144,7 @@ export class OpenApiService {
   }
 
   getJsonSchema(schema: ISchema, action: CrudAction): JSONSchema7Definition {
-    const jschema: JSONSchema7Definition = {
+    let jschema: JSONSchema7Definition = {
       type: 'object',
       properties: {},
       required: [],
@@ -233,6 +238,13 @@ export class OpenApiService {
       if (!isNullable && !FieldTool.hasDefaultValue(field)) {
         jschema.required.push(field.reference);
       }
+    }
+
+    if (action === CrudAction.FIND) {
+      jschema = {
+        type: 'array',
+        items: jschema,
+      };
     }
 
     return jschema;

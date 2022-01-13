@@ -5,5 +5,5 @@ export interface IAccessKey {
   accountId: string;
   issuedAt: string | Date;
 
-  account: IAccount;
+  account?: IAccount;
 }

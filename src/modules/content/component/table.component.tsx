@@ -21,7 +21,7 @@ import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { FieldType, ISchema } from '../../schema';
 import { isPrimary } from '../../schema/util/field-tools';
-import { routeCrudRecordAPI, toODataRoute } from '../util/schema-url';
+import { toRestRecordRoute, toRestRoute } from '../util/schema-url';
 
 type Props = {
   schema: ISchema;
@@ -36,7 +36,7 @@ export default function TableComponent({ schema, onEdit }: Props) {
   // Load content
   const [{ data: content, loading: isContentLoading }, refetch] = useHttpClient<
     object[]
-  >(toODataRoute(schema) + new QueryBuilder().top(1_000).toQuery(), {
+  >(toRestRoute(schema) + new QueryBuilder().top(1_000).toQuery(), {
     useCache: false,
   });
 
@@ -45,7 +45,7 @@ export default function TableComponent({ schema, onEdit }: Props) {
 
   const doDelete = async (record: Record<string, unknown>) => {
     try {
-      await httpClient.delete<any>(routeCrudRecordAPI(schema, record));
+      await httpClient.delete<any>(toRestRecordRoute(schema, record));
 
       message.warning(`Record deleted`);
       refetch();

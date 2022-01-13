@@ -70,10 +70,10 @@ export class HttpService {
   /**
    * Update the upstream server
    */
-  updateUpstream() {
+  async updateUpstream() {
     // Only propagate when the first upstream is online.
     if (this.bootstrapped) {
-      this.createUpstream();
+      await this.createUpstream();
     }
   }
 

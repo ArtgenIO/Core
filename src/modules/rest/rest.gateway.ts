@@ -4,7 +4,8 @@ import {
   FastifyRequest,
   RouteHandlerMethod,
 } from 'fastify';
-import { Inject, Service } from '../../app/container';
+import kebabCase from 'lodash.kebabcase';
+import { ILogger, Inject, Logger, Service } from '../../app/container';
 import { IKernel, Kernel } from '../../app/kernel';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
 import { AuthenticationHandlerProvider } from '../identity/provider/authentication-handler.provider';
@@ -18,6 +19,8 @@ import { RestService } from './service/rest.service';
 })
 export class RestGateway implements IHttpGateway {
   constructor(
+    @Logger()
+    readonly logger: ILogger,
     @Inject(RestService)
     readonly rest: RestService,
     @Inject(OpenApiService)
@@ -80,6 +83,38 @@ export class RestGateway implements IHttpGateway {
             schema.database,
             schema.reference,
             request.params,
+          );
+
+          if (record) {
+            reply.header('content-type', 'application/json');
+            return JSON.stringify(record);
+          }
+
+          // Handle the 404 error
+          reply.statusCode = 404;
+
+          return {
+            error: 'Not Found',
+            statusCode: 404,
+          };
+        },
+      );
+
+      // Find action
+      httpServer.get(
+        this.openApi.getResourceURL(schema),
+        {
+          schema: this.openApi.toFastifySchema(schema, CrudAction.FIND),
+          preHandler,
+        },
+        async (
+          request: FastifyRequest,
+          reply: FastifyReply,
+        ): Promise<unknown> => {
+          const record = await this.rest.find(
+            schema.database,
+            schema.reference,
+            request.query as Record<string, unknown>,
           );
 
           if (record) {
@@ -181,6 +216,12 @@ export class RestGateway implements IHttpGateway {
             };
           }
         },
+      );
+
+      this.logger.info(
+        'REST routes for [%s/%s] registered',
+        kebabCase(schema.database),
+        kebabCase(schema.reference),
       );
     }
   }

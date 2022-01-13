@@ -69,7 +69,7 @@ export default function FlowRouterComponent() {
   const [{ data: flows, loading, error }, refetch] = useHttpClient<
     FlowWithModule[]
   >(
-    '/api/odata/main/flow' +
+    '/api/rest/main/flow' +
       new QueryBuilder().top(1_000).select('*,module').toQuery(),
     {
       useCache: false,

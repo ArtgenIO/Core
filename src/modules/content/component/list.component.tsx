@@ -13,7 +13,7 @@ import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
 import { IContentModule } from '../interface/content-module.interface';
-import { toODataRoute } from '../util/schema-url';
+import { toRestRoute } from '../util/schema-url';
 import ContentCreateComponent from './create.component';
 import TableComponent from './table.component';
 import TitleComponent from './title.components';
@@ -43,7 +43,7 @@ export default function ContentListComponent() {
   const [{ data: schemaResponse, loading: iSchemaLoading }] = useHttpClient<
     SchemaWithModule[]
   >(
-    toODataRoute({ database: 'main', reference: 'Schema' }) +
+    toRestRoute({ database: 'main', reference: 'Schema' }) +
       new QueryBuilder()
         .filter(f =>
           f
@@ -59,7 +59,7 @@ export default function ContentListComponent() {
   const [{ data: modulesResponse, loading: isModulesLoading }] = useHttpClient<
     IContentModule[]
   >(
-    toODataRoute({ database: 'main', reference: 'Module' }) +
+    toRestRoute({ database: 'main', reference: 'Module' }) +
       new QueryBuilder().top(500).toQuery(),
   );
 

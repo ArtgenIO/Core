@@ -8,7 +8,7 @@ import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { toODataRoute } from '../../content/util/schema-url';
+import { toRestRoute } from '../../content/util/schema-url';
 import { ISchema } from '../../schema';
 
 export default function AnalyticsEditorComponent() {
@@ -21,7 +21,7 @@ export default function AnalyticsEditorComponent() {
     if (schema) {
       client
         .get<unknown[]>(
-          toODataRoute({
+          toRestRoute({
             database: 'main',
             reference: schema.reference,
           }),
@@ -33,7 +33,7 @@ export default function AnalyticsEditorComponent() {
   }, [schema]);
 
   const [{ data, loading, error }] = useHttpClient<ISchema[]>(
-    toODataRoute({
+    toRestRoute({
       database: 'main',
       reference: 'Schema',
     }),

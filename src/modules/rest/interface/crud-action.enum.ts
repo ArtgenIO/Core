@@ -3,4 +3,5 @@ export enum CrudAction {
   READ = 'read',
   UPDATE = 'update',
   DELETE = 'delete',
+  FIND = 'find',
 }

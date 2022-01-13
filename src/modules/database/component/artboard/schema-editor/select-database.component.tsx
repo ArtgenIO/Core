@@ -4,7 +4,7 @@ import { cloneDeep, startCase } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
-import { toODataRoute } from '../../../../content/util/schema-url';
+import { toRestRoute } from '../../../../content/util/schema-url';
 import { ISchema } from '../../../../schema';
 import { IDatabase } from '../../../interface';
 
@@ -16,7 +16,7 @@ export default function SelectDatabaseComponent({
   setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
 }) {
   const [{ data: databases, loading, error }] = useHttpClient<IDatabase[]>(
-    toODataRoute({
+    toRestRoute({
       database: 'main',
       reference: 'Database',
     }),

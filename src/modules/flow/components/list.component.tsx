@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../admin/library/http-client';
-import { toODataRoute } from '../../content/util/schema-url';
+import { toRestRoute } from '../../content/util/schema-url';
 import { IFlow } from '../interface/flow.interface';
 import CreateFlowComponent from './create.component';
 
@@ -54,7 +54,7 @@ export default function FlowListComponent() {
 
   useEffect(() => {
     httpClient
-      .get<IFlow[]>(toODataRoute({ database: 'main', reference: 'Flow' }))
+      .get<IFlow[]>(toRestRoute({ database: 'main', reference: 'Flow' }))
       .then(response => {
         setFlows(response.data);
         setIsLoading(false);
