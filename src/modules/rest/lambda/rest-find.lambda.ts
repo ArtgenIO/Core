@@ -1,4 +1,5 @@
 import { Inject, Service } from '../../../app/container';
+import { RowLike } from '../../../app/interface/row-like.interface';
 import { getErrorMessage } from '../../../app/kernel';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
@@ -133,7 +134,7 @@ export class RestFindLambda implements ILambda {
   ) {}
 
   async invoke(session: FlowSession) {
-    const conditions = session.getInput<Record<string, unknown>>('conditions');
+    const conditions = session.getInput<RowLike>('conditions');
     const config = session.getConfig<Config>();
 
     try {

@@ -1,4 +1,5 @@
 import { Service } from '../../../app/container';
+import { RowLike } from '../../../app/interface/row-like.interface';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
@@ -10,10 +11,10 @@ import {
 } from '../../lambda/utility/json-schema.helpers';
 
 type IncomingRequest = {
-  headers: Record<string, unknown>;
-  params: Record<string, unknown>;
-  query: Record<string, unknown>;
-  body: Record<string, unknown> | string;
+  headers: RowLike;
+  params: RowLike;
+  query: RowLike;
+  body: RowLike | string;
   url: string;
 };
 

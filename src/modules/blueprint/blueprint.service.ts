@@ -2,13 +2,12 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { ILogger, Inject, Logger, Service } from '../../app/container';
 import { SEED_DIR } from '../../app/globals';
+import { RowLike } from '../../app/interface/row-like.interface';
 import { getErrorMessage } from '../../app/kernel';
 import { DatabaseConnectionService } from '../database/service/database-connection.service';
 import { RestService } from '../rest/service/rest.service';
 import { IBlueprint } from './interface/blueprint.interface';
 import { SystemBlueprintProvider } from './provider/system-blueprint.provider';
-
-type R = Record<string, unknown>;
 
 @Service()
 export class BlueprintService {
@@ -108,7 +107,7 @@ export class BlueprintService {
 
       if (!isExists) {
         await this.rest
-          .create('main', 'Flow', flow as unknown as R)
+          .create('main', 'Flow', flow as unknown as RowLike)
           .then(() =>
             this.logger.info(
               'Flow [%s][%s] installed',

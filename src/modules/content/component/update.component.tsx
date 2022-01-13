@@ -1,6 +1,7 @@
 import Form from '@rjsf/antd';
 import { Button, Drawer, message } from 'antd';
 import { useEffect, useState } from 'react';
+import { RowLike } from '../../../app/interface/row-like.interface';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { ISchema } from '../../schema';
@@ -9,7 +10,7 @@ import { toRestRecordRoute } from '../util/schema-url';
 
 type Props = {
   schema: ISchema;
-  content: Record<string, unknown> | object;
+  content: RowLike;
   onClose: () => void;
 };
 

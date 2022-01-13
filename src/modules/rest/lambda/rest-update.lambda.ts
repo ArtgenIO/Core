@@ -1,4 +1,5 @@
 import { Inject, Service } from '../../../app/container';
+import { RowLike } from '../../../app/interface/row-like.interface';
 import { getErrorMessage } from '../../../app/kernel';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
@@ -14,7 +15,7 @@ type Config = {
 
 type Input = {
   identifiers: Record<string, string>;
-  changes: Record<string, unknown>;
+  changes: RowLike;
 };
 
 @Service({

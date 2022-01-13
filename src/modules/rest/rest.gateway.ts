@@ -6,6 +6,7 @@ import {
 } from 'fastify';
 import kebabCase from 'lodash.kebabcase';
 import { ILogger, Inject, Logger, Service } from '../../app/container';
+import { RowLike } from '../../app/interface/row-like.interface';
 import { IKernel, Kernel } from '../../app/kernel';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
 import { AuthenticationHandlerProvider } from '../identity/provider/authentication-handler.provider';
@@ -114,7 +115,7 @@ export class RestGateway implements IHttpGateway {
           const record = await this.rest.find(
             schema.database,
             schema.reference,
-            request.query as Record<string, unknown>,
+            request.query as RowLike,
           );
 
           if (record) {

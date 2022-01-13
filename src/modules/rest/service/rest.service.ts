@@ -1,12 +1,11 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
+import { RowLike } from '../../../app/interface/row-like.interface';
 import { getErrorMessage } from '../../../app/kernel';
 import { SchemaService } from '../../schema/service/schema.service';
 import { isManagedField, isPrimary } from '../../schema/util/field-tools';
 import { ODataService } from './odata.service';
-
-type Row = Record<string, unknown> | object;
 
 /**
  * Provides CRUD functions with odata filtering and query compositions.
@@ -29,8 +28,8 @@ export class RestService {
   async find(
     database: string,
     reference: string,
-    filters: Row,
-  ): Promise<Row[]> {
+    filters: RowLike,
+  ): Promise<RowLike[]> {
     const model = this.schema.getModel(database, reference);
     const schema = this.schema.getSchema(database, reference);
 
@@ -42,7 +41,7 @@ export class RestService {
   /**
    * Create single record.
    */
-  async create<R = Row>(
+  async create<R = RowLike>(
     database: string,
     reference: string,
     input: R,
@@ -71,7 +70,7 @@ export class RestService {
     database: string,
     reference: string,
     filterKeys: object,
-  ): Promise<Row | null> {
+  ): Promise<RowLike | null> {
     // Load the model
     const model = this.schema.getModel(database, reference);
     const schema = this.schema.getSchema(database, reference);
@@ -95,7 +94,7 @@ export class RestService {
   /**
    * Read multiple record.
    */
-  async list<R = Row>(database: string, reference: string): Promise<R[]> {
+  async list<R = RowLike>(database: string, reference: string): Promise<R[]> {
     // Load the model
     const model = this.schema.getModel(database, reference);
     const records = await model.query();
@@ -114,8 +113,8 @@ export class RestService {
     database: string,
     reference: string,
     idValues: Record<string, string>,
-    input: Row,
-  ): Promise<Row | null> {
+    input: RowLike,
+  ): Promise<RowLike | null> {
     // Define the event key.
     const event = `crud.${database}.${reference}.updated`;
     // Load the model
@@ -175,7 +174,7 @@ export class RestService {
     database: string,
     reference: string,
     idValues: Record<string, string>,
-  ): Promise<Row | null> {
+  ): Promise<RowLike | null> {
     // Define the event key.
     const event = `crud.${database}.${reference}.deleted`;
     // Get the model

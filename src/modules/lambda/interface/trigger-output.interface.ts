@@ -1,4 +1,6 @@
+import { RowLike } from '../../../app/interface/row-like.interface';
+
 export interface ITriggerOutput {
-  meta: Record<string, unknown>;
+  meta: RowLike;
   data: unknown;
 }

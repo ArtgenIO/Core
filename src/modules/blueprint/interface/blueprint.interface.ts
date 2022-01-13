@@ -1,3 +1,4 @@
+import { RowLike } from '../../../app/interface/row-like.interface';
 import { IFlow } from '../../flow/interface';
 import { ISchema } from '../../schema';
 
@@ -41,7 +42,7 @@ export interface IBlueprint {
    * Provided schemas
    */
   content: {
-    [schema: string]: Record<string, unknown>[];
+    [schema: string]: RowLike[];
   };
 
   /**
