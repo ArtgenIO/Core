@@ -33,8 +33,8 @@ export class RestService {
     const model = this.schema.getModel(database, reference);
     const schema = this.schema.getSchema(database, reference);
 
-    return (await this.odata.toQuery(model, schema, filters)).map(record =>
-      record.$toJson(),
+    return (await this.odata.toQueryBuilder(model, schema, filters)).map(
+      record => record.$toJson(),
     );
   }
 

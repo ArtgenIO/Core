@@ -5,6 +5,10 @@ import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { ILogger, Logger, Service } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { ISchema } from '../../schema';
+import { IODataAST } from '../interface/odata-ast.interface';
+
+type QB = QueryBuilder<Model, Model[]>;
+type AST = IODataAST;
 
 @Service()
 export class ODataService {
@@ -13,44 +17,137 @@ export class ODataService {
     readonly logger: ILogger,
   ) {}
 
-  protected tOperator(op: string): Operator {
-    if (op === 'eq') {
-      return '=';
+  /**
+   * Map OData operator to SQL operators
+   */
+  protected mapOperator(op: string): Operator {
+    switch (op) {
+      case 'eq':
+        return '=';
+      case 'ne':
+        return '!=';
+      case 'lt':
+        return '<';
+      case 'le':
+        return '<=';
+      case 'gt':
+        return '>';
+      case 'ge':
+        return '>=';
     }
 
     throw new Exception(`Unknown [${op}] operator`);
   }
 
-  protected toConditions(q: QueryBuilder<any>, $filter: any) {
-    if ($filter.type == 'eq') {
-      q.where(
-        $filter.left.name,
-        this.tOperator($filter.type),
-        $filter.right.value,
+  /**
+   * Apply the $filter segment
+   */
+  protected applyConditions(qb: QB, $filter: AST['$filter']) {
+    const svc = this;
+
+    switch ($filter.type) {
+      case 'eq':
+      case 'ne':
+      case 'lt':
+      case 'le':
+      case 'gt':
+      case 'ge':
+        qb.where(
+          $filter.left.name,
+          this.mapOperator($filter.type),
+          $filter.right.value,
+        );
+        break;
+      case 'and':
+        qb.andWhere(function () {
+          svc.applyConditions(this, $filter['left']);
+          svc.applyConditions(this, $filter['right']);
+        });
+        break;
+      case 'or':
+        qb.orWhere(function () {
+          svc.applyConditions(this, $filter['left']);
+          svc.applyConditions(this, $filter['right']);
+        });
+        break;
+    }
+  }
+
+  /**
+   * Apply the $select segment.
+   */
+  protected applySelect(schema: ISchema, qb: QB, $select: AST['$select']) {
+    const fieldNames = schema.fields.map(f => f.reference);
+    const relationNames = schema.relations.map(r => r.name);
+    const fieldSelection = new Set<string>();
+    const eagerSelection = new Set<string>();
+    const trimmedEager = new Map<string, string[]>();
+
+    for (const item of $select) {
+      if (!item.match('/')) {
+        // Select from the schema fields
+        if (fieldNames.includes(item)) {
+          fieldSelection.add(item);
+        }
+        // Select from relations as whole
+        else if (relationNames.includes(item)) {
+          eagerSelection.add(item);
+        }
+        // Select all
+        else if (item == '*') {
+          fieldNames.forEach(f => fieldSelection.add(f));
+        } else {
+          throw new Exception(`Unknown selection [${item}]`);
+        }
+      }
+      // Load from relation
+      else {
+        const relation = item.substring(0, item.indexOf('/'));
+
+        if (relationNames.includes(relation)) {
+          qb.withGraphFetched(relation);
+
+          if (!trimmedEager.has(relation)) {
+            trimmedEager.set(relation, []);
+          }
+
+          trimmedEager.get(relation).push(item.substring(relation.length + 1));
+        } else {
+          throw new Exception(`Unknown relation [${item}][${relation}]`);
+        }
+      }
+    }
+
+    if (fieldSelection.size) {
+      qb.select(
+        Array.from(fieldSelection.values()).map(
+          fRef => schema.fields.find(f => f.reference == fRef).columnName,
+        ),
       );
-    } else if ($filter.type == 'and') {
-      const s = this;
+    }
 
-      q.andWhere(function () {
-        s.toConditions(this, $filter.left);
-        s.toConditions(this, $filter.right);
-      });
-    } else if ($filter.type == 'or') {
-      const s = this;
+    if (eagerSelection.size) {
+      qb.withGraphFetched(
+        `[${Array.from(eagerSelection.values()).join(', ')}]`,
+      );
+    }
 
-      q.orWhere(function () {
-        s.toConditions(this, $filter.left);
-        s.toConditions(this, $filter.right);
+    for (const [rel, selects] of trimmedEager.entries()) {
+      qb.modifyGraph(rel, b => {
+        b.select(selects);
       });
     }
   }
 
-  toQuery(
+  /**
+   * Convert an OData query into a QueryBuilder for the given schema.
+   */
+  toQueryBuilder(
     model: ModelClass<Model>,
     schema: ISchema,
     filters: object,
-  ): QueryBuilder<Model, Model[]> {
-    // Merge with the defualts
+  ): QB {
+    // Merge with the defualts, need to pick the valid keys because the lib crashes if non odata params are apssed.
     const options = pick(
       merge(
         {
@@ -59,89 +156,32 @@ export class ODataService {
         },
         filters,
       ),
-      ['$top', '$skip', '$select', '$filter'],
+      ['$top', '$skip', '$select', '$filter', '$expand'],
     ) as ParsedUrlQueryInput;
 
     // Convert it into string (the parser only accepts it in this format)
     const queryString = decodeURIComponent(stringify(options));
-    const AST = parser.parse(queryString);
-    const query = model.query();
+    const ast: AST = parser.parse(queryString);
+    const qb = model.query();
 
-    if (AST?.$filter) {
-      this.toConditions(query, AST.$filter);
+    // Select X,Y
+    if (ast?.$select) {
+      this.applySelect(schema, qb, ast.$select);
     }
 
-    if (AST?.$top) {
-      query.limit(parseInt(AST.$top, 10));
+    if (ast?.$filter) {
+      this.applyConditions(qb, ast.$filter);
     }
 
-    if (AST?.$skip) {
-      query.offset(parseInt(AST.$skip, 10));
+    // We allow the -1 to be converted to no limit.
+    if (ast?.$top && ast.$top != -1) {
+      qb.limit(ast.$top);
     }
 
-    if (AST?.$select) {
-      const fieldNames = schema.fields.map(f => f.reference);
-      const relationNames = schema.relations.map(r => r.name);
-      const fieldSelection = new Set<string>();
-      const eagerSelection = new Set<string>();
-      const trimmedEager = new Map<string, string[]>();
-
-      for (const s of AST?.$select as string[]) {
-        if (!s.match('/')) {
-          // Select from the schema fields
-          if (fieldNames.includes(s)) {
-            fieldSelection.add(s);
-          }
-          // Select from relations as whole
-          else if (relationNames.includes(s)) {
-            eagerSelection.add(s);
-          }
-          // Select all
-          else if (s == '*') {
-            fieldNames.forEach(f => fieldSelection.add(f));
-          } else {
-            throw new Exception(`Unknown selection [${s}]`);
-          }
-        }
-        // Load from relation
-        else {
-          const rel = s.substring(0, s.indexOf('/'));
-
-          if (relationNames.includes(rel)) {
-            query.withGraphFetched(rel);
-
-            if (!trimmedEager.has(rel)) {
-              trimmedEager.set(rel, []);
-            }
-
-            trimmedEager.get(rel).push(s.substring(rel.length + 1));
-          } else {
-            throw new Exception(`Unknown relation [${s}][${rel}]`);
-          }
-        }
-      }
-
-      if (fieldSelection.size) {
-        query.select(
-          Array.from(fieldSelection.values()).map(
-            fRef => schema.fields.find(f => f.reference == fRef).columnName,
-          ),
-        );
-      }
-
-      if (eagerSelection.size) {
-        query.withGraphFetched(
-          `[${Array.from(eagerSelection.values()).join(', ')}]`,
-        );
-      }
-
-      for (const [rel, selects] of trimmedEager.entries()) {
-        query.modifyGraph(rel, b => {
-          b.select(selects);
-        });
-      }
+    if (ast?.$skip) {
+      qb.offset(ast.$skip);
     }
 
-    return query;
+    return qb;
   }
 }
