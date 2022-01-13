@@ -103,8 +103,6 @@ export default function RelationBelongsToOne({
                 s.relations[idx].name = newName;
                 setName(newName);
 
-                console.log(s.relations[idx]);
-
                 return s;
               });
             }}

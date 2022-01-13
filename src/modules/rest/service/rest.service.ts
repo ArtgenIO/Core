@@ -1,14 +1,10 @@
 import { EventEmitter2 } from 'eventemitter2';
-import { merge, pick } from 'lodash';
-import { Model, ModelClass, Operator, QueryBuilder } from 'objection';
-import parser from 'odata-parser';
-import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { getErrorMessage } from '../../../app/kernel';
-import { ISchema } from '../../schema';
 import { SchemaService } from '../../schema/service/schema.service';
 import { isManagedField, isPrimary } from '../../schema/util/field-tools';
+import { ODataService } from './odata.service';
 
 type Row = Record<string, unknown> | object;
 
@@ -21,124 +17,11 @@ export class RestService {
     readonly logger: ILogger,
     @Inject(SchemaService)
     readonly schema: SchemaService,
+    @Inject(ODataService)
+    readonly odata: ODataService,
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
   ) {}
-
-  protected tOperator(op: string): Operator {
-    if (op === 'eq') {
-      return '=';
-    }
-
-    throw new Exception(`Unknown [${op}] operator`);
-  }
-
-  protected toConditions(q: QueryBuilder<any>, $filter: any) {
-    //console.log('$filter', $filter);
-
-    if ($filter.type == 'eq') {
-      q.where(
-        $filter.left.name,
-        this.tOperator($filter.type),
-        $filter.right.value,
-      );
-    } else if ($filter.type == 'and') {
-      const s = this;
-
-      q.andWhere(function () {
-        s.toConditions(this, $filter.left);
-        s.toConditions(this, $filter.right);
-      });
-    } else if ($filter.type == 'or') {
-      const s = this;
-
-      q.orWhere(function () {
-        s.toConditions(this, $filter.left);
-        s.toConditions(this, $filter.right);
-      });
-    }
-  }
-
-  protected runQuery(model: ModelClass<Model>, schema: ISchema, ast: any) {
-    const q = model.query();
-
-    if (ast?.$filter) {
-      this.toConditions(q, ast.$filter);
-    }
-
-    if (ast?.$top) {
-      q.limit(parseInt(ast.$top, 10));
-    }
-
-    if (ast?.$skip) {
-      q.offset(parseInt(ast.$skip, 10));
-    }
-
-    if (ast?.$select) {
-      const fieldNames = schema.fields.map(f => f.reference);
-      const relationNames = schema.relations.map(r => r.name);
-      const fieldSelection = new Set<string>();
-      const eagerSelection = new Set<string>();
-      const trimmedEager = new Map<string, string[]>();
-
-      for (const s of ast?.$select as string[]) {
-        if (!s.match('/')) {
-          // Select from the schema fields
-          if (fieldNames.includes(s)) {
-            fieldSelection.add(s);
-          }
-          // Select from relations as whole
-          else if (relationNames.includes(s)) {
-            eagerSelection.add(s);
-          }
-          // Select all
-          else if (s == '*') {
-            fieldNames.forEach(f => fieldSelection.add(f));
-          } else {
-            throw new Exception(`Unknown selection [${s}]`);
-          }
-        }
-        // Load from relation
-        else {
-          const rel = s.substring(0, s.indexOf('/'));
-
-          if (relationNames.includes(rel)) {
-            q.withGraphFetched(rel);
-
-            if (!trimmedEager.has(rel)) {
-              trimmedEager.set(rel, []);
-            }
-
-            trimmedEager.get(rel).push(s.substring(rel.length + 1));
-          } else {
-            throw new Exception(`Unknown relation [${s}][${rel}]`);
-          }
-        }
-      }
-
-      if (fieldSelection.size) {
-        q.select(
-          Array.from(fieldSelection.values()).map(
-            fRef => schema.fields.find(f => f.reference == fRef).columnName,
-          ),
-        );
-      }
-
-      if (eagerSelection.size) {
-        q.withGraphFetched(
-          `[${Array.from(eagerSelection.values()).join(', ')}]`,
-        );
-      }
-
-      for (const [rel, selects] of trimmedEager.entries()) {
-        q.modifyGraph(rel, b => {
-          b.select(selects);
-        });
-      }
-    }
-
-    return q;
-  }
 
   /**
    * Read multiple record.
@@ -148,39 +31,12 @@ export class RestService {
     reference: string,
     filters: Row,
   ): Promise<Row[]> {
-    // Load the model
     const model = this.schema.getModel(database, reference);
     const schema = this.schema.getSchema(database, reference);
 
-    // Merge with the defualts
-    const options = pick(
-      merge(
-        {
-          $top: 10,
-          $skip: 0,
-        },
-        filters,
-      ),
-      ['$top', '$skip', '$select', '$filter'],
-    ) as ParsedUrlQueryInput;
-
-    // Convert it into string (the parser only accepts it in this format)
-    const qs = decodeURIComponent(stringify(options));
-    // console.log({ qs });
-
-    try {
-      const ast = parser.parse(qs);
-      // console.log({ ast });
-      const q = this.runQuery(model, schema, ast);
-      console.log(q.toKnexQuery().toQuery());
-
-      const records = await q;
-
-      return records.map(record => record.$toJson());
-    } catch (error) {
-      console.log({ error });
-      throw error;
-    }
+    return (await this.odata.toQuery(model, schema, filters)).map(record =>
+      record.$toJson(),
+    );
   }
 
   /**

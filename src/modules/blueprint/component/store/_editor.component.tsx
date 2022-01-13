@@ -114,30 +114,12 @@ export default function ExtensionEdiorComponent({
             description: '',
           })),
       );
-
-      console.log(
-        'Setting schemas',
-        schemasReply
-          .filter(c => c.database === selectedDatabase)
-          .filter(c => !c.tags.includes('system'))
-          .map(s => ({
-            key: s.reference,
-            title: s.title,
-            description: '',
-          })),
-      );
     }
   }, [selectedDatabase, schemasReply]);
 
   if (schemasLoading || flowLoading || !schemas) {
     return <h1>Loading...</h1>;
   }
-
-  console.log({
-    selectedDatabase,
-    selectedSchemas,
-    schemas,
-  });
 
   return (
     <Form

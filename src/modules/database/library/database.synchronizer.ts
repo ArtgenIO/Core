@@ -161,10 +161,6 @@ export class DatabaseSynchronizer {
       const alterColumns: string[] = [];
 
       for (const change of changes) {
-        console.log('Struct mismatch!', changes);
-        console.log('Known', inspect(knownStruct, false, 4, true));
-        console.log('Reversed', inspect(revStruct, false, 4, true));
-
         // Field has been altered
         if (change.path[0] === 'columns' && change.path.length > 2) {
           if (alterColumns.includes(change.path[1] as string)) {
