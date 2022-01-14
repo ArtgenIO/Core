@@ -33,9 +33,14 @@ export class RestService {
     const model = this.schema.getModel(database, reference);
     const schema = this.schema.getSchema(database, reference);
 
-    return (await this.odata.toQueryBuilder(model, schema, filters)).map(
-      record => record.$toJson(),
-    );
+    try {
+      return (await this.odata.toQueryBuilder(model, schema, filters)).map(
+        record => record.$toJson(),
+      );
+    } catch (error) {
+      this.logger.warn(getErrorMessage(error));
+      throw new Exception('Invalid input'); // 400
+    }
   }
 
   /**

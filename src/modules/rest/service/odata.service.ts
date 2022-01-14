@@ -152,7 +152,7 @@ export class ODataService {
             continue;
           }
 
-          qb.orderBy(fieldRef, direction);
+          qb.orderBy(field.columnName, direction);
         }
       }
     }
