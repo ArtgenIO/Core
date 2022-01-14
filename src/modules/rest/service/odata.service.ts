@@ -4,7 +4,7 @@ import parser from 'odata-parser';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { ILogger, Logger, Service } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
-import { ISchema } from '../../schema';
+import { FieldType, ISchema } from '../../schema';
 import { IODataAST } from '../interface/odata-ast.interface';
 
 type QB = QueryBuilder<Model, Model[]>;
@@ -139,6 +139,25 @@ export class ODataService {
     }
   }
 
+  protected applyOrderBy(schema: ISchema, qb: QB, $orderby: AST['$orderby']) {
+    console.log($orderby);
+    for (const order of $orderby) {
+      for (const fieldRef in order) {
+        if (Object.prototype.hasOwnProperty.call(order, fieldRef)) {
+          const direction = order[fieldRef];
+          const field = schema.fields.find(f => f.reference === fieldRef);
+
+          // Complex types could not be sorted.
+          if (field.type === FieldType.JSON || field.type === FieldType.JSONB) {
+            continue;
+          }
+
+          qb.orderBy(fieldRef, direction);
+        }
+      }
+    }
+  }
+
   /**
    * Convert an OData query into a QueryBuilder for the given schema.
    */
@@ -156,7 +175,7 @@ export class ODataService {
         },
         filters,
       ),
-      ['$top', '$skip', '$select', '$filter', '$expand'],
+      ['$top', '$skip', '$select', '$filter', '$expand', '$orderby'],
     ) as ParsedUrlQueryInput;
 
     // Convert it into string (the parser only accepts it in this format)
@@ -171,6 +190,10 @@ export class ODataService {
 
     if (ast?.$filter) {
       this.applyConditions(qb, ast.$filter);
+    }
+
+    if (ast?.$orderby) {
+      this.applyOrderBy(schema, qb, ast.$orderby);
     }
 
     // We allow the -1 to be converted to no limit.

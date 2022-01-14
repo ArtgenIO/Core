@@ -2,6 +2,25 @@
 # yarn lockfile v1
 
 
+"@ag-grid-community/client-side-row-model@^26.2.0":
+  version "26.2.0"
+  resolved "https://registry.yarnpkg.com/@ag-grid-community/client-side-row-model/-/client-side-row-model-26.2.0.tgz#286160f09f604d30180811f3b8f5dfba8c57b5d6"
+  integrity sha512-kW5lMsK5WEXaqZMfHbLRj+EvxLhPW6qtDv61PyDcv+/91lwm2p5dT/iUBppavSwJDiNul+wntpyIlTulZgokwA==
+  dependencies:
+    "@ag-grid-community/core" "~26.2.0"
+
+"@ag-grid-community/core@^26.2.1", "@ag-grid-community/core@~26.2.0":
+  version "26.2.1"
+  resolved "https://registry.yarnpkg.com/@ag-grid-community/core/-/core-26.2.1.tgz#b0c3478b0df14b3145c7d126b4da34a5f55a44ad"
+  integrity sha512-E2e3rZoZ90QtgO320kmlrm7kFbzFkCyrvCWYUQshJJU/UzCqr6DffVAXTaeehPNLzHBybANxWbSbFab9LQLIwQ==
+
+"@ag-grid-community/react@^26.2.0":
+  version "26.2.0"
+  resolved "https://registry.yarnpkg.com/@ag-grid-community/react/-/react-26.2.0.tgz#f5b021ec2c19e0115f4d3a61f83cbe63294ea01d"
+  integrity sha512-IWNSuyoiRkIbRpoz+Nvagyz8MsoQbTVQ25ixj75VNAyShK/xWus92FMQQFFQBR11Pb3paZeEttrmF0D8WEFLTQ==
+  dependencies:
+    prop-types "^15.6.2"
+
 "@ant-design/colors@^6.0.0":
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/@ant-design/colors/-/colors-6.0.0.tgz#9b9366257cffcc47db42b9d0203bb592c13c0298"
@@ -1739,6 +1758,18 @@ acorn@^8.2.4, acorn@^8.4.1:
   version "8.7.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.7.0.tgz#90951fde0f8f09df93549481e5fc141445b791cf"
   integrity sha512-V/LGr1APy+PXIwKebEWrkZPwoeoF+w1jiOBUmuxuiUIaOHtob8Qc9BTrYo7VuI5fR8tqsy+buA2WFooR5olqvQ==
+
+ag-grid-community@^26.2.1:
+  version "26.2.1"
+  resolved "https://registry.yarnpkg.com/ag-grid-community/-/ag-grid-community-26.2.1.tgz#b217e1b62317817c7119511a1a8358992e3a2026"
+  integrity sha512-aChSGNdPkBda4BhOUUEAmAkRlIG7rFU8UTXx3NPStavrCOHKLDRV90djIKuiXfM6ONBqKmeqw2as0yuLnSN8dw==
+
+ag-grid-react@^26.2.0:
+  version "26.2.0"
+  resolved "https://registry.yarnpkg.com/ag-grid-react/-/ag-grid-react-26.2.0.tgz#79e851130a1806a5d3d3ba004ca0eecc7f344a63"
+  integrity sha512-sFU1C3OFWun/V5l5+93b4XQegT+RA21AUY1TqUcHActDY0myeEllPJkR0xKj82EZuKihNuH52WQjOrrhzAjoHA==
+  dependencies:
+    prop-types "^15.6.2"
 
 agent-base@6:
   version "6.0.2"

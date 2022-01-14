@@ -1,15 +1,15 @@
 .artboard-tools {
-  background-color: #cfd2d9;
+  @apply bg-midnight-100 text-midnight-600;
   box-shadow: #000 0px 0px 5px 1px;
-  color: #37393f;
   font-size: 24px;
   line-height: 38px;
   z-index: 5;
 }
 
 .artboard-tools > div:hover {
+  @apply border-midnight-600;
+
   background-color: #46bdc6;
-  border-color: #37393f;
   color: #fff;
 }
 
@@ -20,10 +20,8 @@
 }
 
 .artboard-tools > div > div {
-  @apply absolute -left-36 text-right w-32 top-1/2 pr-2 rounded-sm;
+  @apply absolute -left-36 text-right w-32 top-1/2 pr-2 rounded-sm text-midnight-100 bg-black;
 
-  background-color: #000;
-  color: #cfd2d9;
   font-size: 12px;
   line-height: 18px;
   margin-top: -8px;
@@ -32,7 +30,7 @@
 }
 
 .artboard-tools > div:hover > div {
-  display: block;
+  @apply block;
 }
 
 .artboard-tools > div:last-child {
