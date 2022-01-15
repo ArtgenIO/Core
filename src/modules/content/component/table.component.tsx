@@ -2,31 +2,28 @@ import {
   DeleteOutlined,
   FileOutlined,
   FilterOutlined,
+  QuestionCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { ColumnApi, GridApi } from 'ag-grid-community';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham-dark.css';
-import { AgGridColumnProps, AgGridReact } from 'ag-grid-react';
-import { Button, message, Pagination } from 'antd';
+import { Button, message, Pagination, Popconfirm } from 'antd';
 import { debounce } from 'lodash';
 import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useState } from 'react';
+import DataGrid, { Column } from 'react-data-grid';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { FieldTag, FieldType, ISchema } from '../../schema';
-import { FieldTool } from '../../schema/util/field-tools';
 import { toRestRecordRoute, toRestRoute } from '../util/schema-url';
 import ContentCreateComponent from './create.component';
-import './grid.component.less';
+import './table.component.less';
 import ContentUpdateComponent from './update.component';
 
 type Props = {
   schema: ISchema;
 };
 
-export default function GridComponent({ schema }: Props) {
+export default function TableComponent({ schema }: Props) {
   const httpClient = useHttpClientSimple();
 
   // Extended views in drawer
@@ -37,13 +34,9 @@ export default function GridComponent({ schema }: Props) {
   const [pageSize, setPageSize] = useState(20);
   const [pageCurr, setPageCurr] = useState(1);
 
-  // AG Grid API access
-  const [gridApi, setGridApi] = useState<GridApi>(null);
-  const [columnApi, setColumnApi] = useState<ColumnApi>(null);
-
   // Grid content state
-  const [columns, setColumns] = useState<AgGridColumnProps[]>([]);
-  const [rows, setRows] = useState<RowLike[]>(null);
+  const [columns, setColumns] = useState<Column<RowLike>[]>([]);
+  const [rows, setRows] = useState<RowLike[]>([]);
 
   // Load initial content
   const [{ data: content, loading: isContentLoading }, __do_fetch] =
@@ -62,16 +55,6 @@ export default function GridComponent({ schema }: Props) {
       qb.skip(pageCurr * pageSize - pageSize);
     }
 
-    // Sorting
-    for (const col of columnApi.getAllColumns()) {
-      if (col.isSorting()) {
-        qb.orderBy(`${col.getId()} ${col.getSort()}`);
-      }
-    }
-
-    // Lock the view with loading
-    gridApi.showLoadingOverlay();
-
     // Start the HTTP request
     __do_fetch({
       url: toRestRoute(schema) + qb.toQuery(),
@@ -84,41 +67,7 @@ export default function GridComponent({ schema }: Props) {
     }
   }, [pageCurr, pageSize]);
 
-  const rebuildMeta = () => {
-    if (columnApi) {
-      const originalMeta = schema.meta?.grid ?? {};
-
-      const fieldOrder = columnApi
-        .getAllGridColumns()
-        .map((column, idx) => column.getId())
-        .filter(id => id != '0');
-
-      console.log('Order', fieldOrder);
-
-      // Create a default if there is no meta
-      if (!schema.meta?.grid) {
-        schema.meta.grid = {};
-      }
-
-      schema.meta.grid.fieldOrder = fieldOrder;
-
-      httpClient
-        .patch(
-          toRestRoute({
-            database: 'main',
-            reference: 'Schema',
-          }) + `/${schema.database}/${schema.reference}`,
-          schema,
-        )
-        .then(() => {
-          message.success(`Grid's configuration has been saved!`);
-        })
-        .catch(e => {
-          message.warn(`Could not save the grid configuration`);
-          console.error(e);
-        });
-    }
-  };
+  const rebuildMeta = () => {};
 
   const doDelete = async (record: RowLike) => {
     try {
@@ -134,49 +83,25 @@ export default function GridComponent({ schema }: Props) {
   // Unlock the loading screen when the content arrvies
   useEffect(() => {
     if (!isContentLoading) {
-      if (gridApi) {
-        gridApi.hideOverlay();
-      }
-
       setRows(content);
     }
   }, [content]);
 
   useEffect(() => {
-    const columnDef: AgGridColumnProps[] = [];
+    const columnDef: Column<RowLike>[] = [];
 
     for (const field of schema.fields) {
       let sortable = true;
       let resizable = true;
-      let cellRenderer: AgGridColumnProps['cellRenderer'];
-      let initialWidth: AgGridColumnProps['initialWidth'] = undefined;
-      let minWidth: AgGridColumnProps['minWidth'] = undefined;
-      let maxWidth: AgGridColumnProps['maxWidth'] = undefined;
-      const cellClass: AgGridColumnProps['cellClass'] = [];
+      let minWidth: number = undefined;
+      let maxWidth: number = undefined;
+      let width: number = undefined;
+      let cellClass: string;
+      let formatter: Column<RowLike>['formatter'];
 
       // UUID rendering
       if (field.type === FieldType.UUID) {
-        cellRenderer = prop => {
-          return prop.value ? prop.value.substring(0, 8) : 'null';
-        };
-
-        // Fixed with for the cut 8 char
-        initialWidth = 100;
-        minWidth = 100;
-        maxWidth = 100;
-        resizable = false;
-
-        cellClass.push('text-green-500');
-      }
-
-      // Hightlight the primary fields
-      if (FieldTool.isPrimary(field)) {
-        cellClass.push('text-primary-500');
-      }
-
-      // Hightlight the unique fields
-      if (field.tags.includes(FieldTag.UNIQUE)) {
-        cellClass.push('text-yellow-500');
+        width = minWidth = maxWidth = 280;
       }
 
       // JSON need special handling to not to crash the renderer
@@ -185,32 +110,27 @@ export default function GridComponent({ schema }: Props) {
         sortable = false;
         resizable = false;
 
-        // Reach cannot render JSON as object
-        cellRenderer = params => {
-          return `<code class="bg-midnight-600 p-0.5 rounded-md"
-            >${
-              params.value
-                ? JSON.stringify(params.value).substring(0, 32)
-                : 'null'
-            }</code>`;
+        formatter = props => {
+          return <>{JSON.stringify(props.row[field.reference])}</>;
         };
       }
 
-      if (field.tags.includes(FieldTag.TAGS)) {
-        cellRenderer = params => (params.value ? params.value.join(',') : '-');
+      if (field.tags.includes(FieldTag.PRIMARY)) {
+        cellClass = 'text-primary-500';
+      } else if (field.tags.includes(FieldTag.UNIQUE)) {
+        cellClass = 'text-yellow-500';
       }
 
-      const fieldDef: AgGridColumnProps = {
-        field: field.reference,
-        filter: true,
-        floatingFilter: true,
-        headerName: field.title,
+      const fieldDef: Column<RowLike> = {
+        name: field.title,
+        key: field.reference,
         resizable,
-        minWidth: minWidth ?? 150,
-        maxWidth: 500,
-        cellRenderer,
         sortable,
+        minWidth: minWidth ?? 150,
+        width,
+        headerCellClass: 'ag-header',
         cellClass,
+        formatter,
       };
 
       columnDef.push(fieldDef);
@@ -223,31 +143,44 @@ export default function GridComponent({ schema }: Props) {
 
         columnDef.sort((a, b) => {
           // Field has no ref?
-          if (!a.field) {
+          if (!a.key) {
             return 0;
           }
 
-          const aIdx = schema.meta.grid.fieldOrder.findIndex(i => i == a.field);
-          const bIdx = schema.meta.grid.fieldOrder.findIndex(i => i == b.field);
+          const aIdx = schema.meta.grid.fieldOrder.findIndex(i => i == a.key);
+          const bIdx = schema.meta.grid.fieldOrder.findIndex(i => i == b.key);
 
           return aIdx > bIdx ? 1 : -1;
         });
       }
     }
 
-    // Pinned column at the end
+    // // Pinned column at the end
     columnDef.push({
-      headerName: 'Actions',
-      field: null,
-      maxWidth: 250,
+      name: 'Actions',
+      key: null,
+      width: 80,
       sortable: false,
-      suppressMovable: true,
-      filter: false,
-      headerClass: ['text-center'],
-      cellClass: ['text-center'],
-      pinned: 'right',
-      cellRenderer: () => {
-        return '[D]';
+      headerCellClass: 'ag-header',
+      formatter: p => {
+        return (
+          <div className="text-center">
+            <Popconfirm
+              title="Are You sure to delete the record?"
+              okText="Yes, delete"
+              cancelText="No"
+              placement="left"
+              icon={<QuestionCircleOutlined />}
+              onConfirm={() => doDelete(p.row)}
+            >
+              <Button
+                size="small"
+                className="hover:text-red-500 hover:border-red-500"
+                icon={<DeleteOutlined />}
+              ></Button>
+            </Popconfirm>
+          </div>
+        );
       },
     });
 
@@ -261,9 +194,9 @@ export default function GridComponent({ schema }: Props) {
 
   return (
     <>
-      <div className="flex">
+      <div className="flex my-2">
         <div className="grow">
-          <Button.Group className="mb-3">
+          <Button.Group>
             <Button icon={<FileOutlined />} onClick={() => setShowCreate(true)}>
               New
             </Button>
@@ -301,30 +234,14 @@ export default function GridComponent({ schema }: Props) {
         </div>
       </div>
 
-      <div className="ag-theme-balham-dark w-full" style={{ height: 780 }}>
-        <AgGridReact
-          reactUi={true}
-          columnDefs={columns}
-          rowData={rows}
-          rowSelection="multiple"
-          onGridReady={readyEvent => {
-            readyEvent.api.sizeColumnsToFit();
-
-            setColumnApi(readyEvent.columnApi);
-            setGridApi(readyEvent.api);
-          }}
-          onSortChanged={sortChangedEvent => {
-            refetch();
-          }}
-          onColumnMoved={colMovedEvent => {
-            console.log(colMovedEvent, 'onColumnMoved');
-            bouncedMeta();
-          }}
-          onRowDoubleClicked={dblClickEvent => {
-            setShowEdit(dblClickEvent.data);
-          }}
-        />
-      </div>
+      <DataGrid
+        className="ag-table"
+        columns={columns}
+        rows={rows}
+        rowHeight={30}
+        headerRowHeight={32}
+        style={{ height: Math.max(320, 54 + rows.length * 30) }}
+      />
 
       {showCreate ? (
         <ContentCreateComponent

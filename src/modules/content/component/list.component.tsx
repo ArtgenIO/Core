@@ -8,7 +8,7 @@ import { useHttpClient } from '../../admin/library/use-http-client';
 import { ISchema } from '../../schema';
 import { IContentModule } from '../interface/content-module.interface';
 import { toRestRoute } from '../util/schema-url';
-import GridComponent from './grid.component';
+import TableComponent from './table.component';
 import TitleComponent from './title.components';
 
 type RouteParams = {
@@ -84,7 +84,7 @@ export default function ContentListComponent() {
           />
         }
       >
-        {schema ? <GridComponent schema={schema} /> : undefined}
+        {schema ? <TableComponent schema={schema} /> : undefined}
       </PageWithHeader>
     </>
   );
