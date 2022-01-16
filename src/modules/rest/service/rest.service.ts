@@ -44,7 +44,7 @@ export class RestService {
         .clearOrder()
         .clearSelect()
         .clearWithGraph()
-        .count()
+        .count('* as count')
         .toKnexQuery();
 
       const records = (await rowQuery).map(record => record.$toJson());
