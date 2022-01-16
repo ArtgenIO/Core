@@ -58,6 +58,7 @@ describe('Database E2E', () => {
       columnName: 'xtra_int',
       defaultValue: 5,
       type: FieldType.INTEGER,
+      meta: {},
       args: {},
       tags: [],
     });
@@ -73,6 +74,7 @@ describe('Database E2E', () => {
       columnName: 'xtra_txt',
       defaultValue: 'Haps',
       type: FieldType.TEXT,
+      meta: {},
       args: {},
       tags: [],
     });

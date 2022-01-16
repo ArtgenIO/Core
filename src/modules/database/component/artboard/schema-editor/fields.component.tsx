@@ -48,6 +48,7 @@ export default function SchemaEditorFieldsComponent({
         title: `New Field ${fieldKey}`,
         type: FieldType.TEXT,
         defaultValue: null,
+        meta: {},
         args: {},
         tags: [],
       });

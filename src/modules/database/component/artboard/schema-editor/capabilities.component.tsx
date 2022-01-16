@@ -62,6 +62,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     reference: 'id',
                     columnName: 'id',
                     type: FieldType.UUID,
+                    meta: {},
                     args: {},
                     tags: [FieldTag.PRIMARY],
                   });
@@ -104,6 +105,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     columnName: 'tags',
                     type: FieldType.JSON,
                     tags: [FieldTag.TAGS],
+                    meta: {},
                     args: {},
                     defaultValue: [],
                   });
@@ -142,6 +144,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     columnName: 'created_at',
                     type: FieldType.DATETIME,
                     args: {},
+                    meta: {},
                     tags: [FieldTag.CREATED],
                   });
                 } else {
@@ -178,6 +181,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     reference: 'updatedAt',
                     columnName: 'updated_at',
                     args: {},
+                    meta: {},
                     type: FieldType.DATETIME,
                     tags: [FieldTag.UPDATED],
                   });
@@ -215,6 +219,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     reference: 'deletedAt',
                     columnName: 'deleted_at',
                     args: {},
+                    meta: {},
                     type: FieldType.DATETIME,
                     tags: [FieldTag.DELETED],
                   });
@@ -252,6 +257,7 @@ export default function SchemaEditorCapabilitiesComponent({
                     reference: 'Revision',
                     columnName: 'revision',
                     args: {},
+                    meta: {},
                     type: FieldType.INTEGER,
                     tags: [FieldTag.VERSION],
                     defaultValue: 1,
