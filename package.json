@@ -159,7 +159,6 @@
     "postcss": "^8.3.9",
     "prettier": "^2.4.1",
     "react": "^17.0.2",
-    "react-data-grid": "^7.0.0-beta.7",
     "react-dom": "^17.0.2",
     "react-draggable": "^4.4.4",
     "react-flow-renderer": "^9.6.9",

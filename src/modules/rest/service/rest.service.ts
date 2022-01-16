@@ -40,6 +40,7 @@ export class RestService {
         .clone()
         .clear('limit')
         .clear('offset')
+        .clearOrder()
         .clearSelect()
         .clearWithGraph()
         .count()

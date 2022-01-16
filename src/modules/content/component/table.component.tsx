@@ -6,12 +6,11 @@ import {
   QuestionCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { Button, Input, message, Pagination, Popconfirm, Tag } from 'antd';
-import dayjs from 'dayjs';
-import { debounce } from 'lodash';
+import { Button, message, Pagination, Popconfirm, Table, Tag } from 'antd';
+import Column from 'antd/lib/table/Column';
+import { SorterResult } from 'antd/lib/table/interface';
 import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useState } from 'react';
-import DataGrid, { Column } from 'react-data-grid';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
@@ -39,8 +38,8 @@ export default function TableComponent({ schema }: Props) {
   const [total, setTotal] = useState(0);
 
   // Grid content state
-  const [columns, setColumns] = useState<Column<RowLike>[]>([]);
   const [rows, setRows] = useState<RowLike[]>([]);
+  const [sorters, setSorters] = useState<string[]>([]);
 
   // Load initial content
   const [{ data: findResponse, loading: isContentLoading }, __do_fetch] =
@@ -59,6 +58,10 @@ export default function TableComponent({ schema }: Props) {
       qb.skip(pageCurr * pageSize - pageSize);
     }
 
+    if (sorters) {
+      qb.orderBy(sorters.join(', '));
+    }
+
     // Start the HTTP request
     __do_fetch({
       url: toRestRoute(schema) + qb.toQuery(),
@@ -69,7 +72,7 @@ export default function TableComponent({ schema }: Props) {
     if (!isContentLoading) {
       refetch();
     }
-  }, [pageCurr, pageSize]);
+  }, [pageCurr, pageSize, sorters]);
 
   const rebuildMeta = () => {};
 
@@ -92,189 +95,6 @@ export default function TableComponent({ schema }: Props) {
     }
   }, [findResponse]);
 
-  useEffect(() => {
-    const columnDef: Column<RowLike>[] = [];
-
-    for (const field of schema.fields) {
-      let sortable = true;
-      let resizable = true;
-      let maxWidth: number = undefined;
-      let minWidth: number = undefined;
-      let width: number = undefined;
-      let cellClass: string;
-      let formatter: Column<RowLike>['formatter'];
-      let headerRenderer: Column<RowLike>['headerRenderer'];
-
-      headerRenderer = p => {
-        return (
-          <>
-            {p.column.name}
-            <div className="filter">
-              <Input size="small" />
-            </div>
-          </>
-        );
-      };
-
-      // UUID rendering
-      if (field.type === FieldType.UUID) {
-        width = minWidth = maxWidth = 280;
-
-        headerRenderer = p => (
-          <>
-            {p.column.name}
-            <div className="filter">
-              <Input size="small" pattern="^[a-fA-F0-9]+$" />
-            </div>
-          </>
-        );
-      }
-
-      // JSON need special handling to not to crash the renderer
-      if (field.type === FieldType.JSON || field.type === FieldType.JSONB) {
-        // Some engine can't sort JSON
-        sortable = false;
-        resizable = false;
-
-        formatter = props => {
-          return <>{JSON.stringify(props.row[field.reference])}</>;
-        };
-      }
-
-      if (field.tags.includes(FieldTag.PRIMARY)) {
-        cellClass = 'text-primary-500';
-      } else if (field.tags.includes(FieldTag.UNIQUE)) {
-        cellClass = 'text-yellow-500';
-      } else if (field.type == FieldType.INTEGER) {
-        cellClass = 'text-green-500 text-right';
-
-        formatter = props => {
-          return (
-            <>
-              {props.row[field.reference]
-                ? (props.row[field.reference] as number).toLocaleString()
-                : '0'}
-            </>
-          );
-        };
-
-        headerRenderer = p => (
-          <>
-            {p.column.name}
-            <div className="filter">
-              <Input size="small" />
-            </div>
-          </>
-        );
-      }
-
-      if (field.type == FieldType.DATETIME) {
-        width = minWidth = 200;
-
-        cellClass = 'text-right';
-
-        formatter = props => {
-          return (
-            <>
-              {props.row[field.reference]
-                ? dayjs(props.row[field.reference]).toDate().toLocaleString()
-                : ''}
-            </>
-          );
-        };
-      }
-
-      if (field.tags.includes(FieldTag.TAGS)) {
-        formatter = props => {
-          return (
-            <>
-              {props.row[field.reference]
-                ? props.row[field.reference].map(t => <Tag>{t}</Tag>)
-                : ''}
-            </>
-          );
-        };
-      }
-
-      const fieldDef: Column<RowLike> = {
-        name: field.title,
-        key: field.reference,
-        headerRenderer,
-        resizable,
-        sortable,
-        minWidth: minWidth ?? 150,
-        width,
-        headerCellClass: 'ag-header',
-        cellClass,
-        formatter,
-      };
-
-      columnDef.push(fieldDef);
-    }
-
-    // Has grid configuration
-    if (schema.meta?.grid) {
-      if (schema.meta.grid?.fieldOrder) {
-        console.log('FieldOrder', schema.meta.grid?.fieldOrder);
-
-        columnDef.sort((a, b) => {
-          // Field has no ref?
-          if (!a.key) {
-            return 0;
-          }
-
-          const aIdx = schema.meta.grid.fieldOrder.findIndex(i => i == a.key);
-          const bIdx = schema.meta.grid.fieldOrder.findIndex(i => i == b.key);
-
-          return aIdx > bIdx ? 1 : -1;
-        });
-      }
-    }
-
-    // // Pinned column at the end
-    columnDef.push({
-      name: 'Actions',
-      key: null,
-      width: 80,
-      sortable: false,
-      headerCellClass: 'ag-header text-center',
-      formatter: p => {
-        return (
-          <div className="text-center">
-            <Button
-              size="small"
-              key="edit"
-              className="hover:text-yellow-500 hover:border-yellow-500 mr-0.5"
-              icon={<EditOutlined />}
-              onClick={() => setShowEdit(p.row)}
-            ></Button>
-            <Popconfirm
-              title="Are You sure to delete the record?"
-              okText="Yes, delete"
-              cancelText="No"
-              placement="left"
-              icon={<QuestionCircleOutlined />}
-              onConfirm={() => doDelete(p.row)}
-              key="delete"
-            >
-              <Button
-                size="small"
-                className="hover:text-red-500 hover:border-red-500"
-                icon={<DeleteOutlined />}
-              ></Button>
-            </Popconfirm>
-          </div>
-        );
-      },
-    });
-
-    setColumns(columnDef);
-  }, [schema]);
-
-  const bouncedMeta = debounce(() => {
-    rebuildMeta();
-  }, 1_000);
-
   return (
     <>
       <div className="flex my-2">
@@ -294,14 +114,108 @@ export default function TableComponent({ schema }: Props) {
         </div>
       </div>
 
-      <DataGrid
+      <Table
         className="ag-table"
-        columns={columns}
-        rows={rows}
-        rowHeight={30}
-        headerRowHeight={64}
-        style={{ height: Math.max(320, 82 + rows.length * 30) }}
-      />
+        dataSource={rows}
+        pagination={false}
+        size="small"
+        onChange={(pagination, filters, sorter, extra) => {
+          if (sorter instanceof Array) {
+            setSorters(
+              sorter.map(
+                s => `${s.column.key} ${s.order == 'ascend' ? 'asc' : 'desc'}`,
+              ),
+            );
+          } else {
+            sorter = sorter as SorterResult<RowLike>;
+
+            if (sorter.column) {
+              setSorters([
+                `${sorter.column.key} ${
+                  sorter.order == 'ascend' ? 'asc' : 'desc'
+                }`,
+              ]);
+            } else {
+              setSorters([]);
+            }
+          }
+        }}
+        bordered
+      >
+        {schema.fields.map((f, idx) => {
+          return (
+            <Column
+              title={f.title}
+              dataIndex={f.reference}
+              key={f.reference}
+              sortDirections={['ascend', 'descend']}
+              filterMode="menu"
+              sorter={f.type == FieldType.JSON ? false : { multiple: idx }}
+              render={(val, record) => {
+                const classes = [];
+
+                if (f.tags.includes(FieldTag.TAGS)) {
+                  return val && val.length ? (
+                    <>
+                      {val.map(t => (
+                        <Tag>{t}</Tag>
+                      ))}
+                    </>
+                  ) : (
+                    <>---</>
+                  );
+                }
+
+                if (f.type === FieldType.JSON || f.type === FieldType.JSONB) {
+                  val = JSON.stringify(val);
+                }
+
+                if (f.tags.includes(FieldTag.PRIMARY)) {
+                  classes.push('text-primary-500');
+                } else if (f.tags.includes(FieldTag.UNIQUE)) {
+                  classes.push('text-yellow-500');
+                } else if (f.type === FieldType.INTEGER) {
+                  classes.push('text-green-500');
+                }
+
+                return <span className={classes.join(' ')}>{val}</span>;
+              }}
+            ></Column>
+          );
+        })}
+
+        <Column
+          title={<div className="text-center">Actions</div>}
+          fixed="right"
+          width={90}
+          render={(v, record) => (
+            <div className="text-center">
+              <Button
+                size="small"
+                key="edit"
+                className="hover:text-yellow-500 hover:border-yellow-500 mr-0.5"
+                icon={<EditOutlined />}
+                onClick={() => setShowEdit(record as RowLike)}
+              ></Button>
+              <Popconfirm
+                title="Are You sure to delete the record?"
+                okText="Yes, delete"
+                cancelText="No"
+                placement="left"
+                icon={<QuestionCircleOutlined />}
+                onConfirm={() => doDelete(record as RowLike)}
+                key="delete"
+              >
+                <Button
+                  size="small"
+                  className="hover:text-red-500 hover:border-red-500"
+                  icon={<DeleteOutlined />}
+                ></Button>
+              </Popconfirm>
+            </div>
+          )}
+        ></Column>
+      </Table>
 
       <div className="flex my-2 bg-midnight-800 rounded-sm px-2 py-1">
         <div className="grow text-right">

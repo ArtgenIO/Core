@@ -1,59 +1,18 @@
 .ag-table {
-  @apply bg-midnight-750 rounded-sm border-midnight-600;
-
-  .rdg-cell.ag-header {
+  .ant-table-small .ant-table-thead > tr > th {
     @apply bg-midnight-800 font-header text-midnight-200;
 
     font-size: 17px;
-    line-height: 32px;
-
-    .filter {
-      @apply border-midnight-600;
-
-      margin: -4px -8px;
-      padding: 0 6px;
-
-      border-width: 1px 0 0 0;
-      border-style: solid;
-    }
+    padding: 2px 8px;
   }
 
-  .rdg-cell {
-    @apply bg-midnight-750;
+  .ant-table.ant-table-small .ant-table-tbody > tr > td {
+    padding: 2px 8px;
   }
-}
 
-.rdg-row {
-  @apply border-midnight-750 text-midnight-200;
-
-  &:hover,
-  &:hover .ag-cell {
-    @apply bg-midnight-500 text-midnight-50;
-  }
-}
-
-.ag-theme-balham-dark .ag-row-selected {
-  @apply bg-slate-800;
-}
-
-.rdg-cell {
-  @apply font-normal;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 12px;
-}
-
-.ag-center-cols-clipper {
-  @apply bg-midnight-750;
-}
-
-.ag-theme-balham-dark .ag-header-cell {
-  @apply bg-midnight-800;
-}
-
-.grid-toolbar {
-  @apply bg-midnight-100 text-midnight-600 rounded-md inline-block;
-
-  .ant-btn {
-    @apply bg-midnight-100 text-midnight-600 rounded-md;
+  .ant-table-cell {
+    @apply font-normal bg-midnight-700;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
   }
 }
