@@ -4,6 +4,7 @@ import { atom, DefaultValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 import { IContentModule } from '../content/interface/content-module.interface';
 import { toRestSysRoute } from '../content/util/schema-url';
+import { IDatabase } from '../database';
 import { ISchema } from '../schema';
 import { useHttpClientSimple } from './library/http-client';
 
@@ -62,6 +63,26 @@ export const schemasAtom = atom<ISchema[]>({
       setSelf(
         useHttpClientSimple()
           .get(toRestSysRoute('schema', q => q.top(1_000).orderBy('title')))
+          .then(r => r.data.data),
+      );
+    },
+  ],
+});
+
+export const databasesAtom = atom<IDatabase[]>({
+  key: 'databases',
+  default: null,
+  effects_UNSTABLE: [
+    ({ onSet }) => {
+      onSet((newState, oldState) => {
+        //
+      });
+    },
+
+    ({ setSelf }) => {
+      setSelf(
+        useHttpClientSimple()
+          .get(toRestSysRoute('database', q => q.top(1_000).orderBy('title')))
           .then(r => r.data.data),
       );
     },
