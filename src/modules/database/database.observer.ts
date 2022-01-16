@@ -29,11 +29,11 @@ export class DatabaseObserver {
   }
 
   @On('crud.main.Schema.updated')
-  async handleSchemaUpdate(schema: ISchema) {
-    this.logger.warn('Updating [%s] schema association', schema.reference);
+  async handleSchemaUpdate(newSchema: ISchema) {
+    this.logger.warn('Updating [%s] schema association', newSchema.reference);
 
     try {
-      await this.connections.findOne(schema.database).associate([schema]);
+      await this.connections.findOne(newSchema.database).associate([newSchema]);
     } catch (error) {
       this.logger.error(getErrorMessage(error));
     }

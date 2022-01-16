@@ -140,7 +140,6 @@ export class ODataService {
   }
 
   protected applyOrderBy(schema: ISchema, qb: QB, $orderby: AST['$orderby']) {
-    console.log($orderby);
     for (const order of $orderby) {
       for (const fieldRef in order) {
         if (Object.prototype.hasOwnProperty.call(order, fieldRef)) {

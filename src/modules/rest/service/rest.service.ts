@@ -1,5 +1,6 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { diff } from 'just-diff';
+import pick from 'lodash.pick';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { RowLike } from '../../../app/interface/row-like.interface';
@@ -72,15 +73,23 @@ export class RestService {
   ): Promise<R> {
     // Load the model
     const model = this.schema.getModel(database, reference);
+    const schema = this.schema.getSchema(database, reference);
     const event = `crud.${database}.${reference}.created`;
 
     try {
-      const record = await model.query().insert(input);
-      const object = record.$toJson();
+      const query = model.query().insertAndFetch(
+        pick(
+          input,
+          schema.fields.map(f => f.reference),
+        ),
+      );
 
-      this.event.emit(event, object);
+      const record = await query;
 
-      return object as R;
+      const newRecord = record.$toJson();
+      this.event.emit(event, newRecord);
+
+      return newRecord as R;
     } catch (error) {
       this.logger.warn(getErrorMessage(error));
       throw new Exception('Invalid input'); // 400

@@ -79,6 +79,10 @@ export class DatabaseConnection implements IDatabaseConnection {
       // will already work with given dialect's patches.
       const dialected = this.toDialectSchema(cloneDeep(schema));
       const structure = this.toStructure(dialected);
+      const model = this.toModel(schema);
+
+      // Bind to the connection
+      model.knex(this.knex);
 
       // Check if the schema is already associated with the registry.
       if (this.associations.has(key)) {
@@ -86,6 +90,7 @@ export class DatabaseConnection implements IDatabaseConnection {
 
         // Update the schema ref
         association.schema = schema;
+        association.model = model;
 
         // Check if the structure has changed.
         if (!isEqual(association.structure, structure)) {
@@ -94,13 +99,10 @@ export class DatabaseConnection implements IDatabaseConnection {
             schema.reference,
           );
 
-          association.model = this.toModel(schema).bindKnex(this.knex);
           association.structure = structure;
           association.inSync = false;
         }
       } else {
-        const model = this.toModel(schema).bindKnex(this.knex);
-
         this.associations.set(key, { schema, structure, inSync: false, model });
         this.logger.info('Schema [%s] registered', schema.reference);
       }
