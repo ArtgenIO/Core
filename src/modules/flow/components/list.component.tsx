@@ -19,7 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../admin/library/http-client';
-import { toRestRoute } from '../../content/util/schema-url';
+import { toRestSysRoute } from '../../content/util/schema-url';
+import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { IFlow } from '../interface/flow.interface';
 import CreateFlowComponent from './create.component';
 
@@ -36,7 +37,7 @@ export default function FlowListComponent() {
 
     if (flow) {
       try {
-        await httpClient.delete(`/api/rest/main/flow/${id}`);
+        await httpClient.delete(`${toRestSysRoute('flow')}/${id}`);
 
         setFlows(wfs => wfs.filter(wf => wf.id !== id));
 
@@ -54,9 +55,9 @@ export default function FlowListComponent() {
 
   useEffect(() => {
     httpClient
-      .get<IFlow[]>(toRestRoute({ database: 'main', reference: 'Flow' }))
+      .get<IFindResponse<IFlow>>(toRestSysRoute('flow'))
       .then(response => {
-        setFlows(response.data);
+        setFlows(response.data.data);
         setIsLoading(false);
       });
   }, []);

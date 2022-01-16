@@ -1,11 +1,13 @@
 import {
   DeleteOutlined,
+  EditOutlined,
   FileOutlined,
   FilterOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { Button, message, Pagination, Popconfirm } from 'antd';
+import { Button, message, Pagination, Popconfirm, Tag } from 'antd';
+import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useState } from 'react';
@@ -13,6 +15,7 @@ import DataGrid, { Column } from 'react-data-grid';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
+import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { FieldTag, FieldType, ISchema } from '../../schema';
 import { toRestRecordRoute, toRestRoute } from '../util/schema-url';
 import ContentCreateComponent from './create.component';
@@ -33,14 +36,15 @@ export default function TableComponent({ schema }: Props) {
   // Pagination
   const [pageSize, setPageSize] = useState(20);
   const [pageCurr, setPageCurr] = useState(1);
+  const [total, setTotal] = useState(0);
 
   // Grid content state
   const [columns, setColumns] = useState<Column<RowLike>[]>([]);
   const [rows, setRows] = useState<RowLike[]>([]);
 
   // Load initial content
-  const [{ data: content, loading: isContentLoading }, __do_fetch] =
-    useHttpClient<object[]>(
+  const [{ data: findResponse, loading: isContentLoading }, __do_fetch] =
+    useHttpClient<IFindResponse>(
       toRestRoute(schema) + new QueryBuilder().top(pageSize).toQuery(),
     );
 
@@ -82,10 +86,11 @@ export default function TableComponent({ schema }: Props) {
 
   // Unlock the loading screen when the content arrvies
   useEffect(() => {
-    if (!isContentLoading) {
-      setRows(content);
+    if (findResponse) {
+      setRows(findResponse.data);
+      setTotal(findResponse.meta.total);
     }
-  }, [content]);
+  }, [findResponse]);
 
   useEffect(() => {
     const columnDef: Column<RowLike>[] = [];
@@ -93,8 +98,8 @@ export default function TableComponent({ schema }: Props) {
     for (const field of schema.fields) {
       let sortable = true;
       let resizable = true;
-      let minWidth: number = undefined;
       let maxWidth: number = undefined;
+      let minWidth: number = undefined;
       let width: number = undefined;
       let cellClass: string;
       let formatter: Column<RowLike>['formatter'];
@@ -119,6 +124,46 @@ export default function TableComponent({ schema }: Props) {
         cellClass = 'text-primary-500';
       } else if (field.tags.includes(FieldTag.UNIQUE)) {
         cellClass = 'text-yellow-500';
+      } else if (field.type == FieldType.INTEGER) {
+        cellClass = 'text-green-500 text-right';
+
+        formatter = props => {
+          return (
+            <>
+              {props.row[field.reference]
+                ? (props.row[field.reference] as number).toLocaleString()
+                : '0'}
+            </>
+          );
+        };
+      }
+
+      if (field.type == FieldType.DATETIME) {
+        width = minWidth = 200;
+
+        cellClass = 'text-right';
+
+        formatter = props => {
+          return (
+            <>
+              {props.row[field.reference]
+                ? dayjs(props.row[field.reference]).toDate().toLocaleString()
+                : ''}
+            </>
+          );
+        };
+      }
+
+      if (field.tags.includes(FieldTag.TAGS)) {
+        formatter = props => {
+          return (
+            <>
+              {props.row[field.reference]
+                ? props.row[field.reference].map(t => <Tag>{t}</Tag>)
+                : ''}
+            </>
+          );
+        };
       }
 
       const fieldDef: Column<RowLike> = {
@@ -165,6 +210,13 @@ export default function TableComponent({ schema }: Props) {
       formatter: p => {
         return (
           <div className="text-center">
+            <Button
+              size="small"
+              key="edit"
+              className="hover:text-yellow-500 hover:border-yellow-500 mr-0.5"
+              icon={<EditOutlined />}
+              onClick={() => setShowEdit(p.row)}
+            ></Button>
             <Popconfirm
               title="Are You sure to delete the record?"
               okText="Yes, delete"
@@ -172,6 +224,7 @@ export default function TableComponent({ schema }: Props) {
               placement="left"
               icon={<QuestionCircleOutlined />}
               onConfirm={() => doDelete(p.row)}
+              key="delete"
             >
               <Button
                 size="small"
@@ -189,7 +242,6 @@ export default function TableComponent({ schema }: Props) {
 
   const bouncedMeta = debounce(() => {
     rebuildMeta();
-    console.log('Bounced');
   }, 1_000);
 
   return (
@@ -209,10 +261,21 @@ export default function TableComponent({ schema }: Props) {
             </Button>
           </Button.Group>
         </div>
+      </div>
 
-        <div className="shrink text-right">
+      <DataGrid
+        className="ag-table"
+        columns={columns}
+        rows={rows}
+        rowHeight={30}
+        headerRowHeight={32}
+        style={{ height: Math.max(320, 54 + rows.length * 30) }}
+      />
+
+      <div className="flex my-2">
+        <div className="grow text-right">
           <Pagination
-            total={5000}
+            total={total}
             defaultCurrent={pageCurr}
             current={pageCurr}
             pageSize={pageSize}
@@ -233,15 +296,6 @@ export default function TableComponent({ schema }: Props) {
           />
         </div>
       </div>
-
-      <DataGrid
-        className="ag-table"
-        columns={columns}
-        rows={rows}
-        rowHeight={30}
-        headerRowHeight={32}
-        style={{ height: Math.max(320, 54 + rows.length * 30) }}
-      />
 
       {showCreate ? (
         <ContentCreateComponent

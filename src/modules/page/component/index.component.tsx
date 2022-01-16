@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { toRestRoute } from '../../content/util/schema-url';
+import { toRestSysRoute } from '../../content/util/schema-url';
+import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { IPage } from '../interface/page.interface';
 import PageEditorComponent from './editor.component';
 
@@ -15,8 +16,10 @@ export default function PageIndexComponent() {
   const redirect = useNavigate();
   const [search, setSearch] = useState<string>(null);
 
-  const [{ data: pages, loading, error }] = useHttpClient<IPage[]>(
-    toRestRoute({ database: 'main', reference: 'Page' }) +
+  const [{ data: reponse, loading, error }] = useHttpClient<
+    IFindResponse<IPage>
+  >(
+    toRestSysRoute('page') +
       new QueryBuilder()
         .select('id,title,domain,path,tags')
         .orderBy('id')
@@ -25,7 +28,7 @@ export default function PageIndexComponent() {
   );
 
   if (!loading) {
-    if (pages.length) {
+    if (reponse.data.length) {
       if (location.pathname === '/admin/page') {
         //history.push(routeCrudUI(`TODO`));
       }
@@ -64,7 +67,7 @@ export default function PageIndexComponent() {
               onChange={e => setSearch(e.target.value.toLowerCase())}
               onKeyPress={event => {
                 if (event.key === 'Enter') {
-                  const match = pages.filter(menuFilter);
+                  const match = reponse.data.filter(menuFilter);
 
                   if (match.length === 1) {
                     redirect('TODO');
@@ -82,8 +85,8 @@ export default function PageIndexComponent() {
             mode="inline"
             triggerSubMenuAction="hover"
           >
-            {pages
-              ? pages.filter(menuFilter).map(page => {
+            {reponse
+              ? reponse.data.filter(menuFilter).map(page => {
                   return (
                     <Menu.Item key={`page-${page.id}`}>
                       <Link to={`/admin/page/${page.id}`}>

@@ -22,7 +22,8 @@ import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import { toRestRoute } from '../../../content/util/schema-url';
+import { toRestSysRoute } from '../../../content/util/schema-url';
+import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
 import { IDatabase } from '../../interface';
 import DatabaseConnectComponent from './connect.component';
 import DatabaseEditComponent from './edit.component';
@@ -37,17 +38,17 @@ export default function DatabaseListComponent() {
   const [showExport, setShowExport] = useState<IDatabase>(null);
   const [databases, setDatabases] = useState<IDatabase[]>([]);
 
-  const [{ data, loading, error }] = useHttpClient<IDatabase[]>(
-    toRestRoute({ database: 'main', reference: 'Database' }) +
-      new QueryBuilder().top(100).toQuery(),
-    {
-      useCache: false,
-    },
-  );
+  const [{ data: response, loading, error }] = useHttpClient<
+    IFindResponse<IDatabase>
+  >(toRestSysRoute('database') + new QueryBuilder().top(100).toQuery(), {
+    useCache: false,
+  });
 
   useEffect(() => {
-    setDatabases(data);
-  }, [data]);
+    if (response) {
+      setDatabases(response.data);
+    }
+  }, [response]);
 
   if (error) {
     return (

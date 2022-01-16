@@ -3,6 +3,7 @@ import { notification } from 'antd';
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
+import { toRestSysRoute } from '../../../content/util/schema-url';
 import {
   flowAtom,
   flowChangedAtom,
@@ -26,7 +27,7 @@ export default function ArtboardSave() {
     );
 
     httpClient
-      .patch(`/api/rest/main/flow/${flow.id}`, serializedFlow)
+      .patch(`${toRestSysRoute('flow')}/${flow.id}`, serializedFlow)
       .then(() => {
         notification.success({
           key: SAVING_NOTIFICATION,

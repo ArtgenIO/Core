@@ -5,6 +5,7 @@ import { RowLike } from '../../../app/interface/row-like.interface';
 import { getErrorMessage } from '../../../app/kernel';
 import { SchemaService } from '../../schema/service/schema.service';
 import { isManagedField, isPrimary } from '../../schema/util/field-tools';
+import { IFindResponse } from '../interface/find-reponse.interface';
 import { ODataService } from './odata.service';
 
 /**
@@ -29,14 +30,30 @@ export class RestService {
     database: string,
     reference: string,
     filters: RowLike,
-  ): Promise<RowLike[]> {
+  ): Promise<IFindResponse> {
     const model = this.schema.getModel(database, reference);
     const schema = this.schema.getSchema(database, reference);
 
     try {
-      return (await this.odata.toQueryBuilder(model, schema, filters)).map(
-        record => record.$toJson(),
-      );
+      const rowQuery = this.odata.toQueryBuilder(model, schema, filters);
+      const cntQuery = rowQuery
+        .clone()
+        .clear('limit')
+        .clear('offset')
+        .clearSelect()
+        .clearWithGraph()
+        .count()
+        .toKnexQuery();
+
+      const records = (await rowQuery).map(record => record.$toJson());
+
+      return {
+        meta: {
+          total: parseInt((await cntQuery)[0].count, 10),
+          count: records.length,
+        },
+        data: records,
+      };
     } catch (error) {
       this.logger.warn(getErrorMessage(error));
       throw new Exception('Invalid input'); // 400

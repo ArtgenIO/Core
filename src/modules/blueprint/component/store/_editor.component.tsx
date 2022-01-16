@@ -2,8 +2,9 @@ import { Button, Divider, Form, Input, Select, Transfer } from 'antd';
 import { startCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import { toRestRoute } from '../../../content/util/schema-url';
+import { toRestSysRoute } from '../../../content/util/schema-url';
 import { IFlow } from '../../../flow/interface';
+import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../../schema';
 import { IBlueprint } from '../../interface/blueprint.interface';
 
@@ -43,33 +44,25 @@ export default function ExtensionEdiorComponent({
   );
 
   const [{ data: schemasReply, loading: schemasLoading }] = useHttpClient<
-    ISchema[]
-  >(
-    toRestRoute({
-      database: 'main',
-      reference: 'Schema',
-    }),
-  );
+    IFindResponse<ISchema>
+  >(toRestSysRoute('schema'));
 
-  const [{ data: flowReply, loading: flowLoading }] = useHttpClient<IFlow[]>(
-    toRestRoute({
-      database: 'main',
-      reference: 'Flow',
-    }),
-  );
+  const [{ data: flowReply, loading: flowLoading }] = useHttpClient<
+    IFindResponse<IFlow>
+  >(toRestSysRoute('flow'));
 
   useEffect(() => {
     setExtension(ext => {
       ext.database = selectedDatabase;
 
       if (schemasReply) {
-        ext.schemas = schemasReply.filter(s =>
+        ext.schemas = schemasReply.data.filter(s =>
           selectedSchemas.includes(s.reference),
         );
       }
 
       if (flowReply) {
-        ext.flows = flowReply.filter(wf => selectedFlows.includes(wf.id));
+        ext.flows = flowReply.data.filter(wf => selectedFlows.includes(wf.id));
       }
 
       return ext;
@@ -79,7 +72,7 @@ export default function ExtensionEdiorComponent({
   useEffect(() => {
     if (schemasReply) {
       const dbs = Array.from(
-        new Set(schemasReply.map(s => s.database)).values(),
+        new Set(schemasReply.data.map(s => s.database)).values(),
       );
 
       setDatabases(dbs);
@@ -93,7 +86,7 @@ export default function ExtensionEdiorComponent({
   useEffect(() => {
     if (flowReply) {
       setFlows(
-        flowReply.map(wf => ({
+        flowReply.data.map(wf => ({
           title: wf.name,
           key: wf.id,
           description: wf.name,
@@ -105,7 +98,7 @@ export default function ExtensionEdiorComponent({
   useEffect(() => {
     if (schemasReply) {
       setSchemas(
-        schemasReply
+        schemasReply.data
           .filter(c => c.database === selectedDatabase)
           .filter(c => !c.tags.includes('system'))
           .map(s => ({

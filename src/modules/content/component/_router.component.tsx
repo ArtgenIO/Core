@@ -20,8 +20,10 @@ import {
 } from 'react-router';
 import MenuBlock from '../../admin/component/menu-block.component';
 import { useHttpClient } from '../../admin/library/use-http-client';
+import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../schema';
 import { IContentModule } from '../interface/content-module.interface';
+import { toRestSysRoute } from '../util/schema-url';
 import ContentListComponent from './list.component';
 import PlaceholderComponent from './placeholder.component';
 
@@ -63,8 +65,10 @@ export default function ContentRouterComponent() {
   const [selected, setSelected] = useState<string[]>(null);
   const [tree, setTree] = useState<TreeDataNode[]>([]);
 
-  const [{ data: schemas, loading, error }] = useHttpClient<SchemaWithModule[]>(
-    '/api/rest/main/schema' +
+  const [{ data: schemasResponse, loading, error }] = useHttpClient<
+    IFindResponse<SchemaWithModule>
+  >(
+    toRestSysRoute('schema') +
       new QueryBuilder().top(1_000).select('*,module').toQuery(),
     {
       useCache: false,
@@ -80,12 +84,12 @@ export default function ContentRouterComponent() {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (schemas) {
+    if (schemasResponse) {
       const modules: IContentModule[] = [];
       const tree: TreeDataNode[] = [];
 
       // Collect modules from existing references
-      for (const schema of schemas
+      for (const schema of schemasResponse.data
         .filter(s => s.module)
         .sort((a, b) => (a.title > b.title ? 1 : -1))) {
         if (!modules.find(m => schema.module.id === m.id)) {
@@ -95,7 +99,7 @@ export default function ContentRouterComponent() {
 
       // Build the module branches
       for (const module of modules) {
-        const children = schemas
+        const children = schemasResponse.data
           .filter(s => s.module)
           .filter(s => s.module.id == module.id)
           .filter(applyQuickFilter(quickFilter))
@@ -121,7 +125,7 @@ export default function ContentRouterComponent() {
       }
 
       // Add the schemas which are not in any module
-      for (const schema of schemas
+      for (const schema of schemasResponse.data
         .filter(s => !s.module)
         .filter(applyQuickFilter(quickFilter))) {
         tree.push({

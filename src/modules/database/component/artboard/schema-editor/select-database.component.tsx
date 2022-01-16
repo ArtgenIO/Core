@@ -4,7 +4,8 @@ import { cloneDeep, startCase } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
-import { toRestRoute } from '../../../../content/util/schema-url';
+import { toRestSysRoute } from '../../../../content/util/schema-url';
+import { IFindResponse } from '../../../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../../../schema';
 import { IDatabase } from '../../../interface';
 
@@ -15,12 +16,9 @@ export default function SelectDatabaseComponent({
   schema: Partial<ISchema>;
   setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
 }) {
-  const [{ data: databases, loading, error }] = useHttpClient<IDatabase[]>(
-    toRestRoute({
-      database: 'main',
-      reference: 'Database',
-    }),
-  );
+  const [{ data: databases, loading, error }] = useHttpClient<
+    IFindResponse<IDatabase>
+  >(toRestSysRoute('database'));
 
   if (error) {
     return (
@@ -75,7 +73,7 @@ export default function SelectDatabaseComponent({
           }
         >
           {databases
-            ? databases.map(db => (
+            ? databases.data.map(db => (
                 <Select.Option key={db.ref} value={db.ref}>
                   {startCase(db.ref)}
                 </Select.Option>

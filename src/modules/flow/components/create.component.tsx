@@ -2,6 +2,7 @@ import { Button, Drawer, Form, Input, message } from 'antd';
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { useHttpClientSimple } from '../../admin/library/http-client';
+import { toRestSysRoute } from '../../content/util/schema-url';
 import { IFlow } from '../interface/flow.interface';
 
 type Props = {
@@ -13,7 +14,7 @@ export default function CreateFlowComponent({ onClose }: Props) {
   const httpClient = useHttpClientSimple();
 
   const sendRequest = async (data: Omit<IFlow, 'id'>) => {
-    const response = await httpClient.post<IFlow>('/api/rest/main/flow', data);
+    const response = await httpClient.post<IFlow>(toRestSysRoute('flow'), data);
 
     return response.data.id;
   };

@@ -22,6 +22,8 @@ import {
 import MenuBlock from '../../admin/component/menu-block.component';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { IContentModule } from '../../content/interface/content-module.interface';
+import { toRestSysRoute } from '../../content/util/schema-url';
+import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { IFlow } from '../interface';
 import CreateFlowComponent from './create.component';
 import FlowListComponent from './list.component';
@@ -67,9 +69,9 @@ export default function FlowRouterComponent() {
   const [showCreate, setShowCreate] = useState<boolean>(false);
 
   const [{ data: flows, loading, error }, refetch] = useHttpClient<
-    FlowWithModule[]
+    IFindResponse<FlowWithModule>
   >(
-    '/api/rest/main/flow' +
+    toRestSysRoute('flow') +
       new QueryBuilder().top(1_000).select('*,module').toQuery(),
     {
       useCache: false,
@@ -90,7 +92,7 @@ export default function FlowRouterComponent() {
       const tree: TreeDataNode[] = [];
 
       // Collect modules from existing references
-      for (const flow of flows
+      for (const flow of flows.data
         .filter(f => f.module)
         .sort((a, b) => (a.name > b.name ? 1 : -1))) {
         if (!modules.find(m => flow.module.id === m.id)) {
@@ -100,7 +102,7 @@ export default function FlowRouterComponent() {
 
       // Build the module branches
       for (const module of modules) {
-        const children = flows
+        const children = flows.data
           .filter(f => f.module)
           .filter(f => f.module.id == module.id)
           .filter(applyQuickFilter(quickFilter))
@@ -126,7 +128,7 @@ export default function FlowRouterComponent() {
       }
 
       // Add the flows which are not in any module
-      for (const flow of flows
+      for (const flow of flows.data
         .filter(s => !s.module)
         .filter(applyQuickFilter(quickFilter))) {
         tree.push({

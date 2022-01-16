@@ -4,7 +4,8 @@ import { QueryBuilder } from 'odata-query-builder';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import { toRestRoute } from '../../../content/util/schema-url';
+import { toRestSysRoute } from '../../../content/util/schema-url';
+import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../../schema';
 import { IDatabase } from '../../interface';
 
@@ -18,8 +19,10 @@ type DatabaseWithSchemas = IDatabase & {
 };
 
 export default function DatabaseExportComponent({ onClose, database }: Props) {
-  const [{ data, loading, error }] = useHttpClient<DatabaseWithSchemas[]>(
-    toRestRoute({ database: 'main', reference: 'Database' }) +
+  const [{ data: response, loading, error }] = useHttpClient<
+    IFindResponse<DatabaseWithSchemas>
+  >(
+    toRestSysRoute('database') +
       new QueryBuilder()
         .top(1)
         .select('ref,schemas')
@@ -41,7 +44,7 @@ export default function DatabaseExportComponent({ onClose, database }: Props) {
 
   const doDownload = () => {
     const fileName = `schema-${database.ref}.json`;
-    const fileContent = new Blob([JSON.stringify(data[0], null, 2)], {
+    const fileContent = new Blob([JSON.stringify(response[0], null, 2)], {
       type: 'application/json',
     });
 
@@ -69,7 +72,7 @@ export default function DatabaseExportComponent({ onClose, database }: Props) {
           showLineNumbers={true}
           selected
         >
-          {data ? JSON.stringify(data[0], null, 2) : ''}
+          {response ? JSON.stringify(response.data[0], null, 2) : ''}
         </SyntaxHighlighter>
       </Skeleton>
     </Drawer>

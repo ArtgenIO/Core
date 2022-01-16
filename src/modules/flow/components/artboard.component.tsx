@@ -15,6 +15,7 @@ import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { pageDrawerAtom } from '../../admin/admin.atoms';
 import { useHttpClientSimple } from '../../admin/library/http-client';
+import { toRestSysRoute } from '../../content/util/schema-url';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import {
   catalogCollapsedAtom,
@@ -117,7 +118,9 @@ export default function FlowArtboardComponent() {
   useEffect(() => {
     (async () => {
       const nodes = await httpClient.get<ILambdaMeta[]>('/api/lambda');
-      const flow = await httpClient.get<IFlow>(`/api/rest/main/flow/${flowId}`);
+      const flow = await httpClient.get<IFlow>(
+        `${toRestSysRoute('flow')}/${flowId}`,
+      );
 
       const customNodes: NodeTypesType = {};
       for (const node of nodes.data) {

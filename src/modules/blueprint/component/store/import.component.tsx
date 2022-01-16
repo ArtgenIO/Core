@@ -6,8 +6,9 @@ import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { useHttpClient } from '../../../admin/library/use-http-client';
-import { toRestRoute } from '../../../content/util/schema-url';
+import { toRestSysRoute } from '../../../content/util/schema-url';
 import { IDatabase } from '../../../database/interface';
+import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
 
 type FormData = {
   database: string;
@@ -21,12 +22,9 @@ export default function ImportExtension() {
 
   const [waitForSource, setWaitForSource] = useState(true);
   const [source, setSource] = useState('');
-  const [{ data: databases, loading }] = useHttpClient<IDatabase[]>(
-    toRestRoute({
-      database: 'main',
-      reference: 'Database',
-    }),
-  );
+  const [{ data: databases, loading }] = useHttpClient<
+    IFindResponse<IDatabase>
+  >(toRestSysRoute('database'));
 
   useEffect(() => {
     if (params?.id) {
@@ -77,7 +75,7 @@ export default function ImportExtension() {
         >
           <Form.Item label="Import into Database" name="database">
             <Select placeholder="Select a target database">
-              {databases.map(db => (
+              {databases.data.map(db => (
                 <Select.Option key={db.ref} value={db.ref}>
                   {startCase(db.ref)}
                 </Select.Option>

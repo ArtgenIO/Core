@@ -111,7 +111,6 @@ export class OpenApiService {
 
       case CrudAction.FIND:
         definition.response[400] = this.getBadRequestResponseSchema();
-        definition.response[404] = this.getNotFoundResponseSchema();
         definition.response[200] = {
           description: 'OK',
           ...(this.getJsonSchema(schema, CrudAction.FIND) as JSONSchema7Object),
@@ -242,8 +241,22 @@ export class OpenApiService {
 
     if (action === CrudAction.FIND) {
       jschema = {
-        type: 'array',
-        items: jschema,
+        type: 'object',
+        properties: {
+          meta: {
+            type: 'object',
+            properties: {
+              total: {
+                type: 'number',
+              },
+            },
+          },
+          data: {
+            type: 'array',
+            items: jschema,
+          },
+        },
+        required: ['meta', 'data'],
       };
     }
 

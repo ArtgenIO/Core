@@ -8,7 +8,8 @@ import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
-import { toRestRoute } from '../../content/util/schema-url';
+import { toRestSysRoute } from '../../content/util/schema-url';
+import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../schema';
 
 export default function AnalyticsEditorComponent() {
@@ -20,26 +21,18 @@ export default function AnalyticsEditorComponent() {
   useEffect(() => {
     if (schema) {
       client
-        .get<unknown[]>(
-          toRestRoute({
-            database: 'main',
-            reference: schema.reference,
-          }),
-        )
-        .then(r => setResult(r.data.length));
+        .get<IFindResponse>(toRestSysRoute(schema.reference))
+        .then(r => setResult(r.data.data.length));
     } else {
       setResult(0);
     }
   }, [schema]);
 
-  const [{ data, loading, error }] = useHttpClient<ISchema[]>(
-    toRestRoute({
-      database: 'main',
-      reference: 'Schema',
-    }),
-  );
+  const [{ data: response, loading, error }] = useHttpClient<
+    IFindResponse<ISchema>
+  >(toRestSysRoute('schema'));
 
-  if (!data) {
+  if (!response) {
     return <h1>Loading...</h1>;
   }
 
@@ -73,9 +66,11 @@ export default function AnalyticsEditorComponent() {
                   <Select
                     className="w-96"
                     placeholder="Select data model"
-                    onChange={v => setSchema(data.find(s => s.reference === v))}
+                    onChange={v =>
+                      setSchema(response.data.find(s => s.reference === v))
+                    }
                   >
-                    {data.map(s => (
+                    {response.data.map(s => (
                       <Select.Option key={s.reference} value={s.reference}>
                         {s.title}
                       </Select.Option>

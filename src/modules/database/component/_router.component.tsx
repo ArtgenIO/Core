@@ -13,6 +13,8 @@ import {
 import { ADMIN_URL } from '../../admin/admin.constants';
 import MenuBlock from '../../admin/component/menu-block.component';
 import { useHttpClient } from '../../admin/library/use-http-client';
+import { toRestSysRoute } from '../../content/util/schema-url';
+import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../schema';
 import { IDatabase } from '../interface';
 import DatabaseArtboardComponent from './artboard/artboard.component';
@@ -29,9 +31,9 @@ export default function DatabaseRouterComponent() {
   const [tree, setTree] = useState<TreeDataNode[]>([]);
 
   const [{ data: databases, loading, error }] = useHttpClient<
-    DatabaseWithSchemas[]
+    IFindResponse<DatabaseWithSchemas>
   >(
-    '/api/rest/main/database' +
+    toRestSysRoute('database') +
       new QueryBuilder()
         .top(5000)
         .select(
@@ -46,7 +48,7 @@ export default function DatabaseRouterComponent() {
   useEffect(() => {
     if (databases) {
       setTree(
-        databases.map(db => ({
+        databases.data.map(db => ({
           title: db.title,
           key: db.ref,
           children: db.schemas

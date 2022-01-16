@@ -6,7 +6,8 @@ import { useResetRecoilState } from 'recoil';
 import { Exception } from '../../../../../app/exceptions/exception';
 import { pageDrawerAtom } from '../../../../admin/admin.atoms';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
-import { toRestRoute } from '../../../../content/util/schema-url';
+import { toRestSysRoute } from '../../../../content/util/schema-url';
+import { IFindResponse } from '../../../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../../../schema';
 import { RelationKind } from '../../../../schema/interface/relation.interface';
 import { isPrimary } from '../../../../schema/util/field-tools';
@@ -27,8 +28,10 @@ export default function RelationsComponent({
     schema.fields.filter(isPrimary).length,
   );
 
-  const [{ data: schemas, loading, error }] = useHttpClient<ISchema[]>(
-    toRestRoute({ database: 'main', reference: 'Schema' }) +
+  const [{ data: schemas, loading, error }] = useHttpClient<
+    IFindResponse<ISchema>
+  >(
+    toRestSysRoute('schema') +
       new QueryBuilder()
         .top(1000)
         .filter(f => f.filterExpression('database', 'eq', schema.database))
@@ -135,7 +138,7 @@ export default function RelationsComponent({
           if (relation.kind === RelationKind.BELONGS_TO_ONE) {
             return (
               <RelationBelongsToOne
-                schemas={schemas}
+                schemas={schemas.data}
                 relation={relation}
                 idx={k}
                 setSchema={setSchema}
@@ -144,7 +147,7 @@ export default function RelationsComponent({
           } else if (relation.kind === RelationKind.BELONGS_TO_MANY) {
             return (
               <RelationBelongsToMany
-                schemas={schemas}
+                schemas={schemas.data}
                 schema={schema}
                 relation={relation}
                 idx={k}
@@ -154,7 +157,7 @@ export default function RelationsComponent({
           } else if (relation.kind === RelationKind.HAS_MANY) {
             return (
               <RelationHasMany
-                schemas={schemas}
+                schemas={schemas.data}
                 schema={schema}
                 relation={relation}
                 idx={k}
@@ -164,7 +167,7 @@ export default function RelationsComponent({
           } else if (relation.kind === RelationKind.HAS_ONE) {
             return (
               <RelationHasOne
-                schemas={schemas}
+                schemas={schemas.data}
                 schema={schema}
                 relation={relation}
                 idx={k}

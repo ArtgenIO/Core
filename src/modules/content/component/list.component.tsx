@@ -5,9 +5,10 @@ import { useParams } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClient } from '../../admin/library/use-http-client';
+import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../schema';
 import { IContentModule } from '../interface/content-module.interface';
-import { toRestRoute } from '../util/schema-url';
+import { toRestSysRoute } from '../util/schema-url';
 import TableComponent from './table.component';
 import TitleComponent from './title.components';
 
@@ -28,9 +29,9 @@ export default function ContentListComponent() {
 
   // Load schema
   const [{ data: schemaResponse, loading: iSchemaLoading }] = useHttpClient<
-    SchemaWithModule[]
+    IFindResponse<SchemaWithModule>
   >(
-    toRestRoute({ database: 'main', reference: 'Schema' }) +
+    toRestSysRoute('schema') +
       new QueryBuilder()
         .filter(f =>
           f
@@ -44,21 +45,18 @@ export default function ContentListComponent() {
 
   // Load modules
   const [{ data: modulesResponse, loading: isModulesLoading }] = useHttpClient<
-    IContentModule[]
-  >(
-    toRestRoute({ database: 'main', reference: 'Module' }) +
-      new QueryBuilder().top(500).toQuery(),
-  );
+    IFindResponse<IContentModule>
+  >(toRestSysRoute('module') + new QueryBuilder().top(500).toQuery());
 
   useEffect(() => {
-    if (schemaResponse && schemaResponse.length) {
-      setSchema(schemaResponse[0]);
+    if (schemaResponse && schemaResponse.data.length) {
+      setSchema(schemaResponse.data[0]);
     }
   }, [schemaResponse]);
 
   useEffect(() => {
     if (modulesResponse) {
-      setModules(modulesResponse);
+      setModules(modulesResponse.data);
     }
   }, [modulesResponse]);
 

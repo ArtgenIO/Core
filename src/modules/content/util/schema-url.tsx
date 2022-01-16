@@ -13,6 +13,9 @@ const routeRestFilterOne = (schema: Partial<ISchema>, record: RowLike) => {
 export const toRestRoute = (schema: Pick<ISchema, 'database' | 'reference'>) =>
   `/api/rest/${kebabCase(schema.database)}/${kebabCase(schema.reference)}`;
 
+export const toRestSysRoute = (reference: string) =>
+  `/api/rest/main/${kebabCase(reference)}`;
+
 export const toRestRecordRoute = (schema: ISchema, record: RowLike) =>
   `/api/rest/${kebabCase(schema.database)}/${kebabCase(
     schema.reference,

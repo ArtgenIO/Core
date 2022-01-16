@@ -24,7 +24,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useHttpClientSimple } from '../../../../admin/library/http-client';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
-import { toRestRoute } from '../../../../content/util/schema-url';
+import { toRestSysRoute } from '../../../../content/util/schema-url';
+import { IFindResponse } from '../../../../rest/interface/find-reponse.interface';
 import { IBlueprint } from '../../../interface/blueprint.interface';
 
 export default function OfflineExtensions() {
@@ -34,11 +35,8 @@ export default function OfflineExtensions() {
   const [showSourceFor, setShowSourceFor] = useState(null);
 
   const [{ data: extensions, loading, error }, refetch] = useHttpClient<
-    IBlueprint[]
-  >(
-    toRestRoute({ database: 'main', reference: 'Extension' }) +
-      new QueryBuilder().top(100).toQuery(),
-  );
+    IFindResponse<IBlueprint>
+  >(toRestSysRoute('blueprint') + new QueryBuilder().top(100).toQuery());
 
   if (error) {
     return (
@@ -58,7 +56,7 @@ export default function OfflineExtensions() {
       <List
         bordered
         size="large"
-        dataSource={extensions}
+        dataSource={extensions.data}
         renderItem={(ext, k) => (
           <List.Item key={`ext-${k}`}>
             <List.Item.Meta

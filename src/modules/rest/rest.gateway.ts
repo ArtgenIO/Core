@@ -111,25 +111,15 @@ export class RestGateway implements IHttpGateway {
         async (
           request: FastifyRequest,
           reply: FastifyReply,
-        ): Promise<unknown> => {
-          const record = await this.rest.find(
+        ): Promise<string> => {
+          const records = await this.rest.find(
             schema.database,
             schema.reference,
             request.query as RowLike,
           );
 
-          if (record) {
-            reply.header('content-type', 'application/json');
-            return JSON.stringify(record);
-          }
-
-          // Handle the 404 error
-          reply.statusCode = 404;
-
-          return {
-            error: 'Not Found',
-            statusCode: 404,
-          };
+          reply.header('content-type', 'application/json');
+          return JSON.stringify(records);
         },
       );
 

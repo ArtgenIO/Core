@@ -12,7 +12,8 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import { useParams } from 'react-router-dom';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
-import { toRestRoute } from '../../../content/util/schema-url';
+import { toRestSysRoute } from '../../../content/util/schema-url';
+import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../../schema';
 import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
 import { createEmptySchema } from '../../../schema/util/get-new-schema';
@@ -28,10 +29,7 @@ export default function DatabaseArtboardComponent() {
   const httpClient = useHttpClientSimple();
   const { ref } = useParams();
   const apiReadUrl =
-    toRestRoute({
-      database: 'main',
-      reference: 'Schema',
-    }) +
+    toRestSysRoute('schema') +
     new QueryBuilder()
       .top(1000)
       .filter(f => f.filterExpression('database', 'eq', ref))
@@ -51,12 +49,12 @@ export default function DatabaseArtboardComponent() {
 
   useEffect(() => {
     (async () => {
-      const response = await httpClient.get<ISchema[]>(apiReadUrl);
+      const response = await httpClient.get<IFindResponse<ISchema>>(apiReadUrl);
 
       setElements(() =>
-        layoutOrganizer(SchemaSerializer.toElements(response.data)),
+        layoutOrganizer(SchemaSerializer.toElements(response.data.data)),
       );
-      setSavedState(response.data);
+      setSavedState(response.data.data);
       setIsLoading(false);
     })();
   }, [ref]);
@@ -72,7 +70,7 @@ export default function DatabaseArtboardComponent() {
       // New schema create now
       if (!original) {
         await httpClient
-          .post('/api/rest/main/schema', schema)
+          .post(toRestSysRoute('schema'), schema)
           .then(() => {
             message.success(`Schema [${schema.reference}] created!`);
           })
@@ -89,7 +87,9 @@ export default function DatabaseArtboardComponent() {
         } else {
           await httpClient
             .patch(
-              `/api/rest/main/schema/${schema.database}/${schema.reference}`,
+              `${toRestSysRoute('schema')}/${schema.database}/${
+                schema.reference
+              }`,
               schema,
             )
             .then(() => {
@@ -109,12 +109,7 @@ export default function DatabaseArtboardComponent() {
 
     for (const deleted of deletedRefs) {
       await httpClient
-        .delete(
-          toRestRoute({
-            database: 'main',
-            reference: 'Schema',
-          }) + `${ref}/${deleted.reference}`,
-        )
+        .delete(toRestSysRoute('schema') + `${ref}/${deleted.reference}`)
         .then(() => {
           // message.success(`Schema [${deleted.reference}] deleted!`);
         })
