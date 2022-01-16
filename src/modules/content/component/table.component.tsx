@@ -6,7 +6,7 @@ import {
   QuestionCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { Button, message, Pagination, Popconfirm, Tag } from 'antd';
+import { Button, Input, message, Pagination, Popconfirm, Tag } from 'antd';
 import dayjs from 'dayjs';
 import { debounce } from 'lodash';
 import { QueryBuilder } from 'odata-query-builder';
@@ -103,10 +103,31 @@ export default function TableComponent({ schema }: Props) {
       let width: number = undefined;
       let cellClass: string;
       let formatter: Column<RowLike>['formatter'];
+      let headerRenderer: Column<RowLike>['headerRenderer'];
+
+      headerRenderer = p => {
+        return (
+          <>
+            {p.column.name}
+            <div className="filter">
+              <Input size="small" />
+            </div>
+          </>
+        );
+      };
 
       // UUID rendering
       if (field.type === FieldType.UUID) {
         width = minWidth = maxWidth = 280;
+
+        headerRenderer = p => (
+          <>
+            {p.column.name}
+            <div className="filter">
+              <Input size="small" pattern="^[a-fA-F0-9]+$" />
+            </div>
+          </>
+        );
       }
 
       // JSON need special handling to not to crash the renderer
@@ -136,6 +157,15 @@ export default function TableComponent({ schema }: Props) {
             </>
           );
         };
+
+        headerRenderer = p => (
+          <>
+            {p.column.name}
+            <div className="filter">
+              <Input size="small" />
+            </div>
+          </>
+        );
       }
 
       if (field.type == FieldType.DATETIME) {
@@ -169,6 +199,7 @@ export default function TableComponent({ schema }: Props) {
       const fieldDef: Column<RowLike> = {
         name: field.title,
         key: field.reference,
+        headerRenderer,
         resizable,
         sortable,
         minWidth: minWidth ?? 150,
@@ -206,7 +237,7 @@ export default function TableComponent({ schema }: Props) {
       key: null,
       width: 80,
       sortable: false,
-      headerCellClass: 'ag-header',
+      headerCellClass: 'ag-header text-center',
       formatter: p => {
         return (
           <div className="text-center">
@@ -268,11 +299,11 @@ export default function TableComponent({ schema }: Props) {
         columns={columns}
         rows={rows}
         rowHeight={30}
-        headerRowHeight={32}
-        style={{ height: Math.max(320, 54 + rows.length * 30) }}
+        headerRowHeight={64}
+        style={{ height: Math.max(320, 82 + rows.length * 30) }}
       />
 
-      <div className="flex my-2">
+      <div className="flex my-2 bg-midnight-800 rounded-sm px-2 py-1">
         <div className="grow text-right">
           <Pagination
             total={total}
