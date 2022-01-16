@@ -151,7 +151,9 @@ export default function TableComponent({ schema }: Props) {
             showQuickJumper
             showTotal={total => (
               <span>
-                <span className="text-green-500">{total.toLocaleString()}</span>{' '}
+                <span className="text-green-500">
+                  {total ? total.toLocaleString() : 0}
+                </span>{' '}
                 Record
               </span>
             )}
