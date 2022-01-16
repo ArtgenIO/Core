@@ -20,10 +20,6 @@ export interface ISchema {
         y: number;
       };
     };
-
-    grid?: Partial<{
-      fieldOrder: string[];
-    }>;
   };
 
   /**

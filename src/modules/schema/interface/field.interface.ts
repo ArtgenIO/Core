@@ -25,6 +25,16 @@ export interface IField {
   title: string;
 
   /**
+   * Visual infor
+   */
+  meta: {
+    grid?: {
+      order: number;
+      hidden: boolean;
+    };
+  };
+
+  /**
    * Real column name in the database.
    */
   columnName: string;

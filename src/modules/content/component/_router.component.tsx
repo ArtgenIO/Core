@@ -1,15 +1,6 @@
 import { SearchOutlined } from '@ant-design/icons';
-import {
-  Divider,
-  Empty,
-  Input,
-  Layout,
-  Result,
-  Tree,
-  TreeDataNode,
-} from 'antd';
+import { Divider, Empty, Input, Layout, Tree, TreeDataNode } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
-import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useState } from 'react';
 import {
   generatePath,
@@ -18,12 +9,11 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router';
+import { useRecoilValue } from 'recoil';
+import { modulesAtom, schemasAtom } from '../../admin/admin.atoms';
 import MenuBlock from '../../admin/component/menu-block.component';
-import { useHttpClient } from '../../admin/library/use-http-client';
-import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../schema';
 import { IContentModule } from '../interface/content-module.interface';
-import { toRestSysRoute } from '../util/schema-url';
 import ContentListComponent from './list.component';
 import PlaceholderComponent from './placeholder.component';
 
@@ -64,16 +54,8 @@ export default function ContentRouterComponent() {
   const [quickFilter, setQuickFilter] = useState<string>(null);
   const [selected, setSelected] = useState<string[]>(null);
   const [tree, setTree] = useState<TreeDataNode[]>([]);
-
-  const [{ data: schemasResponse, loading, error }] = useHttpClient<
-    IFindResponse<SchemaWithModule>
-  >(
-    toRestSysRoute('schema') +
-      new QueryBuilder().top(1_000).select('*,module').toQuery(),
-    {
-      useCache: false,
-    },
-  );
+  const schemas = useRecoilValue(schemasAtom);
+  const modules = useRecoilValue(modulesAtom);
 
   useEffect(() => {
     const segments = location.pathname.split('/').slice(3, 5);
@@ -81,27 +63,18 @@ export default function ContentRouterComponent() {
     if (segments && segments.length === 2) {
       setSelected([`${segments[0]}-${segments[1]}`]);
     }
-  }, [location.pathname]);
+
+    setQuickFilter(null);
+  }, [location]);
 
   useEffect(() => {
-    if (schemasResponse) {
-      const modules: IContentModule[] = [];
+    if (schemas) {
       const tree: TreeDataNode[] = [];
-
-      // Collect modules from existing references
-      for (const schema of schemasResponse.data
-        .filter(s => s.module)
-        .sort((a, b) => (a.title > b.title ? 1 : -1))) {
-        if (!modules.find(m => schema.module.id === m.id)) {
-          modules.push(schema.module);
-        }
-      }
 
       // Build the module branches
       for (const module of modules) {
-        const children = schemasResponse.data
-          .filter(s => s.module)
-          .filter(s => s.module.id == module.id)
+        const children = schemas
+          .filter(s => s.moduleId == module.id)
           .filter(applyQuickFilter(quickFilter))
           .sort((a, b) => (a.title > b.title ? 1 : -1))
           .map(s => ({
@@ -125,8 +98,8 @@ export default function ContentRouterComponent() {
       }
 
       // Add the schemas which are not in any module
-      for (const schema of schemasResponse.data
-        .filter(s => !s.module)
+      for (const schema of schemas
+        .filter(s => !s.moduleId)
         .filter(applyQuickFilter(quickFilter))) {
         tree.push({
           title: schema.title,
@@ -137,20 +110,7 @@ export default function ContentRouterComponent() {
 
       setTree(tree);
     }
-  }, [loading, quickFilter]);
-
-  // Clear the quick filter when the location changes
-  // I assume the user clicked to the match
-  useEffect(() => setQuickFilter(null), [location.pathname]);
-
-  if (error) {
-    return (
-      <Result
-        status="error"
-        title="Oups! There was an error, while we loaded the schemas"
-      ></Result>
-    );
-  }
+  }, [schemas, quickFilter]);
 
   return (
     <Layout hasSider>

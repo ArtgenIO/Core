@@ -528,6 +528,7 @@ export class DatabaseSynchronizer {
         reference: camelCase(col.name),
         columnName: col.name,
         defaultValue: col.default_value,
+        meta: {},
         type: FieldType.STRING,
         args: {},
         tags: [],

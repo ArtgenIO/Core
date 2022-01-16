@@ -83,6 +83,7 @@ export default function SchemaEditorFieldTunerComponent({
         title: form.getFieldValue('title'),
         columnName: form.getFieldValue('columnName'),
         type,
+        meta: {},
         args: {
           ...currentField.args,
           values,

@@ -1,18 +1,19 @@
-import { message, Select, Tag } from 'antd';
+import { Select, Tag } from 'antd';
+import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import cloneDeep from 'lodash.clonedeep';
 import { useEffect, useState } from 'react';
-import { useHttpClientSimple } from '../../admin/library/http-client';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { modulesAtom, schemasAtom } from '../../admin/admin.atoms';
 import { ISchema } from '../../schema';
-import { IContentModule } from '../interface/content-module.interface';
 
 type Props = {
-  modules: IContentModule[];
   schema: ISchema;
 };
 
-export default function TitleComponent({ schema, modules }: Props) {
-  const httpClient = useHttpClientSimple();
+export default function TitleComponent({ schema }: Props) {
   const [assignedModuleId, setAssignedModuleId] = useState(null);
+  const modules = useRecoilValue(modulesAtom);
+  const setSchemas = useSetRecoilState(schemasAtom);
 
   useEffect(() => {
     if (schema) {
@@ -21,26 +22,28 @@ export default function TitleComponent({ schema, modules }: Props) {
   }, [schema]);
 
   return (
-    <>
+    <ErrorBoundary>
       <Select
         value={assignedModuleId}
         bordered={false}
         className="text-4xl"
         size="large"
-        placeholder="$ROOT"
-        onSelect={selected => {
+        placeholder="$Root"
+        onSelect={(selected: string) => {
           if (selected !== assignedModuleId) {
             setAssignedModuleId(selected);
 
-            const patch = cloneDeep(schema);
-            patch.moduleId = selected;
+            setSchemas(currentState => {
+              const newState = cloneDeep(currentState);
 
-            httpClient
-              .patch(
-                `/api/rest/main/schema/${schema.database}/${schema.reference}`,
-                patch,
-              )
-              .then(() => message.success('Module changed'));
+              newState.find(
+                s =>
+                  s.database === schema.database &&
+                  s.reference === schema.reference,
+              ).moduleId = selected;
+
+              return newState;
+            });
           }
         }}
       >
@@ -49,14 +52,20 @@ export default function TitleComponent({ schema, modules }: Props) {
             {m.name}
           </Select.Option>
         ))}
+        <Select.Option key={null} value={null}>
+          <span className="text-midnight-500">$Root</span>
+        </Select.Option>
       </Select>
 
       {schema.title}
+
       <span className="ml-4">
         {schema.tags.map(t => (
-          <Tag key={t}>{t}</Tag>
+          <Tag key={t} color="magenta">
+            {t}
+          </Tag>
         ))}
       </span>
-    </>
+    </ErrorBoundary>
   );
 }
