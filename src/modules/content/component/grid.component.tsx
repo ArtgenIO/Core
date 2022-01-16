@@ -12,15 +12,15 @@ import Column, { ColumnProps } from 'antd/lib/table/Column';
 import { SorterResult } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import cloneDeep from 'lodash.clonedeep';
-import merge from 'lodash.merge';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { pageSizeAtom } from '../../admin/admin.atoms';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
-import { FieldTag, FieldType, ISchema } from '../../schema';
+import { FieldTag, FieldType, IField, ISchema } from '../../schema';
 import { FieldTool } from '../../schema/util/field-tools';
+import { GridTools } from '../util/grid.tools';
 import { toRestRecordRoute, toRestRoute } from '../util/schema-url';
 import ContentCreateComponent from './create.component';
 import ContentGridConfigComponent from './grid-config.component';
@@ -49,6 +49,7 @@ export default function TableComponent({ schema }: Props) {
   const [sorters, setSorters] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [refetch, doRefetch] = useState<number>(() => Date.now());
+  const [fields, setFields] = useState<IField[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -63,9 +64,18 @@ export default function TableComponent({ schema }: Props) {
             qb.skip(pageCurr * pageSize - pageSize);
           }
 
+          // TODO: eliminate sorters if hidden
           if (sorters) {
             qb.orderBy(sorters.join(', '));
           }
+
+          qb.select(
+            cloneDeep(schema)
+              .fields.map(FieldTool.withMeta)
+              .filter(f => FieldTool.isPrimary(f) || !f.meta.grid.hidden)
+              .map(f => f.reference)
+              .join(','),
+          );
 
           return qb;
         }) + `&--artgen-no-cache=${refetch}`,
@@ -81,6 +91,12 @@ export default function TableComponent({ schema }: Props) {
         setTotal(reply.data.meta.total);
         setLoading(false);
       });
+
+    setFields(
+      cloneDeep(schema.fields)
+        .map(FieldTool.withMeta)
+        .sort(GridTools.sortFields),
+    );
   }, [pageCurr, pageSize, sorters, schema, refetch]);
 
   const doDelete = async (record: RowLike) => {
@@ -182,23 +198,8 @@ export default function TableComponent({ schema }: Props) {
         }}
         bordered
       >
-        {schema.fields
-          .map((f, idx) => {
-            f = cloneDeep(f);
-
-            f.meta = merge(
-              {
-                grid: {
-                  order: idx,
-                  hidden: false,
-                },
-              },
-              f?.meta ?? {},
-            );
-
-            return f;
-          })
-          .sort((a, b) => (a.meta.grid.order > b.meta.grid.order ? 1 : -1))
+        {fields
+          .filter(f => !f.meta.grid.hidden)
           .map((f, idx) => {
             let align: ColumnProps<RowLike>['align'] = 'left';
             let width: ColumnProps<RowLike>['width'];

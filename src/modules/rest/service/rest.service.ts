@@ -1,4 +1,5 @@
 import { EventEmitter2 } from 'eventemitter2';
+import { diff } from 'just-diff';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { RowLike } from '../../../app/interface/row-like.interface';
@@ -152,6 +153,8 @@ export class RestService {
       return null;
     }
 
+    const oldValue = record.$toJson();
+
     for (const key in input) {
       if (Object.prototype.hasOwnProperty.call(input, key)) {
         const value = input[key];
@@ -179,11 +182,13 @@ export class RestService {
     try {
       // Commit the changes
       await record.$query().update();
-      const object = record.$toJson();
+      const newValue = record.$toJson();
 
-      this.event.emit(event, object);
+      if (diff(newValue, oldValue).length) {
+        this.event.emit(event, newValue, oldValue);
+      }
 
-      return object;
+      return newValue;
     } catch (error) {
       this.logger.warn(getErrorMessage(error));
       throw new Exception('Invalid input');

@@ -60,6 +60,21 @@ export const getTakenColumNames = (schema: ISchema) => [
   ...schema.relations.map(r => r.name), // Locked in the JSON
 ];
 
+const withMeta = (f: IField, idx?: number) => {
+  if (!f.meta) {
+    f.meta = {};
+  }
+
+  if (!f.meta.grid) {
+    f.meta.grid = {
+      order: idx === undefined ? 1 : idx,
+      hidden: false,
+    };
+  }
+
+  return f;
+};
+
 export const FieldTool = {
   isPrimary,
   isText,
@@ -72,4 +87,5 @@ export const FieldTool = {
   hasDefaultValue,
   isJson,
   isDate,
+  withMeta,
 };

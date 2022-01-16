@@ -22,6 +22,7 @@ import { isPrimary } from '../../schema/util/field-tools';
 import { createEmptySchema } from '../../schema/util/get-new-schema';
 import { IDatabaseConnection, IEnumeratorStructure } from '../interface';
 import { DatabaseInspector } from './database.inspector';
+import { toStructure } from './structure/to-structure';
 
 interface ChangeStep {
   type:
@@ -153,8 +154,8 @@ export class DatabaseSynchronizer {
       await this.toSchema(schema.tableName),
     );
 
-    const revStruct = this.connection.toStructure(revSchema);
-    const knownStruct = this.connection.toStructure(knownSchema);
+    const revStruct = toStructure(revSchema);
+    const knownStruct = toStructure(knownSchema);
 
     if (!isEqual(revStruct, knownStruct)) {
       const changes = diff(revStruct, knownStruct);
