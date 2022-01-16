@@ -9,6 +9,11 @@ export const jwtAtom = atom<string>({
   default: '',
   effects_UNSTABLE: [persistAtom],
 });
+export const pageSizeAtom = atom<number>({
+  key: 'pageSize',
+  default: 20,
+  effects_UNSTABLE: [persistAtom],
+});
 
 export const pageDrawerAtom = atom<ReactChild>({
   key: 'pageDrawer',

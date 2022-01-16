@@ -5,17 +5,22 @@ import {
   FilterOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { Button, message, Pagination, Popconfirm, Table, Tag } from 'antd';
-import Column from 'antd/lib/table/Column';
+import Column, { ColumnProps } from 'antd/lib/table/Column';
 import { SorterResult } from 'antd/lib/table/interface';
+import dayjs from 'dayjs';
 import { QueryBuilder } from 'odata-query-builder';
 import React, { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
+import { pageSizeAtom } from '../../admin/admin.atoms';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { FieldTag, FieldType, ISchema } from '../../schema';
+import { FieldTool } from '../../schema/util/field-tools';
 import { toRestRecordRoute, toRestRoute } from '../util/schema-url';
 import ContentCreateComponent from './create.component';
 import './table.component.less';
@@ -33,7 +38,7 @@ export default function TableComponent({ schema }: Props) {
   const [showEdit, setShowEdit] = useState<RowLike>(null);
 
   // Pagination
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useRecoilState(pageSizeAtom);
   const [pageCurr, setPageCurr] = useState(1);
   const [total, setTotal] = useState(0);
 
@@ -98,8 +103,8 @@ export default function TableComponent({ schema }: Props) {
   return (
     <>
       <div className="flex my-2">
-        <div className="grow">
-          <Button.Group>
+        <div className="shrink">
+          <Button.Group size="small">
             <Button icon={<FileOutlined />} onClick={() => setShowCreate(true)}>
               New
             </Button>
@@ -107,10 +112,36 @@ export default function TableComponent({ schema }: Props) {
             <Button icon={<ReloadOutlined />} onClick={() => refetch()}>
               Reload
             </Button>
-            <Button icon={<DeleteOutlined />} disabled>
+            <Button icon={<SettingOutlined />} type="dashed">
+              Configure
+            </Button>
+            <Button icon={<DeleteOutlined />} disabled danger>
               Delete
             </Button>
           </Button.Group>
+        </div>
+
+        <div className="grow text-right">
+          <Pagination
+            size="small"
+            total={total}
+            defaultCurrent={pageCurr}
+            current={pageCurr}
+            pageSize={pageSize}
+            pageSizeOptions={[10, 20, 50, 100, 500, 1000]}
+            showSizeChanger
+            showQuickJumper
+            showTotal={total => (
+              <span>
+                <span className="text-green-500">{total.toLocaleString()}</span>{' '}
+                Record
+              </span>
+            )}
+            onChange={(_pageNth, _pageSize) => {
+              setPageCurr(_pageNth);
+              setPageSize(_pageSize);
+            }}
+          />
         </div>
       </div>
 
@@ -118,8 +149,13 @@ export default function TableComponent({ schema }: Props) {
         className="ag-table"
         dataSource={rows}
         pagination={false}
+        loading={isContentLoading}
+        scroll={{
+          x: true,
+        }}
         size="small"
         onChange={(pagination, filters, sorter, extra) => {
+          // Multisort
           if (sorter instanceof Array) {
             setSorters(
               sorter.map(
@@ -127,6 +163,7 @@ export default function TableComponent({ schema }: Props) {
               ),
             );
           } else {
+            // Single sort
             sorter = sorter as SorterResult<RowLike>;
 
             if (sorter.column) {
@@ -136,13 +173,29 @@ export default function TableComponent({ schema }: Props) {
                 }`,
               ]);
             } else {
-              setSorters([]);
+              setSorters([]); // Sort removed
             }
           }
         }}
         bordered
       >
         {schema.fields.map((f, idx) => {
+          let align: ColumnProps<RowLike>['align'] = 'left';
+          let width: ColumnProps<RowLike>['width'];
+
+          if (FieldTool.isInteger(f)) {
+            align = 'right';
+          } else if (f.type === FieldType.UUID) {
+            align = 'left';
+            width = 280;
+          } else if (FieldTool.isDate(f)) {
+            align = 'right';
+            width = 240;
+          } else if (FieldTool.isJson(f)) {
+            align = 'center';
+            width = 100;
+          }
+
           return (
             <Column
               title={f.title}
@@ -150,7 +203,9 @@ export default function TableComponent({ schema }: Props) {
               key={f.reference}
               sortDirections={['ascend', 'descend']}
               filterMode="menu"
-              sorter={f.type == FieldType.JSON ? false : { multiple: idx }}
+              align={align}
+              width={width}
+              sorter={FieldTool.isJson(f) ? false : { multiple: idx }}
               render={(val, record) => {
                 const classes = [];
 
@@ -158,7 +213,7 @@ export default function TableComponent({ schema }: Props) {
                   return val && val.length ? (
                     <>
                       {val.map(t => (
-                        <Tag>{t}</Tag>
+                        <Tag color="magenta">{t}</Tag>
                       ))}
                     </>
                   ) : (
@@ -166,16 +221,25 @@ export default function TableComponent({ schema }: Props) {
                   );
                 }
 
-                if (f.type === FieldType.JSON || f.type === FieldType.JSONB) {
-                  val = JSON.stringify(val);
+                if (FieldTool.isJson(f)) {
+                  val = (
+                    <code className="p-0.5 bg-midnight-800 text-midnight-200 rounded-sm underline">
+                      Show Code
+                    </code>
+                  );
                 }
 
-                if (f.tags.includes(FieldTag.PRIMARY)) {
+                if (FieldTool.isPrimary(f)) {
                   classes.push('text-primary-500');
                 } else if (f.tags.includes(FieldTag.UNIQUE)) {
                   classes.push('text-yellow-500');
                 } else if (f.type === FieldType.INTEGER) {
                   classes.push('text-green-500');
+                } else if (FieldTool.isDate(f)) {
+                  if (val) {
+                    val = dayjs(val).format('YYYY-MM-DD dddd, HH:mm:ss');
+                    classes.push('text-pink-500');
+                  }
                 }
 
                 return <span className={classes.join(' ')}>{val}</span>;
@@ -185,11 +249,12 @@ export default function TableComponent({ schema }: Props) {
         })}
 
         <Column
-          title={<div className="text-center">Actions</div>}
+          title="Actions"
           fixed="right"
-          width={90}
+          align="center"
+          width={75}
           render={(v, record) => (
-            <div className="text-center">
+            <div className="text-center inline-block" style={{ width: 50 }}>
               <Button
                 size="small"
                 key="edit"
@@ -216,31 +281,6 @@ export default function TableComponent({ schema }: Props) {
           )}
         ></Column>
       </Table>
-
-      <div className="flex my-2 bg-midnight-800 rounded-sm px-2 py-1">
-        <div className="grow text-right">
-          <Pagination
-            total={total}
-            defaultCurrent={pageCurr}
-            current={pageCurr}
-            pageSize={pageSize}
-            pageSizeOptions={[10, 20, 50, 100, 500, 1000]}
-            showSizeChanger
-            showQuickJumper
-            showTotal={total => (
-              <span>
-                Total{' '}
-                <span className="text-green-500">{total.toLocaleString()}</span>{' '}
-                record
-              </span>
-            )}
-            onChange={(_pageNth, _pageSize) => {
-              setPageCurr(_pageNth);
-              setPageSize(_pageSize);
-            }}
-          />
-        </div>
-      </div>
 
       {showCreate ? (
         <ContentCreateComponent

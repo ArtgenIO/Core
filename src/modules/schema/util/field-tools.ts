@@ -6,6 +6,12 @@ export const isPrimary = (field: IField) =>
 export const isText = (field: IField) =>
   field.type === FieldType.TEXT || field.type === FieldType.BLOB;
 
+export const isJson = (field: IField) =>
+  field.type === FieldType.JSON || field.type === FieldType.JSONB;
+
+export const isDate = (field: IField) =>
+  field.type === FieldType.DATEONLY || field.type === FieldType.DATETIME;
+
 export const isNullable = (field: IField) =>
   field.tags.includes(FieldTag.NULLABLE);
 
@@ -64,4 +70,6 @@ export const FieldTool = {
   isIndexed,
   isInteger,
   hasDefaultValue,
+  isJson,
+  isDate,
 };
