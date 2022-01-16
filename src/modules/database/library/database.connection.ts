@@ -94,8 +94,8 @@ export class DatabaseConnection implements IDatabaseConnection {
             schema.reference,
           );
 
+          association.model = this.toModel(schema).bindKnex(this.knex);
           association.structure = structure;
-          association.model = this.toModel(schema);
           association.inSync = false;
         }
       } else {
