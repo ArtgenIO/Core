@@ -19,6 +19,7 @@ import {
   Switch,
   Table,
   Tag,
+  Tooltip,
 } from 'antd';
 import Column, { ColumnProps } from 'antd/lib/table/Column';
 import { SorterResult } from 'antd/lib/table/interface';
@@ -161,6 +162,17 @@ export default function TableComponent({ schema }: Props) {
         });
     }
   }, [apiUrl]);
+
+  const doUpdate = record => {
+    setLoading(true);
+
+    httpClient
+      .patch<RowLike>(toRestRecordRoute(schema, record), record)
+      .then(() => {
+        doRefetch(Date.now());
+        message.success('Record updated');
+      });
+  };
 
   return (
     <>
@@ -351,13 +363,22 @@ export default function TableComponent({ schema }: Props) {
                 align={align}
                 width={width}
                 sorter={FieldTool.isJson(f) ? false : { multiple: idx }}
-                render={(val, record) => {
+                render={(val, record: RowLike) => {
                   const classes = [];
+                  const oVal = val;
+
+                  if (oVal === null) {
+                    val = (
+                      <code className="p-0.5 bg-midnight-800 text-purple-500 rounded-sm underline">
+                        &lt;NULL&gt;
+                      </code>
+                    );
+                  }
 
                   if (f.tags.includes(FieldTag.TAGS)) {
-                    return val && val.length ? (
+                    return oVal && oVal.length ? (
                       <>
-                        {val.map((t, i) => (
+                        {oVal.map((t, i) => (
                           <Tag key={t + i.toString()} color="magenta">
                             {t}
                           </Tag>
@@ -390,15 +411,27 @@ export default function TableComponent({ schema }: Props) {
                   }
 
                   if (f.type === FieldType.BOOLEAN) {
-                    val = <Switch checked={val} disabled size="small" />;
-                  }
-
-                  if (val === null) {
                     val = (
-                      <code className="p-0.5 bg-midnight-800 text-purple-500 rounded-sm underline">
-                        &lt;NULL&gt;
-                      </code>
+                      <Switch
+                        checked={oVal}
+                        size="small"
+                        checkedChildren="✓"
+                        unCheckedChildren={oVal === null ? '∅' : '!'}
+                        onChange={newValue => {
+                          record[f.reference] = newValue;
+                          doUpdate(record);
+                        }}
+                      />
                     );
+
+                    // Display the null value
+                    if (oVal === null) {
+                      val = (
+                        <Tooltip title="null" placement="left">
+                          {val}
+                        </Tooltip>
+                      );
+                    }
                   }
 
                   return <span className={classes.join(' ')}>{val}</span>;
