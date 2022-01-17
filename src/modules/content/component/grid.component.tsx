@@ -19,7 +19,6 @@ import React, { useEffect, useState } from 'react';
 import { JsonGroup } from 'react-awesome-query-builder';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { v4 } from 'uuid';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { pageSizeAtom } from '../../admin/admin.atoms';
 import { useHttpClientSimple } from '../../admin/library/http-client';
@@ -62,7 +61,7 @@ export default function TableComponent({ schema }: Props) {
   const [fields, setFields] = useState<IField[]>([]);
   const [selected, setSelected] = useState<RowLike[]>([]);
   const [selectedKey, setSelectedKey] = useState<React.Key[]>([]);
-  const [filter, setFilter] = useState<JsonGroup>({ id: v4(), type: 'group' });
+  const [filter, setFilter] = useState<JsonGroup>(null);
 
   useEffect(() => {
     if (params.get('page')) {
@@ -91,6 +90,7 @@ export default function TableComponent({ schema }: Props) {
 
           // Convert the filter to OData
           if (filter) {
+            console.log('Filter\n', filter);
             qb.filter(fb => toODataFilter(fb, filter));
           }
 

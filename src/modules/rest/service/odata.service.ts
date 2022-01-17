@@ -1,11 +1,17 @@
-import { merge, pick } from 'lodash';
+import { isArray, merge, pick } from 'lodash';
 import { Model, ModelClass, Operator, QueryBuilder } from 'objection';
 import parser from 'odata-parser';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
+import { inspect } from 'util';
 import { ILogger, Logger, Service } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldType, ISchema } from '../../schema';
-import { IODataAST } from '../interface/odata-ast.interface';
+import {
+  fLiteral,
+  fLogic,
+  fPropery,
+  IODataAST,
+} from '../interface/odata-ast.interface';
 
 type QB = QueryBuilder<Model, Model[]>;
 type AST = IODataAST;
@@ -45,6 +51,11 @@ export class ODataService {
   protected applyConditions(schema: ISchema, qb: QB, $filter: AST['$filter']) {
     const svc = this;
 
+    const getColumn = (ref: string) =>
+      schema.fields.find(f => f.reference === ref).columnName;
+
+    const isColumn = (side: fLogic) => side.type == 'property';
+
     switch ($filter.type) {
       case 'eq':
       case 'ne':
@@ -52,11 +63,53 @@ export class ODataService {
       case 'le':
       case 'gt':
       case 'ge':
-        qb.where(
-          schema.fields.find(f => f.reference === $filter.left.name).columnName,
-          this.mapOperator($filter.type),
-          $filter.right.value,
-        );
+        // Where COL = 'val'
+        if (isColumn($filter.left)) {
+          const column = getColumn(($filter.left as fPropery).name);
+
+          if (isArray($filter.right.value)) {
+            $filter.right.value = $filter.right.value[0];
+
+            // Null primitive comparison
+            if ($filter.right.value === 'null') {
+              if ($filter.type === 'eq') {
+                qb.whereNull(column);
+              } else {
+                qb.whereNotNull(column);
+              }
+
+              return;
+            }
+          }
+
+          // Empty or boolean comparision
+          if (typeof $filter.right.value === 'boolean') {
+            if ($filter.type === 'eq') {
+              qb.where(column, $filter.right.value);
+            } else {
+              qb.whereNot(column, $filter.right.value);
+            }
+
+            return;
+          }
+
+          qb.where(column, this.mapOperator($filter.type), $filter.right.value);
+        }
+        // Where COL (like 'xxx%') = true
+        else {
+          let comparator: 'where' | 'whereNot' = 'where';
+
+          if (typeof $filter.right.value === 'boolean') {
+            comparator = $filter.right.value ? 'where' : 'whereNot';
+          } else {
+            throw new Exception('Unhandled right value comparison');
+          }
+
+          qb[comparator](fLeft => {
+            this.applyConditions(schema, fLeft, $filter.left as fLogic);
+          });
+        }
+
         break;
       case 'and':
         qb.andWhere(function () {
@@ -70,6 +123,52 @@ export class ODataService {
           svc.applyConditions(schema, this, $filter['right']);
         });
         break;
+      case 'functioncall':
+        switch ($filter.func) {
+          // Translates to the %LIKE% search
+          case 'substringof':
+          case 'startswith':
+          case 'endswith':
+            // Find the compared property
+            const property = $filter.args.find(
+              arg => arg.type === 'property',
+            ) as fPropery;
+            const column = getColumn(property.name);
+
+            // Find the substring for it
+            const literal = $filter.args.find(
+              arg => arg.type === 'literal',
+            ) as fLiteral;
+
+            // Expect at least 3 char, many db fails under this
+            if ((literal.value as string).length >= 3) {
+              let value = literal.value;
+
+              switch ($filter.func) {
+                case 'substringof':
+                  value = `%${value}%`;
+                  break;
+                case 'startswith':
+                  value = `${value}%`;
+                  break;
+                case 'endswith':
+                  value = `%${value}`;
+                  break;
+              }
+
+              qb.where(column, 'like', value);
+            }
+            break;
+
+          default:
+            throw new Exception(
+              `Unsupported function call [${($filter as any).func}]`,
+            );
+        }
+
+        break;
+      default:
+        throw new Exception(`Unsupported operator [${($filter as any).type}]`);
     }
   }
 
@@ -188,6 +287,7 @@ export class ODataService {
     }
 
     if (ast?.$filter) {
+      this.logger.debug('Filter [%s]', inspect(ast.$filter, false, 8, false));
       this.applyConditions(schema, qb, ast.$filter);
     }
 
@@ -203,6 +303,9 @@ export class ODataService {
     if (ast?.$skip) {
       qb.offset(ast.$skip);
     }
+
+    // Debugger
+    this.logger.debug('Query [%s]', qb.clone().toKnexQuery().toQuery());
 
     return qb;
   }

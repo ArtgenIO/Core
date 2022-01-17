@@ -10,7 +10,7 @@ export const toODataFilter = (
 ): FilterBuilder => {
   // Nesting with groups
   if (filter.type === 'group') {
-    if (filter.children1) {
+    if (filter.children1 && filter.properties) {
       // Splitter for OR / AND conjunctions
       let op: 'or' | 'and' =
         filter.properties?.conjunction === 'OR' ? 'or' : 'and';
@@ -42,50 +42,108 @@ export const toODataFilter = (
       });
     }
   } else if (filter.type === 'rule') {
-    let op: IODataOperator;
-
     // Empty rule
     if (!filter.properties?.operator) {
       return builder;
     }
 
-    switch (filter.properties.operator) {
-      case 'equal':
-        op = !isInverted ? 'eq' : 'ne';
-        break;
-      case 'not_equal':
-        op = !isInverted ? 'ne' : 'eq';
-        break;
-      case 'greater':
-        op = !isInverted ? 'gt' : 'lt';
-        break;
-      case 'less':
-        op = !isInverted ? 'lt' : 'gt';
-        break;
-      case 'greater_or_equal':
-        op = !isInverted ? 'ge' : 'le';
-        break;
-      case 'less_or_equal':
-        op = !isInverted ? 'le' : 'ge';
-        break;
-      default:
-        console.error('Could not convert filter:', filter);
-        throw new Error(`Unsupported operator [${op}]`);
+    let operator = filter.properties.operator;
+
+    // Inversion is always a matched as not_STATEMENT
+    if (operator.match(/not_/)) {
+      operator = operator.replace(/not_/, '');
+      isInverted = !isInverted;
     }
 
+    // Operators without value
+    if (['is_empty', 'none', 'some'].includes(operator)) {
+      // Allow empty values
+    }
     // Value is not yet chosen
-    if (
+    else if (
       typeof filter.properties.value[0] === 'undefined' ||
       filter.properties.value[0].toString().length < 1
     ) {
       return builder;
     }
 
-    builder.filterExpression(
-      filter.properties.field,
-      op,
-      filter.properties.value[0],
-    );
+    const field = filter.properties.field;
+    let value = filter.properties.value[0] ?? null;
+
+    // Basic translatable function calls
+    if (
+      operator === 'like' ||
+      operator === 'starts_with' ||
+      operator === 'ends_with'
+    ) {
+      let func: string;
+
+      switch (operator) {
+        case 'like':
+          func = 'substringof';
+          break;
+        case 'starts_with':
+          func = 'startswith';
+          break;
+        case 'ends_with':
+          func = 'endswith';
+          break;
+      }
+
+      let phrase = `${func}('${value.replace(/'/g, "''")}', ${field})`;
+
+      // Invert with false comparison
+      if (isInverted) {
+        phrase = `${phrase} eq false`;
+      }
+
+      builder.filterPhrase(phrase);
+
+      return builder;
+    }
+
+    let expOp: IODataOperator;
+
+    switch (operator) {
+      case 'equal':
+        expOp = !isInverted ? 'eq' : 'ne';
+        break;
+      case 'not_equal':
+        expOp = !isInverted ? 'ne' : 'eq';
+        break;
+      case 'greater':
+        expOp = !isInverted ? 'gt' : 'lt';
+        break;
+      case 'less':
+        expOp = !isInverted ? 'lt' : 'gt';
+        break;
+      case 'greater_or_equal':
+        expOp = !isInverted ? 'ge' : 'le';
+        break;
+      case 'less_or_equal':
+        expOp = !isInverted ? 'le' : 'ge';
+        break;
+
+      // Null handling
+      case 'none':
+        expOp = !isInverted ? 'eq' : 'ne';
+        value = null;
+        break;
+      case 'some':
+        expOp = !!isInverted ? 'eq' : 'ne';
+        value = null;
+        break;
+
+      case 'is_empty':
+        expOp = !isInverted ? 'eq' : 'ne';
+        value = false;
+        break;
+      default:
+        console.error('Could not convert filter:', filter);
+        throw new Error(`Unsupported operator [${expOp}]`);
+    }
+
+    builder.filterExpression(field, expOp, value);
   }
 
   return builder;

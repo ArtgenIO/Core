@@ -12,24 +12,30 @@ type fLogicOr = {
   right: fLogic;
 };
 
-type fPropery = {
+export type fPropery = {
   type: 'property';
   name: string;
 };
 
-type fLiteral = {
+export type fLiteral = {
   type: 'literal';
-  value: string;
+  value: string | boolean;
+};
+
+type fFunction = {
+  type: 'functioncall';
+  func: 'substringof' | 'startswith' | 'endswith';
+  args: (fPropery | fLiteral)[];
 };
 
 type fLogicCheck = {
   type: IODataOperator;
-  left: fPropery;
+  left: fPropery | fLogic;
   right: fLiteral;
 };
 
 type fLogicOp = fLogicAnd | fLogicOr;
-type fLogic = fLogicCheck | fLogicOp;
+export type fLogic = fLogicCheck | fLogicOp | fFunction | fPropery;
 
 export interface IODataAST {
   /**

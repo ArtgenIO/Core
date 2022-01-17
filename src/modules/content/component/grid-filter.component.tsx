@@ -11,6 +11,7 @@ import {
 import AntdConfig from 'react-awesome-query-builder/lib/config/antd';
 import 'react-awesome-query-builder/lib/css/compact_styles.css';
 import 'react-awesome-query-builder/lib/css/styles.css';
+import { v4 } from 'uuid';
 import { FieldType, ISchema } from '../../schema';
 import { FieldTool } from '../../schema/util/field-tools';
 import './grid-filter.component.less';
@@ -30,6 +31,14 @@ export default function GridFilterComponent({
   const [config, setConfig] = useState<Config>(null);
 
   useEffect(() => {
+    return () => {
+      setConfig(null);
+      setTree(null);
+      setFilter(null);
+    };
+  }, []);
+
+  useEffect(() => {
     const _config: Config = {
       ...AntdConfig,
       fields: {},
@@ -39,7 +48,7 @@ export default function GridFilterComponent({
 
     schema.fields.forEach(f => {
       let type: string = 'text';
-      let operators = ['equal', 'not_equal', 'is_empty', 'is_not_empty'];
+      let operators = ['equal', 'not_equal'];
 
       if (FieldTool.isNumber(f)) {
         type = 'number';
@@ -53,7 +62,14 @@ export default function GridFilterComponent({
       } else if (f.type == FieldType.BOOLEAN) {
         type = 'boolean';
       } else {
-        operators.push('like', 'not_like', 'starts_with', 'ends_with');
+        operators.push(
+          'like',
+          'not_like',
+          'starts_with',
+          'ends_with',
+          'is_empty',
+          'is_not_empty',
+        );
       }
 
       if (FieldTool.isNullable(f)) {
@@ -73,7 +89,12 @@ export default function GridFilterComponent({
 
   useEffect(() => {
     if (config) {
-      setTree(QbUtils.checkTree(QbUtils.loadTree(filter), config));
+      setTree(
+        QbUtils.checkTree(
+          QbUtils.loadTree(filter ?? { id: v4(), type: 'group' }),
+          config,
+        ),
+      );
     }
   }, [config, filter]);
 
@@ -91,7 +112,7 @@ export default function GridFilterComponent({
     </div>
   );
 
-  if (!tree) {
+  if (!tree || !config) {
     return <>Loading...</>;
   }
 

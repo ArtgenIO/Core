@@ -136,7 +136,7 @@ export default function ContentRouterComponent() {
                   });
 
                   navigate(path, {
-                    replace: true,
+                    replace: false,
                   });
                 }
               }}
