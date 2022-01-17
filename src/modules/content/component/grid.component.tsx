@@ -16,6 +16,7 @@ import {
   notification,
   Pagination,
   Popconfirm,
+  Switch,
   Table,
   Tag,
 } from 'antd';
@@ -328,6 +329,10 @@ export default function TableComponent({ schema }: Props) {
               icon = <CodeOutlined />;
             }
 
+            if (f.type === FieldType.BOOLEAN) {
+              align = 'center';
+            }
+
             if (FieldTool.isPrimary(f)) {
               icon = <KeyOutlined />;
             }
@@ -382,6 +387,10 @@ export default function TableComponent({ schema }: Props) {
                       val = dayjs(val).format('YYYY-MM-DD dddd, HH:mm:ss');
                       classes.push('text-pink-500');
                     }
+                  }
+
+                  if (f.type === FieldType.BOOLEAN) {
+                    val = <Switch checked={val} disabled size="small" />;
                   }
 
                   if (val === null) {

@@ -12,8 +12,8 @@ import AntdConfig from 'react-awesome-query-builder/lib/config/antd';
 import 'react-awesome-query-builder/lib/css/compact_styles.css';
 import 'react-awesome-query-builder/lib/css/styles.css';
 import { v4 } from 'uuid';
-import { FieldType, ISchema } from '../../schema';
-import { FieldTool } from '../../schema/util/field-tools';
+import { ISchema } from '../../schema';
+import { toFieldFilter } from '../util/to-field-filter';
 import { toODataFilter } from '../util/to-odata-filter';
 import './grid-filter.component.less';
 
@@ -43,41 +43,11 @@ export default function GridFilterComponent({ schema, setFilter }: Props) {
     config.settings.renderSize = 'small';
 
     schema.fields.forEach(f => {
-      let type: string = 'text';
-      let operators = ['equal', 'not_equal'];
+      const fieldConfig = toFieldFilter(f);
 
-      if (FieldTool.isNumber(f)) {
-        type = 'number';
-        operators.push('less', 'less_or_equal', 'greater', 'greater_or_equal');
-      } else if (f.type === FieldType.DATETIME) {
-        type = 'datetime';
-        operators.push('less', 'less_or_equal', 'greater', 'greater_or_equal');
-      } else if (f.type === FieldType.DATEONLY) {
-        type = 'date';
-        operators.push('less', 'less_or_equal', 'greater', 'greater_or_equal');
-      } else if (f.type == FieldType.BOOLEAN) {
-        type = 'boolean';
-      } else {
-        operators.push(
-          'like',
-          'not_like',
-          'starts_with',
-          'ends_with',
-          'is_empty',
-          'is_not_empty',
-        );
+      if (fieldConfig) {
+        config.fields[f.reference] = fieldConfig;
       }
-
-      if (FieldTool.isNullable(f)) {
-        operators.push('none', 'some');
-      }
-
-      config.fields[f.reference] = {
-        label: f.title,
-        type,
-        operators,
-        valueSources: ['value'],
-      };
     });
 
     setConfig(config);
