@@ -1,0 +1,22 @@
+.grid-filter {
+  .query-builder {
+    @apply mx-0;
+  }
+
+  div.group {
+    @apply bg-midnight-800 border-midnight-600 rounded-sm;
+  }
+
+  div.rule {
+    @apply bg-midnight-750 border-midnight-600 rounded-sm;
+  }
+
+  .group--children > .group-or-rule-container > .group-or-rule::after,
+  .group--children > .group-or-rule-container > .group-or-rule::before {
+    @apply border-midnight-400;
+  }
+
+  .ant-btn-danger {
+    @apply bg-midnight-750 border-midnight-400 text-red-500;
+  }
+}

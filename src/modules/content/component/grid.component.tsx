@@ -1,13 +1,21 @@
 import {
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   FileOutlined,
   FilterOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
-import { Button, message, Pagination, Popconfirm, Table, Tag } from 'antd';
+import {
+  Button,
+  message,
+  notification,
+  Pagination,
+  Popconfirm,
+  Table,
+  Tag,
+} from 'antd';
 import Column, { ColumnProps } from 'antd/lib/table/Column';
 import { SorterResult } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
@@ -24,6 +32,7 @@ import { GridTools } from '../util/grid.tools';
 import { toRestRecordRoute, toRestRoute } from '../util/schema-url';
 import ContentCreateComponent from './create.component';
 import ContentGridConfigComponent from './grid-config.component';
+import GridFilterComponent from './grid-filter.component';
 import './grid.component.less';
 import ContentUpdateComponent from './update.component';
 
@@ -38,6 +47,7 @@ export default function TableComponent({ schema }: Props) {
   const [showCreate, setShowCreate] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<RowLike>(null);
   const [showConfig, setShowConfig] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
 
   // Pagination
   const [pageSize, setPageSize] = useRecoilState(pageSizeAtom);
@@ -50,6 +60,8 @@ export default function TableComponent({ schema }: Props) {
   const [loading, setLoading] = useState(true);
   const [refetch, doRefetch] = useState<number>(() => Date.now());
   const [fields, setFields] = useState<IField[]>([]);
+  const [selected, setSelected] = useState<RowLike[]>([]);
+  const [selectedKey, setSelectedKey] = useState<React.Key[]>([]);
 
   useEffect(() => {
     setLoading(true);
@@ -119,23 +131,58 @@ export default function TableComponent({ schema }: Props) {
             <Button icon={<FileOutlined />} onClick={() => setShowCreate(true)}>
               New
             </Button>
-            <Button icon={<FilterOutlined />}>Filter</Button>
+            <Button
+              icon={<FilterOutlined />}
+              onClick={() => setShowFilter(v => !v)}
+            >
+              Filter
+            </Button>
             <Button
               icon={<ReloadOutlined />}
               onClick={() => doRefetch(Date.now())}
             >
               Reload
             </Button>
-            <Button
-              icon={<SettingOutlined />}
-              type="dashed"
-              onClick={() => setShowConfig(true)}
+            <Button icon={<EyeOutlined />} onClick={() => setShowConfig(true)}>
+              Appearance
+            </Button>
+            <Popconfirm
+              disabled={!selected.length}
+              title="Are You sure to delete this extension?"
+              okText="Yes, delete it"
+              cancelText="No"
+              okType="danger"
+              placement="left"
+              icon={<QuestionCircleOutlined />}
+              onConfirm={() => {
+                // Lock the interactions
+                setLoading(true);
+
+                // Concurrent delete
+                Promise.all(
+                  selected.map(r =>
+                    httpClient.delete(toRestRecordRoute(schema, r)),
+                  ),
+                ).then(() => {
+                  notification.warn({
+                    message: `Success, deleted [${selected.length}] record!`,
+                    duration: 3,
+                  });
+
+                  doRefetch(Date.now());
+                  setSelected([]);
+                  setSelectedKey([]);
+                });
+              }}
             >
-              Grid Config
-            </Button>
-            <Button icon={<DeleteOutlined />} disabled danger>
-              Delete
-            </Button>
+              <Button
+                icon={<DeleteOutlined />}
+                disabled={!selected.length}
+                danger
+              >
+                Delete
+              </Button>
+            </Popconfirm>
           </Button.Group>
         </div>
 
@@ -165,12 +212,23 @@ export default function TableComponent({ schema }: Props) {
         </div>
       </div>
 
+      {showFilter ? <GridFilterComponent schema={schema} /> : undefined}
+
       <Table
         className="ag-table"
         rowKey="__ag_rowkey"
         dataSource={rows}
         pagination={false}
         loading={loading}
+        rowSelection={{
+          type: 'checkbox',
+          fixed: 'left',
+          selectedRowKeys: selectedKey,
+          onChange: (keys, selectedRows) => {
+            setSelected(selectedRows);
+            setSelectedKey(keys);
+          },
+        }}
         scroll={{
           x: true,
         }}
@@ -247,7 +305,7 @@ export default function TableComponent({ schema }: Props) {
                   if (FieldTool.isJson(f)) {
                     val = (
                       <code className="p-0.5 bg-midnight-800 text-midnight-200 rounded-sm underline">
-                        Show Code
+                        &lt;JSON&gt;
                       </code>
                     );
                   }
@@ -281,24 +339,10 @@ export default function TableComponent({ schema }: Props) {
               <Button.Group size="small">
                 <Button
                   key="edit"
-                  className="hover:text-yellow-500 hover:border-yellow-500"
+                  className="hover:text-green-500 hover:border-green-500"
                   icon={<EditOutlined />}
                   onClick={() => setShowEdit(record as RowLike)}
                 ></Button>
-                <Popconfirm
-                  title="Are You sure to delete the record?"
-                  okText="Yes, delete"
-                  cancelText="No"
-                  placement="left"
-                  icon={<QuestionCircleOutlined />}
-                  onConfirm={() => doDelete(record as RowLike)}
-                  key="delete"
-                >
-                  <Button
-                    className="hover:text-red-500 hover:border-red-500"
-                    icon={<DeleteOutlined />}
-                  ></Button>
-                </Popconfirm>
               </Button.Group>
             </div>
           )}

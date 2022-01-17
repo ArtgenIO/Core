@@ -35,6 +35,11 @@ export const isInteger = (field: IField) =>
   field.type == FieldType.SMALLINT ||
   field.type == FieldType.TINYINT;
 
+const isNumber = (field: IField) =>
+  isInteger(field) ||
+  field.type === FieldType.DECIMAL ||
+  field.type === FieldType.FLOAT;
+
 export const isManagedField = (field: IField) =>
   field.tags.includes(FieldTag.CREATED) ||
   field.tags.includes(FieldTag.UPDATED) ||
@@ -88,4 +93,5 @@ export const FieldTool = {
   isJson,
   isDate,
   withMeta,
+  isNumber,
 };

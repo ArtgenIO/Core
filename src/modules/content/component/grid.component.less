@@ -15,4 +15,22 @@
     font-family: 'Courier New', Courier, monospace;
     font-size: 12px;
   }
+
+  .ant-table-tbody > tr.ant-table-row.ant-table-row-selected:hover > td {
+    @apply bg-primary-800;
+  }
+
+  .ant-table-tbody > tr.ant-table-row:hover > td {
+    @apply bg-midnight-600;
+  }
+
+  .ant-table.ant-table-bordered
+    > .ant-table-container
+    > .ant-table-content
+    > table
+    > tbody
+    > tr
+    > td {
+    @apply border-midnight-600;
+  }
 }
