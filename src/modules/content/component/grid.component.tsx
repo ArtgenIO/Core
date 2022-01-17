@@ -83,10 +83,14 @@ export default function TableComponent({ schema }: Props) {
   useEffect(() => {
     setFilter(null);
     setShowFilter(false);
+    setSorters([]);
+    setSelected([]);
 
     return () => {
       setFilter(null);
       setShowFilter(false);
+      setSorters([]);
+      setSelected([]);
     };
   }, [schema]);
 
