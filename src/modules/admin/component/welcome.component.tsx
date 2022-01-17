@@ -62,7 +62,7 @@ export default function WelcomeComponent() {
           <DatabaseOutlined />
           <h1>Database Manager</h1>
         </div>
-        <div onClick={() => navigate('/admin/content')}>
+        <div onClick={() => navigate('/admin/content/main/AccessKey?page=1')}>
           <FileOutlined />
           <h1>Content Editor</h1>
         </div>

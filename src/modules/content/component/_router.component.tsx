@@ -13,39 +13,26 @@ import { useRecoilValue } from 'recoil';
 import { modulesAtom, schemasAtom } from '../../admin/admin.atoms';
 import MenuBlock from '../../admin/component/menu-block.component';
 import { ISchema } from '../../schema';
-import { IContentModule } from '../interface/content-module.interface';
 import ContentListComponent from './list.component';
 import PlaceholderComponent from './placeholder.component';
 
-type SchemaWithModule = ISchema & {
-  module?: IContentModule;
-};
+const applyQuickFilter = (filterValue: string) => (schema: ISchema) => {
+  if (!filterValue) {
+    return true;
+  }
 
-const applyQuickFilter =
-  (filterValue: string) => (schema: SchemaWithModule) => {
-    if (!filterValue) {
+  filterValue = filterValue.toLowerCase();
+  const words = filterValue.replace(/\s+/, ' ').split(' ');
+
+  for (const word of words) {
+    // Match in the title
+    if (schema.title.toLowerCase().match(word)) {
       return true;
     }
+  }
 
-    filterValue = filterValue.toLowerCase();
-    const words = filterValue.replace(/\s+/, ' ').split(' ');
-
-    for (const word of words) {
-      // Match in the title
-      if (schema.title.toLowerCase().match(word)) {
-        return true;
-      }
-
-      // In the matched module
-      if (schema.moduleId) {
-        if (schema.module.name.toLowerCase().match(word)) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  };
+  return false;
+};
 
 export default function ContentRouterComponent() {
   const navigate = useNavigate();
@@ -143,12 +130,14 @@ export default function ContentRouterComponent() {
                 if (selected.length) {
                   const [db, ref] = selected[0].toString().split('-');
 
-                  const path = generatePath('/admin/content/:db/:ref/list', {
+                  const path = generatePath('/admin/content/:db/:ref?page=1', {
                     db,
                     ref,
                   });
 
-                  navigate(path);
+                  navigate(path, {
+                    replace: true,
+                  });
                 }
               }}
             />
@@ -162,7 +151,7 @@ export default function ContentRouterComponent() {
       <Layout>
         <Routes>
           <Route
-            path=":database/:reference/list"
+            path=":database/:reference"
             element={<ContentListComponent />}
           ></Route>
           <Route path="/" element={<PlaceholderComponent />}></Route>

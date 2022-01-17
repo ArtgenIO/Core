@@ -21,6 +21,7 @@ import { SorterResult } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import cloneDeep from 'lodash.clonedeep';
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { pageSizeAtom } from '../../admin/admin.atoms';
@@ -42,6 +43,7 @@ type Props = {
 
 export default function TableComponent({ schema }: Props) {
   const httpClient = useHttpClientSimple();
+  const [params, setParams] = useSearchParams();
 
   // Extended views in drawer
   const [showCreate, setShowCreate] = useState<boolean>(false);
@@ -64,6 +66,12 @@ export default function TableComponent({ schema }: Props) {
   const [selectedKey, setSelectedKey] = useState<React.Key[]>([]);
 
   useEffect(() => {
+    if (params.get('page')) {
+      setPageCurr(parseInt(params.get('page'), 10));
+    }
+  }, [params]);
+
+  useEffect(() => {
     setLoading(true);
 
     httpClient
@@ -74,6 +82,12 @@ export default function TableComponent({ schema }: Props) {
 
           if (pageCurr > 1) {
             qb.skip(pageCurr * pageSize - pageSize);
+
+            // Sync with the pagination param
+            params.set('page', pageCurr.toString());
+            setParams(params, {
+              replace: true,
+            });
           }
 
           // TODO: eliminate sorters if hidden
@@ -140,6 +154,8 @@ export default function TableComponent({ schema }: Props) {
             <Button
               icon={<ReloadOutlined />}
               onClick={() => doRefetch(Date.now())}
+              loading={loading}
+              disabled={loading}
             >
               Reload
             </Button>
