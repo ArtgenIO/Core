@@ -94,4 +94,5 @@ export const FieldTool = {
   isDate,
   withMeta,
   isNumber,
+  fReference: (ref: string) => (f: IField) => f.reference === ref,
 };

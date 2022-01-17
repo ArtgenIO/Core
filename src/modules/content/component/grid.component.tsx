@@ -48,7 +48,7 @@ type Props = {
 
 export default function TableComponent({ schema }: Props) {
   const httpClient = useHttpClientSimple();
-  const [params, setParams] = useSearchParams();
+  const [browserParams, setBrowserParams] = useSearchParams();
 
   const [apiUrl, setApiUrl] = useState(null);
 
@@ -65,7 +65,7 @@ export default function TableComponent({ schema }: Props) {
 
   // Grid content state
   const [rows, setRows] = useState<RowLike[]>([]);
-  const [sorters, setSorters] = useState<string[]>([]);
+  const [sorters, setSorters] = useState<[string, 'asc' | 'desc'][]>([]);
   const [loading, setLoading] = useState(true);
   const [refetch, doRefetch] = useState<number>(() => Date.now());
   const [fields, setFields] = useState<IField[]>([]);
@@ -74,10 +74,10 @@ export default function TableComponent({ schema }: Props) {
   const [filter, setFilter] = useState<string>(null);
 
   useEffect(() => {
-    if (params.get('page')) {
-      setPageCurr(parseInt(params.get('page'), 10));
+    if (browserParams.has('page')) {
+      setPageCurr(parseInt(browserParams.get('page'), 10));
     }
-  }, [params]);
+  }, [browserParams]);
 
   // Reset states
   useEffect(() => {
@@ -91,6 +91,8 @@ export default function TableComponent({ schema }: Props) {
   }, [schema]);
 
   useEffect(() => {
+    const fields = cloneDeep(schema).fields.map(FieldTool.withMeta);
+
     let apiUrl = toRestRoute(schema, qb => {
       // Pagination limit
       qb.top(pageSize);
@@ -99,20 +101,25 @@ export default function TableComponent({ schema }: Props) {
         qb.skip(pageCurr * pageSize - pageSize);
 
         // Sync with the pagination param
-        params.set('page', pageCurr.toString());
-        setParams(params, {
-          replace: true,
-        });
+        browserParams.set('page', pageCurr.toString());
       }
 
-      // TODO eliminate sorters if hidden
       if (sorters) {
-        qb.orderBy(sorters.join(', '));
+        const orderBy = sorters
+          // Remove the hidden fields from sorting
+          .filter(
+            s => !fields.find(FieldTool.fReference(s[0])).meta.grid.hidden,
+          )
+          .map(s => s.join(' '))
+          .join(', ');
+
+        if (orderBy.length) {
+          qb.orderBy(orderBy);
+        }
       }
 
       qb.select(
-        cloneDeep(schema)
-          .fields.map(FieldTool.withMeta)
+        fields
           .filter(f => FieldTool.isPrimary(f) || !f.meta.grid.hidden)
           .map(f => f.reference)
           .join(','),
@@ -125,13 +132,10 @@ export default function TableComponent({ schema }: Props) {
       apiUrl += `&${filter.substring(1)}`;
     }
 
-    setApiUrl(apiUrl + `&--artgen-no-cache=${refetch}`);
+    setBrowserParams(browserParams);
 
-    setFields(
-      cloneDeep(schema.fields)
-        .map(FieldTool.withMeta)
-        .sort(GridTools.sortFields),
-    );
+    setFields(fields.sort(GridTools.sortFields));
+    setApiUrl(apiUrl + `&--artgen-no-cache=${refetch}`);
   }, [pageCurr, pageSize, sorters, schema, refetch, filter]);
 
   useEffect(() => {
@@ -276,6 +280,11 @@ export default function TableComponent({ schema }: Props) {
         dataSource={rows}
         pagination={false}
         loading={loading}
+        onRow={(record, idx) => {
+          return {
+            onDoubleClick: () => setShowEdit(record),
+          };
+        }}
         rowSelection={{
           type: 'checkbox',
           fixed: 'left',
@@ -298,9 +307,10 @@ export default function TableComponent({ schema }: Props) {
           // Multisort
           if (sorter instanceof Array) {
             setSorters(
-              sorter.map(
-                s => `${s.column.key} ${s.order == 'ascend' ? 'asc' : 'desc'}`,
-              ),
+              sorter.map(s => [
+                s.column.key.toString(),
+                s.order == 'ascend' ? 'asc' : 'desc',
+              ]),
             );
           } else {
             // Single sort
@@ -308,9 +318,10 @@ export default function TableComponent({ schema }: Props) {
 
             if (sorter.column) {
               setSorters([
-                `${sorter.column.key} ${
-                  sorter.order == 'ascend' ? 'asc' : 'desc'
-                }`,
+                [
+                  sorter.column.key.toString(),
+                  sorter.order == 'ascend' ? 'asc' : 'desc',
+                ],
               ]);
             } else {
               setSorters([]); // Sort removed
