@@ -1,4 +1,4 @@
-import { FieldOrGroup } from 'react-awesome-query-builder';
+import { FieldOrGroup, ValueSource } from 'react-awesome-query-builder';
 import { FieldType, IField } from '../../schema';
 import { FieldTool } from '../../schema/util/field-tools';
 
@@ -40,6 +40,8 @@ type IType =
 export const toFieldFilter = (f: IField): FieldOrGroup | null => {
   const ops: IOperator[] = ['equal', 'not_equal'];
   const isNullable = FieldTool.isNullable(f);
+  const valueSources: ValueSource[] = ['value', 'field'];
+
   let type: IType;
 
   switch (f.type) {
@@ -112,6 +114,6 @@ export const toFieldFilter = (f: IField): FieldOrGroup | null => {
     label: f.title,
     type,
     operators: ops,
-    valueSources: ['value'],
+    valueSources,
   };
 };

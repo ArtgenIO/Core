@@ -143,7 +143,12 @@ export const toODataFilter = (
         throw new Error(`Unsupported operator [${expOp}]`);
     }
 
-    builder.filterExpression(field, expOp, value);
+    // Where COL1 = COL2
+    if (filter.properties.valueSrc[0] === 'field') {
+      builder.filterPhrase(`${field} ${expOp} ${filter.properties.value[0]}`);
+    } else {
+      builder.filterExpression(field, expOp, value);
+    }
   }
 
   return builder;

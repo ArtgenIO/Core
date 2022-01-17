@@ -1,5 +1,5 @@
 import { isArray, merge, pick } from 'lodash';
-import { Model, ModelClass, Operator, QueryBuilder } from 'objection';
+import { Model, ModelClass, Operator, QueryBuilder, ref } from 'objection';
 import parser from 'odata-parser';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { inspect } from 'util';
@@ -66,16 +66,19 @@ export class ODataService {
       case 'gt':
       case 'ge':
         // Where COL = 'val'
-        if (isColumn($filter.left)) {
-          const column = getColumn(($filter.left as fPropery).name);
+        if (isColumn($filter.left) && !isColumn($filter.right)) {
+          const colLeft = getColumn(($filter.left as fPropery).name);
+          const right = $filter.right as fLiteral;
 
-          if (isArray($filter.right.value)) {
+          const operator = this.mapOperator($filter.type);
+
+          if (isArray(right.value)) {
             // Null primitive comparison
-            if ($filter.right.value[0] === 'null') {
+            if (right.value[0] === 'null') {
               if ($filter.type === 'eq') {
-                qb.whereNull(column);
+                qb.whereNull(colLeft);
               } else {
-                qb.whereNotNull(column);
+                qb.whereNotNull(colLeft);
               }
 
               return qb;
@@ -85,24 +88,37 @@ export class ODataService {
           }
 
           // Empty or boolean comparision
-          if (typeof $filter.right.value === 'boolean') {
+          if (typeof right.value === 'boolean') {
             if ($filter.type === 'eq') {
-              qb.where(column, $filter.right.value);
+              qb.where(colLeft, right.value);
             } else {
-              qb.whereNot(column, $filter.right.value);
+              qb.whereNot(colLeft, right.value);
             }
 
             return qb;
           }
 
-          qb.where(column, this.mapOperator($filter.type), $filter.right.value);
+          qb.where(colLeft, operator, right.value);
+        }
+        // Where col1 = col2
+        else if (isColumn($filter.left) && isColumn($filter.right)) {
+          const left = $filter.left as fPropery;
+          const right = $filter.right as fPropery;
+
+          const colLeft = getColumn(left.name);
+          const colRigh = getColumn(right.name);
+
+          const operator = this.mapOperator($filter.type);
+
+          qb.where(colLeft, operator, ref(colRigh));
         }
         // Where COL (like 'xxx%') = true
         else {
           let comparator: 'where' | 'whereNot' = 'where';
+          const right = $filter.right as fLiteral;
 
-          if (typeof $filter.right.value === 'boolean') {
-            comparator = $filter.right.value ? 'where' : 'whereNot';
+          if (typeof right.value === 'boolean') {
+            comparator = right.value ? 'where' : 'whereNot';
           } else {
             throw new Exception('Unhandled right value comparison');
           }

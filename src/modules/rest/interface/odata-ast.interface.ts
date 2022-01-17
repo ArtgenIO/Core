@@ -31,11 +31,11 @@ type fFunction = {
 type fLogicCheck = {
   type: IODataOperator;
   left: fPropery | fLogic;
-  right: fLiteral;
+  right: fPropery | fLogic | fLiteral;
 };
 
 type fLogicOp = fLogicAnd | fLogicOr;
-export type fLogic = fLogicCheck | fLogicOp | fFunction | fPropery;
+export type fLogic = fLogicCheck | fLogicOp | fFunction | fPropery | fLiteral;
 
 export interface IODataAST {
   /**
