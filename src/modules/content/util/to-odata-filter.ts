@@ -10,10 +10,10 @@ export const toODataFilter = (
 ): FilterBuilder => {
   // Nesting with groups
   if (filter.type === 'group') {
-    if (filter.children1 && filter.properties) {
+    if (filter.children1) {
       // Splitter for OR / AND conjunctions
       let op: 'or' | 'and' =
-        filter.properties?.conjunction === 'OR' ? 'or' : 'and';
+        filter?.properties?.conjunction === 'OR' ? 'or' : 'and';
 
       // All rule in the group is inverted
       let inverted = filter.properties?.not ?? false;
@@ -136,7 +136,7 @@ export const toODataFilter = (
 
       case 'is_empty':
         expOp = !isInverted ? 'eq' : 'ne';
-        value = false;
+        value = '';
         break;
       default:
         console.error('Could not convert filter:', filter);

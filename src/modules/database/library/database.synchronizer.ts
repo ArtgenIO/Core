@@ -134,7 +134,7 @@ export class DatabaseSynchronizer {
         queries.length,
       );
 
-      queries.forEach(q => console.log('--SQL:\t', q.toQuery()));
+      queries.forEach(q => this.logger.debug('SQL [%s]', q.toQuery()));
 
       changeQueries += queries.length;
 

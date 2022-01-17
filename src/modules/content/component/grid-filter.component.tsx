@@ -1,12 +1,12 @@
+import { QueryBuilder } from 'odata-query-builder';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   Builder,
   BuilderProps,
   Config,
   ImmutableTree,
-  JsonGroup,
   Query,
-  Utils as QbUtils,
+  Utils,
 } from 'react-awesome-query-builder';
 import AntdConfig from 'react-awesome-query-builder/lib/config/antd';
 import 'react-awesome-query-builder/lib/css/compact_styles.css';
@@ -14,37 +14,33 @@ import 'react-awesome-query-builder/lib/css/styles.css';
 import { v4 } from 'uuid';
 import { FieldType, ISchema } from '../../schema';
 import { FieldTool } from '../../schema/util/field-tools';
+import { toODataFilter } from '../util/to-odata-filter';
 import './grid-filter.component.less';
 
 type Props = {
   schema: ISchema;
-  filter: JsonGroup;
-  setFilter: Dispatch<SetStateAction<JsonGroup>>;
+  setFilter: Dispatch<SetStateAction<string>>;
 };
 
-export default function GridFilterComponent({
-  schema,
-  filter,
-  setFilter,
-}: Props) {
-  const [tree, setTree] = useState<ImmutableTree>(null);
+export default function GridFilterComponent({ schema, setFilter }: Props) {
   const [config, setConfig] = useState<Config>(null);
+  const [tree, setTree] = useState<ImmutableTree>(null);
 
+  // Reset state on unload
   useEffect(() => {
     return () => {
       setConfig(null);
       setTree(null);
-      setFilter(null);
     };
   }, []);
 
   useEffect(() => {
-    const _config: Config = {
+    const config: Config = {
       ...AntdConfig,
       fields: {},
     };
 
-    _config.settings.renderSize = 'small';
+    config.settings.renderSize = 'small';
 
     schema.fields.forEach(f => {
       let type: string = 'text';
@@ -76,7 +72,7 @@ export default function GridFilterComponent({
         operators.push('none', 'some');
       }
 
-      _config.fields[f.reference] = {
+      config.fields[f.reference] = {
         label: f.title,
         type,
         operators,
@@ -84,25 +80,28 @@ export default function GridFilterComponent({
       };
     });
 
-    setConfig(_config);
-  }, [schema]);
-
-  useEffect(() => {
-    if (config) {
-      setTree(
-        QbUtils.checkTree(
-          QbUtils.loadTree(filter ?? { id: v4(), type: 'group' }),
-          config,
-        ),
-      );
-    }
-  }, [config, filter]);
-
-  const onChange = (tree: ImmutableTree, config: Config) => {
-    // setTree(tree);
     setConfig(config);
-    setFilter(QbUtils.getTree(tree));
-  };
+    setTree(
+      Utils.checkTree(
+        Utils.loadTree({
+          id: v4(),
+          type: 'group',
+          children1: {
+            [v4()]: {
+              type: 'rule',
+              properties: {
+                field: null,
+                operator: null,
+                value: [],
+                valueSrc: [],
+              },
+            },
+          },
+        }),
+        config,
+      ),
+    );
+  }, [schema]);
 
   const renderBuilder = (props: BuilderProps) => (
     <div className="query-builder-container grid-filter">
@@ -112,17 +111,27 @@ export default function GridFilterComponent({
     </div>
   );
 
-  if (!tree || !config) {
+  if (!tree || !config || !Utils.isValidTree(tree)) {
     return <>Loading...</>;
   }
 
   return (
     <Query
       {...config}
-      onChange={(tree, config, action) => {
-        onChange(tree, config);
-      }}
       value={tree}
+      onChange={(tree, config, action) => {
+        // setConfig(config);
+        setTree(tree);
+        console.log(Utils.getTree(tree));
+        const qb = new QueryBuilder();
+
+        qb.filter(fb => {
+          toODataFilter(fb, Utils.getTree(tree));
+          return fb;
+        });
+
+        setFilter(qb.toQuery());
+      }}
       renderBuilder={renderBuilder}
     />
   );

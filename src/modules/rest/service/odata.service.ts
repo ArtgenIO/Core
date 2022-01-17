@@ -48,9 +48,11 @@ export class ODataService {
   /**
    * Apply the $filter segment
    */
-  protected applyConditions(schema: ISchema, qb: QB, $filter: AST['$filter']) {
-    const svc = this;
-
+  protected applyConditions(
+    schema: ISchema,
+    qb: QB,
+    $filter: AST['$filter'],
+  ): QB {
     const getColumn = (ref: string) =>
       schema.fields.find(f => f.reference === ref).columnName;
 
@@ -68,17 +70,17 @@ export class ODataService {
           const column = getColumn(($filter.left as fPropery).name);
 
           if (isArray($filter.right.value)) {
-            $filter.right.value = $filter.right.value[0];
-
             // Null primitive comparison
-            if ($filter.right.value === 'null') {
+            if ($filter.right.value[0] === 'null') {
               if ($filter.type === 'eq') {
                 qb.whereNull(column);
               } else {
                 qb.whereNotNull(column);
               }
 
-              return;
+              return qb;
+            } else {
+              throw new Exception('Unhandled primitive filter');
             }
           }
 
@@ -90,7 +92,7 @@ export class ODataService {
               qb.whereNot(column, $filter.right.value);
             }
 
-            return;
+            return qb;
           }
 
           qb.where(column, this.mapOperator($filter.type), $filter.right.value);
@@ -112,15 +114,19 @@ export class ODataService {
 
         break;
       case 'and':
-        qb.andWhere(function () {
-          svc.applyConditions(schema, this, $filter['left']);
-          svc.applyConditions(schema, this, $filter['right']);
+        qb.where(andTop => {
+          this.applyConditions(schema, andTop, $filter.left).andWhere(
+            andChain => {
+              this.applyConditions(schema, andChain, $filter.right);
+            },
+          );
         });
         break;
       case 'or':
-        qb.orWhere(function () {
-          svc.applyConditions(schema, this, $filter['left']);
-          svc.applyConditions(schema, this, $filter['right']);
+        qb.where(orTop => {
+          this.applyConditions(schema, orTop, $filter.left).orWhere(orChain => {
+            this.applyConditions(schema, orChain, $filter.right);
+          });
         });
         break;
       case 'functioncall':
@@ -170,6 +176,8 @@ export class ODataService {
       default:
         throw new Exception(`Unsupported operator [${($filter as any).type}]`);
     }
+
+    return qb;
   }
 
   /**

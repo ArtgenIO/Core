@@ -10,13 +10,20 @@ import {
   QuestionCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { Button, notification, Pagination, Popconfirm, Table, Tag } from 'antd';
+import {
+  Button,
+  message,
+  notification,
+  Pagination,
+  Popconfirm,
+  Table,
+  Tag,
+} from 'antd';
 import Column, { ColumnProps } from 'antd/lib/table/Column';
 import { SorterResult } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import cloneDeep from 'lodash.clonedeep';
 import React, { useEffect, useState } from 'react';
-import { JsonGroup } from 'react-awesome-query-builder';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
@@ -27,7 +34,6 @@ import { FieldTag, FieldType, IField, ISchema } from '../../schema';
 import { FieldTool } from '../../schema/util/field-tools';
 import { GridTools } from '../util/grid.tools';
 import { toRestRecordRoute, toRestRoute } from '../util/schema-url';
-import { toODataFilter } from '../util/to-odata-filter';
 import ContentCreateComponent from './create.component';
 import ContentGridConfigComponent from './grid-config.component';
 import GridFilterComponent from './grid-filter.component';
@@ -41,6 +47,8 @@ type Props = {
 export default function TableComponent({ schema }: Props) {
   const httpClient = useHttpClientSimple();
   const [params, setParams] = useSearchParams();
+
+  const [apiUrl, setApiUrl] = useState(null);
 
   // Extended views in drawer
   const [showCreate, setShowCreate] = useState<boolean>(false);
@@ -61,7 +69,7 @@ export default function TableComponent({ schema }: Props) {
   const [fields, setFields] = useState<IField[]>([]);
   const [selected, setSelected] = useState<RowLike[]>([]);
   const [selectedKey, setSelectedKey] = useState<React.Key[]>([]);
-  const [filter, setFilter] = useState<JsonGroup>(null);
+  const [filter, setFilter] = useState<string>(null);
 
   useEffect(() => {
     if (params.get('page')) {
@@ -69,58 +77,53 @@ export default function TableComponent({ schema }: Props) {
     }
   }, [params]);
 
+  // Reset states
   useEffect(() => {
-    setLoading(true);
+    setFilter(null);
+    setShowFilter(false);
 
-    httpClient
-      .get<IFindResponse>(
-        toRestRoute(schema, qb => {
-          // Pagination limit
-          qb.top(pageSize);
+    return () => {
+      setFilter(null);
+      setShowFilter(false);
+    };
+  }, [schema]);
 
-          if (pageCurr > 1) {
-            qb.skip(pageCurr * pageSize - pageSize);
+  useEffect(() => {
+    let apiUrl = toRestRoute(schema, qb => {
+      // Pagination limit
+      qb.top(pageSize);
 
-            // Sync with the pagination param
-            params.set('page', pageCurr.toString());
-            setParams(params, {
-              replace: true,
-            });
-          }
+      if (pageCurr > 1) {
+        qb.skip(pageCurr * pageSize - pageSize);
 
-          // Convert the filter to OData
-          if (filter) {
-            console.log('Filter\n', filter);
-            qb.filter(fb => toODataFilter(fb, filter));
-          }
+        // Sync with the pagination param
+        params.set('page', pageCurr.toString());
+        setParams(params, {
+          replace: true,
+        });
+      }
 
-          // TODO eliminate sorters if hidden
-          if (sorters) {
-            qb.orderBy(sorters.join(', '));
-          }
+      // TODO eliminate sorters if hidden
+      if (sorters) {
+        qb.orderBy(sorters.join(', '));
+      }
 
-          qb.select(
-            cloneDeep(schema)
-              .fields.map(FieldTool.withMeta)
-              .filter(f => FieldTool.isPrimary(f) || !f.meta.grid.hidden)
-              .map(f => f.reference)
-              .join(','),
-          );
+      qb.select(
+        cloneDeep(schema)
+          .fields.map(FieldTool.withMeta)
+          .filter(f => FieldTool.isPrimary(f) || !f.meta.grid.hidden)
+          .map(f => f.reference)
+          .join(','),
+      );
 
-          return qb;
-        }) + `&--artgen-no-cache=${refetch}`,
-      )
-      .then(reply => {
-        setRows(
-          reply.data.data.map((row, idx) => {
-            row['__ag_rowkey'] = idx;
-            return row;
-          }),
-        );
+      return qb;
+    });
 
-        setTotal(reply.data.meta.total);
-        setLoading(false);
-      });
+    if (filter && filter != '?$filter=()') {
+      apiUrl += `&${filter.substring(1)}`;
+    }
+
+    setApiUrl(apiUrl + `&--artgen-no-cache=${refetch}`);
 
     setFields(
       cloneDeep(schema.fields)
@@ -128,6 +131,35 @@ export default function TableComponent({ schema }: Props) {
         .sort(GridTools.sortFields),
     );
   }, [pageCurr, pageSize, sorters, schema, refetch, filter]);
+
+  useEffect(() => {
+    if (apiUrl) {
+      setLoading(true);
+
+      const pks = schema.fields
+        .filter(FieldTool.isPrimary)
+        .map(f => f.reference);
+
+      httpClient
+        .get<IFindResponse>(apiUrl)
+        .then(reply => {
+          setRows(
+            reply.data.data.map((row, idx) => {
+              row['__ag_rowkey'] = pks.map(pk => row[pk]).join('///');
+              return row;
+            }),
+          );
+
+          setTotal(reply.data.meta.total);
+        })
+        .catch(e => {
+          message.error('Invalid request!');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [apiUrl]);
 
   return (
     <>
@@ -222,11 +254,7 @@ export default function TableComponent({ schema }: Props) {
       </div>
 
       {showFilter ? (
-        <GridFilterComponent
-          schema={schema}
-          filter={filter}
-          setFilter={setFilter}
-        />
+        <GridFilterComponent schema={schema} setFilter={setFilter} />
       ) : undefined}
 
       <Table
@@ -324,8 +352,10 @@ export default function TableComponent({ schema }: Props) {
                   if (f.tags.includes(FieldTag.TAGS)) {
                     return val && val.length ? (
                       <>
-                        {val.map(t => (
-                          <Tag color="magenta">{t}</Tag>
+                        {val.map((t, i) => (
+                          <Tag key={t + i.toString()} color="magenta">
+                            {t}
+                          </Tag>
                         ))}
                       </>
                     ) : (
@@ -352,6 +382,14 @@ export default function TableComponent({ schema }: Props) {
                       val = dayjs(val).format('YYYY-MM-DD dddd, HH:mm:ss');
                       classes.push('text-pink-500');
                     }
+                  }
+
+                  if (val === null) {
+                    val = (
+                      <code className="p-0.5 bg-midnight-800 text-purple-500 rounded-sm underline">
+                        &lt;NULL&gt;
+                      </code>
+                    );
                   }
 
                   return <span className={classes.join(' ')}>{val}</span>;
