@@ -1,3 +1,5 @@
+import { IODataOperator } from './odata-op.interface';
+
 type fLogicAnd = {
   type: 'and';
   left: fLogic;
@@ -21,7 +23,7 @@ type fLiteral = {
 };
 
 type fLogicCheck = {
-  type: 'eq' | 'ne' | 'lt' | 'le' | 'gt' | 'ge';
+  type: IODataOperator;
   left: fPropery;
   right: fLiteral;
 };

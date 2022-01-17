@@ -42,7 +42,7 @@ export class ODataService {
   /**
    * Apply the $filter segment
    */
-  protected applyConditions(qb: QB, $filter: AST['$filter']) {
+  protected applyConditions(schema: ISchema, qb: QB, $filter: AST['$filter']) {
     const svc = this;
 
     switch ($filter.type) {
@@ -53,21 +53,21 @@ export class ODataService {
       case 'gt':
       case 'ge':
         qb.where(
-          $filter.left.name,
+          schema.fields.find(f => f.reference === $filter.left.name).columnName,
           this.mapOperator($filter.type),
           $filter.right.value,
         );
         break;
       case 'and':
         qb.andWhere(function () {
-          svc.applyConditions(this, $filter['left']);
-          svc.applyConditions(this, $filter['right']);
+          svc.applyConditions(schema, this, $filter['left']);
+          svc.applyConditions(schema, this, $filter['right']);
         });
         break;
       case 'or':
         qb.orWhere(function () {
-          svc.applyConditions(this, $filter['left']);
-          svc.applyConditions(this, $filter['right']);
+          svc.applyConditions(schema, this, $filter['left']);
+          svc.applyConditions(schema, this, $filter['right']);
         });
         break;
     }
@@ -188,7 +188,7 @@ export class ODataService {
     }
 
     if (ast?.$filter) {
-      this.applyConditions(qb, ast.$filter);
+      this.applyConditions(schema, qb, ast.$filter);
     }
 
     if (ast?.$orderby) {

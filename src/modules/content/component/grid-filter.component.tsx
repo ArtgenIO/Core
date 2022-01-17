@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   Builder,
   BuilderProps,
   Config,
+  ImmutableTree,
   JsonGroup,
   Query,
   Utils as QbUtils,
@@ -16,22 +17,25 @@ import './grid-filter.component.less';
 
 type Props = {
   schema: ISchema;
+  filter: JsonGroup;
+  setFilter: Dispatch<SetStateAction<JsonGroup>>;
 };
 
-export default function GridFilterComponent({ schema }: Props) {
-  const [tree, setTree] = useState(null);
-  const [config, setConfig] = useState(null);
-
-  const InitialConfig = AntdConfig;
-  const queryValue: JsonGroup = { id: QbUtils.uuid(), type: 'group' };
+export default function GridFilterComponent({
+  schema,
+  filter,
+  setFilter,
+}: Props) {
+  const [tree, setTree] = useState<ImmutableTree>(null);
+  const [config, setConfig] = useState<Config>(null);
 
   useEffect(() => {
-    const cfg: Config = {
-      ...InitialConfig,
+    const _config: Config = {
+      ...AntdConfig,
       fields: {},
     };
 
-    cfg.settings.renderSize = 'small';
+    _config.settings.renderSize = 'small';
 
     schema.fields.forEach(f => {
       let type: string = 'text';
@@ -42,8 +46,10 @@ export default function GridFilterComponent({ schema }: Props) {
         operators.push('less', 'less_or_equal', 'greater', 'greater_or_equal');
       } else if (f.type === FieldType.DATETIME) {
         type = 'datetime';
+        operators.push('less', 'less_or_equal', 'greater', 'greater_or_equal');
       } else if (f.type === FieldType.DATEONLY) {
         type = 'date';
+        operators.push('less', 'less_or_equal', 'greater', 'greater_or_equal');
       } else if (f.type == FieldType.BOOLEAN) {
         type = 'boolean';
       } else {
@@ -54,7 +60,7 @@ export default function GridFilterComponent({ schema }: Props) {
         operators.push('none', 'some');
       }
 
-      cfg.fields[f.reference] = {
+      _config.fields[f.reference] = {
         label: f.title,
         type,
         operators,
@@ -62,11 +68,20 @@ export default function GridFilterComponent({ schema }: Props) {
       };
     });
 
-    console.log(cfg);
-
-    setTree(QbUtils.checkTree(QbUtils.loadTree(queryValue), cfg));
-    setConfig(cfg);
+    setConfig(_config);
   }, [schema]);
+
+  useEffect(() => {
+    if (config) {
+      setTree(QbUtils.checkTree(QbUtils.loadTree(filter), config));
+    }
+  }, [config, filter]);
+
+  const onChange = (tree: ImmutableTree, config: Config) => {
+    // setTree(tree);
+    setConfig(config);
+    setFilter(QbUtils.getTree(tree));
+  };
 
   const renderBuilder = (props: BuilderProps) => (
     <div className="query-builder-container grid-filter">
@@ -80,5 +95,14 @@ export default function GridFilterComponent({ schema }: Props) {
     return <>Loading...</>;
   }
 
-  return <Query {...config} value={tree} renderBuilder={renderBuilder} />;
+  return (
+    <Query
+      {...config}
+      onChange={(tree, config, action) => {
+        onChange(tree, config);
+      }}
+      value={tree}
+      renderBuilder={renderBuilder}
+    />
+  );
 }

@@ -1,28 +1,25 @@
 import {
+  CalendarOutlined,
+  CodeOutlined,
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
   FileOutlined,
   FilterOutlined,
+  KeyOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  message,
-  notification,
-  Pagination,
-  Popconfirm,
-  Table,
-  Tag,
-} from 'antd';
+import { Button, notification, Pagination, Popconfirm, Table, Tag } from 'antd';
 import Column, { ColumnProps } from 'antd/lib/table/Column';
 import { SorterResult } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import cloneDeep from 'lodash.clonedeep';
 import React, { useEffect, useState } from 'react';
+import { JsonGroup } from 'react-awesome-query-builder';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { v4 } from 'uuid';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { pageSizeAtom } from '../../admin/admin.atoms';
 import { useHttpClientSimple } from '../../admin/library/http-client';
@@ -31,6 +28,7 @@ import { FieldTag, FieldType, IField, ISchema } from '../../schema';
 import { FieldTool } from '../../schema/util/field-tools';
 import { GridTools } from '../util/grid.tools';
 import { toRestRecordRoute, toRestRoute } from '../util/schema-url';
+import { toODataFilter } from '../util/to-odata-filter';
 import ContentCreateComponent from './create.component';
 import ContentGridConfigComponent from './grid-config.component';
 import GridFilterComponent from './grid-filter.component';
@@ -64,6 +62,7 @@ export default function TableComponent({ schema }: Props) {
   const [fields, setFields] = useState<IField[]>([]);
   const [selected, setSelected] = useState<RowLike[]>([]);
   const [selectedKey, setSelectedKey] = useState<React.Key[]>([]);
+  const [filter, setFilter] = useState<JsonGroup>({ id: v4(), type: 'group' });
 
   useEffect(() => {
     if (params.get('page')) {
@@ -90,7 +89,12 @@ export default function TableComponent({ schema }: Props) {
             });
           }
 
-          // TODO: eliminate sorters if hidden
+          // Convert the filter to OData
+          if (filter) {
+            qb.filter(fb => toODataFilter(fb, filter));
+          }
+
+          // TODO eliminate sorters if hidden
           if (sorters) {
             qb.orderBy(sorters.join(', '));
           }
@@ -123,19 +127,7 @@ export default function TableComponent({ schema }: Props) {
         .map(FieldTool.withMeta)
         .sort(GridTools.sortFields),
     );
-  }, [pageCurr, pageSize, sorters, schema, refetch]);
-
-  const doDelete = async (record: RowLike) => {
-    try {
-      await httpClient.delete<any>(toRestRecordRoute(schema, record));
-
-      message.warning(`Record deleted`);
-
-      doRefetch(Date.now());
-    } catch (error) {
-      message.error(`Error while deleting the record!`);
-    }
-  };
+  }, [pageCurr, pageSize, sorters, schema, refetch, filter]);
 
   return (
     <>
@@ -162,6 +154,7 @@ export default function TableComponent({ schema }: Props) {
             <Button icon={<EyeOutlined />} onClick={() => setShowConfig(true)}>
               Appearance
             </Button>
+
             <Popconfirm
               disabled={!selected.length}
               title="Are You sure to delete this extension?"
@@ -196,7 +189,7 @@ export default function TableComponent({ schema }: Props) {
                 disabled={!selected.length}
                 danger
               >
-                Delete
+                Delete {selected.length ? `x${selected.length}` : ''}
               </Button>
             </Popconfirm>
           </Button.Group>
@@ -228,7 +221,13 @@ export default function TableComponent({ schema }: Props) {
         </div>
       </div>
 
-      {showFilter ? <GridFilterComponent schema={schema} /> : undefined}
+      {showFilter ? (
+        <GridFilterComponent
+          schema={schema}
+          filter={filter}
+          setFilter={setFilter}
+        />
+      ) : undefined}
 
       <Table
         className="ag-table"
@@ -244,6 +243,11 @@ export default function TableComponent({ schema }: Props) {
             setSelected(selectedRows);
             setSelectedKey(keys);
           },
+          selections: [
+            Table.SELECTION_ALL,
+            Table.SELECTION_INVERT,
+            Table.SELECTION_NONE,
+          ],
         }}
         scroll={{
           x: true,
@@ -277,6 +281,7 @@ export default function TableComponent({ schema }: Props) {
         {fields
           .filter(f => !f.meta.grid.hidden)
           .map((f, idx) => {
+            let icon: React.ReactNode = <FileOutlined />;
             let align: ColumnProps<RowLike>['align'] = 'left';
             let width: ColumnProps<RowLike>['width'];
 
@@ -288,14 +293,24 @@ export default function TableComponent({ schema }: Props) {
             } else if (FieldTool.isDate(f)) {
               align = 'right';
               width = 240;
+              icon = <CalendarOutlined />;
             } else if (FieldTool.isJson(f)) {
               align = 'center';
               width = 100;
+              icon = <CodeOutlined />;
+            }
+
+            if (FieldTool.isPrimary(f)) {
+              icon = <KeyOutlined />;
             }
 
             return (
               <Column
-                title={f.title}
+                title={
+                  <>
+                    {icon} {f.title}
+                  </>
+                }
                 dataIndex={f.reference}
                 key={f.reference}
                 sortDirections={['ascend', 'descend']}
@@ -349,7 +364,7 @@ export default function TableComponent({ schema }: Props) {
           title="Actions"
           fixed="right"
           align="center"
-          width={75}
+          width={80}
           render={(v, record) => (
             <div className="text-center inline-block" style={{ width: 50 }}>
               <Button.Group size="small">
