@@ -1,6 +1,7 @@
-import { WarningOutlined } from '@ant-design/icons';
+import { SaveOutlined, WarningOutlined } from '@ant-design/icons';
 import { Button, Drawer, message, Popconfirm, Spin, Tabs } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
+import isEqual from 'lodash.isequal';
 import { Suspense, useEffect, useState } from 'react';
 import { ISchema } from '..';
 import SchemaEditorCapabilitiesComponent from './editor/capabilities.component';
@@ -20,6 +21,7 @@ export default function SchemaEditorComponent({
 }: Props) {
   const [schema, setSchema] = useState<ISchema>(null);
   const [isNewSchema, setIsNewSchema] = useState(null);
+  const [isChanged, setIsChanged] = useState(false);
 
   useEffect(() => {
     if (immutableSchema) {
@@ -33,6 +35,12 @@ export default function SchemaEditorComponent({
     };
   }, [immutableSchema]);
 
+  useEffect(() => {
+    if (schema && immutableSchema) {
+      setIsChanged(!isEqual(schema, immutableSchema));
+    }
+  }, [schema]);
+
   if (!schema) {
     return <></>;
   }
@@ -45,15 +53,28 @@ export default function SchemaEditorComponent({
           <div className="grow">Schema » {schema.title}</div>
           <div className="shrink">
             <div className="-mt-1">
-              <Popconfirm
-                title="Are You sure want to discard the changes?"
-                okText="Yes, I understand"
-                onConfirm={() => onClose(null)}
-              >
-                <Button danger block icon={<WarningOutlined />}>
-                  Discard Changes
+              {isChanged ? (
+                <Button
+                  className="text-yellow-500 border-yellow-500 hover:text-yellow-200 hover:border-yellow-200"
+                  block
+                  icon={<SaveOutlined />}
+                  onClick={() => setSchema(immutableSchema)}
+                >
+                  Restore Changes
                 </Button>
-              </Popconfirm>
+              ) : (
+                isNewSchema && (
+                  <Popconfirm
+                    title="Are You sure want to discard the schema?"
+                    okText="Yes, I understand"
+                    onConfirm={() => onClose(null)}
+                  >
+                    <Button danger block icon={<WarningOutlined />}>
+                      Discard Schema
+                    </Button>
+                  </Popconfirm>
+                )
+              )}
             </div>
           </div>
         </div>
@@ -65,8 +86,10 @@ export default function SchemaEditorComponent({
       onClose={() => {
         if (schema.reference === '__new_schema') {
           message.warn('Please first change the name and reference');
-        } else {
+        } else if (isChanged) {
           onClose(schema);
+        } else {
+          onClose(null);
         }
       }}
     >

@@ -4,6 +4,7 @@ import {
   DownOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
+  PlusOutlined,
   QuestionCircleOutlined,
   UpOutlined,
 } from '@ant-design/icons';
@@ -18,10 +19,10 @@ import {
 } from 'antd';
 import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { FieldType, ISchema } from '../..';
+import { FieldType, IField, ISchema } from '../..';
 import { GridTools } from '../../../content/util/grid.tools';
 import { FieldTool } from '../../util/field-tools';
-import SchemaEditorFieldTunerComponent from './field-tune.component';
+import FieldEditor from './field-editor.component';
 
 export default function SchemaEditorFieldsComponent({
   schema,
@@ -34,7 +35,7 @@ export default function SchemaEditorFieldsComponent({
   isNewSchema: boolean;
   immutableSchema: ISchema;
 }) {
-  const [fieldTuneKey, setFieldTuneKey] = useState<number>(null);
+  const [fieldEditor, setFieldEditor] = useState<IField>(null);
 
   const reSort = (idx: number, dir: number) => {
     setSchema(currentState => {
@@ -57,32 +58,27 @@ export default function SchemaEditorFieldsComponent({
   };
 
   const addNewField = () => {
-    setSchema(s => {
-      const newState = cloneDeep(s);
-      const fieldKeys = newState.fields.map(f => f.reference);
-      let fieldKey = 0;
+    const fieldKeys = schema.fields.map(f => f.reference);
+    let fieldKey = 0;
 
-      while (++fieldKey) {
-        if (!fieldKeys.includes(`newField${fieldKey}`)) {
-          break;
-        }
+    while (++fieldKey) {
+      if (!fieldKeys.includes(`newField${fieldKey}`)) {
+        break;
       }
+    }
 
-      newState.fields.push({
-        reference: `newField${fieldKey}`,
-        columnName: `newField${fieldKey}`,
-        title: `New Field ${fieldKey}`,
-        type: FieldType.TEXT,
-        defaultValue: null,
-        meta: {},
-        args: {},
-        tags: [],
-      });
+    const newField = {
+      reference: `newField${fieldKey ?? ''}`,
+      columnName: `newField${fieldKey ?? ''}`,
+      title: `New Field ${fieldKey ?? ''}`,
+      type: FieldType.TEXT,
+      defaultValue: null,
+      meta: {},
+      args: {},
+      tags: [],
+    };
 
-      setFieldTuneKey(newState.fields.length - 1);
-
-      return newState;
-    });
+    setFieldEditor(newField);
   };
 
   return (
@@ -105,7 +101,7 @@ export default function SchemaEditorFieldsComponent({
           .fields.map(FieldTool.withMeta)
           .sort(GridTools.sortFields)}
         renderItem={(field, idx) => (
-          <List.Item key={`field-${idx}`} onClick={() => setFieldTuneKey(idx)}>
+          <List.Item key={`field-${idx}`} onClick={() => setFieldEditor(field)}>
             <List.Item.Meta
               avatar={
                 <Avatar
@@ -175,9 +171,7 @@ export default function SchemaEditorFieldsComponent({
                     e.stopPropagation();
 
                     setSchema(schema => {
-                      if (
-                        schema.fields.filter(FieldTool.isPrimary).length === 1
-                      ) {
+                      if (!schema.fields.filter(FieldTool.isPrimary).length) {
                         message.warn(
                           'You need to have at least primary key field',
                         );
@@ -212,23 +206,39 @@ export default function SchemaEditorFieldsComponent({
         )}
       ></List>
       <Button
-        ghost
         block
-        size="large"
         type="dashed"
         onClick={() => addNewField()}
         className="mt-4 hover:text-green-400"
+        icon={<PlusOutlined />}
       >
-        <span className="material-icons-outlined">add</span>
+        Add New Field
       </Button>
-      {fieldTuneKey !== null && (
-        <SchemaEditorFieldTunerComponent
-          fieldKey={fieldTuneKey}
-          schema={schema}
-          setSchema={setSchema}
-          onClose={() => setFieldTuneKey(null)}
-          isNewSchema={isNewSchema}
+      {fieldEditor && (
+        <FieldEditor
+          immutableField={fieldEditor}
           immutableSchema={immutableSchema}
+          onClose={newField => {
+            if (newField) {
+              setSchema(currentSchema => {
+                const newSchema = cloneDeep(currentSchema);
+                const fIndex = newSchema.fields.findIndex(
+                  f => f.reference === fieldEditor.reference,
+                );
+
+                if (fIndex != -1) {
+                  newSchema.fields.splice(fIndex, 1, newField);
+                } else {
+                  newSchema.fields.push(newField);
+                }
+
+                return newSchema;
+              });
+            }
+
+            setFieldEditor(null);
+          }}
+          isNewSchema={isNewSchema}
         />
       )}
     </>

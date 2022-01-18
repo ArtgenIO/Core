@@ -160,6 +160,7 @@ export class DatabaseSynchronizer {
     if (!isEqual(revStruct, knownStruct)) {
       const changes = diff(revStruct, knownStruct);
       const alterColumns: string[] = [];
+      const typeChecks = await this.buildTypeChecks(schema);
 
       for (const change of changes) {
         // Field has been altered
@@ -179,7 +180,7 @@ export class DatabaseSynchronizer {
             type: 'alter',
             query: this.connection.knex.schema.alterTable(
               knownSchema.tableName,
-              t => this.addColumn(t, changedField, new Map()).alter(),
+              t => this.addColumn(t, changedField, typeChecks).alter(),
             ),
           });
         } else if (
@@ -209,7 +210,7 @@ export class DatabaseSynchronizer {
             type: 'create',
             query: this.connection.knex.schema.alterTable(
               knownSchema.tableName,
-              t => this.addColumn(t, newField, new Map()),
+              t => this.addColumn(t, newField, typeChecks),
             ),
           });
         } else {
@@ -324,7 +325,7 @@ export class DatabaseSynchronizer {
 
         col = table.enum(f.columnName, f.args.values, {
           useNative: true,
-          enumName: typeFor.name,
+          enumName: typeFor?.name,
           existingType: typeFor.exists,
         });
 
@@ -396,8 +397,9 @@ export class DatabaseSynchronizer {
     return col;
   }
 
-  protected async createTable(schema: ISchema): Promise<ChangeStep[]> {
-    const instructions: ChangeStep[] = [];
+  protected async buildTypeChecks(
+    schema: ISchema,
+  ): Promise<Map<string, { exists: boolean; name: string }>> {
     const typeChecks = new Map<string, { exists: boolean; name: string }>();
 
     for (const f of schema.fields) {
@@ -423,6 +425,13 @@ export class DatabaseSynchronizer {
         });
       }
     }
+
+    return typeChecks;
+  }
+
+  protected async createTable(schema: ISchema): Promise<ChangeStep[]> {
+    const instructions: ChangeStep[] = [];
+    const typeChecks = await this.buildTypeChecks(schema);
 
     instructions.push({
       type: 'create',

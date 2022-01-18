@@ -25,6 +25,7 @@ export class DatabaseObserver {
       await this.connections.findOne(schema.database).associate([schema]);
     } catch (error) {
       this.logger.error(getErrorMessage(error));
+      console.error(error);
     }
   }
 
@@ -36,6 +37,7 @@ export class DatabaseObserver {
       await this.connections.findOne(newSchema.database).associate([newSchema]);
     } catch (error) {
       this.logger.error(getErrorMessage(error));
+      console.error(error);
     }
   }
 
@@ -49,6 +51,7 @@ export class DatabaseObserver {
         .knex.schema.dropTable(schema.tableName);
     } catch (error) {
       this.logger.error(getErrorMessage(error));
+      console.error(error);
     }
   }
 
@@ -69,6 +72,7 @@ export class DatabaseObserver {
       this.logger.info('Link [%s] closed', database.ref);
     } catch (error) {
       this.logger.error(getErrorMessage(error));
+      console.error(error);
     }
   }
 }

@@ -180,10 +180,11 @@ export default function SchemaEditorCapabilitiesComponent({
                     title: 'Updated Date',
                     reference: 'updatedAt',
                     columnName: 'updated_at',
+                    defaultValue: null,
                     args: {},
                     meta: {},
                     type: FieldType.DATETIME,
-                    tags: [FieldTag.UPDATED],
+                    tags: [FieldTag.UPDATED, FieldTag.NULLABLE],
                   });
                 } else {
                   update.fields = update.fields.filter(
@@ -218,10 +219,11 @@ export default function SchemaEditorCapabilitiesComponent({
                     title: 'Deleted Date',
                     reference: 'deletedAt',
                     columnName: 'deleted_at',
+                    defaultValue: null,
                     args: {},
                     meta: {},
                     type: FieldType.DATETIME,
-                    tags: [FieldTag.DELETED],
+                    tags: [FieldTag.DELETED, FieldTag.NULLABLE],
                   });
                 } else {
                   update.fields = update.fields.filter(

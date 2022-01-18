@@ -62,9 +62,10 @@ export class DatabaseService {
       // Connection does not exists yet, load up with the schemas.
       if (database.ref !== 'main') {
         updates.push(
-          this.connectionService
-            .connect(database, associations)
-            .catch(e => this.logger.warn(getErrorMessage(e))),
+          this.connectionService.connect(database, associations).catch(e => {
+            this.logger.warn(getErrorMessage(e));
+            console.warn(e);
+          }),
         );
       }
       // Existing connection (main)

@@ -64,7 +64,9 @@ export default function DatabaseArtboardComponent() {
             e => isNode(e) && e.data.schema.reference == showEditor.reference,
           ) as Node<{ schema: ISchema }>;
 
-        setCenter(el.position.x + 400, el.position.y + 200, 1.5, 1000);
+        if (el) {
+          setCenter(el.position.x + 400, el.position.y + 200, 1.5, 1000);
+        }
       }
     } else {
       search.delete('schema');
@@ -84,18 +86,7 @@ export default function DatabaseArtboardComponent() {
   }, [schemas, ref]);
 
   const doNew = () => {
-    const newSchema = createEmptySchema(ref);
-
-    setElements(currentState => {
-      const newState = cloneDeep(currentState);
-      const newElement = SchemaSerializer.toElements([newSchema]);
-      newState.push(...newElement);
-
-      return newState;
-    });
-
-    setCenter(400, 200, 1.5, 1000);
-    setShowEditor(newSchema);
+    setShowEditor(createEmptySchema(ref));
   };
 
   const doRemove = () => {

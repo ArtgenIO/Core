@@ -457,6 +457,7 @@ export class DatabaseConnection implements IDatabaseConnection {
       const hasUUIDPK =
         primaryKeys.length === 1 && primaryKeys[0].type === FieldType.UUID;
       const createdAt = s.fields.find(f => f.tags.includes(FieldTag.CREATED));
+      const updatedAt = s.fields.find(f => f.tags.includes(FieldTag.UPDATED));
       const versioned = s.fields.find(f => f.tags.includes(FieldTag.VERSION));
       const defaults = s.fields.filter(
         f => typeof f.defaultValue !== 'undefined',
@@ -476,6 +477,12 @@ export class DatabaseConnection implements IDatabaseConnection {
             .toISOString()
             .replace(/T|Z/g, ' ');
         }
+
+        // if (updatedAt) {
+        //   this[updatedAt.reference] = new Date()
+        //     .toISOString()
+        //     .replace(/T|Z/g, ' ');
+        // }
 
         if (hasUUIDPK) {
           if (!this[primaryKeys[0].reference]) {
