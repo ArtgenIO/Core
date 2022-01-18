@@ -26,9 +26,13 @@ import SchemaEditorFieldTunerComponent from './field-tune.component';
 export default function SchemaEditorFieldsComponent({
   schema,
   setSchema,
+  isNewSchema,
+  immutableSchema,
 }: {
   schema: ISchema;
   setSchema: Dispatch<SetStateAction<ISchema>>;
+  isNewSchema: boolean;
+  immutableSchema: ISchema;
 }) {
   const [fieldTuneKey, setFieldTuneKey] = useState<number>(null);
 
@@ -75,6 +79,8 @@ export default function SchemaEditorFieldsComponent({
         tags: [],
       });
 
+      setFieldTuneKey(newState.fields.length - 1);
+
       return newState;
     });
   };
@@ -104,7 +110,7 @@ export default function SchemaEditorFieldsComponent({
               avatar={
                 <Avatar
                   shape="square"
-                  size="large"
+                  size="default"
                   className="bg-midnight-800"
                   icon={<DatabaseOutlined />}
                 />
@@ -158,36 +164,49 @@ export default function SchemaEditorFieldsComponent({
                 }}
               />
 
-              <Popconfirm
-                title="Are You sure to delete this field?"
-                okText="Yes, delete"
-                cancelText="No"
-                placement="left"
-                icon={<QuestionCircleOutlined />}
-                onConfirm={e => {
-                  e.stopPropagation();
+              {isNewSchema || !FieldTool.isPrimary(field) ? (
+                <Popconfirm
+                  title="Are You sure to delete this field?"
+                  okText="Yes, delete"
+                  cancelText="No"
+                  placement="left"
+                  icon={<QuestionCircleOutlined />}
+                  onConfirm={e => {
+                    e.stopPropagation();
 
-                  setSchema(schema => {
-                    if (schema.fields.length === 1) {
-                      message.warn('You need to have at least one field');
+                    setSchema(schema => {
+                      if (
+                        schema.fields.filter(FieldTool.isPrimary).length === 1
+                      ) {
+                        message.warn(
+                          'You need to have at least primary key field',
+                        );
 
-                      return schema;
-                    }
+                        return schema;
+                      }
 
-                    const newSchema = cloneDeep(schema);
-                    newSchema.fields.splice(idx, 1);
+                      const newSchema = cloneDeep(schema);
+                      newSchema.fields.splice(idx, 1);
 
-                    return newSchema;
-                  });
-                }}
-              >
+                      return newSchema;
+                    });
+                  }}
+                >
+                  <Button
+                    onClick={e => e.stopPropagation()}
+                    icon={<DeleteOutlined />}
+                    size="small"
+                    danger
+                  ></Button>
+                </Popconfirm>
+              ) : (
                 <Button
-                  onClick={e => e.stopPropagation()}
                   icon={<DeleteOutlined />}
                   size="small"
+                  disabled
                   danger
                 ></Button>
-              </Popconfirm>
+              )}
             </Button.Group>
           </List.Item>
         )}
@@ -202,14 +221,16 @@ export default function SchemaEditorFieldsComponent({
       >
         <span className="material-icons-outlined">add</span>
       </Button>
-      {fieldTuneKey !== null ? (
+      {fieldTuneKey !== null && (
         <SchemaEditorFieldTunerComponent
           fieldKey={fieldTuneKey}
           schema={schema}
           setSchema={setSchema}
-          onClose={setFieldTuneKey}
+          onClose={() => setFieldTuneKey(null)}
+          isNewSchema={isNewSchema}
+          immutableSchema={immutableSchema}
         />
-      ) : undefined}
+      )}
     </>
   );
 }

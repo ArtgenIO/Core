@@ -43,6 +43,7 @@ const config = {
   theme: {
     fontFamily: {
       header: ['Bebas Neue', 'cursive'],
+      code: ['Courier New', 'Courier', 'monospace'],
       cursive: ['Gruppo', 'cursive'],
     },
     colors: customColors,

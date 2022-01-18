@@ -4,8 +4,8 @@ import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { Suspense, useEffect, useState } from 'react';
 import { ISchema } from '..';
 import SchemaEditorCapabilitiesComponent from './editor/capabilities.component';
+import SchemaExportComponent from './editor/export.component';
 import SchemaEditorFieldsComponent from './editor/fields.component';
-import SchemaEditorIndexesComponent from './editor/indexes.component';
 import SchemaEditorNamingComponent from './editor/naming.component';
 import RelationsComponent from './editor/relations.component';
 
@@ -90,20 +90,18 @@ export default function SchemaEditorComponent({
               <SchemaEditorFieldsComponent
                 schema={schema}
                 setSchema={setSchema}
+                isNewSchema={isNewSchema}
+                immutableSchema={immutableSchema}
               />
             </Tabs.TabPane>
             <Tabs.TabPane key="relations" tab="Relations">
               <RelationsComponent schema={schema} setSchema={setSchema} />
             </Tabs.TabPane>
-            <Tabs.TabPane key="indices" tab="Indices">
-              <SchemaEditorIndexesComponent
-                schema={schema}
-                setSchema={setSchema}
-              />
+            <Tabs.TabPane key="indices" tab="Serialize">
+              <SchemaExportComponent schema={schema} setSchema={setSchema} />
             </Tabs.TabPane>
           </Tabs>
         </ErrorBoundary>
-        );
       </Suspense>
     </Drawer>
   );
