@@ -14,6 +14,7 @@ export default function DatabaseNameComponent({ name }: { name: string }) {
           bordered={false}
           placeholder="Database name"
           required
+          readOnly
           className="text-3xl"
           style={{ lineHeight: '3rem' }}
         />

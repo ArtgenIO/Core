@@ -1,15 +1,16 @@
 import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Avatar, Button, Input, List, Popconfirm, Select, Tooltip } from 'antd';
-import { camelCase, cloneDeep, upperFirst } from 'lodash';
+import { pluralize } from 'inflection';
+import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ISchema } from '../../../../../schema';
-import { IRelation } from '../../../../../schema/interface/relation.interface';
+import { ISchema } from '../../..';
 import {
-  getTakenColumNames,
-  isPrimary,
-} from '../../../../../schema/util/field-tools';
+  IRelation,
+  IRelationBelongsToMany,
+} from '../../../interface/relation.interface';
+import { getTakenColumNames, isPrimary } from '../../../util/field-tools';
 
-export default function RelationBelongsToMany({
+export default function RelationManyToMany({
   relation,
   setSchema,
   schema,
@@ -25,6 +26,9 @@ export default function RelationBelongsToMany({
   const primary = schema.fields.find(isPrimary);
   const [name, setName] = useState(relation.name);
   const [remoteField, setRemoteField] = useState<string>(relation.remoteField);
+  const [through, setThrough] = useState<string>(
+    (relation as IRelationBelongsToMany).through,
+  );
 
   return (
     <List.Item>
@@ -33,13 +37,13 @@ export default function RelationBelongsToMany({
           <Avatar
             shape="square"
             size="large"
-            className="bg-green-500"
+            className="bg-blue-500"
             icon={
               <span className="material-icons-outlined">settings_ethernet</span>
             }
           />
         }
-        description="Belongs To Many"
+        description="Many To Many"
         title={
           <Input
             bordered={false}
@@ -58,23 +62,6 @@ export default function RelationBelongsToMany({
       />
 
       <div className="flex">
-        <div className="hidden">
-          <Tooltip
-            title="Local field name, will be added to the schema before generation"
-            placement="left"
-          >
-            <Input
-              value={relation.localField}
-              disabled
-              placeholder="Local field"
-              addonAfter={
-                <span className="material-icons-outlined">anchor</span>
-              }
-              className="mr-2 w-64"
-            />
-          </Tooltip>
-        </div>
-
         <div>
           <Select
             defaultValue={relation.target}
@@ -83,7 +70,7 @@ export default function RelationBelongsToMany({
             onChange={newTarget => {
               setSchema(s => {
                 const usedNames = getTakenColumNames(s);
-                let newName = camelCase(newTarget);
+                let newName = pluralize(camelCase(newTarget));
 
                 if (usedNames.includes(newName)) {
                   newName = `of${upperFirst(newName)}`;
@@ -99,14 +86,18 @@ export default function RelationBelongsToMany({
                     }
                   }
                 }
+                const through =
+                  snakeCase(schema.tableName) + '_' + snakeCase(newName);
+
+                const remotePrimary = schemas
+                  .find(s => s.reference === newTarget)
+                  .fields.find(isPrimary);
 
                 s.relations[idx].name = newName;
                 s.relations[idx].target = newTarget;
-                s.relations[idx].remoteField = schemas
-                  .find(s => s.reference === newTarget)
-                  .fields.find(
-                    f => f.type === primary.type && !isPrimary(f),
-                  ).reference;
+                s.relations[idx].remoteField = remotePrimary.reference;
+                (s.relations[idx] as IRelationBelongsToMany).through = through;
+                setThrough(through);
                 setName(newName);
                 setRemoteField(s.relations[idx].remoteField);
 
@@ -133,33 +124,41 @@ export default function RelationBelongsToMany({
           </Select>
         </div>
 
-        <div className="mr-2">
-          <Tooltip title="Target schema's relation key" placement="left">
-            <Select
+        <div>
+          <Tooltip title="Cross connection table" placement="left">
+            <Input
+              value={through}
               disabled={!relation.target}
-              value={remoteField}
-              placeholder="Remote field"
-              className="w-64"
-              onChange={newRemoteField => {
+              placeholder="Cross connection table"
+              addonAfter={
+                <span className="material-icons-outlined text-sm">
+                  call_merge
+                </span>
+              }
+              onChange={e => {
+                setThrough(e.target.value);
                 setSchema(s => {
-                  s.relations[idx].remoteField = newRemoteField;
-                  setRemoteField(newRemoteField);
+                  (s.relations[idx] as IRelationBelongsToMany).through =
+                    e.target.value;
+
                   return s;
                 });
               }}
-            >
-              {relation.target
-                ? schemas
-                    .find(s => s.reference === relation.target)
-                    .fields.filter(f => !isPrimary(f))
-                    .filter(f => f.type === primary.type)
-                    .map(f => (
-                      <Select.Option key={f.reference} value={f.reference}>
-                        {f.title}
-                      </Select.Option>
-                    ))
-                : undefined}
-            </Select>
+              className="mr-2 w-64"
+            />
+          </Tooltip>
+        </div>
+
+        <div className="hidden">
+          <Tooltip title="Target schema's relation key" placement="left">
+            <Input
+              value={remoteField}
+              disabled
+              readOnly
+              placeholder="Remote field"
+              className="w-64"
+              addonAfter={<span className="material-icons-outlined">key</span>}
+            />
           </Tooltip>
         </div>
       </div>

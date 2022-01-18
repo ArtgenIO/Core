@@ -3,11 +3,11 @@ import { Button, Divider, Result, Select, Spin, Typography } from 'antd';
 import { cloneDeep, startCase } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { Link } from 'react-router-dom';
-import { useHttpClient } from '../../../../admin/library/use-http-client';
-import { toRestSysRoute } from '../../../../content/util/schema-url';
-import { IFindResponse } from '../../../../rest/interface/find-reponse.interface';
-import { ISchema } from '../../../../schema';
-import { IDatabase } from '../../../interface';
+import { ISchema } from '../..';
+import { useHttpClient } from '../../../admin/library/use-http-client';
+import { toRestSysRoute } from '../../../content/util/schema-url';
+import { IDatabase } from '../../../database/interface';
+import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
 
 export default function SelectDatabaseComponent({
   schema,

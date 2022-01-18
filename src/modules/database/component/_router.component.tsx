@@ -13,14 +13,19 @@ import { useRecoilValue } from 'recoil';
 import { databasesAtom, schemasAtom } from '../../admin/admin.atoms';
 import { ADMIN_URL } from '../../admin/admin.constants';
 import MenuBlock from '../../admin/component/menu-block.component';
-import DatabaseArtboardComponent from './artboard/artboard.component';
+import ArtboardWrapper from './artboard/wrapper.component';
 import DatabaseListComponent from './databases/list.component';
 import ManagerMenuComponent from './_menu/manager.component';
 
 export default function DatabaseRouterComponent() {
   const base = `${ADMIN_URL}/database`;
-  const navigate = useNavigate();
   const [tree, setTree] = useState<TreeDataNode[]>([]);
+  const [selected, setSelected] = useState([]);
+
+  // Routing
+  const navigate = useNavigate();
+
+  // Global states
   const databases = useRecoilValue(databasesAtom);
   const schemas = useRecoilValue(schemasAtom);
 
@@ -40,6 +45,7 @@ export default function DatabaseRouterComponent() {
           className: 'test--db-list-ref',
           icon: <DatabaseOutlined />,
           isLeaf: false,
+          selectable: true,
         })),
       );
     }
@@ -66,15 +72,21 @@ export default function DatabaseRouterComponent() {
             <Tree.DirectoryTree
               treeData={tree}
               defaultExpandAll
+              selectedKeys={selected}
               onSelect={selected => {
                 if (selected.length) {
-                  const [ref] = selected[0].toString().split('-');
-                  const path = generatePath('/admin/database/artboard/:ref', {
-                    ref,
-                  });
+                  const [ref, sch] = selected[0].toString().split('-');
+                  const path = generatePath(
+                    `/admin/database/artboard/:ref?schema=${sch}`,
+                    {
+                      ref,
+                    },
+                  );
 
                   navigate(path);
                 }
+
+                setSelected(selected);
               }}
             />
           ) : undefined}
@@ -85,10 +97,7 @@ export default function DatabaseRouterComponent() {
       <Layout>
         <Routes>
           <Route path="databases" element={<DatabaseListComponent />}></Route>
-          <Route
-            path="artboard/:ref"
-            element={<DatabaseArtboardComponent />}
-          ></Route>
+          <Route path="artboard/:ref" element={<ArtboardWrapper />}></Route>
           <Route
             path="/"
             element={<Navigate to={`${base}/databases`} />}

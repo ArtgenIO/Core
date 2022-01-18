@@ -11,11 +11,11 @@ export interface ISchema {
     /**
      * Artboard appearance meta.
      */
-    artboard: {
+    artboard?: {
       /**
        *  Position on the artboard's coordinate system
        */
-      position: {
+      position?: {
         x: number;
         y: number;
       };

@@ -1,37 +1,30 @@
 import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Avatar, Button, Input, List, Popconfirm, Select, Tooltip } from 'antd';
-import { pluralize } from 'inflection';
 import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { ISchema } from '../../../../../schema';
-import {
-  IRelation,
-  IRelationBelongsToMany,
-} from '../../../../../schema/interface/relation.interface';
-import {
-  getTakenColumNames,
-  isPrimary,
-} from '../../../../../schema/util/field-tools';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { ISchema } from '../../..';
+import { IRelation } from '../../../interface/relation.interface';
+import { getTakenColumNames, isPrimary } from '../../../util/field-tools';
 
-export default function RelationManyToMany({
+export default function RelationBelongsToOne({
   relation,
   setSchema,
-  schema,
   idx,
   schemas,
 }: {
   relation: IRelation;
-  schema: ISchema;
   setSchema: Dispatch<SetStateAction<ISchema>>;
   idx: number;
   schemas: ISchema[];
 }) {
-  const primary = schema.fields.find(isPrimary);
   const [name, setName] = useState(relation.name);
   const [remoteField, setRemoteField] = useState<string>(relation.remoteField);
-  const [through, setThrough] = useState<string>(
-    (relation as IRelationBelongsToMany).through,
-  );
+  const [localField, setLocalField] = useState<string>(relation.localField);
+
+  useEffect(() => {
+    setRemoteField(relation.remoteField);
+    setLocalField(relation.localField);
+  }, [idx]);
 
   return (
     <List.Item>
@@ -40,13 +33,13 @@ export default function RelationManyToMany({
           <Avatar
             shape="square"
             size="large"
-            className="bg-blue-500"
+            className="bg-yellow-500"
             icon={
               <span className="material-icons-outlined">settings_ethernet</span>
             }
           />
         }
-        description="Many To Many"
+        description="Belongs To One"
         title={
           <Input
             bordered={false}
@@ -72,8 +65,17 @@ export default function RelationManyToMany({
             placeholder="Select Target"
             onChange={newTarget => {
               setSchema(s => {
+                const remoteField = schemas
+                  .find(rs => rs.reference === newTarget)
+                  .fields.find(isPrimary).reference;
+
+                s.relations[idx].target = newTarget;
+                s.relations[idx].remoteField = remoteField;
+
+                setRemoteField(remoteField);
+
                 const usedNames = getTakenColumNames(s);
-                let newName = pluralize(camelCase(newTarget));
+                let newName = camelCase(newTarget);
 
                 if (usedNames.includes(newName)) {
                   newName = `of${upperFirst(newName)}`;
@@ -89,20 +91,14 @@ export default function RelationManyToMany({
                     }
                   }
                 }
-                const through =
-                  snakeCase(schema.tableName) + '_' + snakeCase(newName);
 
-                const remotePrimary = schemas
-                  .find(s => s.reference === newTarget)
-                  .fields.find(isPrimary);
+                let localName =
+                  snakeCase(newName) + upperFirst(snakeCase(remoteField));
 
+                s.relations[idx].localField = localName;
+                setLocalField(localName); // Just preset
                 s.relations[idx].name = newName;
-                s.relations[idx].target = newTarget;
-                s.relations[idx].remoteField = remotePrimary.reference;
-                (s.relations[idx] as IRelationBelongsToMany).through = through;
-                setThrough(through);
                 setName(newName);
-                setRemoteField(s.relations[idx].remoteField);
 
                 return s;
               });
@@ -110,11 +106,8 @@ export default function RelationManyToMany({
           >
             {schemas.map(opt => {
               const primaries = opt.fields.filter(isPrimary).length;
-              const sameType = opt.fields.some(
-                f => f.type === primary.type && !isPrimary(f),
-              );
 
-              if (primaries === 1 && sameType) {
+              if (primaries === 1) {
                 return (
                   <Select.Option key={opt.reference} value={opt.reference}>
                     {opt.title}
@@ -128,32 +121,35 @@ export default function RelationManyToMany({
         </div>
 
         <div>
-          <Tooltip title="Cross connection table" placement="left">
+          <Tooltip
+            title="Local field name, will be added to the schema before generation"
+            placement="bottom"
+          >
             <Input
-              value={through}
+              value={localField}
               disabled={!relation.target}
-              placeholder="Cross connection table"
+              placeholder="Local field"
               addonAfter={
-                <span className="material-icons-outlined text-sm">
-                  call_merge
-                </span>
+                <span className="material-icons-outlined text-sm">anchor</span>
               }
+              className="mr-2 w-64"
               onChange={e => {
-                setThrough(e.target.value);
+                setLocalField(e.target.value);
                 setSchema(s => {
-                  (s.relations[idx] as IRelationBelongsToMany).through =
-                    e.target.value;
+                  s.relations[idx].localField = e.target.value;
 
                   return s;
                 });
               }}
-              className="mr-2 w-64"
             />
           </Tooltip>
         </div>
 
         <div className="hidden">
-          <Tooltip title="Target schema's relation key" placement="left">
+          <Tooltip
+            title="Target schema's primary key, automaticaly selected"
+            placement="bottom"
+          >
             <Input
               value={remoteField}
               disabled

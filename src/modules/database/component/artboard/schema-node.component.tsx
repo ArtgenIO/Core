@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import Icon from '../../../admin/component/icon.component';
 import { FieldTag, IField, ISchema } from '../../../schema';
@@ -27,14 +27,14 @@ const isRelationTarget = (
 
 export const createSchemaNode = (
   schemas: ISchema[],
-  dblClickHandler: Dispatch<SetStateAction<unknown>>,
+  dblClickHandler: (schema: ISchema) => void,
 ) => {
   return (props: NodeProps<{ schema: ISchema }>) => {
     return (
       <div
         className="schema-node"
         key={`${props.id}-node`}
-        onDoubleClick={() => dblClickHandler(props.id)}
+        onDoubleClick={() => dblClickHandler(props.data.schema)}
       >
         <div key="name" className="table-name">
           {props.data.schema.tableName}
@@ -45,46 +45,48 @@ export const createSchemaNode = (
         </div>
 
         <table key="fields" className="fields mb-2 w-full">
-          {props.data.schema.fields.map(f => (
-            <tr>
-              <td className="w-4/6 column relative">
-                {isRelationTarget(schemas, props.data.schema, f) ? (
-                  <Handle
-                    className="target-handle"
-                    key={`${props.id}.rel-target.${f.reference}`}
-                    type="target"
-                    position={Position.Left}
-                    id={`th-${f.reference}`}
-                  />
-                ) : undefined}
+          <tbody>
+            {props.data.schema.fields.map((f, i) => (
+              <tr key={i}>
+                <td className="w-4/6 column relative">
+                  {isRelationTarget(schemas, props.data.schema, f) ? (
+                    <Handle
+                      className="target-handle"
+                      key={`${props.id}.rel-target.${f.reference}`}
+                      type="target"
+                      position={Position.Left}
+                      id={`th-${f.reference}`}
+                    />
+                  ) : undefined}
 
-                {f.columnName}
-              </td>
-              <td className="w-1/6 text-center type">{f.type}</td>
-              <td className="w-1/6 text-right icon relative">
-                {FieldTool.isPrimary(f) ? <Icon id="key" /> : undefined}
-                {f.tags.includes(FieldTag.CREATED) ? (
-                  <Icon id="event_available" />
-                ) : undefined}
-                {f.tags.includes(FieldTag.UPDATED) ? (
-                  <Icon id="edit_calendar" />
-                ) : undefined}
-                {f.tags.includes(FieldTag.TAGS) ? (
-                  <Icon id="sell" />
-                ) : undefined}
+                  {f.columnName}
+                </td>
+                <td className="w-1/6 text-center type">{f.type}</td>
+                <td className="w-1/6 text-right icon relative">
+                  {FieldTool.isPrimary(f) ? <Icon id="key" /> : undefined}
+                  {f.tags.includes(FieldTag.CREATED) ? (
+                    <Icon id="event_available" />
+                  ) : undefined}
+                  {f.tags.includes(FieldTag.UPDATED) ? (
+                    <Icon id="edit_calendar" />
+                  ) : undefined}
+                  {f.tags.includes(FieldTag.TAGS) ? (
+                    <Icon id="sell" />
+                  ) : undefined}
 
-                {isRelationSource(props.data.schema, f) ? (
-                  <Handle
-                    className="source-handle"
-                    key={`${props.id}.rel-source.${f.reference}`}
-                    type="source"
-                    position={Position.Right}
-                    id={`sh-${f.reference}`}
-                  />
-                ) : undefined}
-              </td>
-            </tr>
-          ))}
+                  {isRelationSource(props.data.schema, f) ? (
+                    <Handle
+                      className="source-handle"
+                      key={`${props.id}.rel-source.${f.reference}`}
+                      type="source"
+                      position={Position.Right}
+                      id={`sh-${f.reference}`}
+                    />
+                  ) : undefined}
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     );

@@ -1,7 +1,7 @@
-import { Form, Input, Tooltip, Typography } from 'antd';
+import { Form, Input, Tooltip } from 'antd';
 import { camelCase, cloneDeep, snakeCase } from 'lodash';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { ISchema } from '../../../../schema';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { ISchema } from '../..';
 
 type InputLinkedProps = {
   isLinked: boolean;
@@ -29,9 +29,11 @@ function InputLinked({ isLinked, setIsLinked }: InputLinkedProps) {
 }
 
 export default function SchemaEditorNamingComponent({
+  isNewSchema,
   schema,
   setSchema,
 }: {
+  isNewSchema: boolean;
   schema: Partial<ISchema>;
   setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
 }) {
@@ -40,18 +42,13 @@ export default function SchemaEditorNamingComponent({
   const [refLinked, setRefLinked] = useState(true);
   const [tblLinked, setTblLinked] = useState(true);
 
+  useEffect(() => {
+    setRefLinked(isNewSchema);
+    setTblLinked(isNewSchema);
+  }, [isNewSchema]);
+
   return (
     <>
-      <Typography>
-        <Typography.Paragraph>
-          Choose which database you want to create the schema to. Please be
-          aware that different database providers come with different
-          capabilities, for example PostgreSQL provides native UUID type, but
-          SQLite does not. If you want to use a new database for this schema
-          click to the add new database at the right top corner.
-        </Typography.Paragraph>
-      </Typography>
-
       <Form
         form={form}
         name="naming"
@@ -105,9 +102,11 @@ export default function SchemaEditorNamingComponent({
         >
           <Input
             placeholder="System inner reference, used as a unique identifier per database"
-            disabled={refLinked}
+            disabled={!isNewSchema}
             suffix={
-              <InputLinked isLinked={refLinked} setIsLinked={setRefLinked} />
+              isNewSchema ? (
+                <InputLinked isLinked={refLinked} setIsLinked={setRefLinked} />
+              ) : undefined
             }
           />
         </Form.Item>
@@ -120,9 +119,11 @@ export default function SchemaEditorNamingComponent({
           <Input
             className="mb-12"
             placeholder="The table's name created in the database server"
-            disabled={tblLinked}
+            disabled={!isNewSchema}
             suffix={
-              <InputLinked isLinked={tblLinked} setIsLinked={setTblLinked} />
+              isNewSchema ? (
+                <InputLinked isLinked={tblLinked} setIsLinked={setTblLinked} />
+              ) : undefined
             }
           />
         </Form.Item>

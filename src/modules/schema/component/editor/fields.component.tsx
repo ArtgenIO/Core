@@ -15,8 +15,8 @@ import {
 import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
-import { pageDrawerAtom } from '../../../../admin/admin.atoms';
-import { FieldType, ISchema } from '../../../../schema';
+import { FieldType, ISchema } from '../..';
+import { pageDrawerAtom } from '../../../admin/admin.atoms';
 import SchemaEditorFieldTunerComponent from './field-tune.component';
 
 export default function SchemaEditorFieldsComponent({

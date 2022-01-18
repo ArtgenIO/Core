@@ -2,14 +2,11 @@ import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Avatar, Button, Input, List, Popconfirm, Select, Tooltip } from 'antd';
 import { camelCase, cloneDeep, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ISchema } from '../../../../../schema';
-import { IRelation } from '../../../../../schema/interface/relation.interface';
-import {
-  getTakenColumNames,
-  isPrimary,
-} from '../../../../../schema/util/field-tools';
+import { ISchema } from '../../..';
+import { IRelation } from '../../../interface/relation.interface';
+import { getTakenColumNames, isPrimary } from '../../../util/field-tools';
 
-export default function RelationHasOne({
+export default function RelationBelongsToMany({
   relation,
   setSchema,
   schema,
@@ -33,13 +30,13 @@ export default function RelationHasOne({
           <Avatar
             shape="square"
             size="large"
-            className="bg-purple-500"
+            className="bg-green-500"
             icon={
               <span className="material-icons-outlined">settings_ethernet</span>
             }
           />
         }
-        description="Has One"
+        description="Belongs To Many"
         title={
           <Input
             bordered={false}
@@ -58,6 +55,23 @@ export default function RelationHasOne({
       />
 
       <div className="flex">
+        <div className="hidden">
+          <Tooltip
+            title="Local field name, will be added to the schema before generation"
+            placement="left"
+          >
+            <Input
+              value={relation.localField}
+              disabled
+              placeholder="Local field"
+              addonAfter={
+                <span className="material-icons-outlined">anchor</span>
+              }
+              className="mr-2 w-64"
+            />
+          </Tooltip>
+        </div>
+
         <div>
           <Select
             defaultValue={relation.target}
@@ -91,7 +105,6 @@ export default function RelationHasOne({
                     f => f.type === primary.type && !isPrimary(f),
                   ).reference;
                 setName(newName);
-
                 setRemoteField(s.relations[idx].remoteField);
 
                 return s;

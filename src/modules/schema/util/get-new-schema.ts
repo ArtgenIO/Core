@@ -3,8 +3,8 @@ import { FieldTag, FieldType, ISchema } from '..';
 export const createEmptySchema = (database: string): ISchema => ({
   database,
   title: 'New Schema',
-  reference: 'newSchema',
-  tableName: 'new_schema',
+  reference: '__new_schema',
+  tableName: '__new_schema',
   meta: {
     artboard: {
       position: {
@@ -22,16 +22,6 @@ export const createEmptySchema = (database: string): ISchema => ({
       meta: {},
       args: {},
       tags: [FieldTag.PRIMARY],
-    },
-    {
-      title: 'Tags',
-      reference: 'tags',
-      columnName: 'tags',
-      type: FieldType.JSON,
-      tags: [FieldTag.TAGS],
-      meta: {},
-      args: {},
-      defaultValue: [],
     },
   ],
   indices: [],

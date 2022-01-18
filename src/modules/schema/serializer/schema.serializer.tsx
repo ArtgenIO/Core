@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash.clonedeep';
 import { Edge, Elements, isNode, Node } from 'react-flow-renderer';
 import { ISchema } from '../interface';
 
@@ -7,10 +8,16 @@ let offsetX = 0;
  * Responsible to serialize between schema list state and node/edge elements state.
  */
 export class SchemaSerializer {
-  static toElements(schemas: ISchema[]): Elements {
+  static toElements(schemas: ISchema[]): Elements<{ schema: ISchema }> {
     const elements: Elements = [];
 
-    for (const schema of schemas) {
+    for (const s of schemas) {
+      const schema = cloneDeep(s);
+
+      if (schema?.meta) {
+        schema.meta = {};
+      }
+
       if (!schema.meta?.artboard?.position) {
         if (!schema.meta?.artboard) {
           schema.meta = {
@@ -22,8 +29,8 @@ export class SchemaSerializer {
         }
 
         schema.meta.artboard.position = {
-          x: offsetX++ * 100 + 100,
-          y: offsetX * 50 + 100,
+          x: 0,
+          y: 0,
         };
       }
 

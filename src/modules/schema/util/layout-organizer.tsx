@@ -1,5 +1,5 @@
 import dagre from 'dagre/dist/dagre.js';
-import { Elements, isNode, Position } from 'react-flow-renderer';
+import { Elements, isNode } from 'react-flow-renderer';
 
 export const createLayouOrganizer = (
   nodeWidth: number = 300,
@@ -9,7 +9,6 @@ export const createLayouOrganizer = (
   planner.setDefaultEdgeLabel(() => ({}));
 
   return (elements: Elements, direction = 'LR'): Elements => {
-    const isHorizontal = direction === 'LR';
     planner.setGraph({ rankdir: direction });
 
     elements.forEach(el => {
@@ -28,8 +27,6 @@ export const createLayouOrganizer = (
     return elements.map(el => {
       if (isNode(el)) {
         const nodeWithPosition = planner.node(el.id);
-        el.targetPosition = isHorizontal ? Position.Left : Position.Top;
-        el.sourcePosition = isHorizontal ? Position.Right : Position.Bottom;
 
         // unfortunately we need this little hack to pass a slightly different position
         // to notify react flow about the change. Moreover we are shifting the dagre node position

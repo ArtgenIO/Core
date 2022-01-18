@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { ISchema } from '../../../../schema';
+import { ISchema } from '../..';
 
 export default function SchemaEditorIndexesComponent({
   schema,

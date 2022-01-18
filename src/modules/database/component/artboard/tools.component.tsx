@@ -1,5 +1,6 @@
 import {
   ClusterOutlined,
+  CopyOutlined,
   DeleteOutlined,
   ExpandOutlined,
   PlusSquareOutlined,
@@ -10,29 +11,26 @@ import {
 } from '@ant-design/icons';
 import { Popconfirm } from 'antd';
 import React, { Dispatch, SetStateAction } from 'react';
-import { Elements, OnLoadParams } from 'react-flow-renderer';
-import DatabaseSaveComponent from './save.component';
-import DatabaseSerializerComponent from './serializer.component';
+import { Elements, useZoomPanHelper } from 'react-flow-renderer';
+import { ISchema } from '../../../schema';
 
 export default function DatabaseToolsComponent({
-  flowInstance,
   layoutOrganizer,
   setElements,
   setOpenedNode,
-  doSave,
   doNew,
   selectedNode,
   doRemove,
 }: {
-  flowInstance: OnLoadParams;
   layoutOrganizer: any;
   setElements: Dispatch<SetStateAction<Elements>>;
-  setOpenedNode: Dispatch<SetStateAction<string>>;
-  doSave: () => Promise<void>;
+  setOpenedNode: Dispatch<SetStateAction<ISchema>>;
   doNew: () => void;
   doRemove: () => void;
-  selectedNode: string;
+  selectedNode: ISchema;
 }) {
+  const { zoomIn, zoomOut, fitView } = useZoomPanHelper();
+
   return (
     <>
       <div className="absolute right-4 top-4 w-10 rounded-md artboard-tools text-center">
@@ -48,34 +46,35 @@ export default function DatabaseToolsComponent({
           <div>{1 ? 'Create Schema' : 'Close Catalog'}</div>
         </div>
 
-        <DatabaseSaveComponent doSave={doSave} />
-
         <div onClick={() => setElements(el => layoutOrganizer(el))}>
           <ClusterOutlined />
           <div>Organize Structure</div>
         </div>
 
-        <div onClick={() => flowInstance.zoomIn()}>
+        <div onClick={() => zoomIn()}>
           <ZoomInOutlined />
           <div>Zoom In</div>
         </div>
 
-        <div onClick={() => flowInstance.zoomOut()}>
+        <div onClick={() => zoomOut()}>
           <ZoomOutOutlined />
           <div>Zoom Out</div>
         </div>
 
-        <div onClick={() => flowInstance.fitView()}>
+        <div onClick={() => fitView()}>
           <ExpandOutlined />
           <div>Zoom To Fit</div>
         </div>
-
-        <DatabaseSerializerComponent flowInstance={flowInstance} />
       </div>
 
       <div className="absolute right-4 bottom-4 w-10 rounded-md artboard-tools text-center">
         {selectedNode ? (
           <>
+            <div className="rounded-t-md">
+              <CopyOutlined />
+              <div>Copy Schema</div>
+            </div>
+
             <div
               className="rounded-t-md"
               onClick={() => setOpenedNode(selectedNode)}

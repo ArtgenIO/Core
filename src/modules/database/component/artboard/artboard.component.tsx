@@ -1,202 +1,179 @@
-import { message, notification } from 'antd';
-import { diff } from 'just-diff';
-import { QueryBuilder } from 'odata-query-builder';
+import cloneDeep from 'lodash.clonedeep';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactFlow, {
   Background,
   BackgroundVariant,
   Elements,
   isNode,
+  Node,
   OnLoadParams,
-  ReactFlowProvider,
+  useZoomPanHelper,
 } from 'react-flow-renderer';
-import { useParams } from 'react-router-dom';
-import { useHttpClientSimple } from '../../../admin/library/http-client';
-import { toRestSysRoute } from '../../../content/util/schema-url';
-import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { schemasAtom } from '../../../admin/admin.atoms';
 import { ISchema } from '../../../schema';
+import SchemaEditorComponent from '../../../schema/component/editor.component';
 import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
+import { fSchema } from '../../../schema/util/filter-schema';
 import { createEmptySchema } from '../../../schema/util/get-new-schema';
 import { createLayouOrganizer } from '../../../schema/util/layout-organizer';
 import DatabaseNameComponent from './name.component';
-import DatabaseSchemaEditorComponent from './schema-editor.component';
 import { createSchemaNode } from './schema-node.component';
 import './schemaboard.component.less';
 import DatabaseToolsComponent from './tools.component';
 
 export default function DatabaseArtboardComponent() {
   // Router
-  const httpClient = useHttpClientSimple();
   const { ref } = useParams();
-  const apiReadUrl =
-    toRestSysRoute('schema') +
-    new QueryBuilder()
-      .top(1000)
-      .filter(f => f.filterExpression('database', 'eq', ref))
-      .toQuery();
+  const [schemas, setSchemas] = useRecoilState(schemasAtom);
+  const [search, setSearch] = useSearchParams();
+  const { setCenter } = useZoomPanHelper();
 
   // Artboard state
   const flowWrapper = useRef(null);
-  const [flowInstance, setFlowInstance] = useState<OnLoadParams>(null);
+  const [flowInstance, setFlowInstance] =
+    useState<OnLoadParams<{ schema: ISchema }>>(null);
   const [elements, setElements] = useState<Elements>([]);
-  const [openedNode, setOpenedNode] = useState<string>(null);
-  const [selectedNode, setSelectedNode] = useState<string>(null);
-  const [savedState, setSavedState] = useState<ISchema[]>([]);
-
-  const [isLoading, setIsLoading] = useState(true);
+  const [showEditor, setShowEditor] = useState<ISchema>(null);
+  const [selectedNode, setSelectedNode] = useState<ISchema>(null);
 
   const layoutOrganizer = createLayouOrganizer();
 
   useEffect(() => {
-    (async () => {
-      const response = await httpClient.get<IFindResponse<ISchema>>(apiReadUrl);
-
-      setElements(() =>
-        layoutOrganizer(SchemaSerializer.toElements(response.data.data)),
+    if (search.has('schema')) {
+      const schema = schemas.find(
+        s => s.database === ref && s.reference === search.get('schema'),
       );
-      setSavedState(response.data.data);
-      setIsLoading(false);
-    })();
-  }, [ref]);
 
-  const doSave = async () => {
-    const currentState = SchemaSerializer.fromElements(
-      flowInstance.getElements(),
-    );
-
-    for (const schema of currentState) {
-      const original = savedState.find(s => s.reference === schema.reference);
-
-      // New schema create now
-      if (!original) {
-        await httpClient
-          .post(toRestSysRoute('schema'), schema)
-          .then(() => {
-            message.success(`Schema [${schema.reference}] created!`);
-          })
-          .catch(e => {
-            message.error(`Schema [${schema.reference}] creating error!`);
-          });
-      }
-      // Already had
-      else {
-        const changes = diff(original, schema);
-
-        if (!changes || !changes.length) {
-          //message.info(`Schema [${schema.reference}] is unchanged`);
-        } else {
-          await httpClient
-            .patch(
-              `${toRestSysRoute('schema')}/${schema.database}/${
-                schema.reference
-              }`,
-              schema,
-            )
-            .then(() => {
-              message.success(`Schema [${schema.reference}] updated!`);
-            })
-            .catch(e => {
-              message.error(`Schema [${schema.reference}] update error!`);
-            });
-        }
+      if (!showEditor) {
+        setShowEditor(schema);
       }
     }
+  }, [search]);
 
-    // Find deleted ones.
-    const deletedRefs = savedState.filter(
-      o => !currentState.some(c => c.reference === o.reference),
-    );
+  useEffect(() => {
+    if (showEditor) {
+      search.set('schema', showEditor.reference);
+      setSelectedNode(showEditor);
 
-    for (const deleted of deletedRefs) {
-      await httpClient
-        .delete(toRestSysRoute('schema') + `${ref}/${deleted.reference}`)
-        .then(() => {
-          // message.success(`Schema [${deleted.reference}] deleted!`);
-        })
-        .catch(e => {
-          message.error(`Schema [${deleted.reference}] delete error!`);
-        });
+      if (flowInstance) {
+        const el = flowInstance
+          .getElements()
+          .find(
+            e => isNode(e) && e.data.schema.reference == showEditor.reference,
+          ) as Node<{ schema: ISchema }>;
+
+        setCenter(el.position.x + 400, el.position.y + 200, 1.5, 1000);
+      }
+    } else {
+      search.delete('schema');
     }
 
-    setSavedState(currentState);
-    notification.success({
-      message: 'Changes has been saved!',
-      placement: 'bottomRight',
-    });
-  };
+    setSearch(search);
+  }, [showEditor]);
+
+  useEffect(() => {
+    if (schemas) {
+      setElements(() =>
+        layoutOrganizer(
+          SchemaSerializer.toElements(schemas.filter(s => s.database === ref)),
+        ),
+      );
+    }
+  }, [schemas, ref]);
 
   const doNew = () => {
-    const currentState = SchemaSerializer.fromElements(
-      flowInstance.getElements(),
-    );
-
     const newSchema = createEmptySchema(ref);
 
-    currentState.push(newSchema);
+    setElements(currentState => {
+      const newState = cloneDeep(currentState);
+      const newElement = SchemaSerializer.toElements([newSchema]);
+      newState.push(...newElement);
 
-    setElements(SchemaSerializer.toElements(currentState));
-    flowInstance.fitView();
+      return newState;
+    });
 
-    setOpenedNode(newSchema.reference);
+    setCenter(400, 200, 1.5, 1000);
+    setShowEditor(newSchema);
   };
 
   const doRemove = () => {
-    setElements(els => els.filter(el => el.id !== selectedNode));
+    setSchemas(currentState => {
+      const newState = cloneDeep(currentState);
+      newState.splice(newState.findIndex(fSchema(selectedNode)), 1);
+
+      return newState;
+    });
+
     setSelectedNode(null);
   };
-
-  if (isLoading) {
-    return <h1>Loading</h1>;
-  }
 
   return (
     <>
       <div className="h-screen bg-midnight-800">
-        <ReactFlowProvider>
-          <div className="w-full h-full" ref={flowWrapper}>
-            <ReactFlow
-              elements={elements}
-              onLoad={(instance: OnLoadParams) => setFlowInstance(instance)}
-              nodeTypes={{
-                schema: createSchemaNode(savedState, setOpenedNode),
-              }}
-              defaultZoom={1.2}
-              onSelectionChange={selections => {
-                if (selections?.length) {
-                  if (isNode(selections[0])) {
-                    setSelectedNode(selections[0].id);
-                  }
-                } else {
-                  setSelectedNode(null);
+        <div className="w-full h-full" ref={flowWrapper}>
+          <ReactFlow
+            elements={elements}
+            onLoad={(instance: OnLoadParams) => setFlowInstance(instance)}
+            nodeTypes={{
+              schema: createSchemaNode(schemas, s => setShowEditor(s)),
+            }}
+            defaultZoom={1.2}
+            onSelectionChange={(selections: Elements<{ schema: ISchema }>) => {
+              if (selections?.length) {
+                if (isNode(selections[0])) {
+                  setSelectedNode(selections[0].data.schema);
                 }
-              }}
-            >
-              <Background
-                variant={BackgroundVariant.Lines}
-                gap={24}
-                size={0.5}
-                color="#37393f"
+              } else {
+                setSelectedNode(null);
+              }
+            }}
+          >
+            <Background
+              variant={BackgroundVariant.Lines}
+              gap={24}
+              size={0.5}
+              color="#37393f"
+            />
+            <DatabaseNameComponent name={ref} />
+            {showEditor ? (
+              <SchemaEditorComponent
+                schema={showEditor}
+                onClose={newSchema => {
+                  if (newSchema) {
+                    setSchemas(currentState => {
+                      const newState = cloneDeep(currentState);
+                      const idx = newState.findIndex(fSchema(newSchema));
+
+                      // Replace with the newSchema state
+                      if (idx !== -1) {
+                        newState.splice(idx, 1, newSchema);
+                      }
+                      // Add new schema
+                      else {
+                        newState.push(newSchema);
+                      }
+
+                      return newState;
+                    });
+                  }
+
+                  setShowEditor(null);
+                }}
               />
-              <DatabaseNameComponent name={ref} />
-              <DatabaseSchemaEditorComponent
-                flowInstance={flowInstance}
-                openedNode={openedNode}
-                setOpenedNode={setOpenedNode}
-                setElements={setElements}
-              />
-              <DatabaseToolsComponent
-                doNew={doNew}
-                selectedNode={selectedNode}
-                doSave={doSave}
-                doRemove={doRemove}
-                setOpenedNode={setOpenedNode}
-                flowInstance={flowInstance}
-                setElements={setElements}
-                layoutOrganizer={layoutOrganizer}
-              />
-            </ReactFlow>
-          </div>
-        </ReactFlowProvider>
+            ) : undefined}
+
+            <DatabaseToolsComponent
+              doNew={doNew}
+              selectedNode={selectedNode}
+              doRemove={doRemove}
+              setOpenedNode={setShowEditor}
+              setElements={setElements}
+              layoutOrganizer={layoutOrganizer}
+            />
+          </ReactFlow>
+        </div>
       </div>
     </>
   );

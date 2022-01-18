@@ -6,6 +6,7 @@ import { IContentModule } from '../content/interface/content-module.interface';
 import { toRestSysRoute } from '../content/util/schema-url';
 import { IDatabase } from '../database';
 import { ISchema } from '../schema';
+import { fSchema } from '../schema/util/filter-schema';
 import { useHttpClientSimple } from './library/http-client';
 
 const { persistAtom } = recoilPersist();
@@ -35,23 +36,31 @@ export const schemasAtom = atom<ISchema[]>({
 
       onSet((newSchemas, oldSchemas) => {
         if (!(oldSchemas instanceof DefaultValue)) {
+          const path = toRestSysRoute('schema');
+
           newSchemas.forEach(newSchema => {
-            const oldSchema = oldSchemas.find(
-              s =>
-                s.database === newSchema.database &&
-                s.reference === newSchema.reference,
-            );
+            const oldSchema = oldSchemas.find(fSchema(newSchema));
 
-            const route = toRestSysRoute('schema');
-
+            // New created
             if (!oldSchema) {
-              // New created
-              client.post(route, newSchema);
-            } else if (diff(newSchema, oldSchema).length) {
-              // Schema changed
+              client.post(path, newSchema);
+            }
+            // Schema changed
+            else if (diff(newSchema, oldSchema).length) {
               client.patch(
-                `${route}/${newSchema.database}/${newSchema.reference}`,
+                `${path}/${newSchema.database}/${newSchema.reference}`,
                 newSchema,
+              );
+            }
+          });
+
+          // Deletes
+          oldSchemas.forEach(oldSchema => {
+            if (!newSchemas.find(fSchema(oldSchema))) {
+              console.warn('Schema is being deleted', oldSchema);
+
+              client.delete(
+                `${path}/${oldSchema.database}/${oldSchema.reference}`,
               );
             }
           });

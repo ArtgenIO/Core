@@ -1,6 +1,6 @@
 import { Tabs } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
-import { ISchema } from '../../../../schema';
+import { ISchema } from '../..';
 import SchemaEditorCapabilitiesComponent from './capabilities.component';
 import SchemaEditorFieldsComponent from './fields.component';
 import SchemaEditorIndexesComponent from './indexes.component';
@@ -10,16 +10,22 @@ import RelationsComponent from './relations.component';
 type Props = {
   schema: ISchema;
   setSchema: Dispatch<SetStateAction<ISchema>>;
+  isNewSchema: boolean;
 };
 
 export default function SchemaEditorFrameComponent({
   schema,
   setSchema,
+  isNewSchema,
 }: Props) {
   return (
     <Tabs tabPosition="left" size="middle">
       <Tabs.TabPane key="naming" tab="Naming">
-        <SchemaEditorNamingComponent schema={schema} setSchema={setSchema} />
+        <SchemaEditorNamingComponent
+          isNewSchema={isNewSchema}
+          schema={schema}
+          setSchema={setSchema}
+        />
       </Tabs.TabPane>
       <Tabs.TabPane key="capabilities" tab="Capabilities">
         <SchemaEditorCapabilitiesComponent

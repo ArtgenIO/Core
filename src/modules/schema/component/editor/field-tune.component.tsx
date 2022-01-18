@@ -2,7 +2,7 @@ import { Button, Divider, Drawer, Form, Input, Select, Tooltip } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { camelCase, cloneDeep, snakeCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { FieldTag, FieldType, IField, ISchema } from '../../../../schema';
+import { FieldTag, FieldType, IField, ISchema } from '../..';
 
 type InputLinkedProps = {
   isLinked: boolean;

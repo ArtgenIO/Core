@@ -1,16 +1,12 @@
 import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Avatar, Button, Input, List, Popconfirm, Select, Tooltip } from 'antd';
-import { pluralize } from 'inflection';
 import { camelCase, cloneDeep, upperFirst } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ISchema } from '../../../../../schema';
-import { IRelation } from '../../../../../schema/interface/relation.interface';
-import {
-  getTakenColumNames,
-  isPrimary,
-} from '../../../../../schema/util/field-tools';
+import { ISchema } from '../../..';
+import { IRelation } from '../../../interface/relation.interface';
+import { getTakenColumNames, isPrimary } from '../../../util/field-tools';
 
-export default function RelationHasMany({
+export default function RelationHasOne({
   relation,
   setSchema,
   schema,
@@ -34,13 +30,13 @@ export default function RelationHasMany({
           <Avatar
             shape="square"
             size="large"
-            className="bg-pink-500"
+            className="bg-purple-500"
             icon={
               <span className="material-icons-outlined">settings_ethernet</span>
             }
           />
         }
-        description="Has Many"
+        description="Has One"
         title={
           <Input
             bordered={false}
@@ -67,7 +63,7 @@ export default function RelationHasMany({
             onChange={newTarget => {
               setSchema(s => {
                 const usedNames = getTakenColumNames(s);
-                let newName = pluralize(camelCase(newTarget));
+                let newName = camelCase(newTarget);
 
                 if (usedNames.includes(newName)) {
                   newName = `of${upperFirst(newName)}`;
