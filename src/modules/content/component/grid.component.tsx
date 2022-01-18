@@ -26,6 +26,7 @@ import { SorterResult } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import cloneDeep from 'lodash.clonedeep';
 import React, { useEffect, useState } from 'react';
+import { ResizableBox } from 'react-resizable';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
@@ -73,6 +74,9 @@ export default function TableComponent({ schema }: Props) {
   const [selectedKey, setSelectedKey] = useState<React.Key[]>([]);
   const [filter, setFilter] = useState<string>(null);
 
+  // Visuals
+  const [fieldWidth, setFieldWidth] = useState<[string, number][]>([]);
+
   useEffect(() => {
     if (browserParams.has('page')) {
       setPageCurr(parseInt(browserParams.get('page'), 10));
@@ -85,6 +89,8 @@ export default function TableComponent({ schema }: Props) {
     setShowFilter(false);
     setSorters([]);
     setSelected([]);
+
+    setFieldWidth(schema.fields.map(f => [f.reference, 280]));
 
     return () => {
       setFilter(null);
@@ -304,8 +310,9 @@ export default function TableComponent({ schema }: Props) {
           ],
         }}
         scroll={{
-          x: true,
+          x: '100%',
         }}
+        tableLayout="fixed"
         size="small"
         onChange={(pagination, filters, sorter, extra) => {
           // Multisort
@@ -339,21 +346,19 @@ export default function TableComponent({ schema }: Props) {
           .map((f, idx) => {
             let icon: React.ReactNode = <FileOutlined />;
             let align: ColumnProps<RowLike>['align'] = 'left';
-            let width: ColumnProps<RowLike>['width'];
+            let sortable = true;
 
             if (FieldTool.isInteger(f)) {
               align = 'right';
             } else if (f.type === FieldType.UUID) {
               align = 'left';
-              width = 280;
             } else if (FieldTool.isDate(f)) {
               align = 'right';
-              width = 240;
               icon = <CalendarOutlined />;
             } else if (FieldTool.isJson(f)) {
               align = 'center';
-              width = 100;
               icon = <CodeOutlined />;
+              sortable = false;
             }
 
             if (f.type === FieldType.BOOLEAN) {
@@ -364,20 +369,56 @@ export default function TableComponent({ schema }: Props) {
               icon = <KeyOutlined />;
             }
 
+            const width = fieldWidth.find(r => r[0] === f.reference)[1];
+
             return (
               <Column
                 title={
-                  <>
-                    {icon} {f.title}
-                  </>
+                  <ResizableBox
+                    key={f.reference}
+                    width={width - (sortable ? 36 : 12)}
+                    height={24}
+                    axis="x"
+                    minConstraints={[100, 24]}
+                    maxConstraints={[4000, 24]}
+                    onResize={(e, data) =>
+                      setFieldWidth(state => {
+                        const newState = cloneDeep(state);
+
+                        newState.find(r => r[0] === f.reference)[1] =
+                          data.size.width + (sortable ? 36 : 12);
+
+                        return newState;
+                      })
+                    }
+                    resizeHandles={['w']}
+                    onClick={e => {
+                      e.stopPropagation(); // Capture the event from the sorter
+                    }}
+                  >
+                    <div className="flex w-full">
+                      <div className="shrink mr-1 ml-3">{icon}</div>
+                      <div className="grow">{f.title}</div>
+                    </div>
+                  </ResizableBox>
                 }
                 dataIndex={f.reference}
                 key={f.reference}
-                sortDirections={['ascend', 'descend']}
+                sortDirections={sortable ? ['ascend', 'descend'] : undefined}
                 filterMode="menu"
+                ellipsis={{
+                  showTitle: false,
+                }}
+                onCell={(record, idx) => {
+                  return {
+                    onClick: () => {
+                      console.log('Cell clicked', record);
+                    },
+                  };
+                }}
                 align={align}
                 width={width}
-                sorter={FieldTool.isJson(f) ? false : { multiple: idx }}
+                sorter={sortable ? { multiple: idx } : false}
                 render={(val, record: RowLike) => {
                   const classes = [];
                   const oVal = val;

@@ -164,6 +164,7 @@
     "react-draggable": "^4.4.4",
     "react-flow-renderer": "^9.6.9",
     "react-grid-layout": "^1.3.0",
+    "react-resizable": "^3.0.4",
     "react-router-dom": "^6.0.0",
     "react-spinners": "^0.11.0",
     "react-syntax-highlighter": "^15.4.5",
