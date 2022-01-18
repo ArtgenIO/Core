@@ -1,7 +1,11 @@
 import {
   DatabaseOutlined,
   DeleteOutlined,
+  DownOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
   QuestionCircleOutlined,
+  UpOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
@@ -14,9 +18,9 @@ import {
 } from 'antd';
 import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { FieldType, ISchema } from '../..';
-import { pageDrawerAtom } from '../../../admin/admin.atoms';
+import { GridTools } from '../../../content/util/grid.tools';
+import { FieldTool } from '../../util/field-tools';
 import SchemaEditorFieldTunerComponent from './field-tune.component';
 
 export default function SchemaEditorFieldsComponent({
@@ -26,9 +30,27 @@ export default function SchemaEditorFieldsComponent({
   schema: ISchema;
   setSchema: Dispatch<SetStateAction<ISchema>>;
 }) {
-  const setPageDrawler = useSetRecoilState(pageDrawerAtom);
-  const resetPageDrawler = useResetRecoilState(pageDrawerAtom);
   const [fieldTuneKey, setFieldTuneKey] = useState<number>(null);
+
+  const reSort = (idx: number, dir: number) => {
+    setSchema(currentState => {
+      const newState = cloneDeep(currentState);
+      const newFields = newState.fields
+        .map(FieldTool.withMeta)
+        .sort(GridTools.sortFields);
+
+      const swapField = newFields[idx + dir];
+      const thisField = newFields[idx];
+
+      const swapValue = swapField.meta.grid.order;
+      const thisValue = thisField.meta.grid.order;
+
+      swapField.meta.grid.order = thisValue;
+      thisField.meta.grid.order = swapValue;
+
+      return newState;
+    });
+  };
 
   const addNewField = () => {
     setSchema(s => {
@@ -73,9 +95,11 @@ export default function SchemaEditorFieldsComponent({
       <List
         bordered
         size="small"
-        dataSource={schema.fields}
-        renderItem={(field, k) => (
-          <List.Item key={`field-${k}`} onClick={() => setFieldTuneKey(k)}>
+        dataSource={cloneDeep(schema)
+          .fields.map(FieldTool.withMeta)
+          .sort(GridTools.sortFields)}
+        renderItem={(field, idx) => (
+          <List.Item key={`field-${idx}`} onClick={() => setFieldTuneKey(idx)}>
             <List.Item.Meta
               avatar={
                 <Avatar
@@ -91,37 +115,80 @@ export default function SchemaEditorFieldsComponent({
               <Tag key={t}>{t}</Tag>
             ))}
 
-            <Popconfirm
-              title="Are You sure to delete this field?"
-              okText="Yes, delete"
-              cancelText="No"
-              placement="left"
-              icon={<QuestionCircleOutlined />}
-              onConfirm={e => {
-                e.stopPropagation();
-
-                setSchema(schema => {
-                  if (schema.fields.length === 1) {
-                    message.warn('You need to have at least one field');
-
-                    return schema;
-                  }
-
-                  const newSchema = cloneDeep(schema);
-                  newSchema.fields.splice(k, 1);
-
-                  return newSchema;
-                });
-
-                resetPageDrawler();
-              }}
-            >
+            <Button.Group size="small">
               <Button
-                onClick={e => e.stopPropagation()}
-                icon={<DeleteOutlined />}
-                className="rounded-md hover:text-red-500 hover:border-red-500"
-              ></Button>
-            </Popconfirm>
+                icon={
+                  field.meta.grid.hidden ? (
+                    <EyeInvisibleOutlined className="text-yellow-500" />
+                  ) : (
+                    <EyeOutlined />
+                  )
+                }
+                onClick={e => {
+                  setSchema(currentState => {
+                    const newState = cloneDeep(currentState);
+
+                    newState.fields
+                      .map(FieldTool.withMeta)
+                      .find(
+                        f => f.reference === field.reference,
+                      ).meta.grid.hidden = !field.meta.grid.hidden;
+
+                    return newState;
+                  });
+
+                  e.stopPropagation();
+                }}
+              />
+
+              <Button
+                icon={<DownOutlined />}
+                disabled={idx + 1 === schema.fields.length}
+                onClick={e => {
+                  reSort(idx, 1);
+                  e.stopPropagation();
+                }}
+              />
+              <Button
+                icon={<UpOutlined />}
+                disabled={idx === 0}
+                onClick={e => {
+                  reSort(idx, -1);
+                  e.stopPropagation();
+                }}
+              />
+
+              <Popconfirm
+                title="Are You sure to delete this field?"
+                okText="Yes, delete"
+                cancelText="No"
+                placement="left"
+                icon={<QuestionCircleOutlined />}
+                onConfirm={e => {
+                  e.stopPropagation();
+
+                  setSchema(schema => {
+                    if (schema.fields.length === 1) {
+                      message.warn('You need to have at least one field');
+
+                      return schema;
+                    }
+
+                    const newSchema = cloneDeep(schema);
+                    newSchema.fields.splice(idx, 1);
+
+                    return newSchema;
+                  });
+                }}
+              >
+                <Button
+                  onClick={e => e.stopPropagation()}
+                  icon={<DeleteOutlined />}
+                  size="small"
+                  danger
+                ></Button>
+              </Popconfirm>
+            </Button.Group>
           </List.Item>
         )}
       ></List>

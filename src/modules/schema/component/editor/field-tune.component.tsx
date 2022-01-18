@@ -223,7 +223,7 @@ export default function SchemaEditorFieldTunerComponent({
             <Divider className="mb-2" />
 
             <Form.Item label="Data Type" name="type" className="mb-2">
-              <Select className="w-64 mr-2" onChange={updateSchema}>
+              <Select className="w-64 mr-2" onChange={updateSchema} showSearch>
                 <Select.Option key="boolean" value="boolean">
                   Boolean
                 </Select.Option>

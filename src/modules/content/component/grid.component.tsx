@@ -1,17 +1,19 @@
 import {
   CalendarOutlined,
+  ClockCircleOutlined,
   CodeOutlined,
   DeleteOutlined,
+  DownOutlined,
   EditOutlined,
-  EyeOutlined,
   FileOutlined,
   FilterOutlined,
   KeyOutlined,
   QuestionCircleOutlined,
-  ReloadOutlined,
 } from '@ant-design/icons';
 import {
   Button,
+  Dropdown,
+  Menu,
   message,
   notification,
   Pagination,
@@ -38,7 +40,6 @@ import { FieldTool } from '../../schema/util/field-tools';
 import { GridTools } from '../util/grid.tools';
 import { toRestRecordRoute, toRestRoute } from '../util/schema-url';
 import ContentCreateComponent from './create.component';
-import ContentGridConfigComponent from './grid-config.component';
 import GridFilterComponent from './grid-filter.component';
 import './grid.component.less';
 import ContentUpdateComponent from './update.component';
@@ -56,7 +57,6 @@ export default function TableComponent({ schema }: Props) {
   // Extended views in drawer
   const [showCreate, setShowCreate] = useState<boolean>(false);
   const [showEdit, setShowEdit] = useState<RowLike>(null);
-  const [showConfig, setShowConfig] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
 
   // Pagination
@@ -74,6 +74,10 @@ export default function TableComponent({ schema }: Props) {
   const [selectedKey, setSelectedKey] = useState<React.Key[]>([]);
   const [filter, setFilter] = useState<string>(null);
 
+  // Auto refresh
+  const [refreshInterval, setRefreshInterval] = useState<number>(null);
+  const [refreshTimer, setRefreshTimer] = useState(null);
+
   // Visuals
   const [fieldWidth, setFieldWidth] = useState<[string, number][]>([]);
 
@@ -82,6 +86,24 @@ export default function TableComponent({ schema }: Props) {
       setPageCurr(parseInt(browserParams.get('page'), 10));
     }
   }, [browserParams]);
+
+  useEffect(() => {
+    if (refreshTimer) {
+      clearInterval(refreshTimer);
+    }
+
+    if (refreshInterval) {
+      setRefreshTimer(
+        setInterval(() => doRefetch(Date.now()), refreshInterval * 1_000),
+      );
+    }
+
+    return () => {
+      if (refreshTimer) {
+        clearInterval(refreshTimer);
+      }
+    };
+  }, [refreshInterval]);
 
   // Reset states
   useEffect(() => {
@@ -202,17 +224,52 @@ export default function TableComponent({ schema }: Props) {
             >
               Filter
             </Button>
-            <Button
-              icon={<ReloadOutlined />}
-              onClick={() => doRefetch(Date.now())}
+
+            <Dropdown.Button
+              size="small"
+              overlay={
+                <Menu
+                  selectable
+                  selectedKeys={[
+                    refreshInterval ? refreshInterval.toString() : undefined,
+                  ]}
+                  onSelect={selection => {
+                    if (selection.key) {
+                      setRefreshInterval(parseInt(selection.key, 10));
+                    }
+                  }}
+                  onDeselect={() => setRefreshInterval(null)}
+                >
+                  <Menu.Item key="5">
+                    Every <b>5</b> seconds
+                  </Menu.Item>
+                  <Menu.Item key="10">
+                    Every <b>10</b> seconds
+                  </Menu.Item>
+                  <Menu.Item key="30">
+                    Every <b>30</b> seconds
+                  </Menu.Item>
+                  <Menu.Item key="60">
+                    Every <b>1</b> minute
+                  </Menu.Item>
+                  <Menu.Item key="300">
+                    Every <b>5</b> minute
+                  </Menu.Item>
+                  <Menu.Item key="600">
+                    Every <b>10</b> minute
+                  </Menu.Item>
+                </Menu>
+              }
+              icon={<DownOutlined />}
               loading={loading}
               disabled={loading}
+              onClick={() => doRefetch(Date.now())}
             >
-              Reload
-            </Button>
-            <Button icon={<EyeOutlined />} onClick={() => setShowConfig(true)}>
-              Appearance
-            </Button>
+              {refreshInterval ? (
+                <ClockCircleOutlined className="text-green-500" />
+              ) : undefined}
+              Refresh
+            </Dropdown.Button>
 
             <Popconfirm
               disabled={!selected.length}
@@ -516,7 +573,7 @@ export default function TableComponent({ schema }: Props) {
         ></Column>
       </Table>
 
-      {showCreate ? (
+      {showCreate && (
         <ContentCreateComponent
           schema={schema}
           onClose={() => {
@@ -524,16 +581,9 @@ export default function TableComponent({ schema }: Props) {
             doRefetch(Date.now());
           }}
         />
-      ) : undefined}
-      {showConfig ? (
-        <ContentGridConfigComponent
-          schema={schema}
-          onClose={() => {
-            setShowConfig(false);
-          }}
-        />
-      ) : undefined}
-      {showEdit ? (
+      )}
+
+      {showEdit && (
         <ContentUpdateComponent
           content={showEdit}
           schema={schema}
@@ -542,7 +592,7 @@ export default function TableComponent({ schema }: Props) {
             doRefetch(Date.now());
           }}
         />
-      ) : undefined}
+      )}
     </>
   );
 }

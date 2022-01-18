@@ -1,7 +1,9 @@
-import { Form, Input, Tooltip } from 'antd';
+import { Form, Input, Select, Tooltip } from 'antd';
 import { camelCase, cloneDeep, snakeCase } from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { ISchema } from '../..';
+import { modulesAtom } from '../../../admin/admin.atoms';
 
 type InputLinkedProps = {
   isLinked: boolean;
@@ -37,93 +39,105 @@ export default function SchemaEditorNamingComponent({
   schema: Partial<ISchema>;
   setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
 }) {
-  const [form] = Form.useForm();
+  const modules = useRecoilValue(modulesAtom);
 
-  const [refLinked, setRefLinked] = useState(true);
-  const [tblLinked, setTblLinked] = useState(true);
+  // Name states
+
+  // Auto generate ref and table for new schema
+  const [refLinked, setRefLinked] = useState(false);
+  const [tblLinked, setTblLinked] = useState(false);
 
   useEffect(() => {
     setRefLinked(isNewSchema);
     setTblLinked(isNewSchema);
   }, [isNewSchema]);
 
+  useEffect(() => {
+    if (refLinked) schema.reference = camelCase(schema.title);
+    if (tblLinked) schema.tableName = snakeCase(schema.title);
+  }, [schema]);
+
   return (
     <>
-      <Form
-        form={form}
-        name="naming"
-        layout="vertical"
-        initialValues={schema}
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 16 }}
-        requiredMark="optional"
-        size="large"
-        onValuesChange={changedValues => {
-          const keys = Object.keys(changedValues);
-
-          if (keys.includes('title')) {
-            if (refLinked) {
-              form.setFieldsValue({
-                reference: camelCase(changedValues['title']),
-              });
+      <Form layout="vertical" requiredMark="optional" size="small">
+        <Form.Item label="Module">
+          <Select
+            placeholder="Select a module"
+            value={schema.moduleId ?? null}
+            allowClear
+            onSelect={value =>
+              setSchema(s => {
+                const newState = cloneDeep(s);
+                newState.moduleId = value;
+                return newState;
+              })
             }
-
-            if (tblLinked) {
-              form.setFieldsValue({
-                tableName: snakeCase(changedValues['title']),
-              });
-            }
-          }
-        }}
-        onChange={e => {
-          setSchema(current => {
-            const update = cloneDeep(current);
-
-            update.title = form.getFieldValue('title');
-            update.reference = form.getFieldValue('reference');
-            update.tableName = form.getFieldValue('tableName');
-
-            return update;
-          });
-        }}
-      >
-        <Form.Item
-          label="Title"
-          name="title"
-          rules={[{ required: true, message: 'Please type a title!' }]}
-        >
-          <Input placeholder="Just a human friendly title, like Products" />
+          >
+            {modules.map(m => (
+              <Select.Option key={m.id} value={m.id}>
+                {m.name}
+              </Select.Option>
+            ))}
+            <Select.Option key="nope" value={null}>
+              - no module -
+            </Select.Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
-          label="Reference"
-          name="reference"
-          rules={[{ required: true, message: 'Please type a reference!' }]}
+          label="Title"
+          rules={[{ required: true, message: 'Please type a title!' }]}
         >
+          <Input
+            value={schema.title}
+            placeholder="Just a human friendly title, like Products"
+            onChange={event =>
+              setSchema(s => {
+                const newState = cloneDeep(s);
+                newState.title = event.target.value;
+                return newState;
+              })
+            }
+          />
+        </Form.Item>
+
+        <Form.Item label="Reference">
           <Input
             placeholder="System inner reference, used as a unique identifier per database"
             disabled={!isNewSchema}
+            value={schema.reference}
             suffix={
               isNewSchema ? (
                 <InputLinked isLinked={refLinked} setIsLinked={setRefLinked} />
               ) : undefined
             }
+            onChange={event =>
+              setSchema(s => {
+                const newState = cloneDeep(s);
+                newState.reference = event.target.value;
+                return newState;
+              })
+            }
           />
         </Form.Item>
 
-        <Form.Item
-          label="Table Name"
-          name="tableName"
-          rules={[{ required: true, message: 'Please type a table name!' }]}
-        >
+        <Form.Item label="Table Name">
           <Input
             className="mb-12"
             placeholder="The table's name created in the database server"
             disabled={!isNewSchema}
+            value={schema.tableName}
             suffix={
               isNewSchema ? (
                 <InputLinked isLinked={tblLinked} setIsLinked={setTblLinked} />
               ) : undefined
+            }
+            onChange={event =>
+              setSchema(s => {
+                const newState = cloneDeep(s);
+                newState.tableName = event.target.value;
+                return newState;
+              })
             }
           />
         </Form.Item>
