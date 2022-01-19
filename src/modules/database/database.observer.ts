@@ -55,6 +55,23 @@ export class DatabaseObserver {
     }
   }
 
+  @On('crud.main.Database.created')
+  async handleDatabaseCreate(database: IDatabase) {
+    try {
+      const connection = this.connections.findOne(database.ref);
+
+      if (!connection) {
+        this.logger.info('Database [%s] connecting', database.ref);
+        await this.connections.connect(database, []);
+      }
+
+      this.logger.info('Database [%s] connected', database.ref);
+    } catch (error) {
+      this.logger.error(getErrorMessage(error));
+      console.error(error);
+    }
+  }
+
   @On('crud.main.Database.deleted')
   async handleDatabaseDelete(database: IDatabase) {
     this.logger.warn(
