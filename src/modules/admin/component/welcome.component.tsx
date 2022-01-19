@@ -30,9 +30,10 @@ export default function WelcomeComponent() {
                 <Button icon={<GithubFilled />}>Star it on Github ❤️</Button>
               </a>
               <a key="blog" href="https://blog.artgen.io/" target="_blank">
-                <Button key="refresh" icon={<MediumOutlined />}>
-                  Read more in our blog
-                </Button>
+                <Button icon={<MediumOutlined />}>Read more in our blog</Button>
+              </a>
+              <a key="site" href="https://artgen.io/" target="_blank">
+                <Button icon={<SmileOutlined />}>Check Out Our Website</Button>
               </a>
             </>
           }

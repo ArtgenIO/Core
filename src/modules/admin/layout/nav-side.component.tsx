@@ -9,6 +9,7 @@ import { snakeCase } from 'lodash';
 import { ReactNode, Suspense, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import MeButtonComponent from '../../identity/component/me-button.component';
+import NewsComponent from '../../upgrade/component/news.component';
 import { ADMIN_URL } from '../admin.constants';
 import './nav-side.component.less';
 
@@ -90,6 +91,7 @@ const NavSide = () => {
         ) : undefined}
 
         <Suspense fallback={<Spin></Spin>}>
+          <NewsComponent />
           <MeButtonComponent />
         </Suspense>
       </Sider>
