@@ -1,9 +1,10 @@
 import { SaveOutlined, WarningOutlined } from '@ant-design/icons';
-import { Button, Drawer, message, Popconfirm, Spin, Tabs } from 'antd';
+import { Button, Drawer, message, Popconfirm, Tabs } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import isEqual from 'lodash.isequal';
 import { Suspense, useEffect, useState } from 'react';
 import { ISchema } from '..';
+import PageLoading from '../../admin/layout/page-loading.component';
 import SchemaEditorCapabilitiesComponent from './editor/capabilities.component';
 import SchemaExportComponent from './editor/export.component';
 import SchemaEditorFieldsComponent from './editor/fields.component';
@@ -93,7 +94,7 @@ export default function SchemaEditorComponent({
         }
       }}
     >
-      <Suspense fallback={<Spin />}>
+      <Suspense fallback={<PageLoading />}>
         <ErrorBoundary>
           <Tabs tabPosition="left" size="middle" defaultActiveKey="fields">
             <Tabs.TabPane key="naming" tab="General">

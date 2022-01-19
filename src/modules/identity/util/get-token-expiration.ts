@@ -5,7 +5,7 @@ import { IJwtPayload } from '../interface/jwt-payload.interface';
 // Use UTC as we sign the token with UTC timezone
 dayjs.extend(utc);
 
-const decode = (token: string): IJwtPayload => {
+export const decodeJWT = (token: string): IJwtPayload => {
   try {
     return JSON.parse(atob(token.split('.')[1]));
   } catch (e) {
@@ -21,7 +21,7 @@ const decode = (token: string): IJwtPayload => {
  * @returns {number}
  */
 export const getTokenExpiration = (token: string): number => {
-  const payload = decode(token);
+  const payload = decodeJWT(token);
 
   // Could be some invalid token leftover.
   if (payload?.exp) {

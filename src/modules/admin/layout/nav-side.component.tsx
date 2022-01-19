@@ -3,14 +3,12 @@ import {
   FileOutlined,
   HomeOutlined,
   PartitionOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
+import { Layout, Menu, Spin } from 'antd';
 import { snakeCase } from 'lodash';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, Suspense, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import MeComponent from '../../identity/component/me.component';
+import MeButtonComponent from '../../identity/component/me-button.component';
 import { ADMIN_URL } from '../admin.constants';
 import './nav-side.component.less';
 
@@ -52,7 +50,6 @@ const matcher = menuItems
 const NavSide = () => {
   const location = useLocation();
   const [selected, setSelected] = useState(null);
-  const [showProfile, setShowProfile] = useState(true);
 
   useEffect(() => {
     setSelected([]);
@@ -70,7 +67,7 @@ const NavSide = () => {
   }, [location]);
 
   return (
-    <ErrorBoundary>
+    <>
       <Sider
         collapsed
         className="nav-side depth-1 relative"
@@ -92,21 +89,11 @@ const NavSide = () => {
           </Menu>
         ) : undefined}
 
-        <div className="w-full absolute bottom-0">
-          <Menu mode="inline">
-            <Menu.Item
-              key="profile"
-              icon={<UserOutlined />}
-              onClick={() => setShowProfile(true)}
-              className="test--sign-out"
-            >
-              Show Profile
-            </Menu.Item>
-          </Menu>
-        </div>
+        <Suspense fallback={<Spin></Spin>}>
+          <MeButtonComponent />
+        </Suspense>
       </Sider>
-      {showProfile && <MeComponent onClose={() => setShowProfile(false)} />}
-    </ErrorBoundary>
+    </>
   );
 };
 

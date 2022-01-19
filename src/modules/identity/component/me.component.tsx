@@ -1,7 +1,8 @@
-import { LogoutOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Divider, Drawer, notification } from 'antd';
-import { useResetRecoilState } from 'recoil';
-import { jwtAtom } from '../../admin/admin.atoms';
+import md5 from 'md5';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { jwtAtom, profileAtom } from '../../admin/admin.atoms';
 
 type Props = {
   onClose: () => void;
@@ -9,6 +10,7 @@ type Props = {
 
 export default function MeComponent({ onClose }: Props) {
   const resetJwt = useResetRecoilState(jwtAtom);
+  const profile = useRecoilValue(profileAtom);
 
   return (
     <Drawer
@@ -21,7 +23,10 @@ export default function MeComponent({ onClose }: Props) {
       <div className="text-center">
         <Avatar
           size={280}
-          src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=identicon&amp;s=300"
+          icon={<UserOutlined />}
+          src={`https://www.gravatar.com/avatar/${md5(
+            profile.email,
+          )}?d=identicon&s=280`}
         />
       </div>
       <Divider />

@@ -1,10 +1,12 @@
 import { diff } from 'just-diff';
 import { ReactChild } from 'react';
-import { atom, DefaultValue } from 'recoil';
+import { atom, DefaultValue, useRecoilValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 import { IContentModule } from '../content/interface/content-module.interface';
 import { toRestSysRoute } from '../content/util/schema-url';
 import { IDatabase } from '../database';
+import { IAccount } from '../identity/interface/account.interface';
+import { decodeJWT } from '../identity/util/get-token-expiration';
 import { ISchema } from '../schema';
 import { fSchema } from '../schema/util/filter-schema';
 import { useHttpClientSimple } from './library/http-client';
@@ -73,6 +75,35 @@ export const schemasAtom = atom<ISchema[]>({
         useHttpClientSimple()
           .get(toRestSysRoute('schema', q => q.top(1_000).orderBy('title')))
           .then(r => r.data.data),
+      );
+    },
+  ],
+});
+
+export const profileAtom = atom<Omit<IAccount, 'password'>>({
+  key: 'profile',
+  default: null,
+  effects_UNSTABLE: [
+    ({ onSet }) => {
+      onSet((newState, oldState) => {
+        //
+      });
+    },
+
+    ({ setSelf }) => {
+      const jwt = decodeJWT(useRecoilValue(jwtAtom));
+
+      setSelf(
+        useHttpClientSimple()
+          .get(
+            toRestSysRoute('account', q =>
+              q
+                .select('id,email')
+                .top(1)
+                .filter(f => f.filterExpression('id', '=', jwt.aid)),
+            ),
+          )
+          .then(r => r.data.data[0]),
       );
     },
   ],
