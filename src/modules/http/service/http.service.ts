@@ -8,6 +8,7 @@ import {
   Service,
 } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel';
+import { TelemetryService } from '../../telemetry/telemetry.service';
 import { IHttpGateway } from '../interface/http-gateway.interface';
 import { HttpUpstreamProvider } from '../provider/http-upstream.provider';
 
@@ -25,6 +26,8 @@ export class HttpService {
     readonly proxy: FastifyInstance,
     @inject.context()
     readonly ctx: IContext,
+    @Inject(TelemetryService)
+    readonly telemetry: TelemetryService,
   ) {}
 
   protected getDefaultPort(): number {
@@ -49,6 +52,8 @@ export class HttpService {
         this.logger.debug('Proxy [%s][%s]', request.method, request.url);
         this.upstream.routing(request.raw, reply.hijack().raw);
       }
+
+      this.telemetry.increment('http.requests');
 
       done();
     });
