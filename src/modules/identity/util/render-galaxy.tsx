@@ -182,12 +182,27 @@ export const renderGalaxy = (mountRef: MutableRefObject<any>) => {
   camera.rotation.x = 5;
   camera.rotation.y = 0.7;
 
-  let handle;
+  let handle: number;
+  let frameCount: number = 0;
 
   const animate = () => {
-    //Update the camera
+    frameCount++;
+
+    // Rotate the stars
     points.rotation.y += 0.0003;
-    bgStars.rotation.y += 0.0018;
+    bgStars.rotation.y -= 0.0018;
+
+    // Move around with the camera
+    const offsetX = (frameCount % (400 * 15)) / (80 * 15);
+    const moveX = (offsetX < 2.5 ? offsetX : 5 - offsetX) * 0.5;
+
+    const offsetY = (frameCount % (1600 * 7)) / (320 * 7);
+    const moveY = (offsetY < 2.5 ? offsetY : 5 - offsetY) * 1.5;
+
+    camera.position.x = 5 + moveX;
+    camera.rotation.x = 5 + moveX * 0.25;
+    camera.position.y = 2.5 + moveY * 0.5;
+    camera.rotation.y = 0.7 - moveY * 0.02;
 
     // Render
     composer.render();
