@@ -11,19 +11,14 @@ const { Content } = Layout;
 
 export default function PageContent() {
   const Flow = lazy(() => import('../../flow/components/_router.component'));
-
   const Database = lazy(
     () => import('../../database/component/_router.component'),
   );
-
   const Contents = lazy(
     () => import('../../content/component/_router.component'),
   );
-
   const Page = lazy(() => import('../../page/component/index.component'));
-
   const Insight = lazy(() => import('../../insight/component/index.component'));
-
   const Ext = lazy(() => import('../../blueprint/component/_router.component'));
 
   return (
