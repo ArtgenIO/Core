@@ -1,4 +1,3 @@
-import { EventEmitter2 } from 'eventemitter2';
 import { Knex } from 'knex';
 import { cloneDeep, isEqual } from 'lodash';
 import {
@@ -9,7 +8,7 @@ import {
   RelationType,
 } from 'objection';
 import { v4 } from 'uuid';
-import { ILogger, Inject, Logger } from '../../../app/container';
+import { ILogger, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldTag, FieldType, ISchema } from '../../schema';
 import { RelationKind } from '../../schema/interface/relation.interface';
@@ -30,8 +29,6 @@ export class DatabaseConnection implements IDatabaseConnection {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(EventEmitter2)
-    readonly eventBus: EventEmitter2,
     readonly knex: Knex,
     readonly database: IDatabase,
     readonly dialect: Dialect,

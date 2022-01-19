@@ -59,6 +59,27 @@ export class DatabaseSynchronizer {
     await this.connection.knex.schema.dropTableIfExists(tableName);
   }
 
+  /**
+   * Read the database for tables which are not synchronized from a schema.
+   */
+  async importUnknownSchemas(): Promise<ISchema[]> {
+    const knownSchemas = this.connection.getSchemas();
+    const unknownTables = (await this.inspector.tables()).filter(
+      table => !knownSchemas.some(s => s.tableName === table),
+    );
+
+    return (
+      await Promise.all(
+        unknownTables.map(tableName => this.getSchemaFromTable(tableName)),
+      )
+    ).map(s => {
+      // Mark the schema as imported
+      s.tags.push('readonly');
+
+      return s;
+    });
+  }
+
   async sync(): Promise<number> {
     let changeQueries = 0;
 
@@ -97,6 +118,8 @@ export class DatabaseSynchronizer {
     for (const schema of changes) {
       // Imported / protected schemas are not synchronized.
       if (!schema || schema.tags.includes('readonly')) {
+        this.logger.debug('Skipping on imported [%s] schema', schema.reference);
+
         continue;
       }
       this.logger.debug('Processing [%s] schema', schema.reference);
@@ -151,7 +174,7 @@ export class DatabaseSynchronizer {
 
     const knownSchema = this.connection.toDialectSchema(cloneDeep(schema));
     const revSchema = this.connection.toDialectSchema(
-      await this.toSchema(schema.tableName),
+      await this.getSchemaFromTable(schema.tableName),
     );
 
     const revStruct = toStructure(revSchema);
@@ -509,7 +532,7 @@ export class DatabaseSynchronizer {
   /**
    * Build a schema for the given database table.
    */
-  protected async toSchema(tableName: string): Promise<ISchema> {
+  protected async getSchemaFromTable(tableName: string): Promise<ISchema> {
     // Prepare an empty schema for the findings.
     const schema = createEmptySchema(this.connection.database.ref);
 

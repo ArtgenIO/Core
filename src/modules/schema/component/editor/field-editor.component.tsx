@@ -1,6 +1,16 @@
 import { DeleteOutlined, FormOutlined, SaveOutlined } from '@ant-design/icons';
-import { Button, Drawer, Form, Input, Select, Tooltip } from 'antd';
+import {
+  Button,
+  Divider,
+  Drawer,
+  Form,
+  Input,
+  Select,
+  Tooltip,
+  Transfer,
+} from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
+import { TransferItem } from 'antd/lib/transfer';
 import camelCase from 'lodash.camelcase';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
@@ -75,6 +85,37 @@ export default function FieldEditor({
       setIsChanged(!isEqual(field, immutableField));
     }
   }, [field]);
+
+  const setters: TransferItem[] = [
+    {
+      title: 'Base64 Encode',
+      key: 'base64Encode',
+      description: 'Encodes the value into base64 format',
+    },
+    {
+      title: 'Hexadecimal Encode',
+      key: 'base16Encode',
+      description: 'Encodes the value into base16 format',
+    },
+    {
+      title: 'Password Hasher',
+      key: 'password',
+      description: 'BCrpyt comparable hash, useful for passwords!',
+    },
+  ];
+
+  const getters: TransferItem[] = [
+    {
+      title: 'Base64 Decode',
+      key: 'base64Decode',
+      description: 'Decodes the value from base64 format',
+    },
+    {
+      title: 'Hexadecimal Decode',
+      key: 'base16Decode',
+      description: 'Decodes the value from base16 format',
+    },
+  ];
 
   return (
     <ErrorBoundary>
@@ -404,6 +445,24 @@ export default function FieldEditor({
                 </Select.Option>
               </Select>
             </Form.Item>
+
+            <Divider />
+            <h2 className="font-header">
+              On <span className="text-primary-500">Set</span> Transformers
+            </h2>
+            <Transfer
+              dataSource={setters}
+              render={item => item.title}
+            ></Transfer>
+
+            <Divider />
+            <h2 className="font-header">
+              On <span className="text-primary-500">Get</span> Transformers
+            </h2>
+            <Transfer
+              dataSource={getters}
+              render={item => item.title}
+            ></Transfer>
           </Form>
         </Drawer>
       )}
