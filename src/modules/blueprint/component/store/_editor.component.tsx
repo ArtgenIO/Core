@@ -6,6 +6,7 @@ import { toRestSysRoute } from '../../../content/util/schema-url';
 import { IFlow } from '../../../flow/interface';
 import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../../schema';
+import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 import { IBlueprint } from '../../interface/blueprint.interface';
 
 type TransferItem = {
@@ -45,11 +46,11 @@ export default function ExtensionEdiorComponent({
 
   const [{ data: schemasReply, loading: schemasLoading }] = useHttpClient<
     IFindResponse<ISchema>
-  >(toRestSysRoute('schema'));
+  >(toRestSysRoute(SchemaRef.SCHEMA));
 
   const [{ data: flowReply, loading: flowLoading }] = useHttpClient<
     IFindResponse<IFlow>
-  >(toRestSysRoute('flow'));
+  >(toRestSysRoute(SchemaRef.FLOW));
 
   useEffect(() => {
     setExtension(ext => {

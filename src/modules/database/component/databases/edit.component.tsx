@@ -2,6 +2,7 @@ import { Button, Drawer, Form, Input, message, notification } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
+import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 import { IDatabase } from '../../interface';
 
 type Props = {
@@ -20,7 +21,7 @@ export default function DatabaseEditComponent({
   const doUpdateDatabase = async (formValues: IDatabase) => {
     try {
       await httpClient.patch<IDatabase>(
-        `${toRestSysRoute('database')}/${formValues.ref}`,
+        `${toRestSysRoute(SchemaRef.DATABASE)}/${formValues.ref}`,
         formValues,
       );
 

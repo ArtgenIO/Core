@@ -4,6 +4,7 @@ import { IKernel } from '../../app/kernel';
 import { RestModule } from '../rest/rest.module';
 import { RestService } from '../rest/service/rest.service';
 import { ISchema } from '../schema';
+import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { SchemaModule } from '../schema/schema.module';
 import { TransformerModule } from '../transformer/transformer.module';
 import { DatabaseObserver } from './database.observer';
@@ -56,7 +57,7 @@ export class DatabaseModule implements IModule {
           newSchema.database,
           newSchema.reference,
         );
-        restService.create('main', 'Schema', newSchema);
+        restService.create('main', SchemaRef.SCHEMA, newSchema);
       }
     }
   }

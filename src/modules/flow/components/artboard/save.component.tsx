@@ -4,6 +4,7 @@ import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
+import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 import {
   flowAtom,
   flowChangedAtom,
@@ -27,7 +28,7 @@ export default function ArtboardSave() {
     );
 
     httpClient
-      .patch(`${toRestSysRoute('flow')}/${flow.id}`, serializedFlow)
+      .patch(`${toRestSysRoute(SchemaRef.FLOW)}/${flow.id}`, serializedFlow)
       .then(() => {
         notification.success({
           key: SAVING_NOTIFICATION,

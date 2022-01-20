@@ -2,6 +2,7 @@ import { Button, Drawer, Form, Input, message, notification } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
+import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 import { IDatabase } from '../../interface';
 
 type Props = {
@@ -17,7 +18,10 @@ export default function DatabaseConnectComponent({
 
   const doCreateDatabase = async (formValues: IDatabase) => {
     try {
-      await httpClient.post<IDatabase>(toRestSysRoute('database'), formValues);
+      await httpClient.post<IDatabase>(
+        toRestSysRoute(SchemaRef.DATABASE),
+        formValues,
+      );
 
       notification.success({
         message: 'New database added!',

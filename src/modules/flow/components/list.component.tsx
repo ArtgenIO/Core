@@ -23,6 +23,7 @@ import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { IFlow } from '../interface/flow.interface';
 import CreateFlowComponent from './create.component';
 import ManagerMenuComponent from './_menu/manager.component';
@@ -40,7 +41,7 @@ export default function FlowListComponent() {
 
     if (flow) {
       try {
-        await httpClient.delete(`${toRestSysRoute('flow')}/${id}`);
+        await httpClient.delete(`${toRestSysRoute(SchemaRef.FLOW)}/${id}`);
 
         setFlows(wfs => wfs.filter(wf => wf.id !== id));
 
@@ -58,7 +59,7 @@ export default function FlowListComponent() {
 
   useEffect(() => {
     httpClient
-      .get<IFindResponse<IFlow>>(toRestSysRoute('flow'))
+      .get<IFindResponse<IFlow>>(toRestSysRoute(SchemaRef.FLOW))
       .then(response => {
         setFlows(response.data.data);
         setIsLoading(false);

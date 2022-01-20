@@ -1,6 +1,7 @@
 import { ILogger, Inject, Logger } from '../../app/container';
 import { Observer, On } from '../event';
 import { RestService } from '../rest/service/rest.service';
+import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IBlueprint } from './interface/blueprint.interface';
 
 @Observer()
@@ -18,7 +19,7 @@ export class BlueprintObserver {
 
     for (const flow of bp.flows) {
       await this.rest
-        .delete('main', 'Flow', {
+        .delete('main', SchemaRef.FLOW, {
           id: flow.id,
         })
         .then(() => this.logger.info('Associated flow [%s] deleted', flow.id))
@@ -29,7 +30,7 @@ export class BlueprintObserver {
 
     for (const schema of bp.schemas) {
       await this.rest
-        .delete('main', 'Schema', {
+        .delete('main', SchemaRef.SCHEMA, {
           database: schema.database,
           reference: schema.reference,
         })

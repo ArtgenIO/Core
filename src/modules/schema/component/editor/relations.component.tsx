@@ -10,6 +10,7 @@ import { useHttpClient } from '../../../admin/library/use-http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
 import { RelationKind } from '../../interface/relation.interface';
+import { SchemaRef } from '../../interface/system-ref.enum';
 import { isPrimary } from '../../util/field-tools';
 import RelationBelongsToMany from './relation/belongs-many.component';
 import RelationBelongsToOne from './relation/belongs-one.component';
@@ -31,7 +32,7 @@ export default function RelationsComponent({
   const [{ data: schemas, loading, error }] = useHttpClient<
     IFindResponse<ISchema>
   >(
-    toRestSysRoute('schema') +
+    toRestSysRoute(SchemaRef.SCHEMA) +
       new QueryBuilder()
         .top(1000)
         .filter(f => f.filterExpression('database', 'eq', schema.database))

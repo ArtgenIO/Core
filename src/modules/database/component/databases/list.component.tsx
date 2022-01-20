@@ -24,6 +24,7 @@ import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { useHttpClient } from '../../../admin/library/use-http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
+import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 import { IDatabase } from '../../interface';
 import DatabaseConnectComponent from './connect.component';
 import DatabaseEditComponent from './edit.component';
@@ -40,9 +41,12 @@ export default function DatabaseListComponent() {
 
   const [{ data: response, loading, error }] = useHttpClient<
     IFindResponse<IDatabase>
-  >(toRestSysRoute('database') + new QueryBuilder().top(100).toQuery(), {
-    useCache: false,
-  });
+  >(
+    toRestSysRoute(SchemaRef.DATABASE) + new QueryBuilder().top(100).toQuery(),
+    {
+      useCache: false,
+    },
+  );
 
   useEffect(() => {
     if (response) {

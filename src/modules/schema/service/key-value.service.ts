@@ -1,6 +1,7 @@
 import { Model } from 'objection';
 import { Inject, Service } from '../../../app/container';
 import { IKeyValueRecord } from '../../content/interface/key-value.interface';
+import { SchemaRef } from '../interface/system-ref.enum';
 import { SchemaService } from './schema.service';
 
 type KVModel = IKeyValueRecord<any> & Model;
@@ -13,7 +14,7 @@ export class KeyValueService {
   ) {}
 
   async get<T = string>(key: string, defaultValue: T = null): Promise<T> {
-    const model = this.schema.getModel<KVModel>('main', 'KeyValueStorage');
+    const model = this.schema.getSysModel<KVModel>(SchemaRef.KV);
     const record = await model.query().findById(key);
 
     if (record) {
@@ -24,7 +25,7 @@ export class KeyValueService {
   }
 
   async set<T = string>(key: string, value: T): Promise<T> {
-    const model = this.schema.getModel<KVModel>('main', 'KeyValueStorage');
+    const model = this.schema.getSysModel<KVModel>(SchemaRef.KV);
     let record = await model.query().findById(key);
 
     if (!record) {

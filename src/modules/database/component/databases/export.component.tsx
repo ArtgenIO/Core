@@ -7,6 +7,7 @@ import { useHttpClient } from '../../../admin/library/use-http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
 import { ISchema } from '../../../schema';
+import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 import { IDatabase } from '../../interface';
 
 type Props = {
@@ -22,7 +23,7 @@ export default function DatabaseExportComponent({ onClose, database }: Props) {
   const [{ data: response, loading, error }] = useHttpClient<
     IFindResponse<DatabaseWithSchemas>
   >(
-    toRestSysRoute('database') +
+    toRestSysRoute(SchemaRef.DATABASE) +
       new QueryBuilder()
         .top(1)
         .select('ref,schemas')

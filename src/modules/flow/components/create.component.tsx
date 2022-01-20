@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { IFlow } from '../interface/flow.interface';
 
 type Props = {
@@ -14,7 +15,10 @@ export default function CreateFlowComponent({ onClose }: Props) {
   const httpClient = useHttpClientSimple();
 
   const sendRequest = async (data: Omit<IFlow, 'id'>) => {
-    const response = await httpClient.post<IFlow>(toRestSysRoute('flow'), data);
+    const response = await httpClient.post<IFlow>(
+      toRestSysRoute(SchemaRef.FLOW),
+      data,
+    );
 
     return response.data.id;
   };

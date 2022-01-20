@@ -17,6 +17,7 @@ import { pageDrawerAtom } from '../../admin/admin.atoms';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import {
   catalogCollapsedAtom,
   elementsAtom,
@@ -119,7 +120,7 @@ export default function FlowArtboardComponent() {
     (async () => {
       const nodes = await httpClient.get<ILambdaMeta[]>('/api/lambda');
       const flow = await httpClient.get<IFlow>(
-        `${toRestSysRoute('flow')}/${flowId}`,
+        `${toRestSysRoute(SchemaRef.FLOW)}/${flowId}`,
       );
 
       const customNodes: NodeTypesType = {};

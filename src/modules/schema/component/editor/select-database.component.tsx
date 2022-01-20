@@ -8,6 +8,7 @@ import { useHttpClient } from '../../../admin/library/use-http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { IDatabase } from '../../../database/interface';
 import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
+import { SchemaRef } from '../../interface/system-ref.enum';
 
 export default function SelectDatabaseComponent({
   schema,
@@ -18,7 +19,7 @@ export default function SelectDatabaseComponent({
 }) {
   const [{ data: databases, loading, error }] = useHttpClient<
     IFindResponse<IDatabase>
-  >(toRestSysRoute('database'));
+  >(toRestSysRoute(SchemaRef.DATABASE));
 
   if (error) {
     return (

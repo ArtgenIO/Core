@@ -3,6 +3,7 @@ import { sign } from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 import { Model } from 'objection';
 import { ILogger, Inject, Logger } from '../../../app/container';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { KeyValueService } from '../../schema/service/key-value.service';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IAccessKey } from '../interface/access-key.interface';
@@ -43,7 +44,7 @@ export class AuthenticationService {
     email: string;
     password: string;
   }): Promise<string | false> {
-    const model = this.schema.getModel<AccountModel>('main', 'Account');
+    const model = this.schema.getSysModel<AccountModel>(SchemaRef.ACCOUNT);
 
     const account = await model.query().findOne({
       email: credentials.email,
@@ -71,7 +72,7 @@ export class AuthenticationService {
   }
 
   async getAccountByID(id: string): Promise<IAccount | false> {
-    const model = this.schema.getModel<AccountModel>('main', 'Account');
+    const model = this.schema.getSysModel<AccountModel>(SchemaRef.ACCOUNT);
     const record = await model.query().findById(id);
 
     if (record) {
@@ -82,7 +83,7 @@ export class AuthenticationService {
   }
 
   async getAccessKeyAccount(key: string): Promise<IAccount | false> {
-    const model = this.schema.getModel<AccountModel>('main', 'AccessKey');
+    const model = this.schema.getSysModel<AccountModel>(SchemaRef.ACCESS_KEY);
     const record = await model
       .query()
       .findById(key)
@@ -99,7 +100,7 @@ export class AuthenticationService {
   }
 
   async seed() {
-    const model = this.schema.getModel<AccountModel>('main', 'Account');
+    const model = this.schema.getSysModel<AccountModel>(SchemaRef.ACCOUNT);
     const check = await model.query().limit(1).resultSize();
 
     if (check) {

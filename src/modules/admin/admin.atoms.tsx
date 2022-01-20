@@ -9,6 +9,7 @@ import { IAccount } from '../identity/interface/account.interface';
 import { decodeJWT } from '../identity/util/get-token-expiration';
 import { IFindResponse } from '../rest/interface/find-reponse.interface';
 import { ISchema } from '../schema';
+import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { fSchema } from '../schema/util/filter-schema';
 import { migrateSchema } from '../schema/util/migrate-schema';
 import { useHttpClientSimple } from './library/http-client';
@@ -40,7 +41,7 @@ export const schemasAtom = atom<ISchema[]>({
 
       onSet((newSchemas, oldSchemas) => {
         if (!(oldSchemas instanceof DefaultValue)) {
-          const path = toRestSysRoute('schema');
+          const path = toRestSysRoute(SchemaRef.SCHEMA);
 
           newSchemas.forEach(newSchema => {
             const oldSchema = oldSchemas.find(fSchema(newSchema));
@@ -76,7 +77,9 @@ export const schemasAtom = atom<ISchema[]>({
       setSelf(
         useHttpClientSimple()
           .get<IFindResponse<ISchema>>(
-            toRestSysRoute('schema', q => q.top(1_000).orderBy('title')),
+            toRestSysRoute(SchemaRef.SCHEMA, q =>
+              q.top(1_000).orderBy('title'),
+            ),
           )
           .then(r => r.data.data.map(migrateSchema)),
       );
@@ -100,7 +103,7 @@ export const profileAtom = atom<Omit<IAccount, 'password'>>({
       setSelf(
         useHttpClientSimple()
           .get(
-            toRestSysRoute('account', q =>
+            toRestSysRoute(SchemaRef.ACCOUNT, q =>
               q
                 .select('id,email')
                 .top(1)
@@ -126,7 +129,11 @@ export const databasesAtom = atom<IDatabase[]>({
     ({ setSelf }) => {
       setSelf(
         useHttpClientSimple()
-          .get(toRestSysRoute('database', q => q.top(1_000).orderBy('title')))
+          .get(
+            toRestSysRoute(SchemaRef.DATABASE, q =>
+              q.top(1_000).orderBy('title'),
+            ),
+          )
           .then(r => r.data.data),
       );
     },
@@ -146,7 +153,9 @@ export const modulesAtom = atom<IContentModule[]>({
     ({ setSelf }) => {
       setSelf(
         useHttpClientSimple()
-          .get(toRestSysRoute('module', q => q.top(1_000).orderBy('name')))
+          .get(
+            toRestSysRoute(SchemaRef.MODULE, q => q.top(1_000).orderBy('name')),
+          )
           .then(r => r.data.data),
       );
     },

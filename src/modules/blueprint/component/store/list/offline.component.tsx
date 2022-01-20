@@ -26,6 +26,7 @@ import { useHttpClientSimple } from '../../../../admin/library/http-client';
 import { useHttpClient } from '../../../../admin/library/use-http-client';
 import { toRestSysRoute } from '../../../../content/util/schema-url';
 import { IFindResponse } from '../../../../rest/interface/find-reponse.interface';
+import { SchemaRef } from '../../../../schema/interface/system-ref.enum';
 import { IBlueprint } from '../../../interface/blueprint.interface';
 
 export default function OfflineExtensions() {
@@ -36,7 +37,9 @@ export default function OfflineExtensions() {
 
   const [{ data: extensions, loading, error }, refetch] = useHttpClient<
     IFindResponse<IBlueprint>
-  >(toRestSysRoute('blueprint') + new QueryBuilder().top(100).toQuery());
+  >(
+    toRestSysRoute(SchemaRef.BLUEPRINT) + new QueryBuilder().top(100).toQuery(),
+  );
 
   if (error) {
     return (

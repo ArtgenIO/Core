@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { useParams } from 'react-router';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { useHttpClient } from '../../admin/library/use-http-client';
+import { toRestSysRoute } from '../../content/util/schema-url';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { IPage } from '../interface/page.interface';
 import './editor.component.less';
 
@@ -22,7 +24,7 @@ export default function PageEditorComponent() {
 
   // Load schema
   const storeURL =
-    toRestRoute({ database: 'main', reference: 'Page' }) +
+    toRestSysRoute(SchemaRef.PAGE) +
     new QueryBuilder()
       .filter(f => f.filterExpression('id', 'eq', route.id))
       .top(1)

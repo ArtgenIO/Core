@@ -1,5 +1,6 @@
 import { Model } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IPage } from '../interface/page.interface';
 
@@ -15,7 +16,7 @@ export class PageService {
   ) {}
 
   async loadRoutes(): Promise<IPage[]> {
-    const model = this.schema.getModel<PageModel>('main', 'Page');
+    const model = this.schema.getSysModel<PageModel>(SchemaRef.PAGE);
     const pages = await model
       .query()
       .select(['id', 'title', 'domain', 'path', '__artgen_tags']);
@@ -24,7 +25,7 @@ export class PageService {
   }
 
   async getHtml(id: string): Promise<string> {
-    const model = this.schema.getModel<PageModel>('main', 'Page');
+    const model = this.schema.getSysModel<PageModel>(SchemaRef.PAGE);
     const page: IPage = (await model.query().findById(id)).$toJson();
     const html = `<html>
       <head>

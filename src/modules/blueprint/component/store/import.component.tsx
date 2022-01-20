@@ -9,6 +9,7 @@ import { useHttpClient } from '../../../admin/library/use-http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { IDatabase } from '../../../database/interface';
 import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
+import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 
 type FormData = {
   database: string;
@@ -24,7 +25,7 @@ export default function ImportExtension() {
   const [source, setSource] = useState('');
   const [{ data: databases, loading }] = useHttpClient<
     IFindResponse<IDatabase>
-  >(toRestSysRoute('database'));
+  >(toRestSysRoute(SchemaRef.DATABASE));
 
   useEffect(() => {
     if (params?.id) {

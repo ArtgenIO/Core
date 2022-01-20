@@ -2,6 +2,7 @@ import kebabCase from 'lodash.kebabcase';
 import { QueryBuilder } from 'odata-query-builder';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { ISchema } from '../../schema';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { FieldTool } from '../../schema/util/field-tools';
 
 const routeRestFilterOne = (schema: Partial<ISchema>, record: RowLike) => {
@@ -19,7 +20,7 @@ export const toRestRoute = (
   (qbc ? qbc(new QueryBuilder()).toQuery() : '');
 
 export const toRestSysRoute = (
-  reference: string,
+  reference: SchemaRef,
   qbc?: (qb: QueryBuilder) => QueryBuilder,
 ) =>
   `/api/rest/main/${kebabCase(reference)}` +

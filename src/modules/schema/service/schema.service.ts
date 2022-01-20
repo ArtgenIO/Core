@@ -7,6 +7,7 @@ import { IContentModule } from '../../content/interface/content-module.interface
 import { IDatabaseConnection } from '../../database/interface';
 import { DatabaseConnectionService } from '../../database/service/database-connection.service';
 import { ISchema } from '../interface/schema.interface';
+import { SchemaRef } from '../interface/system-ref.enum';
 
 type SchemaModel = ISchema & Model;
 type ModuleModel = IContentModule & Model;
@@ -30,7 +31,7 @@ export class SchemaService {
    * existence of the schema and does not overide it if its present.
    */
   async persistSchemas(connection: IDatabaseConnection) {
-    const model = this.getModel<SchemaModel>('main', 'Schema');
+    const model = this.getSysModel<SchemaModel>(SchemaRef.SCHEMA);
 
     // Main connection need to insert the "System" module first.
     if (connection.database.ref === 'main') {
@@ -53,7 +54,7 @@ export class SchemaService {
    * Ensure that the "System" module is inserted, otherwise the system resources could not link to it.
    */
   protected async upsertSystemModule(): Promise<void> {
-    const model = this.getModel<ModuleModel>('main', 'Module');
+    const model = this.getSysModel<ModuleModel>(SchemaRef.MODULE);
     const record = this.systemBlueprint.content
       .Module[0] as unknown as IContentModule;
 
@@ -69,8 +70,8 @@ export class SchemaService {
    * ensure the local cache is up to date.
    */
   async fetchAll(): Promise<ISchema[]> {
-    return (await this.getModel<SchemaModel>('main', 'Schema').query()).map(s =>
-      s.$toJson(),
+    return (await this.getSysModel<SchemaModel>(SchemaRef.SCHEMA).query()).map(
+      s => s.$toJson(),
     );
   }
 
@@ -82,6 +83,13 @@ export class SchemaService {
     schema: string,
   ): ModelClass<T> {
     return this.connections.findOne(database).getModel<T>(schema);
+  }
+
+  /**
+   * Same as the model fetch, but only for system
+   */
+  getSysModel<T extends Model = Model>(schema: SchemaRef): ModelClass<T> {
+    return this.connections.findOne('main').getModel<T>(schema);
   }
 
   getSchema(database: string, reference: string): ISchema {

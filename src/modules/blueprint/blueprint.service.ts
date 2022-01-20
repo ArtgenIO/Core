@@ -6,6 +6,7 @@ import { RowLike } from '../../app/interface/row-like.interface';
 import { getErrorMessage } from '../../app/kernel';
 import { DatabaseConnectionService } from '../database/service/database-connection.service';
 import { RestService } from '../rest/service/rest.service';
+import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IBlueprint } from './interface/blueprint.interface';
 import { SystemBlueprintProvider } from './provider/system-blueprint.provider';
 
@@ -23,7 +24,7 @@ export class BlueprintService {
   ) {}
 
   async seed() {
-    const sysExists = await this.rest.read('main', 'Blueprint', {
+    const sysExists = await this.rest.read('main', SchemaRef.BLUEPRINT, {
       id: this.systemBlueprint.id,
     });
 
@@ -71,11 +72,11 @@ export class BlueprintService {
       for (const schema of blueprint.schemas) {
         schema.database = database;
 
-        const isExists = await this.rest.read('main', 'Schema', schema);
+        const isExists = await this.rest.read('main', SchemaRef.SCHEMA, schema);
 
         if (!isExists) {
           await this.rest
-            .create('main', 'Schema', schema)
+            .create('main', SchemaRef.SCHEMA, schema)
             .then(() =>
               this.logger.info(
                 'Schema [%s][%s] installed',
@@ -103,11 +104,11 @@ export class BlueprintService {
     }
 
     for (const flow of blueprint.flows) {
-      const isExists = await this.rest.read('main', 'Flow', flow);
+      const isExists = await this.rest.read('main', SchemaRef.FLOW, flow);
 
       if (!isExists) {
         await this.rest
-          .create('main', 'Flow', flow as unknown as RowLike)
+          .create('main', SchemaRef.FLOW, flow as unknown as RowLike)
           .then(() =>
             this.logger.info(
               'Flow [%s][%s] installed',
@@ -134,12 +135,12 @@ export class BlueprintService {
 
     const isBlueprintExists = await this.rest.read(
       'main',
-      'Blueprint',
+      SchemaRef.BLUEPRINT,
       blueprint,
     );
 
     if (!isBlueprintExists) {
-      await this.rest.create('main', 'Blueprint', blueprint);
+      await this.rest.create('main', SchemaRef.BLUEPRINT, blueprint);
 
       this.logger.info('Blueprint [%s] installed', blueprint.title);
     } else {

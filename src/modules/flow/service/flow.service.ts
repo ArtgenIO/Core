@@ -2,6 +2,7 @@ import { Model } from 'objection';
 import { v4 } from 'uuid';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { LambdaService } from '../../lambda/service/lambda.service';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IFlow } from '../interface/flow.interface';
 import { FlowSession } from '../library/flow.session';
@@ -20,14 +21,14 @@ export class FlowService {
   ) {}
 
   async findAll(): Promise<IFlow[]> {
-    return (await this.schema.getModel<FlowModel>('main', 'Flow').query()).map(
-      wf => wf.$toJson(),
-    );
+    return (
+      await this.schema.getSysModel<FlowModel>(SchemaRef.FLOW).query()
+    ).map(wf => wf.$toJson());
   }
 
   async createSession(id: string, actionId?: string) {
     const flow = await this.schema
-      .getModel<FlowModel>('main', 'Flow')
+      .getSysModel<FlowModel>(SchemaRef.FLOW)
       .query()
       .findById(id);
 
@@ -49,7 +50,7 @@ export class FlowService {
 
   async createFlow(flow: Omit<IFlow, 'id'>): Promise<IFlow> {
     const record = await this.schema
-      .getModel<FlowModel>('main', 'Flow')
+      .getSysModel<FlowModel>(SchemaRef.FLOW)
       .query()
       .insertAndFetch(flow);
 
@@ -61,7 +62,7 @@ export class FlowService {
 
   async updateFlow(flow: IFlow): Promise<IFlow> {
     const record = await this.schema
-      .getModel<FlowModel>('main', 'Flow')
+      .getSysModel<FlowModel>(SchemaRef.FLOW)
       .query()
       .findById(flow.id);
 

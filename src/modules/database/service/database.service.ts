@@ -4,6 +4,7 @@ import { getErrorMessage } from '../../../app/kernel';
 import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
 import { SystemBlueprintProvider } from '../../blueprint/provider/system-blueprint.provider';
 import { ISchema } from '../../schema';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IDatabaseConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
@@ -121,7 +122,7 @@ export class DatabaseService {
    * We cannot inject this, because it does not exists when the service is created.
    */
   protected get model(): ModelClass<DatabaseModel> {
-    return this.schemaService.getModel<DatabaseModel>('main', 'Database');
+    return this.schemaService.getSysModel<DatabaseModel>(SchemaRef.DATABASE);
   }
 
   /**
