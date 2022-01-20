@@ -1,4 +1,4 @@
-import { Button, Divider, Drawer, Result, Skeleton } from 'antd';
+import { Button, Divider, Drawer, message, Result, Skeleton } from 'antd';
 import { saveAs } from 'file-saver';
 import { QueryBuilder } from 'odata-query-builder';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -45,11 +45,16 @@ export default function DatabaseExportComponent({ onClose, database }: Props) {
 
   const doDownload = () => {
     const fileName = `schema-${database.ref}.json`;
-    const fileContent = new Blob([JSON.stringify(response[0], null, 2)], {
+    const fileContent = new Blob([JSON.stringify(response.data[0], null, 2)], {
       type: 'application/json',
     });
 
     saveAs(fileContent, fileName);
+  };
+
+  const doCopy = () => {
+    navigator.clipboard.writeText(JSON.stringify(response.data[0], null, 2));
+    message.success('Database copied to Your clipboard!', 2);
   };
 
   return (
@@ -60,10 +65,14 @@ export default function DatabaseExportComponent({ onClose, database }: Props) {
       onClose={onClose}
     >
       <Skeleton active loading={loading}>
-        <Button block type="primary" ghost onClick={doDownload}>
-          Download as JSON
-        </Button>
-
+        <Button.Group className="w-full">
+          <Button block type="primary" ghost onClick={doDownload}>
+            Download as JSON
+          </Button>
+          <Button block type="primary" onClick={doCopy}>
+            Copy to Clipboard
+          </Button>
+        </Button.Group>
         <Divider />
 
         <SyntaxHighlighter

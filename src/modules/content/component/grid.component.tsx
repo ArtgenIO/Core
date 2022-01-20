@@ -517,8 +517,8 @@ export default function TableComponent({ schema }: Props) {
                   } else if (f.type === FieldType.INTEGER) {
                     classes.push('text-green-500');
                   } else if (FieldTool.isDate(f)) {
-                    if (val) {
-                      val = dayjs(val).format('YYYY-MM-DD dddd, HH:mm:ss');
+                    if (oVal) {
+                      val = dayjs(oVal).format('YYYY-MM-DD dddd, HH:mm:ss');
                       classes.push('text-pink-500');
                     }
                   }

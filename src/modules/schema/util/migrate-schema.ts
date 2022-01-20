@@ -1,5 +1,6 @@
 import { DeepPartial } from '../../../app/interface/deep-partial.interface';
 import { ISchema } from '../interface/schema.interface';
+import { migrateField } from './migrate-field';
 
 export const migrateSchema = (schema: DeepPartial<ISchema>): ISchema => {
   // Access control
@@ -37,18 +38,7 @@ export const migrateSchema = (schema: DeepPartial<ISchema>): ISchema => {
     };
   }
 
-  schema.fields.forEach((f, idx) => {
-    if (!f.meta) {
-      f.meta = {};
-    }
-
-    if (!f.meta.grid) {
-      f.meta.grid = {
-        order: idx,
-        hidden: false,
-      };
-    }
-  });
+  schema.fields.forEach(migrateField);
 
   return schema as ISchema;
 };

@@ -17,6 +17,7 @@ import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import { useEffect, useState } from 'react';
 import { FieldType, IField, ISchema } from '../..';
+import { FieldTool } from '../../util/field-tools';
 
 type InputLinkedProps = {
   isLinked: boolean;
@@ -64,8 +65,6 @@ export default function FieldEditor({
   const [refReadOnly, setRefReadOnly] = useState(true);
 
   const [isChanged, setIsChanged] = useState(false);
-
-  useEffect(() => {}, [isNewSchema]);
 
   useEffect(() => {
     const isExistingField = immutableSchema.fields.some(
@@ -233,15 +232,49 @@ export default function FieldEditor({
             </Form.Item>
 
             <Form.Item label="Default Value" className="mb-2">
-              <Input
+              <Input.TextArea
+                autoSize
+                value={
+                  FieldTool.isJson(field) &&
+                  typeof field.defaultValue == 'object'
+                    ? JSON.stringify(field.defaultValue)
+                    : field.defaultValue === null
+                    ? 'null'
+                    : (field.defaultValue as string)
+                }
                 placeholder="Initial value"
                 onChange={e => {
-                  setField(oldState =>
-                    Object.assign(cloneDeep(oldState), {
-                      defaultValue:
-                        e.target.value === 'null' ? null : e.target.value,
-                    } as Pick<IField, 'defaultValue'>),
-                  );
+                  setField(oldState => {
+                    let newValue: IField['defaultValue'] = e.target.value;
+
+                    if (newValue === 'null') {
+                      newValue = null;
+                    } else if (
+                      FieldTool.isJson(field) &&
+                      newValue &&
+                      (newValue[0] === '{' || newValue[0] === '[')
+                    ) {
+                      newValue = JSON.parse(newValue);
+                    } else if (field.type === FieldType.BOOLEAN) {
+                      if (
+                        newValue === 'true' ||
+                        newValue === 'yes' ||
+                        (newValue as unknown as number) === 1
+                      ) {
+                        newValue = true;
+                      } else if (
+                        newValue === 'false' ||
+                        newValue === 'no' ||
+                        (newValue as unknown as number) === 0
+                      ) {
+                        newValue = false;
+                      }
+                    }
+
+                    return Object.assign(cloneDeep(oldState), {
+                      defaultValue: newValue,
+                    } as Pick<IField, 'defaultValue'>);
+                  });
                 }}
               />
             </Form.Item>
@@ -414,6 +447,7 @@ export default function FieldEditor({
                 allowClear
                 className="w-64 mr-2"
                 placeholder="Type"
+                value={field.tags}
                 onChange={tags => {
                   setField(oldState =>
                     Object.assign(cloneDeep(oldState), {

@@ -1,5 +1,7 @@
 export interface IAccount {
   id: string;
   email: string;
-  password?: string;
+  password: string;
+
+  signUpAt: Date | string;
 }

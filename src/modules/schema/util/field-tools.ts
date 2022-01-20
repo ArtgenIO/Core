@@ -7,7 +7,9 @@ export const isText = (field: IField) =>
   field.type === FieldType.TEXT || field.type === FieldType.BLOB;
 
 export const isJson = (field: IField) =>
-  field.type === FieldType.JSON || field.type === FieldType.JSONB;
+  field.type === FieldType.JSON ||
+  field.type === FieldType.JSONB ||
+  field.type == FieldType.HSTORE;
 
 export const isDate = (field: IField) =>
   field.type === FieldType.DATEONLY || field.type === FieldType.DATETIME;

@@ -31,7 +31,6 @@ export class AuthenticatorProvider implements Provider<Authenticator> {
             .getAccountByID(payload.aid)
             .then(acc => {
               if (!acc) {
-                // TODO: hack attempt hit
                 done(null, false, 'Account does not exists!');
               } else {
                 done(null, acc);
@@ -61,7 +60,6 @@ export class AuthenticatorProvider implements Provider<Authenticator> {
             .getAccessKeyAccount(token)
             .then(acc => {
               if (!acc) {
-                // TODO: hack attempt hit
                 done(null, false, 'Unknown access key!');
               } else {
                 done(null, acc);

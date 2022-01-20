@@ -82,7 +82,7 @@ export class AuthenticationService {
     return false;
   }
 
-  async getAccessKeyAccount(key: string): Promise<IAccount | false> {
+  async getAccessKeyAccount(key: string): Promise<Partial<IAccount> | false> {
     const model = this.schema.getSysModel<AccountModel>(SchemaRef.ACCESS_KEY);
     const record = await model
       .query()

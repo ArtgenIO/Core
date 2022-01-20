@@ -22,6 +22,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { FieldType, IField, ISchema } from '../..';
 import { GridTools } from '../../../content/util/grid.tools';
 import { FieldTool } from '../../util/field-tools';
+import { migrateField } from '../../util/migrate-field';
 import FieldEditor from './field-editor.component';
 
 type Props = {
@@ -67,16 +68,19 @@ export default function SchemaEditorFieldsComponent({
       }
     }
 
-    const newField = {
-      reference: `newField${fieldKey ?? ''}`,
-      columnName: `newField${fieldKey ?? ''}`,
-      title: `New Field ${fieldKey ?? ''}`,
-      type: FieldType.TEXT,
-      defaultValue: null,
-      meta: {},
-      args: {},
-      tags: [],
-    };
+    const newField = migrateField(
+      {
+        reference: `newField${fieldKey ?? ''}`,
+        columnName: `newField${fieldKey ?? ''}`,
+        title: `New Field ${fieldKey ?? ''}`,
+        type: FieldType.TEXT,
+        defaultValue: null,
+        meta: {},
+        args: {},
+        tags: [],
+      },
+      schema.fields.length,
+    );
 
     setFieldEditor(newField);
   };
