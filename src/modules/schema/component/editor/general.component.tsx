@@ -30,15 +30,17 @@ function InputLinked({ isLinked, setIsLinked }: InputLinkedProps) {
   );
 }
 
-export default function SchemaEditorNamingComponent({
-  isNewSchema,
-  schema,
-  setSchema,
-}: {
+type Props = {
   isNewSchema: boolean;
   schema: Partial<ISchema>;
   setSchema: Dispatch<SetStateAction<Partial<ISchema>>>;
-}) {
+};
+
+export default function SchemaEditorGeneralComponent({
+  isNewSchema,
+  schema,
+  setSchema,
+}: Props) {
   const modules = useRecoilValue(modulesAtom);
 
   // Name states
@@ -79,10 +81,7 @@ export default function SchemaEditorNamingComponent({
           </Select>
         </Form.Item>
 
-        <Form.Item
-          label="Title"
-          rules={[{ required: true, message: 'Please type a title!' }]}
-        >
+        <Form.Item label="Title">
           <Input
             value={schema.title}
             placeholder="Just a human friendly title, like Products"
@@ -120,7 +119,6 @@ export default function SchemaEditorNamingComponent({
 
         <Form.Item label="Table Name">
           <Input
-            className="mb-12"
             placeholder="The table's name created in the database server"
             disabled={!isNewSchema}
             value={schema.tableName}

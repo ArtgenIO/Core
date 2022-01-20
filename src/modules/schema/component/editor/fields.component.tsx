@@ -24,17 +24,19 @@ import { GridTools } from '../../../content/util/grid.tools';
 import { FieldTool } from '../../util/field-tools';
 import FieldEditor from './field-editor.component';
 
+type Props = {
+  schema: ISchema;
+  setSchema: Dispatch<SetStateAction<ISchema>>;
+  isNewSchema: boolean;
+  immutableSchema: ISchema;
+};
+
 export default function SchemaEditorFieldsComponent({
   schema,
   setSchema,
   isNewSchema,
   immutableSchema,
-}: {
-  schema: ISchema;
-  setSchema: Dispatch<SetStateAction<ISchema>>;
-  isNewSchema: boolean;
-  immutableSchema: ISchema;
-}) {
+}: Props) {
   const [fieldEditor, setFieldEditor] = useState<IField>(null);
 
   const reSort = (idx: number, dir: number) => {

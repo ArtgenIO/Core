@@ -10,9 +10,10 @@ import { Suspense, useEffect, useState } from 'react';
 import { ISchema } from '..';
 import PageLoading from '../../admin/layout/page-loading.component';
 import SchemaEditorCapabilitiesComponent from './editor/capabilities.component';
+import DangerZoneComponent from './editor/danger-zone.component';
 import SchemaExportComponent from './editor/export.component';
 import SchemaEditorFieldsComponent from './editor/fields.component';
-import SchemaEditorNamingComponent from './editor/naming.component';
+import SchemaEditorGeneralComponent from './editor/general.component';
 import RelationsComponent from './editor/relations.component';
 
 type Props = {
@@ -123,18 +124,20 @@ export default function SchemaEditorComponent({
             defaultActiveKey={defaultKey ?? 'general'}
           >
             <Tabs.TabPane key="general" tab="General">
-              <SchemaEditorNamingComponent
+              <SchemaEditorGeneralComponent
                 isNewSchema={isNewSchema}
                 schema={schema}
                 setSchema={setSchema}
               />
             </Tabs.TabPane>
+
             <Tabs.TabPane key="capabilities" tab="Capabilities">
               <SchemaEditorCapabilitiesComponent
                 schema={schema}
                 setSchema={setSchema}
               />
             </Tabs.TabPane>
+
             <Tabs.TabPane key="fields" tab="Fields">
               <SchemaEditorFieldsComponent
                 schema={schema}
@@ -143,11 +146,20 @@ export default function SchemaEditorComponent({
                 immutableSchema={immutableSchema}
               />
             </Tabs.TabPane>
+
             <Tabs.TabPane key="relations" tab="Relations">
               <RelationsComponent schema={schema} setSchema={setSchema} />
             </Tabs.TabPane>
+
             <Tabs.TabPane key="indices" tab="Serialize">
               <SchemaExportComponent schema={schema} setSchema={setSchema} />
+            </Tabs.TabPane>
+
+            <Tabs.TabPane
+              key="danger"
+              tab={<span className="text-red-500">Danger Zone</span>}
+            >
+              <DangerZoneComponent schema={schema} setSchema={setSchema} />
             </Tabs.TabPane>
           </Tabs>
         </ErrorBoundary>

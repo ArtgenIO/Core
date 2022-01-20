@@ -34,7 +34,7 @@ export class RestGateway implements IHttpGateway {
 
   async register(httpServer: FastifyInstance): Promise<void> {
     const schemas = await this.schema.fetchAll();
-    const preHandler = await this.kernel.get<RouteHandlerMethod>(
+    const authPrehandler = await this.kernel.get<RouteHandlerMethod>(
       AuthenticationHandlerProvider,
     );
 
@@ -44,7 +44,7 @@ export class RestGateway implements IHttpGateway {
         this.openApi.getResourceURL(schema),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.CREATE),
-          preHandler,
+          preHandler: schema.access.create !== 'public' ? authPrehandler : null,
         },
         async (req: FastifyRequest, reply: FastifyReply): Promise<unknown> => {
           try {
@@ -74,7 +74,7 @@ export class RestGateway implements IHttpGateway {
         this.openApi.getRecordURL(schema),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.READ),
-          preHandler,
+          preHandler: schema.access.read !== 'public' ? authPrehandler : null,
         },
         async (
           request: FastifyRequest<{ Params: Record<string, string> }>,
@@ -106,7 +106,7 @@ export class RestGateway implements IHttpGateway {
         this.openApi.getResourceURL(schema),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.FIND),
-          preHandler,
+          preHandler: schema.access.read !== 'public' ? authPrehandler : null,
         },
         async (
           request: FastifyRequest,
@@ -128,7 +128,7 @@ export class RestGateway implements IHttpGateway {
         this.openApi.getRecordURL(schema),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.UPDATE),
-          preHandler,
+          preHandler: schema.access.update !== 'public' ? authPrehandler : null,
         },
         async (
           req: FastifyRequest<{
@@ -173,7 +173,7 @@ export class RestGateway implements IHttpGateway {
         this.openApi.getRecordURL(schema),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.DELETE),
-          preHandler,
+          preHandler: schema.access.delete !== 'public' ? authPrehandler : null,
         },
         async (
           req: FastifyRequest<{ Params: Record<string, string> }>,

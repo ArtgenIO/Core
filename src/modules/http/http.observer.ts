@@ -28,11 +28,14 @@ export class HttpObserver {
   }
 
   @On('crud.main.Schema.updated')
-  async onSchemaUpdated(newValue: ISchema, oldValue: ISchema) {
-    const newStruct = toStructure(newValue);
-    const oldStruct = toStructure(oldValue);
+  async onSchemaUpdated(newSchema: ISchema, oldSchema: ISchema) {
+    const newStruct = toStructure(newSchema);
+    const oldStruct = toStructure(oldSchema);
 
-    if (!isEqual(newStruct, oldStruct)) {
+    if (
+      !isEqual(newStruct, oldStruct) ||
+      !isEqual(newSchema.access, oldSchema.access)
+    ) {
       this.__update();
     }
   }

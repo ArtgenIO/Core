@@ -324,6 +324,20 @@
           "defaultValue": {},
           "tags": [],
           "args": {}
+        },
+        {
+          "reference": "access",
+          "columnName": "access",
+          "title": "Access Control",
+          "type": "json",
+          "tags": [],
+          "defaultValue": {
+            "create": "protected",
+            "read": "protected",
+            "update": "protected",
+            "delete": "protected"
+          },
+          "args": {}
         }
       ],
       "indices": [],
