@@ -8,6 +8,7 @@ export interface ISchema {
    * Non esential meta data, used by visual and other components for fancy works, haps!
    */
   meta: {
+    isFavorite?: boolean;
     /**
      * Artboard appearance meta.
      */

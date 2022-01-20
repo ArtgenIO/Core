@@ -1,4 +1,4 @@
-import { DatabaseOutlined, TableOutlined } from '@ant-design/icons';
+import { DatabaseOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import cloneDeep from 'lodash.clonedeep';
@@ -46,9 +46,6 @@ export default function ContentListComponent() {
         header={
           <PageHeader
             title={schema ? <TitleComponent schema={schema} /> : <>Loading</>}
-            avatar={{
-              icon: <TableOutlined />,
-            }}
             actions={
               <Button
                 icon={<DatabaseOutlined />}

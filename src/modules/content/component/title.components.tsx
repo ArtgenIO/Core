@@ -1,3 +1,4 @@
+import { StarOutlined } from '@ant-design/icons';
 import { Select, Tag } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import cloneDeep from 'lodash.clonedeep';
@@ -5,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { modulesAtom, schemasAtom } from '../../admin/admin.atoms';
 import { ISchema } from '../../schema';
+import { fSchema } from '../../schema/util/filter-schema';
+import './title.component.less';
 
 type Props = {
   schema: ISchema;
@@ -23,49 +26,77 @@ export default function TitleComponent({ schema }: Props) {
 
   return (
     <ErrorBoundary>
-      <Select
-        value={assignedModuleId}
-        bordered={false}
-        className="text-4xl"
-        size="large"
-        placeholder="$Root"
-        onSelect={(selected: string) => {
-          if (selected !== assignedModuleId) {
-            setAssignedModuleId(selected);
+      <div className="flex items-center">
+        <div className="shrink">
+          <div
+            onClick={() => {
+              setSchemas(oldState => {
+                const newState = cloneDeep(oldState);
+                const newSchema = newState.find(fSchema(schema));
 
-            setSchemas(currentState => {
-              const newState = cloneDeep(currentState);
+                if (!newSchema?.meta) {
+                  newSchema.meta = {};
+                }
 
-              newState.find(
-                s =>
-                  s.database === schema.database &&
-                  s.reference === schema.reference,
-              ).moduleId = selected;
+                newSchema.meta.isFavorite = !newSchema.meta?.isFavorite;
+                return newState;
+              });
+            }}
+            className={
+              'favorite-button ' +
+              (schema?.meta?.isFavorite ? ' is-favorite' : '')
+            }
+          >
+            <StarOutlined />
+          </div>
+        </div>
 
-              return newState;
-            });
-          }
-        }}
-      >
-        {modules.map(m => (
-          <Select.Option key={m.id} value={m.id}>
-            {m.name}
-          </Select.Option>
-        ))}
-        <Select.Option key={null} value={null}>
-          <span className="text-midnight-500">$Root</span>
-        </Select.Option>
-      </Select>
+        <div>
+          <Select
+            value={assignedModuleId}
+            bordered={false}
+            className="text-4xl"
+            size="large"
+            placeholder="$Root"
+            onSelect={(selected: string) => {
+              if (selected !== assignedModuleId) {
+                setAssignedModuleId(selected);
 
-      {schema.title}
+                setSchemas(currentState => {
+                  const newState = cloneDeep(currentState);
 
-      <span className="ml-4">
-        {schema.tags.map(t => (
-          <Tag key={t} color="magenta">
-            {t}
-          </Tag>
-        ))}
-      </span>
+                  newState.find(
+                    s =>
+                      s.database === schema.database &&
+                      s.reference === schema.reference,
+                  ).moduleId = selected;
+
+                  return newState;
+                });
+              }
+            }}
+          >
+            {modules.map(m => (
+              <Select.Option key={m.id} value={m.id}>
+                {m.name}
+              </Select.Option>
+            ))}
+            <Select.Option key={null} value={null}>
+              <span className="text-midnight-500">$Root</span>
+            </Select.Option>
+          </Select>
+        </div>
+
+        <div>{schema.title}</div>
+
+        <div className="ml-2 leading-none text-sm">
+          {schema.tags.map(t => (
+            <Tag key={t} color="magenta">
+              {t}
+            </Tag>
+          ))}
+        </div>
+      </div>
     </ErrorBoundary>
   );
 }

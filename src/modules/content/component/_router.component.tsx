@@ -13,6 +13,7 @@ import { useRecoilValue } from 'recoil';
 import { modulesAtom, schemasAtom } from '../../admin/admin.atoms';
 import MenuBlock from '../../admin/component/menu-block.component';
 import { ISchema } from '../../schema';
+import FavoriteSchemasComponent from '../../schema/component/favorites.component';
 import ContentListComponent from './list.component';
 import PlaceholderComponent from './placeholder.component';
 
@@ -102,11 +103,8 @@ export default function ContentRouterComponent() {
   return (
     <Layout hasSider>
       <Sider width={220} className="h-screen depth-2 overflow-auto gray-scroll">
-        <MenuBlock
-          title="Content Explorer"
-          className="-mb-1"
-          style={{ borderTop: 0 }}
-        >
+        <FavoriteSchemasComponent />
+        <MenuBlock title="Explorer" className="-mb-1">
           <div className="px-2 py-2">
             <Input
               placeholder="Quick Filter"
