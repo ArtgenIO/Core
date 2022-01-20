@@ -40,7 +40,13 @@
           "title": "Password Hash",
           "tags": [],
           "type": "text",
-          "args": {}
+          "args": {},
+          "setters": [
+            {
+              "reference": "passwordHash",
+              "config": {}
+            }
+          ]
         }
       ],
       "indices": [],
@@ -92,7 +98,9 @@
           "columnName": "account_id",
           "type": "uuid",
           "args": {},
-          "tags": []
+          "tags": [
+            "indexed"
+          ]
         }
       ],
       "indices": [],

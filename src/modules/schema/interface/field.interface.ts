@@ -1,5 +1,6 @@
 import { FieldTag } from './field-tags.enum';
 import { FieldType } from './field-type.enum';
+import { IGetter, ISetter } from './setter-getter.interface';
 
 type FieldArgs = {
   binary?: boolean;
@@ -53,6 +54,16 @@ export interface IField {
    * Type args
    */
   args: FieldArgs;
+
+  /**
+   * Value setters
+   */
+  setters?: ISetter[];
+
+  /**
+   * Value setters
+   */
+  getters?: IGetter[];
 
   /**
    * Behavior tags.

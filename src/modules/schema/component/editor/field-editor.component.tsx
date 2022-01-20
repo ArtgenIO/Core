@@ -5,9 +5,10 @@ import {
   Drawer,
   Form,
   Input,
+  List,
   Select,
+  Switch,
   Tooltip,
-  Transfer,
 } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { TransferItem } from 'antd/lib/transfer';
@@ -72,10 +73,6 @@ export default function FieldEditor({
     );
     const isRefReadOnly = isNewSchema ? false : isExistingField;
 
-    console.log('isNewSchema', isNewSchema);
-    console.log('isExistingField', isExistingField);
-    console.log('isRefReadOnly', isRefReadOnly);
-
     setField(immutableField);
     setRefReadOnly(isRefReadOnly);
   }, [immutableField]);
@@ -89,17 +86,17 @@ export default function FieldEditor({
   const setters: TransferItem[] = [
     {
       title: 'Base64 Encode',
-      key: 'base64Encode',
+      key: 'base64',
       description: 'Encodes the value into base64 format',
     },
     {
       title: 'Hexadecimal Encode',
-      key: 'base16Encode',
+      key: 'base16',
       description: 'Encodes the value into base16 format',
     },
     {
       title: 'Password Hasher',
-      key: 'password',
+      key: 'passwordHash',
       description: 'BCrpyt comparable hash, useful for passwords!',
     },
   ];
@@ -107,12 +104,12 @@ export default function FieldEditor({
   const getters: TransferItem[] = [
     {
       title: 'Base64 Decode',
-      key: 'base64Decode',
+      key: 'base64',
       description: 'Decodes the value from base64 format',
     },
     {
       title: 'Hexadecimal Decode',
-      key: 'base16Decode',
+      key: 'base16',
       description: 'Decodes the value from base16 format',
     },
   ];
@@ -447,22 +444,106 @@ export default function FieldEditor({
             </Form.Item>
 
             <Divider />
-            <h2 className="font-header">
+            <span className="font-header text-lg">
               On <span className="text-primary-500">Set</span> Transformers
-            </h2>
-            <Transfer
+            </span>
+            <List
+              size="small"
+              bordered
               dataSource={setters}
-              render={item => item.title}
-            ></Transfer>
+              rowKey="key"
+              renderItem={(setter, priority) => (
+                <List.Item
+                  actions={[
+                    <Switch
+                      key={setter.key}
+                      checked={
+                        !!field?.setters?.some(s => s.reference === setter.key)
+                      }
+                      onChange={v =>
+                        setField(oldState => {
+                          const newState = cloneDeep(oldState);
+
+                          if (!newState.setters) {
+                            newState.setters = [];
+                          }
+
+                          if (v) {
+                            newState.setters.push({
+                              reference: setter.key,
+                              config: {},
+                              priority,
+                            });
+                          } else {
+                            newState.setters = newState.setters.filter(
+                              s => s.reference === setter.key,
+                            );
+                          }
+
+                          return newState;
+                        })
+                      }
+                    />,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={setter.title}
+                    description={setter.description}
+                  />
+                </List.Item>
+              )}
+            ></List>
 
             <Divider />
-            <h2 className="font-header">
+            <span className="font-header text-lg">
               On <span className="text-primary-500">Get</span> Transformers
-            </h2>
-            <Transfer
+            </span>
+            <List
+              size="small"
+              bordered
               dataSource={getters}
-              render={item => item.title}
-            ></Transfer>
+              rowKey="key"
+              renderItem={(getter, priority) => (
+                <List.Item
+                  actions={[
+                    <Switch
+                      key={getter.key}
+                      checked={
+                        !!field?.getters?.some(s => s.reference === getter.key)
+                      }
+                      onChange={v =>
+                        setField(oldState => {
+                          const newState = cloneDeep(oldState);
+
+                          if (!newState.getters) {
+                            newState.getters = [];
+                          }
+
+                          if (v) {
+                            newState.getters.push({
+                              reference: getter.key,
+                              config: {},
+                              priority,
+                            });
+                          } else {
+                            newState.getters = newState.getters.filter(
+                              s => s.reference === getter.key,
+                            );
+                          }
+
+                          return newState;
+                        })
+                      }
+                    />,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={getter.title}
+                    description={getter.description}
+                  />
+                </List.Item>
+              )}
+            ></List>
           </Form>
         </Drawer>
       )}

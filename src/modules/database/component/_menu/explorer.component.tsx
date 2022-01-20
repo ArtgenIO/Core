@@ -39,8 +39,6 @@ export default function DatabaseExplorerComponent() {
       }
     }
 
-    console.log(newSelect, tree);
-
     setSelected(newSelect);
   }, [schemas, databases, location, params]);
 

@@ -52,11 +52,6 @@ export default function SchemaEditorNamingComponent({
     setTblLinked(isNewSchema);
   }, [isNewSchema]);
 
-  useEffect(() => {
-    if (refLinked) schema.reference = camelCase(schema.title);
-    if (tblLinked) schema.tableName = snakeCase(schema.title);
-  }, [schema]);
-
   return (
     <>
       <Form layout="vertical" requiredMark="optional" size="small">
@@ -95,6 +90,8 @@ export default function SchemaEditorNamingComponent({
               setSchema(s => {
                 const newState = cloneDeep(s);
                 newState.title = event.target.value;
+                if (refLinked) newState.reference = camelCase(newState.title);
+                if (tblLinked) newState.tableName = snakeCase(newState.title);
                 return newState;
               })
             }

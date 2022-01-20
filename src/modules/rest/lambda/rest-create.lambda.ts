@@ -1,4 +1,3 @@
-import { genSaltSync, hashSync } from 'bcrypt';
 import { Inject, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel';
 import { FlowSession } from '../../flow/library/flow.session';
@@ -67,14 +66,6 @@ export class RestCreateLambda implements ILambda {
     const config = session.getConfig() as Config;
 
     try {
-      // TODO: remove this!
-      if ((input as any)?.password) {
-        (input as any).password = hashSync(
-          (input as any).password,
-          genSaltSync(4),
-        );
-      }
-
       const result = await this.service.create(
         config.database,
         config.schema,

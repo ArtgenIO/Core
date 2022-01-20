@@ -1,3 +1,4 @@
+import { Binding } from '@loopback/context';
 import { Knex } from 'knex';
 import { cloneDeep, isEqual } from 'lodash';
 import {
@@ -8,11 +9,13 @@ import {
   RelationType,
 } from 'objection';
 import { v4 } from 'uuid';
-import { ILogger, Logger } from '../../../app/container';
+import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldTag, FieldType, ISchema } from '../../schema';
 import { RelationKind } from '../../schema/interface/relation.interface';
 import { FieldTool } from '../../schema/util/field-tools';
+import { ITransform } from '../../transformer/interface/transform.interface';
+import { ITransformer } from '../../transformer/interface/transformer.interface';
 import { IDatabase, IDatabaseConnection, ITableStructure } from '../interface';
 import { IConnectionAssociation } from '../interface/connection-association.interface';
 import { Dialect } from '../interface/dialect.type';
@@ -26,9 +29,18 @@ export class DatabaseConnection implements IDatabaseConnection {
   readonly associations = new Map<string, IConnectionAssociation>();
   readonly synchornizer: DatabaseSynchronizer;
 
+  /**
+   * Hash map for quick lookups, maps the transformers to their references.
+   */
+  protected transformerMap = new Map<string, ITransformer>();
+
   constructor(
     @Logger()
     readonly logger: ILogger,
+    @Inject((binding: Readonly<Binding<unknown>>) =>
+      binding.tagNames.includes('transformer'),
+    )
+    readonly transformers: ITransformer[],
     readonly knex: Knex,
     readonly database: IDatabase,
     readonly dialect: Dialect,
@@ -41,6 +53,8 @@ export class DatabaseConnection implements IDatabaseConnection {
       this.logger.child({ scope: `Synchronizer:${this.database.ref}` }),
       this,
     );
+
+    this.transformers.forEach(t => this.transformerMap.set(t.reference, t));
   }
 
   getModel<T extends Model = Model>(reference: string): ModelClass<T> {
@@ -425,10 +439,32 @@ export class DatabaseConnection implements IDatabaseConnection {
 
   protected toModel(schema: ISchema): ModelClass<Model> {
     // Map database columns to code level references
+    // Database -> Getter
     const toProperty = (s: ISchema) => {
       const columnMap = new Map<string, string>(
         s.fields.map(f => [f.columnName, f.reference]),
       );
+      const getterMap = new Map<string, ITransform[]>();
+
+      for (const f of s.fields) {
+        if (f?.getters && f.getters?.length) {
+          for (const getter of f.getters.sort((a, b) =>
+            a.priority > b.priority ? 1 : -1,
+          )) {
+            if (!getterMap.has(f.reference)) {
+              getterMap.set(f.reference, []);
+            }
+
+            getterMap
+              .get(f.reference)
+              .push(
+                this.transformerMap
+                  .get(getter.reference)
+                  .from.bind(this.transformerMap.get(getter.reference)),
+              );
+          }
+        }
+      }
 
       return (database: Pojo): Pojo => {
         const code = {};
@@ -436,7 +472,18 @@ export class DatabaseConnection implements IDatabaseConnection {
         for (const columnName in database) {
           if (Object.prototype.hasOwnProperty.call(database, columnName)) {
             if (columnMap.has(columnName)) {
-              code[columnMap.get(columnName)] = database[columnName];
+              const referenceName = columnMap.get(columnName);
+              code[referenceName] = database[columnName];
+
+              // Apply get transformations
+              if (getterMap.has(referenceName)) {
+                getterMap
+                  .get(referenceName)
+                  .forEach(
+                    getter =>
+                      (code[referenceName] = getter(code[referenceName])),
+                  );
+              }
             }
           }
         }
@@ -446,10 +493,32 @@ export class DatabaseConnection implements IDatabaseConnection {
     };
 
     // Map code level references to database columns
+    // Database -> Setter
     const toColumn = (s: ISchema) => {
       const referenceMap = new Map<string, string>(
         s.fields.map(f => [f.reference, f.columnName]),
       );
+      const setterMap = new Map<string, ITransform[]>();
+
+      for (const f of s.fields) {
+        if (f?.setters && f.setters?.length) {
+          for (const setter of f.setters.sort((a, b) =>
+            a.priority > b.priority ? 1 : -1,
+          )) {
+            if (!setterMap.has(f.reference)) {
+              setterMap.set(f.reference, []);
+            }
+
+            setterMap
+              .get(f.reference)
+              .push(
+                this.transformerMap
+                  .get(setter.reference)
+                  .to.bind(this.transformerMap.get(setter.reference)),
+              );
+          }
+        }
+      }
 
       return (code: Pojo): Pojo => {
         const database = {};
@@ -457,7 +526,15 @@ export class DatabaseConnection implements IDatabaseConnection {
         for (const referenceName in code) {
           if (Object.prototype.hasOwnProperty.call(code, referenceName)) {
             if (referenceMap.has(referenceName)) {
-              database[referenceMap.get(referenceName)] = code[referenceName];
+              const k = referenceMap.get(referenceName);
+              database[k] = code[referenceName];
+
+              // Apply set transformations
+              if (setterMap.has(referenceName)) {
+                setterMap
+                  .get(referenceName)
+                  .forEach(setter => (database[k] = setter(database[k])));
+              }
             }
           }
         }
@@ -472,7 +549,6 @@ export class DatabaseConnection implements IDatabaseConnection {
       const hasUUIDPK =
         primaryKeys.length === 1 && primaryKeys[0].type === FieldType.UUID;
       const createdAt = s.fields.find(f => f.tags.includes(FieldTag.CREATED));
-      const updatedAt = s.fields.find(f => f.tags.includes(FieldTag.UPDATED));
       const versioned = s.fields.find(f => f.tags.includes(FieldTag.VERSION));
       const defaults = s.fields.filter(
         f => typeof f.defaultValue !== 'undefined',
