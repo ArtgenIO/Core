@@ -5,13 +5,18 @@ import { RestModule } from '../rest/rest.module';
 import { RestService } from '../rest/service/rest.service';
 import { ISchema } from '../schema';
 import { SchemaModule } from '../schema/schema.module';
+import { TransformerModule } from '../transformer/transformer.module';
 import { DatabaseObserver } from './database.observer';
 import { DatabaseConnectionConcrete } from './provider/connection-concrete.provider';
 import { DatabaseConnectionService } from './service/database-connection.service';
 import { DatabaseService } from './service/database.service';
 
 @Module({
-  imports: [moduleRef(() => SchemaModule), moduleRef(() => RestModule)],
+  imports: [
+    moduleRef(() => SchemaModule),
+    moduleRef(() => RestModule),
+    TransformerModule,
+  ],
   providers: [
     DatabaseConnectionConcrete,
     DatabaseConnectionService,

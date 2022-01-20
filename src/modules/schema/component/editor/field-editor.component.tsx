@@ -85,6 +85,21 @@ export default function FieldEditor({
 
   const setters: TransferItem[] = [
     {
+      title: 'Password Hasher',
+      key: 'passwordHash',
+      description: 'BCrpyt comparable hash, useful for passwords!',
+    },
+    {
+      title: 'Kebab Case',
+      key: 'kebabCase',
+      description: 'Convert text into kebab-case format',
+    },
+    {
+      title: 'Snake Case',
+      key: 'snakeCase',
+      description: 'Convert text into snake_case format',
+    },
+    {
       title: 'Base64 Encode',
       key: 'base64',
       description: 'Encodes the value into base64 format',
@@ -93,11 +108,6 @@ export default function FieldEditor({
       title: 'Hexadecimal Encode',
       key: 'base16',
       description: 'Encodes the value into base16 format',
-    },
-    {
-      title: 'Password Hasher',
-      key: 'passwordHash',
-      description: 'BCrpyt comparable hash, useful for passwords!',
     },
   ];
 
@@ -476,7 +486,7 @@ export default function FieldEditor({
                             });
                           } else {
                             newState.setters = newState.setters.filter(
-                              s => s.reference === setter.key,
+                              s => s.reference !== setter.key,
                             );
                           }
 
@@ -527,7 +537,7 @@ export default function FieldEditor({
                             });
                           } else {
                             newState.getters = newState.getters.filter(
-                              s => s.reference === getter.key,
+                              s => s.reference !== getter.key,
                             );
                           }
 
