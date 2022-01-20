@@ -4,6 +4,7 @@ import {
   FastifyRequest,
   RouteHandlerMethod,
 } from 'fastify';
+import NoCachePlugin from 'fastify-disablecache';
 import kebabCase from 'lodash.kebabcase';
 import { ILogger, Inject, Logger, Service } from '../../app/container';
 import { RowLike } from '../../app/interface/row-like.interface';
@@ -37,6 +38,8 @@ export class RestGateway implements IHttpGateway {
     const authPrehandler = await this.kernel.get<RouteHandlerMethod>(
       AuthenticationHandlerProvider,
     );
+
+    await httpServer.register(NoCachePlugin);
 
     for (const schema of schemas) {
       // Create action

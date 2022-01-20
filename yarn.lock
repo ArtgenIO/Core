@@ -3379,6 +3379,13 @@ fastify-cors@^6.0.2:
     fastify-plugin "^3.0.0"
     vary "^1.1.2"
 
+fastify-disablecache@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/fastify-disablecache/-/fastify-disablecache-2.0.5.tgz#b5d1fd61b61eb2006423a31d46ae75e2b9ea89d6"
+  integrity sha512-/UB7tmMcq7HQZ1usG/6l7PJPmESb5c3EVrK7dCzfhGc7xheYWGZMDzxDhPXUvbmUMD3E57JsBug0Z0MeiDtIjQ==
+  dependencies:
+    fastify-plugin "^3.0.0"
+
 fastify-error@^0.3.0:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/fastify-error/-/fastify-error-0.3.1.tgz#8eb993e15e3cf57f0357fc452af9290f1c1278d2"
@@ -3397,6 +3404,14 @@ fastify-formbody@^5.1.0:
   integrity sha512-d8Y5hCL82akPyoFiXh2wYOm3es0pV9jqoPo3pO9OV2cNF0cQx39J5WAVXzCh4MSt9Z2qF4Fy5gHlvlyESwjtvg==
   dependencies:
     fastify-plugin "^3.0.0"
+
+fastify-helmet@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/fastify-helmet/-/fastify-helmet-7.0.0.tgz#3723dbdc77dfc273b5670d5ae3db633b764e52af"
+  integrity sha512-2VmtzyT0B3IWJ3WhrZiM4coCW9Hx08GyMewPY9WT6fk3GXvxAXrzDZF6IVJl7FnTxyn1+xxqeFIErQpeCJbkIg==
+  dependencies:
+    fastify-plugin "^3.0.0"
+    helmet "^5.0.1"
 
 fastify-http-errors-enhanced@2.9.1:
   version "2.9.1"
@@ -3948,6 +3963,11 @@ hastscript@^6.0.0:
     hast-util-parse-selector "^2.0.0"
     property-information "^5.0.0"
     space-separated-tokens "^1.0.0"
+
+helmet@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/helmet/-/helmet-5.0.1.tgz#e8b2aacf881dd5cffadbb640f23155f23de485ae"
+  integrity sha512-iyYpGYH2nbQVaQtauYDnemWg45S2RyGvJ+iKj+V9jp7Dc1NTtAJHmD+hFOSYS7Xdwe1GeyVEYSydggXLOg6TKQ==
 
 highlight.js@^10.4.1, highlight.js@~10.7.0:
   version "10.7.3"

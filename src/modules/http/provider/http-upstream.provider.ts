@@ -1,6 +1,7 @@
 import { Provider } from '@loopback/context';
 import fastify, { FastifyInstance } from 'fastify';
 import FormBodyPlugin from 'fastify-formbody';
+import HelmetPlugin from 'fastify-helmet';
 import FastifyHttpErrorsEnhancedPlugin from 'fastify-http-errors-enhanced';
 import FastifySecureSessionPlugin from 'fastify-secure-session';
 import OpenAPIPlugin from 'fastify-swagger';
@@ -76,6 +77,11 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
 
       done();
     });
+
+    await server.register(HelmetPlugin, {
+      global: true,
+    });
+    this.logger.debug('Plugin [Helmet] registered');
 
     return server;
   }
