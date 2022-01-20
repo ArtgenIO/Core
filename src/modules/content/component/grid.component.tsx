@@ -123,7 +123,7 @@ export default function TableComponent({ schema }: Props) {
   }, [schema]);
 
   useEffect(() => {
-    const fields = cloneDeep(schema).fields.map(FieldTool.withMeta);
+    const fields = cloneDeep(schema).fields;
 
     let apiUrl = toRestRoute(schema, qb => {
       // Pagination limit

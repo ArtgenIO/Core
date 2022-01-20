@@ -40,9 +40,7 @@ export default function SchemaEditorFieldsComponent({
   const reSort = (idx: number, dir: number) => {
     setSchema(currentState => {
       const newState = cloneDeep(currentState);
-      const newFields = newState.fields
-        .map(FieldTool.withMeta)
-        .sort(GridTools.sortFields);
+      const newFields = newState.fields.sort(GridTools.sortFields);
 
       const swapField = newFields[idx + dir];
       const thisField = newFields[idx];
@@ -97,9 +95,7 @@ export default function SchemaEditorFieldsComponent({
       <List
         bordered
         size="small"
-        dataSource={cloneDeep(schema)
-          .fields.map(FieldTool.withMeta)
-          .sort(GridTools.sortFields)}
+        dataSource={cloneDeep(schema).fields.sort(GridTools.sortFields)}
         renderItem={(field, idx) => (
           <List.Item key={`field-${idx}`} onClick={() => setFieldEditor(field)}>
             <List.Item.Meta
@@ -130,11 +126,9 @@ export default function SchemaEditorFieldsComponent({
                   setSchema(currentState => {
                     const newState = cloneDeep(currentState);
 
-                    newState.fields
-                      .map(FieldTool.withMeta)
-                      .find(
-                        f => f.reference === field.reference,
-                      ).meta.grid.hidden = !field.meta.grid.hidden;
+                    newState.fields.find(
+                      f => f.reference === field.reference,
+                    ).meta.grid.hidden = !field.meta.grid.hidden;
 
                     return newState;
                   });

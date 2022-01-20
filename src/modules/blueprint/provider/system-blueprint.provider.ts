@@ -3,13 +3,18 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { Service } from '../../../app/container';
 import { SEED_DIR } from '../../../app/globals';
+import { migrateSchema } from '../../schema/util/migrate-schema';
 import { IBlueprint } from '../interface/blueprint.interface';
 
 @Service()
 export class SystemBlueprintProvider implements Provider<IBlueprint> {
   value() {
-    return JSON.parse(
+    const blueprint = JSON.parse(
       readFileSync(join(SEED_DIR, 'system.blueprint.json')).toString(),
     ) as IBlueprint;
+
+    blueprint.schemas.forEach(migrateSchema);
+
+    return blueprint;
   }
 }

@@ -1,31 +1,25 @@
 import { FieldTag, FieldType, ISchema } from '..';
+import { migrateSchema } from './migrate-schema';
 
-export const createEmptySchema = (database: string): ISchema => ({
-  database,
-  title: 'New Schema',
-  reference: '__new_schema',
-  tableName: '__new_schema',
-  meta: {
-    artboard: {
-      position: {
-        x: 50,
-        y: 50,
+export const createEmptySchema = (database: string): ISchema =>
+  migrateSchema({
+    database,
+    title: 'New Schema',
+    reference: '__new_schema',
+    tableName: '__new_schema',
+    fields: [
+      {
+        title: 'Identifier',
+        reference: 'id',
+        columnName: 'id',
+        type: FieldType.UUID,
+        meta: {},
+        args: {},
+        tags: [FieldTag.PRIMARY],
       },
-    },
-  },
-  fields: [
-    {
-      title: 'Identifier',
-      reference: 'id',
-      columnName: 'id',
-      type: FieldType.UUID,
-      meta: {},
-      args: {},
-      tags: [FieldTag.PRIMARY],
-    },
-  ],
-  indices: [],
-  uniques: [],
-  relations: [],
-  tags: ['active'],
-});
+    ],
+    indices: [],
+    uniques: [],
+    relations: [],
+    tags: ['active'],
+  });

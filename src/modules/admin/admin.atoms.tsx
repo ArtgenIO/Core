@@ -7,8 +7,10 @@ import { toRestSysRoute } from '../content/util/schema-url';
 import { IDatabase } from '../database';
 import { IAccount } from '../identity/interface/account.interface';
 import { decodeJWT } from '../identity/util/get-token-expiration';
+import { IFindResponse } from '../rest/interface/find-reponse.interface';
 import { ISchema } from '../schema';
 import { fSchema } from '../schema/util/filter-schema';
+import { migrateSchema } from '../schema/util/migrate-schema';
 import { useHttpClientSimple } from './library/http-client';
 
 const { persistAtom } = recoilPersist();
@@ -73,8 +75,10 @@ export const schemasAtom = atom<ISchema[]>({
     ({ setSelf }) => {
       setSelf(
         useHttpClientSimple()
-          .get(toRestSysRoute('schema', q => q.top(1_000).orderBy('title')))
-          .then(r => r.data.data),
+          .get<IFindResponse<ISchema>>(
+            toRestSysRoute('schema', q => q.top(1_000).orderBy('title')),
+          )
+          .then(r => r.data.data.map(migrateSchema)),
       );
     },
   ],

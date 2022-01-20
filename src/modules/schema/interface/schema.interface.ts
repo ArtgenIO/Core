@@ -67,4 +67,14 @@ export interface ISchema {
    * Behavior tags.
    */
   tags: string[];
+
+  /**
+   * Access control
+   */
+  access: {
+    create: 'public' | 'protected';
+    read: 'public' | 'protected';
+    update: 'public' | 'protected';
+    delete: 'public' | 'protected';
+  };
 }
