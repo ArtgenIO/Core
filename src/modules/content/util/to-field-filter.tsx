@@ -1,4 +1,9 @@
-import { FieldOrGroup, ValueSource } from 'react-awesome-query-builder';
+import {
+  FieldOrGroup,
+  FieldSettings,
+  SelectFieldSettings,
+  ValueSource,
+} from 'react-awesome-query-builder';
 import { FieldType, IField } from '../../schema';
 import { FieldTool } from '../../schema/util/field-tools';
 
@@ -35,12 +40,15 @@ type IType =
   | 'date'
   | 'time'
   | 'datetime'
+  | 'select'
   | 'boolean';
 
 export const toFieldFilter = (f: IField): FieldOrGroup | null => {
   const ops: IOperator[] = ['equal', 'not_equal'];
   const isNullable = FieldTool.isNullable(f);
   const valueSources: ValueSource[] = ['value', 'field'];
+  const fieldSettings: FieldSettings = {};
+  const listValues: string[] = [];
 
   let type: IType;
 
@@ -102,7 +110,9 @@ export const toFieldFilter = (f: IField): FieldOrGroup | null => {
 
       break;
     case FieldType.ENUM:
-      type = 'multiselect';
+      type = 'select';
+      (fieldSettings as SelectFieldSettings).listValues = f.args.values;
+      listValues.push(...f.args.values);
       break;
   }
 
@@ -113,7 +123,9 @@ export const toFieldFilter = (f: IField): FieldOrGroup | null => {
   return {
     label: f.title,
     type,
-    operators: ops,
+    operators: f.type == FieldType.ENUM ? ['select_equals'] : ops,
     valueSources,
+    fieldSettings,
+    listValues,
   };
 };

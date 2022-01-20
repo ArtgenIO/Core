@@ -13,7 +13,12 @@
 
 ```sh
 docker run -d -p 80:7200 artgenio/core:latest
+
+# Even faster test!
+npx @artgen/core
 ```
+
+then visit the [http://localhost:7200](http://localhost:7200) address
 
 #### Project Status
 

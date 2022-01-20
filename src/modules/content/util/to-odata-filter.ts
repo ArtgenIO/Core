@@ -106,6 +106,7 @@ export const toODataFilter = (
 
     switch (operator) {
       case 'equal':
+      case 'select_equals':
         expOp = !isInverted ? 'eq' : 'ne';
         break;
       case 'not_equal':

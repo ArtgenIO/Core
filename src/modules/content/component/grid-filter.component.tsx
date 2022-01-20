@@ -1,3 +1,4 @@
+import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { QueryBuilder } from 'odata-query-builder';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
@@ -86,23 +87,25 @@ export default function GridFilterComponent({ schema, setFilter }: Props) {
   }
 
   return (
-    <Query
-      {...config}
-      value={tree}
-      onChange={(tree, config, action) => {
-        // setConfig(config);
-        setTree(tree);
-        console.log(Utils.getTree(tree));
-        const qb = new QueryBuilder();
+    <ErrorBoundary>
+      <Query
+        {...config}
+        value={tree}
+        onChange={(tree, config, action) => {
+          // setConfig(config);
+          setTree(tree);
+          console.log(Utils.getTree(tree));
+          const qb = new QueryBuilder();
 
-        qb.filter(fb => {
-          toODataFilter(fb, Utils.getTree(tree));
-          return fb;
-        });
+          qb.filter(fb => {
+            toODataFilter(fb, Utils.getTree(tree));
+            return fb;
+          });
 
-        setFilter(qb.toQuery());
-      }}
-      renderBuilder={renderBuilder}
-    />
+          setFilter(qb.toQuery());
+        }}
+        renderBuilder={renderBuilder}
+      />
+    </ErrorBoundary>
   );
 }
