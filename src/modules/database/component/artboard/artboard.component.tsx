@@ -52,27 +52,36 @@ export default function DatabaseArtboardComponent() {
     }
   }, [search]);
 
+  const zoomTo = (target: ISchema) => {
+    if (flowInstance) {
+      const el = flowInstance
+        .getElements()
+        .find(
+          e => isNode(e) && e.data.schema.reference == target.reference,
+        ) as Node<{ schema: ISchema }>;
+
+      if (el) {
+        setCenter(el.position.x + 400, el.position.y + 200, 1.5, 1000);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (selectedNode) {
+      zoomTo(selectedNode);
+    }
+  }, [selectedNode]);
+
   useEffect(() => {
     if (showEditor) {
       search.set('schema', showEditor.reference);
       setSelectedNode(showEditor);
 
-      if (flowInstance) {
-        const el = flowInstance
-          .getElements()
-          .find(
-            e => isNode(e) && e.data.schema.reference == showEditor.reference,
-          ) as Node<{ schema: ISchema }>;
-
-        if (el) {
-          setCenter(el.position.x + 400, el.position.y + 200, 1.5, 1000);
-        }
-      }
+      zoomTo(showEditor);
+      setSearch(search);
     } else {
-      search.delete('schema');
+      //search.delete('schema');
     }
-
-    setSearch(search);
   }, [showEditor]);
 
   useEffect(() => {
@@ -89,10 +98,10 @@ export default function DatabaseArtboardComponent() {
     setShowEditor(createEmptySchema(ref));
   };
 
-  const doRemove = () => {
+  const doRemove = (schema: ISchema) => {
     setSchemas(currentState => {
       const newState = cloneDeep(currentState);
-      newState.splice(newState.findIndex(fSchema(selectedNode)), 1);
+      newState.splice(newState.findIndex(fSchema(schema)), 1);
 
       return newState;
     });
@@ -131,6 +140,7 @@ export default function DatabaseArtboardComponent() {
             {showEditor ? (
               <SchemaEditorComponent
                 schema={showEditor}
+                doRemove={doRemove}
                 onClose={newSchema => {
                   if (newSchema) {
                     setSchemas(currentState => {

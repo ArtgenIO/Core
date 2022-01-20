@@ -1,7 +1,8 @@
 import { DatabaseOutlined, SearchOutlined } from '@ant-design/icons';
 import { Divider, Input, Tree, TreeDataNode } from 'antd';
 import { useEffect, useState } from 'react';
-import { generatePath, useNavigate } from 'react-router';
+import { generatePath, useLocation, useNavigate } from 'react-router';
+import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { databasesAtom, schemasAtom } from '../../../admin/admin.atoms';
 import MenuBlock from '../../../admin/component/menu-block.component';
@@ -12,10 +13,36 @@ export default function DatabaseExplorerComponent() {
 
   // Routing
   const navigate = useNavigate();
+  const location = useLocation();
+  const [params] = useSearchParams();
 
   // Global states
   const databases = useRecoilValue(databasesAtom);
   const schemas = useRecoilValue(schemasAtom);
+
+  useEffect(() => {
+    let newSelect = [];
+
+    const refMatch = location.pathname.match(
+      /\/database\/artboard\/([a-zA-Z0-9-]+)$/,
+    );
+
+    if (refMatch) {
+      // Exists
+      if (databases.some(db => db.ref == refMatch[1])) {
+        newSelect = [refMatch[1]];
+
+        // Has schmea too
+        if (params.has('schema')) {
+          newSelect = [`${refMatch[1]}$${params.get('schema')}`];
+        }
+      }
+    }
+
+    console.log(newSelect, tree);
+
+    setSelected(newSelect);
+  }, [schemas, databases, location, params]);
 
   useEffect(() => {
     if (databases) {
@@ -27,7 +54,7 @@ export default function DatabaseExplorerComponent() {
             .filter(s => s.database === db.ref)
             .map(s => ({
               title: s.title,
-              key: `${db.ref}-${s.reference}`,
+              key: `${db.ref}$${s.reference}`,
               isLeaf: true,
             })) as TreeDataNode[],
           className: 'test--db-list-ref',
@@ -61,7 +88,7 @@ export default function DatabaseExplorerComponent() {
           selectedKeys={selected}
           onSelect={selected => {
             if (selected.length) {
-              const [ref, sch] = selected[0].toString().split('-');
+              const [ref, sch] = selected[0].toString().split('$');
               const path = generatePath(
                 `/admin/database/artboard/:ref?schema=${sch}`,
                 {

@@ -66,6 +66,7 @@ export default function ContentListComponent() {
       {editSchema && (
         <SchemaEditorComponent
           schema={schema}
+          defaultKey="fields"
           onClose={newSchema => {
             if (newSchema) {
               setSchemas(currentState => {

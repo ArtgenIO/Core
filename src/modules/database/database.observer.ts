@@ -46,9 +46,7 @@ export class DatabaseObserver {
     this.logger.warn("Deleting [%s] schema's table", schema.reference);
 
     try {
-      await this.connections
-        .findOne(schema.database)
-        .knex.schema.dropTable(schema.tableName);
+      await this.connections.findOne(schema.database).deassociate([schema]);
     } catch (error) {
       this.logger.error(getErrorMessage(error));
       console.error(error);

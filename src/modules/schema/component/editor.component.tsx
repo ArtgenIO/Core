@@ -1,4 +1,8 @@
-import { SaveOutlined, WarningOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  SaveOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
 import { Button, Drawer, message, Popconfirm, Tabs } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import isEqual from 'lodash.isequal';
@@ -14,11 +18,15 @@ import RelationsComponent from './editor/relations.component';
 type Props = {
   schema: ISchema;
   onClose: (newState: ISchema | null) => void;
+  doRemove?: (schema: ISchema) => void;
+  defaultKey?: string;
 };
 
 export default function SchemaEditorComponent({
   schema: immutableSchema,
   onClose,
+  doRemove,
+  defaultKey,
 }: Props) {
   const [schema, setSchema] = useState<ISchema>(null);
   const [isNewSchema, setIsNewSchema] = useState(null);
@@ -63,15 +71,28 @@ export default function SchemaEditorComponent({
                 >
                   Restore Changes
                 </Button>
+              ) : isNewSchema ? (
+                <Popconfirm
+                  title="Are You sure want to discard the schema?"
+                  okText="Yes, I understand"
+                  onConfirm={() => onClose(null)}
+                >
+                  <Button danger block icon={<WarningOutlined />}>
+                    Discard Schema
+                  </Button>
+                </Popconfirm>
               ) : (
-                isNewSchema && (
+                doRemove && (
                   <Popconfirm
-                    title="Are You sure want to discard the schema?"
+                    title="Are You sure want to delete the schema?"
                     okText="Yes, I understand"
-                    onConfirm={() => onClose(null)}
+                    onConfirm={() => {
+                      doRemove(immutableSchema);
+                      onClose(null);
+                    }}
                   >
-                    <Button danger block icon={<WarningOutlined />}>
-                      Discard Schema
+                    <Button danger block icon={<DeleteOutlined />}>
+                      Delete Schema
                     </Button>
                   </Popconfirm>
                 )
@@ -96,8 +117,12 @@ export default function SchemaEditorComponent({
     >
       <Suspense fallback={<PageLoading />}>
         <ErrorBoundary>
-          <Tabs tabPosition="left" size="middle" defaultActiveKey="fields">
-            <Tabs.TabPane key="naming" tab="General">
+          <Tabs
+            tabPosition="left"
+            size="middle"
+            defaultActiveKey={defaultKey ?? 'general'}
+          >
+            <Tabs.TabPane key="general" tab="General">
               <SchemaEditorNamingComponent
                 isNewSchema={isNewSchema}
                 schema={schema}

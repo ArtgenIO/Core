@@ -26,7 +26,7 @@ export default function DatabaseToolsComponent({
   setElements: Dispatch<SetStateAction<Elements>>;
   setOpenedNode: Dispatch<SetStateAction<ISchema>>;
   doNew: () => void;
-  doRemove: () => void;
+  doRemove: (schema: ISchema) => void;
   selectedNode: ISchema;
 }) {
   const { zoomIn, zoomOut, fitView } = useZoomPanHelper();
@@ -84,8 +84,8 @@ export default function DatabaseToolsComponent({
             </div>
 
             <Popconfirm
-              title="Are you sure want to delete the selected schema?"
-              onConfirm={doRemove}
+              title={`Are you sure want to delete the [${selectedNode.reference}] schema?`}
+              onConfirm={() => doRemove(selectedNode)}
             >
               <div className="rounded-b-md">
                 <DeleteOutlined />

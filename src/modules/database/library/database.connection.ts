@@ -116,6 +116,24 @@ export class DatabaseConnection implements IDatabaseConnection {
     return await this.synchornizer.sync();
   }
 
+  async deassociate(schemas: ISchema[]): Promise<void> {
+    for (const schema of schemas) {
+      if (!schema.tags.includes('readonly')) {
+        this.logger.warn(
+          'Schema has been deleted [%s], removing table if exists [%s]',
+          schema.reference,
+          schema.tableName,
+        );
+
+        await this.knex.schema.dropTableIfExists(schema.tableName);
+      }
+
+      if (this.associations.has(schema.reference)) {
+        this.associations.delete(schema.reference);
+      }
+    }
+  }
+
   /**
    * Each dialect has some unique behavior problems,
    * we adjust those problems before conversions.
