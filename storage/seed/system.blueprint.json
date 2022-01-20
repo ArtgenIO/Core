@@ -9,60 +9,250 @@
   "schemas": [
     {
       "database": "main",
-      "reference": "Flow",
-      "title": "Flows",
-      "tableName": "__artgen_flows",
+      "reference": "Module",
       "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "title": "Modules",
+      "tableName": "__artgen_modules",
       "fields": [
         {
+          "title": "Identifier",
           "reference": "id",
           "columnName": "id",
-          "title": "Identifier",
           "type": "uuid",
+          "args": {},
           "tags": [
             "primary"
           ],
-          "args": {}
-        },
-        {
-          "reference": "moduleId",
-          "columnName": "moduleId",
-          "title": "Module ID",
-          "type": "uuid",
-          "tags": [
-            "nullable",
-            "indexed"
-          ],
-          "args": {},
-          "defaultValue": null
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "name",
-          "columnName": "name",
           "title": "Name",
+          "columnName": "name",
           "type": "text",
+          "args": {},
           "tags": [
             "unique"
           ],
-          "args": {}
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          }
         },
         {
-          "reference": "nodes",
-          "columnName": "nodes",
-          "title": "Nodes",
+          "title": "Tags",
+          "reference": "tags",
+          "columnName": "tags",
           "type": "json",
-          "tags": [],
+          "tags": [
+            "tags"
+          ],
+          "args": {},
           "defaultValue": [],
-          "args": {}
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false
+            }
+          }
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [],
+      "tags": [
+        "active"
+      ],
+      "meta": {
+        "artboard": {
+          "position": {
+            "x": 670,
+            "y": 339
+          }
+        },
+        "isFavorite": false
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
+    },
+    {
+      "database": "main",
+      "reference": "Blueprint",
+      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "title": "Blueprints",
+      "tableName": "__artgen_blueprints",
+      "fields": [
+        {
+          "title": "Identifier",
+          "reference": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "args": {},
+          "tags": [
+            "primary"
+          ],
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          }
         },
         {
-          "reference": "edges",
-          "columnName": "edges",
-          "title": "Edges",
-          "type": "json",
+          "reference": "title",
+          "title": "title",
+          "columnName": "title",
+          "defaultValue": null,
+          "type": "text",
+          "args": {},
           "tags": [],
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "version",
+          "title": "Version",
+          "columnName": "version",
+          "defaultValue": "0.0.1",
+          "type": "text",
+          "args": {},
+          "tags": [],
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "icon",
+          "title": "Icon",
+          "columnName": "icon",
+          "defaultValue": "widgets",
+          "type": "text",
+          "args": {},
+          "tags": [
+            "nullable"
+          ],
+          "meta": {
+            "grid": {
+              "order": 3,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "config",
+          "title": "Config",
+          "columnName": "config",
+          "defaultValue": {},
+          "type": "json",
+          "args": {},
+          "tags": [],
+          "meta": {
+            "grid": {
+              "order": 4,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "schemas",
+          "title": "Schemas",
+          "columnName": "schemas",
           "defaultValue": [],
-          "args": {}
+          "type": "json",
+          "args": {},
+          "tags": [],
+          "meta": {
+            "grid": {
+              "order": 5,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "flows",
+          "title": "Flows",
+          "columnName": "flows",
+          "defaultValue": [],
+          "type": "json",
+          "args": {},
+          "tags": [],
+          "meta": {
+            "grid": {
+              "order": 6,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "installedAt",
+          "title": "Installed At",
+          "columnName": "installed_at",
+          "type": "timestamp",
+          "args": {},
+          "tags": [
+            "created"
+          ],
+          "meta": {
+            "grid": {
+              "order": 7,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "database",
+          "title": "Database",
+          "columnName": "database",
+          "defaultValue": null,
+          "type": "text",
+          "args": {},
+          "tags": [
+            "indexed"
+          ],
+          "meta": {
+            "grid": {
+              "order": 8,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "source",
+          "title": "Source",
+          "columnName": "source",
+          "defaultValue": "offline",
+          "type": "enum",
+          "args": {
+            "values": [
+              "cloud",
+              "offline"
+            ]
+          },
+          "tags": [],
+          "meta": {
+            "grid": {
+              "order": 9,
+              "hidden": false
+            }
+          }
         }
       ],
       "indices": [],
@@ -70,24 +260,55 @@
       "relations": [
         {
           "kind": "belongs-to-one",
-          "name": "module",
-          "target": "Module",
-          "localField": "moduleId",
-          "remoteField": "id"
+          "name": "ofDatabase",
+          "target": "Database",
+          "localField": "database",
+          "remoteField": "ref"
         }
       ],
       "tags": [
         "active",
         "system"
-      ]
+      ],
+      "meta": {
+        "isFavorite": false,
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
     },
     {
       "database": "main",
       "reference": "Database",
+      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
       "title": "Databases",
       "tableName": "__artgen_databases",
-      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
       "fields": [
+        {
+          "reference": "title",
+          "columnName": "title",
+          "title": "Title",
+          "type": "text",
+          "tags": [
+            "unique"
+          ],
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          }
+        },
         {
           "reference": "ref",
           "columnName": "ref",
@@ -96,15 +317,13 @@
           "tags": [
             "primary"
           ],
-          "args": {}
-        },
-        {
-          "reference": "title",
-          "columnName": "title",
-          "title": "Title",
-          "type": "text",
-          "tags": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "dsn",
@@ -112,7 +331,13 @@
           "title": "Data Source Name (DSN)",
           "type": "text",
           "tags": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": true
+            }
+          }
         }
       ],
       "indices": [],
@@ -129,14 +354,29 @@
       "tags": [
         "system",
         "active"
-      ]
+      ],
+      "meta": {
+        "isFavorite": false,
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
     },
     {
       "database": "main",
-      "reference": "Page",
-      "title": "Pages",
-      "tableName": "__artgen_pages",
+      "reference": "Flow",
       "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "title": "Flows",
+      "tableName": "__artgen_flows",
       "fields": [
         {
           "reference": "id",
@@ -146,7 +386,196 @@
           "tags": [
             "primary"
           ],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "moduleId",
+          "columnName": "moduleId",
+          "title": "Module ID",
+          "type": "uuid",
+          "tags": [
+            "nullable"
+          ],
+          "args": {},
+          "defaultValue": null,
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "name",
+          "columnName": "name",
+          "title": "Name",
+          "type": "text",
+          "tags": [
+            "unique"
+          ],
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "nodes",
+          "columnName": "nodes",
+          "title": "Nodes",
+          "type": "json",
+          "tags": [],
+          "defaultValue": [],
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 3,
+              "hidden": true
+            }
+          }
+        },
+        {
+          "reference": "edges",
+          "columnName": "edges",
+          "title": "Edges",
+          "type": "json",
+          "tags": [],
+          "defaultValue": [],
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 4,
+              "hidden": true
+            }
+          }
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [
+        {
+          "kind": "belongs-to-one",
+          "name": "module",
+          "target": "Module",
+          "localField": "moduleId",
+          "remoteField": "id"
+        }
+      ],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "meta": {
+        "isFavorite": false,
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
+    },
+    {
+      "database": "main",
+      "reference": "KeyValueStorage",
+      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "title": "Key-Value Storage",
+      "tableName": "__artgen_key_value_storage",
+      "fields": [
+        {
+          "reference": "key",
+          "title": "Key",
+          "columnName": "key",
+          "defaultValue": null,
+          "type": "text",
+          "args": {},
+          "tags": [
+            "primary"
+          ],
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "value",
+          "title": "Value",
+          "columnName": "value",
+          "defaultValue": null,
+          "type": "json",
+          "args": {},
+          "tags": [
+            "nullable"
+          ],
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          }
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "meta": {
+        "isFavorite": false,
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
+    },
+    {
+      "database": "main",
+      "reference": "Page",
+      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "title": "Pages",
+      "tableName": "__artgen_pages",
+      "fields": [
+        {
+          "reference": "id",
+          "columnName": "id",
+          "title": "Identifier",
+          "type": "uuid",
+          "tags": [
+            "primary"
+          ],
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "title",
@@ -154,7 +583,13 @@
           "title": "title",
           "type": "text",
           "tags": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "domain",
@@ -162,7 +597,13 @@
           "title": "Domain",
           "type": "text",
           "tags": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "path",
@@ -171,7 +612,13 @@
           "type": "text",
           "tags": [],
           "defaultValue": "/page/x",
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 3,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "content",
@@ -180,7 +627,13 @@
           "type": "json",
           "tags": [],
           "defaultValue": {},
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 4,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "tags",
@@ -193,7 +646,13 @@
           "defaultValue": [
             "active"
           ],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 5,
+              "hidden": false
+            }
+          }
         }
       ],
       "indices": [],
@@ -210,14 +669,29 @@
       "tags": [
         "active",
         "system"
-      ]
+      ],
+      "meta": {
+        "isFavorite": false,
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
     },
     {
       "database": "main",
       "reference": "Schema",
+      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
       "title": "Schemas",
       "tableName": "__artgen_schemas",
-      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
       "fields": [
         {
           "reference": "database",
@@ -227,7 +701,13 @@
           "tags": [
             "primary"
           ],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "reference",
@@ -237,7 +717,13 @@
           "tags": [
             "primary"
           ],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "moduleId",
@@ -249,15 +735,27 @@
             "nullable"
           ],
           "args": {},
-          "defaultValue": null
+          "defaultValue": null,
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "title",
           "columnName": "title",
-          "title": "title",
+          "title": "Title",
           "type": "text",
           "tags": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 3,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "tableName",
@@ -265,7 +763,13 @@
           "title": "Table Name",
           "type": "text",
           "tags": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 4,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "fields",
@@ -274,7 +778,13 @@
           "type": "json",
           "tags": [],
           "defaultValue": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 5,
+              "hidden": true
+            }
+          }
         },
         {
           "reference": "indices",
@@ -283,7 +793,13 @@
           "type": "json",
           "tags": [],
           "defaultValue": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 6,
+              "hidden": true
+            }
+          }
         },
         {
           "reference": "uniques",
@@ -292,7 +808,13 @@
           "type": "json",
           "tags": [],
           "defaultValue": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 7,
+              "hidden": true
+            }
+          }
         },
         {
           "reference": "relations",
@@ -301,7 +823,13 @@
           "type": "json",
           "tags": [],
           "defaultValue": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 8,
+              "hidden": true
+            }
+          }
         },
         {
           "reference": "tags",
@@ -314,7 +842,13 @@
           "defaultValue": [
             "active"
           ],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 9,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "meta",
@@ -323,7 +857,13 @@
           "type": "json",
           "defaultValue": {},
           "tags": [],
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 10,
+              "hidden": true
+            }
+          }
         },
         {
           "reference": "access",
@@ -337,7 +877,13 @@
             "update": "protected",
             "delete": "protected"
           },
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 11,
+              "hidden": true
+            }
+          }
         }
       ],
       "indices": [],
@@ -361,224 +907,21 @@
       "tags": [
         "active",
         "system"
-      ]
-    },
-    {
-      "database": "main",
-      "title": "Key-Value Storage",
-      "reference": "KeyValueStorage",
-      "tableName": "__artgen_key_value_storage",
-      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
-      "fields": [
-        {
-          "reference": "key",
-          "title": "Key",
-          "columnName": "key",
-          "defaultValue": null,
-          "type": "text",
-          "args": {},
-          "tags": [
-            "primary"
-          ]
-        },
-        {
-          "reference": "value",
-          "title": "Value",
-          "columnName": "value",
-          "defaultValue": null,
-          "type": "jsonb",
-          "args": {},
-          "tags": [
-            "nullable"
-          ]
-        }
-      ],
-      "indices": [],
-      "uniques": [],
-      "relations": [],
-      "tags": [
-        "active",
-        "system"
-      ]
-    },
-    {
-      "database": "main",
-      "title": "Blueprints",
-      "reference": "Blueprint",
-      "tableName": "__artgen_blueprints",
-      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
-      "fields": [
-        {
-          "title": "Identifier",
-          "reference": "id",
-          "columnName": "id",
-          "type": "uuid",
-          "args": {},
-          "tags": [
-            "primary"
-          ]
-        },
-        {
-          "reference": "title",
-          "title": "title",
-          "columnName": "title",
-          "defaultValue": null,
-          "type": "text",
-          "args": {},
-          "tags": []
-        },
-        {
-          "reference": "version",
-          "title": "Version",
-          "columnName": "version",
-          "defaultValue": "0.0.1",
-          "type": "text",
-          "args": {},
-          "tags": []
-        },
-        {
-          "reference": "icon",
-          "title": "Icon",
-          "columnName": "icon",
-          "defaultValue": "widgets",
-          "type": "text",
-          "args": {},
-          "tags": [
-            "nullable"
-          ]
-        },
-        {
-          "reference": "config",
-          "title": "Config",
-          "columnName": "config",
-          "defaultValue": {},
-          "type": "json",
-          "args": {},
-          "tags": []
-        },
-        {
-          "reference": "schemas",
-          "title": "Schemas",
-          "columnName": "schemas",
-          "defaultValue": [],
-          "type": "json",
-          "args": {},
-          "tags": []
-        },
-        {
-          "reference": "flows",
-          "title": "Flows",
-          "columnName": "flows",
-          "defaultValue": [],
-          "type": "json",
-          "args": {},
-          "tags": []
-        },
-        {
-          "reference": "installedAt",
-          "title": "Installed At",
-          "columnName": "installed_at",
-          "type": "timestamp",
-          "args": {},
-          "tags": [
-            "created"
-          ]
-        },
-        {
-          "reference": "database",
-          "title": "Database",
-          "columnName": "database",
-          "defaultValue": null,
-          "type": "text",
-          "args": {},
-          "tags": [
-            "indexed"
-          ]
-        },
-        {
-          "reference": "source",
-          "title": "Source",
-          "columnName": "source",
-          "defaultValue": "offline",
-          "type": "enum",
-          "args": {
-            "values": [
-              "cloud",
-              "offline"
-            ]
-          },
-          "tags": []
-        }
-      ],
-      "indices": [],
-      "uniques": [],
-      "relations": [
-        {
-          "kind": "belongs-to-one",
-          "name": "ofDatabase",
-          "target": "Database",
-          "localField": "database",
-          "remoteField": "ref"
-        }
-      ],
-      "tags": [
-        "active",
-        "system"
-      ]
-    },
-    {
-      "database": "main",
-      "reference": "Module",
-      "title": "Modules",
-      "tableName": "__artgen_modules",
-      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
-      "fields": [
-        {
-          "title": "Identifier",
-          "reference": "id",
-          "columnName": "id",
-          "type": "uuid",
-          "args": {},
-          "tags": [
-            "primary"
-          ]
-        },
-        {
-          "reference": "name",
-          "title": "Name",
-          "columnName": "name",
-          "type": "text",
-          "args": {},
-          "tags": [
-            "unique"
-          ]
-        },
-        {
-          "title": "Tags",
-          "reference": "tags",
-          "columnName": "tags",
-          "type": "json",
-          "tags": [
-            "tags"
-          ],
-          "args": {},
-          "defaultValue": []
-        }
-      ],
-      "indices": [],
-      "uniques": [],
-      "relations": [],
-      "tags": [
-        "active",
-        "system"
       ],
       "meta": {
+        "isFavorite": false,
         "artboard": {
           "position": {
-            "x": 670,
-            "y": 339
+            "x": 0,
+            "y": 0
           }
         }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
       }
     }
   ],

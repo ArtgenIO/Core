@@ -10,45 +10,91 @@ import {
   Switch,
 } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
-import { camelCase, cloneDeep, isEqual, upperFirst } from 'lodash';
-import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { IField, ISchema } from '../../..';
+import {
+  camelCase,
+  cloneDeep,
+  isEqual,
+  snakeCase,
+  startCase,
+  upperFirst,
+} from 'lodash';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { FieldTag, ISchema } from '../../..';
 import { schemasAtom } from '../../../../admin/admin.atoms';
-import { IRelation } from '../../../interface/relation.interface';
+import {
+  IRelation,
+  IRelationBelongsToMany,
+} from '../../../interface/relation.interface';
 import {
   FieldTool,
   getTakenColumNames,
   isPrimary,
 } from '../../../util/field-tools';
+import { createEmptySchema } from '../../../util/get-new-schema';
 
 type Props = {
-  immutableSchema: ISchema;
-  immutableRelation: IRelation;
+  schema: ISchema;
+  setSchema: Dispatch<SetStateAction<ISchema>>;
+  immutableRelation: IRelationBelongsToMany;
   onClose: (relation: IRelation) => void;
 };
 
-export default function RelationHasOne({
-  immutableSchema,
-  immutableRelation,
+export default function RelationBelongsToMany({
   onClose,
+  schema,
+  setSchema,
+  immutableRelation,
 }: Props) {
-  const schemas = useRecoilValue(schemasAtom);
-  const [relation, setRelation] = useState<IRelation>(null);
+  const [schemas, setSchemas] = useRecoilState(schemasAtom);
+  const [relation, setRelation] = useState<IRelationBelongsToMany>(null);
   const [isChanged, setIsChanged] = useState(false);
-  const [primary, setPrimary] = useState<IField>(null);
-
-  const sameButNotPrimary = (field: IField) =>
-    field.type === primary.type && !FieldTool.isPrimary(field);
 
   useEffect(() => {
     setRelation(immutableRelation);
-    setPrimary(immutableSchema.fields.find(isPrimary));
   }, [immutableRelation]);
 
   useEffect(() => {
     if (relation) setIsChanged(!isEqual(relation, immutableRelation));
   }, [relation]);
+
+  const addThroughSchema = (target: string) => {
+    const jointName = schema.reference + ' to ' + target;
+    const targetSchema = schemas.find(
+      s => s.database === schema.database && s.reference === target,
+    );
+
+    const nts = createEmptySchema(schema.database);
+    nts.title = startCase(jointName);
+    nts.tableName = snakeCase(jointName);
+    nts.reference = camelCase(jointName);
+
+    const localPrimary = schema.fields.find(FieldTool.isPrimary);
+    const remotePrimary = targetSchema.fields.find(FieldTool.isPrimary);
+
+    const crossFieldLocal = FieldTool.createNew(
+      schema.reference + ' ' + localPrimary.reference,
+    );
+    const crossFieldRemote = FieldTool.createNew(
+      targetSchema.reference + ' ' + remotePrimary.reference,
+    );
+
+    crossFieldLocal.type = localPrimary.type;
+    crossFieldRemote.type = remotePrimary.type;
+
+    crossFieldLocal.tags = [FieldTag.PRIMARY];
+    crossFieldRemote.tags = [FieldTag.PRIMARY];
+
+    nts.fields = [crossFieldLocal, crossFieldRemote];
+
+    setSchemas(oldSchemas => {
+      const newSchemas = cloneDeep(oldSchemas);
+      newSchemas.push(nts);
+      return newSchemas;
+    });
+
+    message.success(`Cross table [${nts.title}] has been created`);
+  };
 
   return (
     relation && (
@@ -58,7 +104,7 @@ export default function RelationHasOne({
         onClose={() => onClose(relation)}
         title={
           <div className="flex w-full">
-            <div className="grow">Has One » {relation.name}</div>
+            <div className="grow">Belongs To Many » {relation.name}</div>
             <div className="shrink">
               {isChanged && (
                 <div className="-mt-1">
@@ -85,7 +131,14 @@ export default function RelationHasOne({
               onChange={newTarget => {
                 setRelation(oldState => {
                   const newState = cloneDeep(oldState);
-                  const usedNames = getTakenColumNames(immutableSchema);
+                  const remoteField = schemas
+                    .find(rs => rs.reference === newTarget)
+                    .fields.find(isPrimary).reference;
+
+                  newState.target = newTarget;
+                  newState.remoteField = remoteField;
+
+                  const usedNames = getTakenColumNames(schema);
                   let newName = camelCase(newTarget);
 
                   if (usedNames.includes(newName)) {
@@ -104,28 +157,25 @@ export default function RelationHasOne({
                   }
 
                   newState.name = newName;
-                  newState.target = newTarget;
-                  newState.remoteField = schemas
-                    .find(s => s.reference === newTarget)
-                    .fields.find(sameButNotPrimary).reference;
+                  newState.localField = schema.fields.find(
+                    FieldTool.isPrimary,
+                  ).reference;
+
+                  addThroughSchema(newTarget);
 
                   return newState;
                 });
               }}
             >
               {schemas
-                .filter(s => s.database === immutableSchema.database)
-                .map(other => {
-                  // Same type remote field which is not the primary key
-                  const sameType = other.fields.some(sameButNotPrimary);
+                .filter(s => s.database === schema.database)
+                .map(opt => {
+                  const primaries = opt.fields.filter(isPrimary).length;
 
-                  if (sameType) {
+                  if (primaries === 1) {
                     return (
-                      <Select.Option
-                        key={other.reference}
-                        value={other.reference}
-                      >
-                        {other.title}
+                      <Select.Option key={opt.reference} value={opt.reference}>
+                        {opt.title}
                       </Select.Option>
                     );
                   }
@@ -135,36 +185,17 @@ export default function RelationHasOne({
             </Select>
           </FormItem>
 
-          <FormItem label="Remote Field" className="hidden">
-            <Select
+          <FormItem label="Remote Field (Target's primary key)">
+            <Input
               value={relation.remoteField}
+              disabled
+              readOnly
               placeholder="Remote field"
-              showSearch
-              suffixIcon={<span className="material-icons-outlined">key</span>}
-              onSelect={(newRemoteField: string) => {
-                setRelation(oldState => {
-                  const newState = cloneDeep(oldState);
-                  newState.remoteField = newRemoteField;
-                  return newState;
-                });
-              }}
-            >
-              {relation.target &&
-                schemas
-                  .find(s => s.reference === relation.target)
-                  .fields.filter(sameButNotPrimary)
-                  .map(field => (
-                    <Select.Option
-                      key={field.reference}
-                      value={field.reference}
-                    >
-                      {field.title}
-                    </Select.Option>
-                  ))}
-            </Select>
+              addonAfter={<span className="material-icons-outlined">key</span>}
+            />
           </FormItem>
 
-          <FormItem label="Local Field (Primary Key)">
+          <FormItem label="Local Field (Local Primary key)">
             <Input
               value={relation.localField}
               disabled
@@ -181,15 +212,8 @@ export default function RelationHasOne({
               value={relation.name}
               onChange={e => {
                 setRelation(oldState => {
-                  const usedNames = getTakenColumNames(immutableSchema);
                   const newState = cloneDeep(oldState);
-
-                  if (usedNames.includes(e.target.value)) {
-                    message.warn(`Name [${e.target.value}] is already in use!`);
-                  } else {
-                    newState.name = e.target.value;
-                  }
-
+                  newState.name = e.target.value;
                   return newState;
                 });
               }}

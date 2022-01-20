@@ -10,8 +10,8 @@
     {
       "database": "main",
       "reference": "Account",
-      "title": "Accounts",
       "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
+      "title": "Accounts",
       "tableName": "__identity_accounts",
       "fields": [
         {
@@ -22,7 +22,13 @@
             "primary"
           ],
           "type": "uuid",
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "email",
@@ -32,7 +38,30 @@
             "unique"
           ],
           "type": "text",
-          "args": {}
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "signUpAt",
+          "columnName": "signUpAt",
+          "title": "Sign Up Date",
+          "type": "timestamp",
+          "defaultValue": null,
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false
+            }
+          },
+          "args": {},
+          "tags": [
+            "created"
+          ]
         },
         {
           "reference": "password",
@@ -41,10 +70,17 @@
           "tags": [],
           "type": "text",
           "args": {},
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": true
+            }
+          },
           "setters": [
             {
               "reference": "passwordHash",
-              "config": {}
+              "config": {},
+              "priority": 0
             }
           ]
         }
@@ -63,13 +99,28 @@
       "tags": [
         "system",
         "active"
-      ]
+      ],
+      "meta": {
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        "isFavorite": true
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
     },
     {
       "database": "main",
       "reference": "AccessKey",
-      "title": "Access Keys",
       "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
+      "title": "Access Keys",
       "tableName": "__identity_access_keys",
       "fields": [
         {
@@ -80,7 +131,13 @@
           "args": {},
           "tags": [
             "primary"
-          ]
+          ],
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "issuedAt",
@@ -90,7 +147,13 @@
           "args": {},
           "tags": [
             "created"
-          ]
+          ],
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          }
         },
         {
           "reference": "accountId",
@@ -100,7 +163,13 @@
           "args": {},
           "tags": [
             "indexed"
-          ]
+          ],
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false
+            }
+          }
         }
       ],
       "indices": [],
@@ -117,7 +186,102 @@
       "tags": [
         "active",
         "system"
-      ]
+      ],
+      "meta": {
+        "isFavorite": false,
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
+    },
+    {
+      "database": "main",
+      "title": "Access Roles",
+      "reference": "AccessRole",
+      "tableName": "__artgen_access_roles",
+      "fields": [
+        {
+          "title": "Identifier",
+          "reference": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          },
+          "args": {},
+          "tags": [
+            "primary"
+          ]
+        },
+        {
+          "title": "Created Date",
+          "reference": "createdAt",
+          "columnName": "created_at",
+          "type": "timestamp",
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          },
+          "tags": [
+            "created"
+          ]
+        },
+        {
+          "reference": "role",
+          "columnName": "role",
+          "title": "Role",
+          "type": "text",
+          "defaultValue": "",
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          },
+          "args": {},
+          "tags": [
+            "unique"
+          ]
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      },
+      "meta": {
+        "isFavorite": false,
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535"
     }
   ],
   "flows": [

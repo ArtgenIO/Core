@@ -1,6 +1,5 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { diff } from 'just-diff';
-import pick from 'lodash.pick';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { RowLike } from '../../../app/interface/row-like.interface';
@@ -77,12 +76,7 @@ export class RestService {
     const event = `crud.${database}.${reference}.created`;
 
     try {
-      const query = model.query().insertAndFetch(
-        pick(
-          input,
-          schema.fields.map(f => f.reference),
-        ),
-      );
+      const query = model.query().insertAndFetch(input);
 
       const record = await query;
 

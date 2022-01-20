@@ -6,13 +6,14 @@ import {
   ModelClass,
   Pojo,
   RelationMappings,
-  RelationType,
+  RelationThrough,
+  RelationType as ObjectionRelationType,
 } from 'objection';
 import { v4 } from 'uuid';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldTag, FieldType, ISchema } from '../../schema';
-import { RelationKind } from '../../schema/interface/relation.interface';
+import { RelationType } from '../../schema/interface/relation.interface';
 import { FieldTool } from '../../schema/util/field-tools';
 import { ITransform } from '../../transformer/interface/transform.interface';
 import { ITransformer } from '../../transformer/interface/transformer.interface';
@@ -161,8 +162,8 @@ export class DatabaseConnection implements IDatabaseConnection {
         schema.uniques.some(u => u.fields.includes(field.reference)) ||
         schema.relations.some(
           r =>
-            (r.kind == RelationKind.BELONGS_TO_MANY ||
-              r.kind == RelationKind.BELONGS_TO_ONE) &&
+            (r.kind == RelationType.BELONGS_TO_MANY ||
+              r.kind == RelationType.BELONGS_TO_ONE) &&
             r.localField == field.reference,
         );
 
@@ -637,20 +638,38 @@ export class DatabaseConnection implements IDatabaseConnection {
     const relationMappings: RelationMappings = {};
 
     for (const rel of collection.relations) {
-      let type: RelationType;
+      let type: ObjectionRelationType;
+      let through: RelationThrough<any> = undefined;
 
       switch (rel.kind) {
-        case RelationKind.BELONGS_TO_ONE:
+        case RelationType.BELONGS_TO_ONE:
           type = Model.BelongsToOneRelation;
           break;
-        case RelationKind.HAS_ONE:
+        case RelationType.HAS_ONE:
           type = Model.HasOneRelation;
           break;
-        case RelationKind.HAS_MANY:
+        case RelationType.HAS_MANY:
           type = Model.HasManyRelation;
           break;
-        case RelationKind.BELONGS_TO_MANY:
+        case RelationType.BELONGS_TO_MANY:
           type = Model.ManyToManyRelation;
+          const throughModel = this.getModel(rel.through);
+          const throughSchema = this.getSchema(rel.through);
+
+          // Define cross connection
+          through = {
+            from: `${throughSchema.tableName}.${
+              throughSchema.fields.find(
+                FieldTool.fReference(rel.throughLocalField),
+              ).columnName
+            }`,
+            to: `${throughSchema.tableName}.${
+              throughSchema.fields.find(
+                FieldTool.fReference(rel.throughRemoteField),
+              ).columnName
+            }`,
+            modelClass: throughModel,
+          };
           break;
       }
 
@@ -669,6 +688,7 @@ export class DatabaseConnection implements IDatabaseConnection {
             targetSchema.fields.find(f => f.reference == rel.remoteField)
               .columnName
           }`,
+          through,
         },
       };
     }

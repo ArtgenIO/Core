@@ -1,4 +1,4 @@
-export enum RelationKind {
+export enum RelationType {
   HAS_ONE = 'has-one',
   HAS_MANY = 'has-many',
   BELONGS_TO_ONE = 'belongs-to-one',
@@ -6,52 +6,56 @@ export enum RelationKind {
 }
 
 export interface IRelationHasOne {
-  kind: RelationKind.HAS_ONE;
+  name: string;
+  kind: RelationType.HAS_ONE;
   // Target DB,SCHEMA
   target: string;
-  // Local indexed key(s)
+  // Local primary key
   localField: string;
   // Remote unique key(s)
   remoteField: string;
 }
 
 export interface IRelationHasMany {
-  kind: RelationKind.HAS_MANY;
+  name: string;
+  kind: RelationType.HAS_MANY;
   // Target DB,SCHEMA
   target: string;
-  // Local indexed key(s)
+  // Local primary key
   localField: string;
   // Remote unique key(s)
   remoteField: string;
 }
 
 export interface IRelationBelongsToOne {
-  kind: RelationKind.BELONGS_TO_ONE;
+  name: string;
+  kind: RelationType.BELONGS_TO_ONE;
   // Target DB,SCHEMA
   target: string;
   // Local indexed key(s)
   localField: string;
-  // Remote unique key(s)
+  // Remote primary key
   remoteField: string;
 }
 
 export interface IRelationBelongsToMany {
-  kind: RelationKind.BELONGS_TO_MANY;
+  name: string;
+
+  kind: RelationType.BELONGS_TO_MANY;
   // Target DB,SCHEMA
   target: string;
-  // Local index key(s)
+  // Local primary key
   localField: string;
-  // Remote unique key(s)
+  // Remote compositive primary key's other side
   remoteField: string;
-  // The cross table
+  // The cross schema
   through: string;
+  throughLocalField: string;
+  throughRemoteField: string;
 }
 
-export type IRelation = {
-  name: string;
-} & (
+export type IRelation =
   | IRelationHasOne
   | IRelationBelongsToOne
   | IRelationHasMany
-  | IRelationBelongsToMany
-);
+  | IRelationBelongsToMany;

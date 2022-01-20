@@ -68,5 +68,5 @@ export interface IField {
   /**
    * Behavior tags.
    */
-  readonly tags: FieldTag[];
+  tags: FieldTag[];
 }

@@ -1,187 +1,295 @@
-import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Avatar, Button, Input, List, Popconfirm, Select, Tooltip } from 'antd';
-import { camelCase, cloneDeep, snakeCase, upperFirst } from 'lodash';
+import { PlusSquareOutlined, SaveOutlined } from '@ant-design/icons';
+import { Button, Drawer, Form, Input, List, Select, Switch } from 'antd';
+import FormItem from 'antd/lib/form/FormItem';
+import {
+  camelCase,
+  cloneDeep,
+  isEqual,
+  snakeCase,
+  startCase,
+  upperFirst,
+} from 'lodash';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { ISchema } from '../../..';
+import { useRecoilValue } from 'recoil';
+import { IField, ISchema } from '../../..';
+import { schemasAtom } from '../../../../admin/admin.atoms';
 import { IRelation } from '../../../interface/relation.interface';
-import { getTakenColumNames, isPrimary } from '../../../util/field-tools';
+import {
+  FieldTool,
+  getTakenColumNames,
+  isPrimary,
+} from '../../../util/field-tools';
+import { migrateField } from '../../../util/migrate-field';
+import FieldEditor from '../field-editor.component';
+
+type Props = {
+  schema: ISchema;
+  setSchema: Dispatch<SetStateAction<ISchema>>;
+  immutableRelation: IRelation;
+  onClose: (relation: IRelation) => void;
+};
 
 export default function RelationBelongsToOne({
-  relation,
+  onClose,
+  schema,
   setSchema,
-  idx,
-  schemas,
-}: {
-  relation: IRelation;
-  setSchema: Dispatch<SetStateAction<ISchema>>;
-  idx: number;
-  schemas: ISchema[];
-}) {
-  const [name, setName] = useState(relation.name);
-  const [remoteField, setRemoteField] = useState<string>(relation.remoteField);
-  const [localField, setLocalField] = useState<string>(relation.localField);
+  immutableRelation,
+}: Props) {
+  const schemas = useRecoilValue(schemasAtom);
+  const [relation, setRelation] = useState<IRelation>(null);
+  const [isChanged, setIsChanged] = useState(false);
+  const [fieldEditor, setFieldEditor] = useState<IField>(null);
+
+  const filterSameButNotPrimary = (targetPrimary: IField) => (field: IField) =>
+    field.type === targetPrimary.type && !FieldTool.isPrimary(field);
+
+  const getTargetPrimary = (target: string) =>
+    schemas
+      .find(s => s.database === schema.database && s.reference === target)
+      .fields.find(FieldTool.isPrimary);
+
+  const getLinkableFields = (target: string) =>
+    schema.fields.filter(filterSameButNotPrimary(getTargetPrimary(target)));
 
   useEffect(() => {
-    setRemoteField(relation.remoteField);
-    setLocalField(relation.localField);
-  }, [idx]);
+    setRelation(immutableRelation);
+  }, [immutableRelation]);
+
+  useEffect(() => {
+    if (relation) setIsChanged(!isEqual(relation, immutableRelation));
+  }, [relation]);
+
+  const addNewField = (name: string, target: string) => {
+    const fieldKeys = schema.fields.map(f => f.reference);
+    let fieldKey = 0;
+
+    while (++fieldKey) {
+      if (!fieldKeys.includes(`newField${fieldKey}`)) {
+        break;
+      }
+    }
+
+    const jointName = target + ' ' + getTargetPrimary(target).columnName;
+
+    const newField = migrateField(
+      {
+        reference: camelCase(jointName),
+        columnName: snakeCase(jointName),
+        title: startCase(jointName),
+        type: getTargetPrimary(target).type,
+        defaultValue: null,
+        meta: {},
+        args: {},
+        tags: [],
+      },
+      schema.fields.length,
+    );
+
+    setFieldEditor(newField);
+  };
 
   return (
-    <List.Item>
-      <List.Item.Meta
-        avatar={
-          <Avatar
-            shape="square"
-            size="large"
-            className="bg-yellow-500"
-            icon={
-              <span className="material-icons-outlined">settings_ethernet</span>
-            }
-          />
-        }
-        description="Belongs To One"
+    relation && (
+      <Drawer
+        width={640}
+        visible
+        onClose={() => onClose(relation)}
         title={
-          <Input
-            bordered={false}
-            size="large"
-            className="text-xl pl-0"
-            value={name}
-            onChange={e => {
-              setName(e.target.value);
-              setSchema(s => {
-                s.relations[idx].name = e.target.value;
-                return s;
-              });
-            }}
-          />
+          <div className="flex w-full">
+            <div className="grow">Belongs To One » {relation.name}</div>
+            <div className="shrink">
+              {isChanged && (
+                <div className="-mt-1">
+                  <Button
+                    className="text-yellow-500 border-yellow-500 hover:text-yellow-200 hover:border-yellow-200"
+                    block
+                    icon={<SaveOutlined />}
+                    onClick={() => setRelation(immutableRelation)}
+                  >
+                    Restore Changes
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
         }
-      />
+      >
+        <Form className="px-4" layout="vertical">
+          <FormItem label="Target Schema">
+            <Select
+              value={relation.target}
+              placeholder="Select Target"
+              showSearch
+              onChange={newTarget => {
+                setRelation(oldState => {
+                  const newState = cloneDeep(oldState);
+                  const remoteField = schemas
+                    .find(rs => rs.reference === newTarget)
+                    .fields.find(isPrimary).reference;
 
-      <div className="flex">
-        <div>
-          <Select
-            defaultValue={relation.target}
-            className="mx-2 w-96"
-            placeholder="Select Target"
-            onChange={newTarget => {
-              setSchema(s => {
-                const remoteField = schemas
-                  .find(rs => rs.reference === newTarget)
-                  .fields.find(isPrimary).reference;
+                  newState.target = newTarget;
+                  newState.remoteField = remoteField;
 
-                s.relations[idx].target = newTarget;
-                s.relations[idx].remoteField = remoteField;
-
-                setRemoteField(remoteField);
-
-                const usedNames = getTakenColumNames(s);
-                let newName = camelCase(newTarget);
-
-                if (usedNames.includes(newName)) {
-                  newName = `of${upperFirst(newName)}`;
+                  const usedNames = getTakenColumNames(schema);
+                  let newName = camelCase(newTarget);
 
                   if (usedNames.includes(newName)) {
-                    let nameX = 0;
+                    newName = `of${upperFirst(newName)}`;
 
-                    while (++nameX) {
-                      if (!usedNames.includes(`${newName}${nameX}`)) {
-                        newName = `${newName}${nameX}`;
-                        break;
+                    if (usedNames.includes(newName)) {
+                      let nameX = 0;
+
+                      while (++nameX) {
+                        if (!usedNames.includes(`${newName}${nameX}`)) {
+                          newName = `${newName}${nameX}`;
+                          break;
+                        }
                       }
                     }
                   }
-                }
 
-                let localName =
-                  snakeCase(newName) + upperFirst(snakeCase(remoteField));
+                  newState.name = newName;
+                  //newState.localField = snakeCase(newName + ' ' + remoteField);
 
-                s.relations[idx].localField = localName;
-                setLocalField(localName); // Just preset
-                s.relations[idx].name = newName;
-                setName(newName);
+                  if (!getLinkableFields(newTarget).length) {
+                    addNewField(newName, newTarget);
+                  }
 
-                return s;
-              });
-            }}
-          >
-            {schemas.map(opt => {
-              const primaries = opt.fields.filter(isPrimary).length;
-
-              if (primaries === 1) {
-                return (
-                  <Select.Option key={opt.reference} value={opt.reference}>
-                    {opt.title}
-                  </Select.Option>
-                );
-              }
-
-              return undefined;
-            })}
-          </Select>
-        </div>
-
-        <div>
-          <Tooltip
-            title="Local field name, will be added to the schema before generation"
-            placement="bottom"
-          >
-            <Input
-              value={localField}
-              disabled={!relation.target}
-              placeholder="Local field"
-              addonAfter={
-                <span className="material-icons-outlined text-sm">anchor</span>
-              }
-              className="mr-2 w-64"
-              onChange={e => {
-                setLocalField(e.target.value);
-                setSchema(s => {
-                  s.relations[idx].localField = e.target.value;
-
-                  return s;
+                  return newState;
                 });
               }}
-            />
-          </Tooltip>
-        </div>
+            >
+              {schemas
+                .filter(s => s.database === schema.database)
+                .map(opt => {
+                  const primaries = opt.fields.filter(isPrimary).length;
 
-        <div className="hidden">
-          <Tooltip
-            title="Target schema's primary key, automaticaly selected"
-            placement="bottom"
-          >
+                  if (primaries === 1) {
+                    return (
+                      <Select.Option key={opt.reference} value={opt.reference}>
+                        {opt.title}
+                      </Select.Option>
+                    );
+                  }
+
+                  return undefined;
+                })}
+            </Select>
+          </FormItem>
+
+          <FormItem label="Remote Field" className="hidden">
             <Input
-              value={remoteField}
+              value={relation.remoteField}
               disabled
               readOnly
               placeholder="Remote field"
-              className="w-64"
               addonAfter={<span className="material-icons-outlined">key</span>}
             />
-          </Tooltip>
-        </div>
-      </div>
+          </FormItem>
 
-      <Popconfirm
-        title="Are You sure to delete this relation?"
-        okText="Yes, delete"
-        cancelText="No"
-        placement="left"
-        icon={<QuestionCircleOutlined />}
-        onConfirm={() => {
-          setSchema(schema => {
-            const newSchema = cloneDeep(schema);
-            newSchema.relations.splice(idx, 1);
+          <FormItem label="Local Field (Reference)">
+            <div className="flex">
+              <div className="grow">
+                <Select
+                  className="border-r-0 rounded-r-none"
+                  disabled={!relation.target}
+                  value={relation.localField}
+                  placeholder="Please select the local field or create one"
+                  onSelect={(selected: string) => {
+                    setRelation(oldState =>
+                      Object.assign(cloneDeep(oldState), {
+                        localField: selected,
+                      } as Pick<IRelation, 'localField'>),
+                    );
+                  }}
+                >
+                  {relation.target &&
+                    getLinkableFields(relation.target).map(f => (
+                      <Select.Option key={f.reference} value={f.reference}>
+                        {f.title}
+                      </Select.Option>
+                    ))}
+                </Select>
+              </div>
+              <div className="shrink">
+                <Button
+                  className="border-l-0 rounded-l-none"
+                  disabled={!relation.target}
+                  type="primary"
+                  onClick={() => addNewField(relation.name, relation.target)}
+                  icon={<PlusSquareOutlined />}
+                ></Button>
+              </div>
+            </div>
+          </FormItem>
 
-            return newSchema;
-          });
-        }}
-      >
-        <Button
-          icon={<DeleteOutlined />}
-          className="rounded-md hover:text-red-500 hover:border-red-500"
-        ></Button>
-      </Popconfirm>
-    </List.Item>
+          <FormItem label="Local Reference">
+            <Input
+              placeholder="Referencing Name"
+              value={relation.name}
+              onChange={e => {
+                setRelation(oldState => {
+                  const newState = cloneDeep(oldState);
+                  newState.name = e.target.value;
+                  return newState;
+                });
+              }}
+            />
+          </FormItem>
+
+          <FormItem label="Cascade Behavior">
+            <List size="small" bordered>
+              <List.Item
+                actions={[
+                  <Switch key="onUpdate" checked={false} onChange={v => {}} />,
+                ]}
+              >
+                <List.Item.Meta title="Update this record when the referenced record's primary key is changed" />
+              </List.Item>
+              <List.Item
+                actions={[
+                  <Switch key="onDelete" checked={false} onChange={v => {}} />,
+                ]}
+              >
+                <List.Item.Meta title="Delete this record too when the referenced record is removed" />
+              </List.Item>
+            </List>
+          </FormItem>
+        </Form>
+        {fieldEditor && (
+          <FieldEditor
+            immutableField={fieldEditor}
+            immutableSchema={schema}
+            onClose={newField => {
+              if (newField) {
+                setSchema(currentSchema => {
+                  const newSchema = cloneDeep(currentSchema);
+                  const fIndex = newSchema.fields.findIndex(
+                    f => f.reference === fieldEditor.reference,
+                  );
+
+                  if (fIndex != -1) {
+                    newSchema.fields.splice(fIndex, 1, newField);
+                  } else {
+                    newSchema.fields.push(newField);
+                  }
+
+                  return newSchema;
+                });
+
+                setRelation(oldRelation => {
+                  const newRelation = cloneDeep(oldRelation);
+                  newRelation.localField = newField.reference;
+                  return newRelation;
+                });
+              }
+
+              setFieldEditor(null);
+            }}
+            isNewSchema={schema.reference === '__new_schema'}
+          />
+        )}
+      </Drawer>
+    )
   );
 }

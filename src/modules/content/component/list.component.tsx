@@ -1,5 +1,5 @@
 import { DatabaseOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Result } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import cloneDeep from 'lodash.clonedeep';
 import React, { useEffect, useState } from 'react';
@@ -23,6 +23,7 @@ export default function ContentListComponent() {
   // Routing
   const route = useParams() as unknown as RouteParams;
   const setLastContent = useSetRecoilState(lastViewedAtom);
+  const [isMissing, setIsMissing] = useState(false);
 
   // Local state
   const [schema, setSchema] = useState<ISchema>(null);
@@ -37,10 +38,25 @@ export default function ContentListComponent() {
         s => s.database === route.database && s.reference === route.reference,
       );
 
-      setSchema(current);
-      setLastContent([current.database, current.reference]);
+      if (current) {
+        setSchema(current);
+        setLastContent([current.database, current.reference]);
+      } else {
+        setIsMissing(true);
+      }
     }
   }, [route, schemas]);
+
+  if (isMissing) {
+    return (
+      <Result
+        status="error"
+        className="mt-36"
+        title="Schema does not exists"
+        subTitle="Use the side explorer to navigate to existing and accessible schemas"
+      ></Result>
+    );
+  }
 
   return (
     <ErrorBoundary>

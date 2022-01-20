@@ -14,10 +14,7 @@ import { inspect } from 'util';
 import { ILogger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldTag, FieldType, IField, ISchema } from '../../schema';
-import {
-  IRelation,
-  RelationKind,
-} from '../../schema/interface/relation.interface';
+import { RelationType } from '../../schema/interface/relation.interface';
 import { isPrimary } from '../../schema/util/field-tools';
 import { createEmptySchema } from '../../schema/util/get-new-schema';
 import { IDatabaseConnection, IEnumeratorStructure } from '../interface';
@@ -507,7 +504,7 @@ export class DatabaseSynchronizer {
                * @example User hasOne Avatar, local field is User.id remote field is Avatar.user_id
                * @example Customer hasMany Order, local field is Customer.id remote field is Order.customer_id
                */
-              if (rel.kind == RelationKind.BELONGS_TO_ONE) {
+              if (rel.kind == RelationType.BELONGS_TO_ONE) {
                 const target = this.connection.getSchema(rel.target);
 
                 table
@@ -519,7 +516,7 @@ export class DatabaseSynchronizer {
               /**
                * @example Product hasManyThroughMany Orders through the OrderEntry, local field is Product.id -> OrderEntry.product_id && OrderEntry.order_id -> Order.id
                */
-              if (rel.kind == RelationKind.BELONGS_TO_MANY) {
+              if (rel.kind == RelationType.BELONGS_TO_MANY) {
                 // TODO implement
               }
             });
@@ -609,10 +606,11 @@ export class DatabaseSynchronizer {
       // TODO do reverse checks to see which other table has FK on the target table to determin who is the real target in M:M
       const kind =
         remotePKs.length === 1
-          ? RelationKind.BELONGS_TO_ONE
-          : RelationKind.BELONGS_TO_MANY;
+          ? RelationType.BELONGS_TO_ONE
+          : RelationType.BELONGS_TO_MANY;
 
-      const relation: IRelation = {
+      // TODO: this needs to be investigated, we need to build graphs from foreign keys and check those with two edges in between
+      const relation: any = {
         name: foreign.constraint_name,
         kind,
         target: target.reference,

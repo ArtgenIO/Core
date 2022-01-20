@@ -7,6 +7,7 @@ export const createEmptySchema = (database: string): ISchema =>
     title: 'New Schema',
     reference: '__new_schema',
     tableName: '__new_schema',
+    moduleId: null,
     fields: [
       {
         title: 'Identifier',
@@ -22,4 +23,10 @@ export const createEmptySchema = (database: string): ISchema =>
     uniques: [],
     relations: [],
     tags: ['active'],
-  });
+    access: {
+      create: 'protected',
+      read: 'protected',
+      update: 'protected',
+      delete: 'protected',
+    },
+  } as ISchema);

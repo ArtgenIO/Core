@@ -13,6 +13,10 @@ export const migrateSchema = (schema: DeepPartial<ISchema>): ISchema => {
     };
   }
 
+  if (!schema.moduleId) {
+    schema.moduleId = null;
+  }
+
   if (!schema.meta) {
     schema.meta = {};
   }

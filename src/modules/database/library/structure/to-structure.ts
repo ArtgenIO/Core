@@ -1,6 +1,6 @@
 import { ITableStructure } from '../..';
 import { FieldType, ISchema } from '../../../schema';
-import { RelationKind } from '../../../schema/interface/relation.interface';
+import { RelationType } from '../../../schema/interface/relation.interface';
 
 export const toStructure = (schema: ISchema): ITableStructure => {
   const sortByName = (a: { name: string }, b: { name: string }) =>
@@ -14,8 +14,8 @@ export const toStructure = (schema: ISchema): ITableStructure => {
     .sort(sortByName)
     .filter(
       r =>
-        r.kind === RelationKind.BELONGS_TO_ONE ||
-        r.kind === RelationKind.BELONGS_TO_MANY,
+        r.kind === RelationType.BELONGS_TO_ONE ||
+        r.kind === RelationType.BELONGS_TO_MANY,
     )
     .map(r => ({
       target: r.target,
@@ -46,5 +46,5 @@ export const toStructure = (schema: ISchema): ITableStructure => {
     };
   }
 
-  return { tableName, relations, uniques, indices, columns: columns };
+  return { tableName, relations: [], uniques, indices, columns: columns };
 };

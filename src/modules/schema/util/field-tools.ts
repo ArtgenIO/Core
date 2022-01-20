@@ -1,4 +1,19 @@
+import { snakeCase, startCase } from 'lodash';
+import camelCase from 'lodash.camelcase';
 import { FieldTag, FieldType, IField, ISchema } from '..';
+import { migrateField } from './migrate-field';
+
+const createNew = (name: string) =>
+  migrateField({
+    reference: camelCase(name),
+    columnName: snakeCase(name),
+    title: startCase(name),
+    type: FieldType.TEXT,
+    defaultValue: null,
+    meta: {},
+    args: {},
+    tags: [],
+  });
 
 export const isPrimary = (field: IField) =>
   field.tags.includes(FieldTag.PRIMARY);
@@ -81,4 +96,5 @@ export const FieldTool = {
   isDate,
   isNumber,
   fReference: (ref: string) => (f: IField) => f.reference === ref,
+  createNew,
 };

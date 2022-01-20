@@ -68,7 +68,9 @@ export default function DatabaseArtboardComponent() {
 
   useEffect(() => {
     if (selectedNode) {
-      zoomTo(selectedNode);
+      if (!flowInstance || selectedNode.reference === '__new_schema') {
+        zoomTo(selectedNode);
+      }
     }
   }, [selectedNode]);
 

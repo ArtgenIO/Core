@@ -57,7 +57,7 @@ export default function SchemaEditorComponent({
 
   return (
     <Drawer
-      width="50%"
+      width={1080}
       title={
         <div className="flex w-full">
           <div className="grow">Schema » {schema.title}</div>
@@ -121,7 +121,9 @@ export default function SchemaEditorComponent({
           <Tabs
             tabPosition="left"
             size="middle"
-            defaultActiveKey={defaultKey ?? 'general'}
+            defaultActiveKey={
+              defaultKey ?? 'general' ? 'relations' : 'relations'
+            }
           >
             <Tabs.TabPane key="general" tab="General">
               <SchemaEditorGeneralComponent
@@ -148,7 +150,11 @@ export default function SchemaEditorComponent({
             </Tabs.TabPane>
 
             <Tabs.TabPane key="relations" tab="Relations">
-              <RelationsComponent schema={schema} setSchema={setSchema} />
+              <RelationsComponent
+                isNewSchema={isNewSchema}
+                schema={schema}
+                setSchema={setSchema}
+              />
             </Tabs.TabPane>
 
             <Tabs.TabPane key="indices" tab="Serialize">

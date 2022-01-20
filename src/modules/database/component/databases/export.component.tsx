@@ -1,13 +1,11 @@
-import { Button, Divider, Drawer, message, Result, Skeleton } from 'antd';
+import { Button, Divider, Drawer, message } from 'antd';
 import { saveAs } from 'file-saver';
-import { QueryBuilder } from 'odata-query-builder';
+import { useEffect, useState } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
-import { useHttpClient } from '../../../admin/library/use-http-client';
-import { toRestSysRoute } from '../../../content/util/schema-url';
-import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
+import { useRecoilValue } from 'recoil';
+import { schemasAtom } from '../../../admin/admin.atoms';
 import { ISchema } from '../../../schema';
-import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 import { IDatabase } from '../../interface';
 
 type Props = {
@@ -20,32 +18,27 @@ type DatabaseWithSchemas = IDatabase & {
 };
 
 export default function DatabaseExportComponent({ onClose, database }: Props) {
-  const [{ data: response, loading, error }] = useHttpClient<
-    IFindResponse<DatabaseWithSchemas>
-  >(
-    toRestSysRoute(SchemaRef.DATABASE) +
-      new QueryBuilder()
-        .top(1)
-        .select('ref,schemas')
-        .filter(f => f.filterExpression('ref', 'eq', database.ref))
-        .toQuery(),
-    {
-      useCache: false,
-    },
-  );
+  const schemas = useRecoilValue(schemasAtom);
+  const [content, setContent] = useState('');
 
-  if (error) {
-    return (
-      <Result
-        status="error"
-        title="Could not load the database schema!"
-      ></Result>
-    );
-  }
+  useEffect(() => {
+    if (schemas) {
+      setContent(
+        JSON.stringify(
+          {
+            ...database,
+            schemas: schemas.filter(s => s.database === database.ref),
+          },
+          null,
+          2,
+        ),
+      );
+    }
+  }, [schemas, database]);
 
   const doDownload = () => {
     const fileName = `schema-${database.ref}.json`;
-    const fileContent = new Blob([JSON.stringify(response.data[0], null, 2)], {
+    const fileContent = new Blob([content], {
       type: 'application/json',
     });
 
@@ -53,7 +46,7 @@ export default function DatabaseExportComponent({ onClose, database }: Props) {
   };
 
   const doCopy = () => {
-    navigator.clipboard.writeText(JSON.stringify(response.data[0], null, 2));
+    navigator.clipboard.writeText(content);
     message.success('Database copied to Your clipboard!', 2);
   };
 
@@ -64,27 +57,25 @@ export default function DatabaseExportComponent({ onClose, database }: Props) {
       title="Export Database Schemantic"
       onClose={onClose}
     >
-      <Skeleton active loading={loading}>
-        <Button.Group className="w-full">
-          <Button block type="primary" ghost onClick={doDownload}>
-            Download as JSON
-          </Button>
-          <Button block type="primary" onClick={doCopy}>
-            Copy to Clipboard
-          </Button>
-        </Button.Group>
-        <Divider />
+      <Button.Group className="w-full">
+        <Button block type="primary" ghost onClick={doDownload}>
+          Download as JSON
+        </Button>
+        <Button block type="primary" onClick={doCopy}>
+          Copy to Clipboard
+        </Button>
+      </Button.Group>
+      <Divider />
 
-        <SyntaxHighlighter
-          className="bg-midnight-800 rounded-sm"
-          language="json"
-          style={nord}
-          showLineNumbers={true}
-          selected
-        >
-          {response ? JSON.stringify(response.data[0], null, 2) : ''}
-        </SyntaxHighlighter>
-      </Skeleton>
+      <SyntaxHighlighter
+        className="bg-midnight-800 rounded-sm"
+        language="json"
+        style={nord}
+        showLineNumbers={true}
+        selected
+      >
+        {content}
+      </SyntaxHighlighter>
     </Drawer>
   );
 }

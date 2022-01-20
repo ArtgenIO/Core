@@ -24,6 +24,13 @@ export class HttpProxyProvider implements Provider<FastifyInstance> {
       keepAliveTimeout: 3_000,
       connectionTimeout: 3_000,
       pluginTimeout: 2_000,
+      ajv: {
+        customOptions: {
+          useDefaults: false,
+          coerceTypes: true,
+          nullable: true,
+        },
+      },
     });
     this.logger.debug('Initialized');
 

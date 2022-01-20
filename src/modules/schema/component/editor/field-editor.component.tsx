@@ -1,4 +1,4 @@
-import { DeleteOutlined, FormOutlined, SaveOutlined } from '@ant-design/icons';
+import { DeleteOutlined, SaveOutlined } from '@ant-design/icons';
 import {
   Button,
   Divider,
@@ -127,7 +127,7 @@ export default function FieldEditor({
     <ErrorBoundary>
       {field && (
         <Drawer
-          width="30%"
+          width={800}
           visible
           onClose={() => onClose(field)}
           title={
@@ -150,19 +150,12 @@ export default function FieldEditor({
             </div>
           }
         >
-          <Form
-            layout="vertical"
-            requiredMark={false}
-            className="w-full px-4"
-            size="small"
-          >
+          <Form layout="vertical" requiredMark={false} className="w-full px-4">
             <Form.Item className="mb-4" label="Title">
               <Input
                 size="large"
-                className="text-2xl pl-0"
-                bordered={false}
+                className="text-2xl"
                 placeholder="Just a human friendly title"
-                suffix={<FormOutlined />}
                 value={field.title}
                 onChange={e => {
                   setField(oldState =>
@@ -231,54 +224,6 @@ export default function FieldEditor({
               />
             </Form.Item>
 
-            <Form.Item label="Default Value" className="mb-2">
-              <Input.TextArea
-                autoSize
-                value={
-                  FieldTool.isJson(field) &&
-                  typeof field.defaultValue == 'object'
-                    ? JSON.stringify(field.defaultValue)
-                    : field.defaultValue === null
-                    ? 'null'
-                    : (field.defaultValue as string)
-                }
-                placeholder="Initial value"
-                onChange={e => {
-                  setField(oldState => {
-                    let newValue: IField['defaultValue'] = e.target.value;
-
-                    if (newValue === 'null') {
-                      newValue = null;
-                    } else if (
-                      FieldTool.isJson(field) &&
-                      newValue &&
-                      (newValue[0] === '{' || newValue[0] === '[')
-                    ) {
-                      newValue = JSON.parse(newValue);
-                    } else if (field.type === FieldType.BOOLEAN) {
-                      if (
-                        newValue === 'true' ||
-                        newValue === 'yes' ||
-                        (newValue as unknown as number) === 1
-                      ) {
-                        newValue = true;
-                      } else if (
-                        newValue === 'false' ||
-                        newValue === 'no' ||
-                        (newValue as unknown as number) === 0
-                      ) {
-                        newValue = false;
-                      }
-                    }
-
-                    return Object.assign(cloneDeep(oldState), {
-                      defaultValue: newValue,
-                    } as Pick<IField, 'defaultValue'>);
-                  });
-                }}
-              />
-            </Form.Item>
-
             <Form.Item label="Data Type" className="mb-2">
               <Select
                 className="w-64 mr-2"
@@ -312,6 +257,15 @@ export default function FieldEditor({
                 }}
                 showSearch
               >
+                <Select.Option key="uuid" value="uuid">
+                  UUID
+                </Select.Option>
+                <Select.Option key="text" value="text">
+                  Text
+                </Select.Option>
+                <Select.Option key="int" value="int">
+                  Integer
+                </Select.Option>
                 <Select.Option key="boolean" value="boolean">
                   Boolean
                 </Select.Option>
@@ -324,17 +278,8 @@ export default function FieldEditor({
                 <Select.Option key="time" value="time">
                   Time
                 </Select.Option>
-                <Select.Option key="int" value="int">
-                  Integer
-                </Select.Option>
                 <Select.Option key="json" value="json">
                   JSON
-                </Select.Option>
-                <Select.Option key="text" value="text">
-                  Text
-                </Select.Option>
-                <Select.Option key="uuid" value="uuid">
-                  UUID
                 </Select.Option>
                 <Select.Option key="string" value="string">
                   String
@@ -390,6 +335,54 @@ export default function FieldEditor({
               </Select>
             </Form.Item>
 
+            <Form.Item label="Default Value" className="mb-2">
+              <Input.TextArea
+                autoSize
+                value={
+                  FieldTool.isJson(field) &&
+                  typeof field.defaultValue == 'object'
+                    ? JSON.stringify(field.defaultValue)
+                    : field.defaultValue === null
+                    ? 'null'
+                    : (field.defaultValue as string)
+                }
+                placeholder="Initial value"
+                onChange={e => {
+                  setField(oldState => {
+                    let newValue: IField['defaultValue'] = e.target.value;
+
+                    if (newValue === 'null') {
+                      newValue = null;
+                    } else if (
+                      FieldTool.isJson(field) &&
+                      newValue &&
+                      (newValue[0] === '{' || newValue[0] === '[')
+                    ) {
+                      newValue = JSON.parse(newValue);
+                    } else if (field.type === FieldType.BOOLEAN) {
+                      if (
+                        newValue === 'true' ||
+                        newValue === 'yes' ||
+                        (newValue as unknown as number) === 1
+                      ) {
+                        newValue = true;
+                      } else if (
+                        newValue === 'false' ||
+                        newValue === 'no' ||
+                        (newValue as unknown as number) === 0
+                      ) {
+                        newValue = false;
+                      }
+                    }
+
+                    return Object.assign(cloneDeep(oldState), {
+                      defaultValue: newValue,
+                    } as Pick<IField, 'defaultValue'>);
+                  });
+                }}
+              />
+            </Form.Item>
+
             <div>
               {field.type === FieldType.ENUM && (
                 <>
@@ -442,7 +435,7 @@ export default function FieldEditor({
               )}
             </div>
 
-            <Form.Item label="Special Tags" className="mb-2">
+            <Form.Item label="System Behaviors" className="mb-2">
               <Select
                 allowClear
                 className="w-64 mr-2"
@@ -489,8 +482,10 @@ export default function FieldEditor({
 
             <Divider />
             <span className="font-header text-lg">
-              On <span className="text-primary-500">Set</span> Transformers
+              Value <span className="text-primary-500">Set</span> Transformers
             </span>
+            <i className="ml-4">Happens when writing the data</i>
+
             <List
               size="small"
               bordered
@@ -540,8 +535,9 @@ export default function FieldEditor({
 
             <Divider />
             <span className="font-header text-lg">
-              On <span className="text-primary-500">Get</span> Transformers
+              Value <span className="text-primary-500">Get</span> Transformers
             </span>
+            <i className="ml-4">Happens when reading the data</i>
             <List
               size="small"
               bordered
