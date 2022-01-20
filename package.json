@@ -1,7 +1,7 @@
 {
-  "name": "@artgen/core",
+  "name": "@artgenio/core",
   "version": "0.1.19",
-  "description": "Versatily headless CMS",
+  "description": "Next generation, Headless CMS with No Code engine",
   "keywords": [
     "headless-cmd",
     "nocode",

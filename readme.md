@@ -2,6 +2,7 @@
 
 [![CD](https://github.com/artgenio/core/actions/workflows/cd.yml/badge.svg?branch=main)](https://github.com/artgenio/core/actions/workflows/cd.yml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/artgenio/core)](https://hub.docker.com/r/artgenio/core)
+[![NPM](https://img.shields.io/npm/dt/@artgen/core?label=NPM)](https://www.npmjs.com/package/@artgen/core)]
 [![Docker Image Version](https://img.shields.io/docker/v/artgenio/core)](https://hub.docker.com/r/artgenio/core)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/artgenio/core)](https://github.com/ArtgenIO/Core/commits/main)
 [![Coverage Status](https://coveralls.io/repos/github/ArtgenIO/Core/badge.svg?branch=main)](https://coveralls.io/github/ArtgenIO/Core?branch=main)
@@ -12,13 +13,14 @@
 ---
 
 ```sh
+# Run in docker
 docker run -d -p 80:7200 artgenio/core:latest
 
-# Even faster test!
-npx @artgen/core
+# Run with node
+npx @artgenio/core
 ```
 
-then visit the [http://localhost:7200](http://localhost:7200) address
+then visit the [http://localhost:7200](http://localhost:7200) address for the demo
 
 #### Project Status
 
