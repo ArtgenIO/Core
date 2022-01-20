@@ -2,6 +2,15 @@
   "name": "@artgen/core",
   "version": "0.1.17",
   "description": "Versatily headless CMS",
+  "keywords": [
+    "headless-cmd",
+    "nocode",
+    "lowcode",
+    "database manager",
+    "cms",
+    "headless",
+    "react"
+  ],
   "main": "build/main.js",
   "homepage": "https://artgen.io",
   "license": "CC-BY-NC-ND-4.0",
@@ -38,6 +47,12 @@
     "test:watch": "jest --watch --collectCoverage=0",
     "test": "jest -i --collectCoverage=0",
     "test:debug": "node --inspect --inspect-brk node_modules/.bin/jest -i --collectCoverage=0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "artgen": "./bin/artgen"
   },
   "dependencies": {
     "@loopback/context": "^3.17.1",

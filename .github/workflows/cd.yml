@@ -233,6 +233,52 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
 
+  release-npm:
+    name: GPR / NPM release
+    runs-on: ubuntu-latest
+    needs:
+      - check
+      - test-mariadb
+      - test-mysql
+      - test-postgres
+      - test-sqlite
+    if: ${{ success() && needs.check.outputs.is_release == 'true' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install the interpreter
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
+      - name: Install development dependencies
+        run: yarn install --ignore-engines
+
+      - name: Run build
+        run: yarn build
+
+      - name: Publish to NPM
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          check-version: false
+
+      - name: Change the Interpreter for GPR
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@artgen'
+          cache: yarn
+
+      - name: Publish to GPR
+        run: yarn publish --non-interactive
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   release-docker:
     name: Docker release
     runs-on: ubuntu-latest

@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+const { main } = require('../build/main');
+const { AppModule } = require('../build/app/app.module');
+
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'production';
+}
+
+main([AppModule]);
