@@ -16,6 +16,12 @@ import { useHttpClientSimple } from './library/http-client';
 
 const { persistAtom } = recoilPersist();
 
+export const lastViewedAtom = atom<[string, string]>({
+  key: 'lastViewed',
+  default: null,
+  effects_UNSTABLE: [persistAtom],
+});
+
 export const jwtAtom = atom<string>({
   key: 'jwt',
   default: '',

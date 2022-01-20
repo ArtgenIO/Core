@@ -4,8 +4,8 @@ import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import cloneDeep from 'lodash.clonedeep';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import { schemasAtom } from '../../admin/admin.atoms';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { lastViewedAtom, schemasAtom } from '../../admin/admin.atoms';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { ISchema } from '../../schema';
@@ -22,6 +22,7 @@ type RouteParams = {
 export default function ContentListComponent() {
   // Routing
   const route = useParams() as unknown as RouteParams;
+  const setLastContent = useSetRecoilState(lastViewedAtom);
 
   // Local state
   const [schema, setSchema] = useState<ISchema>(null);
@@ -32,11 +33,12 @@ export default function ContentListComponent() {
 
   useEffect(() => {
     if (schemas) {
-      setSchema(
-        schemas.find(
-          s => s.database === route.database && s.reference === route.reference,
-        ),
+      const current = schemas.find(
+        s => s.database === route.database && s.reference === route.reference,
       );
+
+      setSchema(current);
+      setLastContent([current.database, current.reference]);
     }
   }, [route, schemas]);
 

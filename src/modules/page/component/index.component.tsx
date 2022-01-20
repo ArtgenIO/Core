@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { IPage } from '../interface/page.interface';
 import PageEditorComponent from './editor.component';
 
@@ -19,7 +20,7 @@ export default function PageIndexComponent() {
   const [{ data: reponse, loading, error }] = useHttpClient<
     IFindResponse<IPage>
   >(
-    toRestSysRoute('page') +
+    toRestSysRoute(SchemaRef.PAGE) +
       new QueryBuilder()
         .select('id,title,domain,path,tags')
         .orderBy('id')
