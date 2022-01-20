@@ -2,7 +2,7 @@
 
 [![CD](https://github.com/artgenio/core/actions/workflows/cd.yml/badge.svg?branch=main)](https://github.com/artgenio/core/actions/workflows/cd.yml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/artgenio/core)](https://hub.docker.com/r/artgenio/core)
-[![NPM](https://img.shields.io/npm/dt/@artgen/core?label=NPM)](https://www.npmjs.com/package/@artgen/core)]
+[![NPM](https://img.shields.io/npm/dt/@artgen/core?label=NPM)](https://www.npmjs.com/package/@artgen/core)
 [![Docker Image Version](https://img.shields.io/docker/v/artgenio/core)](https://hub.docker.com/r/artgenio/core)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/artgenio/core)](https://github.com/ArtgenIO/Core/commits/main)
 [![Coverage Status](https://coveralls.io/repos/github/ArtgenIO/Core/badge.svg?branch=main)](https://coveralls.io/github/ArtgenIO/Core?branch=main)
