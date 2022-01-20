@@ -19,6 +19,12 @@ const elements: IMenuItem[] = [
     title: 'Databases',
     path: 'databases',
   },
+  {
+    key: 'import',
+    icon: 'upload_file',
+    title: 'Import Schema',
+    path: 'import',
+  },
 ];
 
 export default function ManagerMenuComponent() {
