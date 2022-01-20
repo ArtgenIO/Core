@@ -439,7 +439,7 @@ export class DatabaseConnection implements IDatabaseConnection {
 
   protected toModel(schema: ISchema): ModelClass<Model> {
     // Map database columns to code level references
-    // Database -> Getter
+    // Database -> Model = Getter
     const toProperty = (s: ISchema) => {
       const columnMap = new Map<string, string>(
         s.fields.map(f => [f.columnName, f.reference]),
@@ -493,7 +493,7 @@ export class DatabaseConnection implements IDatabaseConnection {
     };
 
     // Map code level references to database columns
-    // Database -> Setter
+    // Database -> Model = Setter
     const toColumn = (s: ISchema) => {
       const referenceMap = new Map<string, string>(
         s.fields.map(f => [f.reference, f.columnName]),

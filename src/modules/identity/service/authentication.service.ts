@@ -1,4 +1,4 @@
-import { compare, hashSync } from 'bcrypt';
+import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 import { Model } from 'objection';
@@ -111,7 +111,7 @@ export class AuthenticationService {
 
     await model.query().insert({
       email: 'demo@artgen.io',
-      password: hashSync('demo', 3),
+      password: 'demo',
     });
 
     this.logger.info(
