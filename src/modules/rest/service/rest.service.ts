@@ -1,11 +1,16 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { diff } from 'just-diff';
+import pick from 'lodash.pick';
 import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { getErrorMessage } from '../../../app/kernel';
 import { SchemaService } from '../../schema/service/schema.service';
-import { isManagedField, isPrimary } from '../../schema/util/field-tools';
+import {
+  FieldTool,
+  isManagedField,
+  isPrimary,
+} from '../../schema/util/field-tools';
 import { IFindResponse } from '../interface/find-reponse.interface';
 import { ODataService } from './odata.service';
 
@@ -140,7 +145,7 @@ export class RestService {
   async update(
     database: string,
     reference: string,
-    idValues: Record<string, string>,
+    idValues: RowLike,
     input: RowLike,
   ): Promise<RowLike | null> {
     // Define the event key.
@@ -149,9 +154,16 @@ export class RestService {
     const model = this.schema.getModel(database, reference);
     // Load the data schema
     const schema = this.schema.getSchema(database, reference);
+    // Extact the identifiers
+    const pks = schema.fields.filter(FieldTool.isPrimary).map(f => f.reference);
+    const ids = Object.values(pick(idValues, pks));
+
+    if (pks.length !== ids.length) {
+      throw new Exception('Invalid identifiers');
+    }
 
     // Fetch the record
-    const record = await model.query().findById(Object.values(idValues));
+    const record = await model.query().findById(ids);
 
     if (!record) {
       return null;

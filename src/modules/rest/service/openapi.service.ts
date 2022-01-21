@@ -75,15 +75,35 @@ export class OpenApiService {
   }
 
   toFastifySchema(schema: ISchema, action: CrudAction): FastifySchema {
+    let isProtected: boolean = true;
+
+    switch (action) {
+      case CrudAction.CREATE:
+        isProtected = schema.access.create !== 'public';
+        break;
+      case CrudAction.READ:
+      case CrudAction.FIND:
+        isProtected = schema.access.read !== 'public';
+        break;
+      case CrudAction.UPDATE:
+        isProtected = schema.access.update !== 'public';
+        break;
+      case CrudAction.DELETE:
+        isProtected = schema.access.delete !== 'public';
+        break;
+    }
+
     const definition: FastifySchema = {
       tags: ['Rest'],
-      security: [
-        {
-          jwt: [],
-          accessKeyQuery: [],
-          accessKeyHeader: [],
-        },
-      ],
+      security: isProtected
+        ? [
+            {
+              jwt: [],
+              accessKeyQuery: [],
+              accessKeyHeader: [],
+            },
+          ]
+        : [],
       response: {
         401: this.getUnauthorizedResponseSchema(),
       },

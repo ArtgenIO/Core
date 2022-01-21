@@ -60,7 +60,7 @@ export default function SchemaEditorGeneralComponent({
         <Form.Item label="Module">
           <Select
             placeholder="Select a module"
-            value={schema.moduleId ? null : schema.moduleId}
+            value={schema.moduleId}
             allowClear
             onSelect={value =>
               setSchema(s => {

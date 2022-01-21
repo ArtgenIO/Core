@@ -2,7 +2,7 @@ import { EventEmitter2 } from 'eventemitter2';
 import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
-import { SystemBlueprintProvider } from '../../blueprint/provider/system-blueprint.provider';
+import { ArtgenBlueprintProvider } from '../../blueprint/provider/artgen-blueprint.provider';
 import { IContentModule } from '../../content/interface/content-module.interface';
 import { IDatabaseConnection } from '../../database/interface';
 import { DatabaseConnectionService } from '../../database/service/database-connection.service';
@@ -21,8 +21,8 @@ export class SchemaService {
     readonly connections: DatabaseConnectionService,
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
-    @Inject(SystemBlueprintProvider)
-    readonly systemBlueprint: IBlueprint,
+    @Inject(ArtgenBlueprintProvider)
+    readonly artgenBlueprint: IBlueprint,
   ) {}
 
   /**
@@ -55,7 +55,7 @@ export class SchemaService {
    */
   protected async upsertSystemModule(): Promise<void> {
     const model = this.getSysModel<ModuleModel>(SchemaRef.MODULE);
-    const record = this.systemBlueprint.content
+    const record = this.artgenBlueprint.content
       .Module[0] as unknown as IContentModule;
 
     const isExists = await model.query().findById(record.id);

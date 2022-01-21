@@ -3,14 +3,14 @@ import { IKernel } from '../../app/kernel';
 import { BlueprintObserver } from './blueprint.observer';
 import { BlueprintService } from './blueprint.service';
 import { BlueprintImportLambda } from './lambda/import-ext.lambda';
-import { SystemBlueprintProvider } from './provider/system-blueprint.provider';
+import { ArtgenBlueprintProvider } from './provider/artgen-blueprint.provider';
 
 @Module({
   providers: [
     BlueprintImportLambda,
     BlueprintService,
     BlueprintObserver,
-    SystemBlueprintProvider,
+    ArtgenBlueprintProvider,
   ],
 })
 export class BlueprintModule implements IModule {

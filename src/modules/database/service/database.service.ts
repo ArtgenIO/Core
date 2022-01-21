@@ -2,7 +2,7 @@ import { Model, ModelClass } from 'objection';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel';
 import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
-import { SystemBlueprintProvider } from '../../blueprint/provider/system-blueprint.provider';
+import { ArtgenBlueprintProvider } from '../../blueprint/provider/artgen-blueprint.provider';
 import { ISchema } from '../../schema';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { SchemaService } from '../../schema/service/schema.service';
@@ -21,8 +21,8 @@ export class DatabaseService {
     readonly schemaService: SchemaService,
     @Inject(DatabaseConnectionService)
     readonly connectionService: DatabaseConnectionService,
-    @Inject(SystemBlueprintProvider)
-    readonly systemBlueprint: IBlueprint,
+    @Inject(ArtgenBlueprintProvider)
+    readonly artgenBlueprint: IBlueprint,
   ) {}
 
   /**
@@ -140,6 +140,6 @@ export class DatabaseService {
    * Accessor to acquire the system's schemas from the packaged system blueprint.
    */
   protected getSystemSchemas(): ISchema[] {
-    return this.systemBlueprint.schemas;
+    return this.artgenBlueprint.schemas;
   }
 }

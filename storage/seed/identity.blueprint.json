@@ -12,7 +12,7 @@
       "reference": "Account",
       "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
       "title": "Accounts",
-      "tableName": "__identity_accounts",
+      "tableName": "__artgen_accounts",
       "fields": [
         {
           "reference": "id",
@@ -130,7 +130,7 @@
             "y": 0
           }
         },
-        "isFavorite": false
+        "isFavorite": true
       },
       "access": {
         "create": "protected",
@@ -144,7 +144,7 @@
       "reference": "AccessKey",
       "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
       "title": "Access Keys",
-      "tableName": "__identity_access_keys",
+      "tableName": "__artgen_access_keys",
       "fields": [
         {
           "title": "Key",
@@ -306,6 +306,133 @@
         }
       },
       "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535"
+    },
+    {
+      "database": "main",
+      "reference": "AccessControl",
+      "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
+      "title": "Access Control",
+      "tableName": "__artgen_access_control",
+      "fields": [
+        {
+          "title": "Identifier",
+          "reference": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [
+            "primary"
+          ]
+        },
+        {
+          "reference": "accessRoleId",
+          "columnName": "accessRoleId",
+          "title": "Access Role ID",
+          "type": "uuid",
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": []
+        },
+        {
+          "reference": "action",
+          "columnName": "action",
+          "title": "Action",
+          "type": "enum",
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {
+            "values": [
+              "Create",
+              "Read",
+              "Update",
+              "Delete"
+            ]
+          },
+          "tags": []
+        },
+        {
+          "title": "Created Date",
+          "reference": "createdAt",
+          "columnName": "created_at",
+          "type": "timestamp",
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 3,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "tags": [
+            "created"
+          ]
+        },
+        {
+          "title": "Updated Date",
+          "reference": "updatedAt",
+          "columnName": "updated_at",
+          "defaultValue": null,
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 4,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "type": "timestamp",
+          "tags": [
+            "updated",
+            "nullable"
+          ]
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [
+        {
+          "kind": "belongs-to-one",
+          "name": "accessRole",
+          "target": "AccessRole",
+          "localField": "accessRoleId",
+          "remoteField": "id"
+        }
+      ],
+      "tags": [
+        "active"
+      ],
+      "meta": {
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
     }
   ],
   "flows": [
@@ -618,6 +745,13 @@
         "tags": [
           "system"
         ]
+      }
+    ],
+    "AccessRole": [
+      {
+        "id": "8cb4fe07-a7b1-4c0e-8a4c-8177be15866d",
+        "role": "Administrator",
+        "createdAt": "2022-01-21 08:16:37.351"
       }
     ]
   }

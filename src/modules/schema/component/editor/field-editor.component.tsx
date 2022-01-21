@@ -17,7 +17,7 @@ import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { FieldType, IField, ISchema } from '../..';
+import { FieldTag, FieldType, IField, ISchema } from '../..';
 import { schemasAtom } from '../../../admin/admin.atoms';
 import { FieldTool } from '../../util/field-tools';
 
@@ -390,6 +390,12 @@ export default function FieldEditor({
                         (newValue as unknown as number) === 0
                       ) {
                         newValue = false;
+                      }
+                    } else if (newValue === '') {
+                      if (field.tags.includes(FieldTag.NULLABLE)) {
+                        newValue = null;
+                      } else {
+                        newValue = undefined;
                       }
                     }
 

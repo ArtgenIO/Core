@@ -1,6 +1,6 @@
 {
   "id": "10000000-0000-0000-0000-000000000000",
-  "title": "System",
+  "title": "Artgen",
   "version": "0.0.1",
   "icon": "settings",
   "source": "offline",
@@ -440,7 +440,7 @@
           "title": "Value",
           "columnName": "value",
           "defaultValue": null,
-          "type": "json",
+          "type": "text",
           "args": {},
           "tags": [
             "nullable"
@@ -450,7 +450,21 @@
               "order": 1,
               "hidden": false
             }
-          }
+          },
+          "setters": [
+            {
+              "reference": "json",
+              "config": {},
+              "priority": 0
+            }
+          ],
+          "getters": [
+            {
+              "reference": "json",
+              "config": {},
+              "priority": 0
+            }
+          ]
         }
       ],
       "indices": [],
@@ -546,7 +560,7 @@
             "y": 339
           }
         },
-        "isFavorite": false
+        "isFavorite": true
       },
       "access": {
         "create": "protected",
@@ -975,7 +989,7 @@
     "Module": [
       {
         "id": "c2046325-9d0e-42a4-aa55-1116fdd97913",
-        "name": "System",
+        "name": "Artgen",
         "tags": [
           "system"
         ]

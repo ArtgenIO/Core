@@ -8,7 +8,7 @@ import { DatabaseConnectionService } from '../database/service/database-connecti
 import { RestService } from '../rest/service/rest.service';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IBlueprint } from './interface/blueprint.interface';
-import { SystemBlueprintProvider } from './provider/system-blueprint.provider';
+import { ArtgenBlueprintProvider } from './provider/artgen-blueprint.provider';
 
 @Service()
 export class BlueprintService {
@@ -17,19 +17,19 @@ export class BlueprintService {
     readonly logger: ILogger,
     @Inject(RestService)
     readonly rest: RestService,
-    @Inject(SystemBlueprintProvider)
-    readonly systemBlueprint: IBlueprint,
+    @Inject(ArtgenBlueprintProvider)
+    readonly artgenBlueprint: IBlueprint,
     @Inject(DatabaseConnectionService)
     readonly connections: DatabaseConnectionService,
   ) {}
 
   async seed() {
     const sysExists = await this.rest.read('main', SchemaRef.BLUEPRINT, {
-      id: this.systemBlueprint.id,
+      id: this.artgenBlueprint.id,
     });
 
     if (!sysExists) {
-      await this.install('main', this.systemBlueprint);
+      await this.install('main', this.artgenBlueprint);
 
       // Install the identity blueprint too
       await this.install(
@@ -46,23 +46,42 @@ export class BlueprintService {
     blueprint.database = database;
 
     const link = this.connections.findOne(database);
+    const existingSchemas = link.getSchemas();
+    const skippedSchemas = new Set<string>();
 
-    // TODO: split this into two phase, check if we create the schema for the data now, or can we inject data safely
+    // Has content to install
     if (blueprint?.content) {
-      for (const schema in blueprint.content) {
-        if (Object.prototype.hasOwnProperty.call(blueprint.content, schema)) {
-          const rows = blueprint.content[schema];
+      for (const schemaRef in blueprint.content) {
+        if (!existingSchemas.some(s => s.reference === schemaRef)) {
+          skippedSchemas.add(schemaRef);
+
+          this.logger.info(
+            'Content for [%s] blueprint delayed on the [%s] schema',
+            blueprint.title,
+            schemaRef,
+          );
+          continue;
+        }
+
+        if (
+          Object.prototype.hasOwnProperty.call(blueprint.content, schemaRef)
+        ) {
+          const rows = blueprint.content[schemaRef];
 
           for (const row of rows) {
-            const isExists = await this.rest.read('main', schema, row);
+            const isExists = await this.rest.read(database, schemaRef, row);
 
             if (!isExists) {
-              await this.rest.create(database, schema, row);
+              await this.rest.create(database, schemaRef, row);
+            } else {
+              await this.rest.update(database, schemaRef, row, row);
             }
           }
         }
       }
     }
+
+    const installedSchemas = new Set<string>();
 
     // Preload the schemas before they are injected one by one.
     if (blueprint?.schemas && blueprint.schemas.length) {
@@ -75,6 +94,8 @@ export class BlueprintService {
         const isExists = await this.rest.read('main', SchemaRef.SCHEMA, schema);
 
         if (!isExists) {
+          installedSchemas.add(schema.reference);
+
           await this.rest
             .create('main', SchemaRef.SCHEMA, schema)
             .then(() =>
@@ -130,6 +151,38 @@ export class BlueprintService {
           blueprint.title,
           flow.id,
         );
+      }
+    }
+
+    // Install content which was dependent.
+    if (skippedSchemas.size) {
+      for (const schemaRef of skippedSchemas.values()) {
+        if (!installedSchemas.has(schemaRef)) {
+          this.logger.error(
+            'Skipping on content for [%s] schema does not exists',
+            schemaRef,
+          );
+          continue;
+        }
+
+        const rows = blueprint.content[schemaRef];
+
+        this.logger.info(
+          'Installing [%d] record for [%s] blueprint into the [%s] schema',
+          rows.length,
+          blueprint.title,
+          schemaRef,
+        );
+
+        for (const row of rows) {
+          const isExists = await this.rest.read(database, schemaRef, row);
+
+          if (!isExists) {
+            await this.rest.create(database, schemaRef, row);
+          } else {
+            //await this.rest.update(database, schemaRef, row, row);
+          }
+        }
       }
     }
 

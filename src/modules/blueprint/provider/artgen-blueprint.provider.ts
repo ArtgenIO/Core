@@ -7,10 +7,10 @@ import { migrateSchema } from '../../schema/util/migrate-schema';
 import { IBlueprint } from '../interface/blueprint.interface';
 
 @Service()
-export class SystemBlueprintProvider implements Provider<IBlueprint> {
+export class ArtgenBlueprintProvider implements Provider<IBlueprint> {
   value() {
     const blueprint = JSON.parse(
-      readFileSync(join(SEED_DIR, 'system.blueprint.json')).toString(),
+      readFileSync(join(SEED_DIR, 'artgen.blueprint.json')).toString(),
     ) as IBlueprint;
 
     blueprint.schemas.forEach(migrateSchema);

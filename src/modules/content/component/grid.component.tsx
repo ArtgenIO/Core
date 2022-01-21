@@ -2,6 +2,8 @@ import {
   CalendarOutlined,
   ClockCircleOutlined,
   CodeOutlined,
+  CopyOutlined,
+  DatabaseOutlined,
   DeleteOutlined,
   DownOutlined,
   EditOutlined,
@@ -9,6 +11,7 @@ import {
   FilterOutlined,
   KeyOutlined,
   QuestionCircleOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -27,16 +30,18 @@ import Column, { ColumnProps } from 'antd/lib/table/Column';
 import { SorterResult } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import cloneDeep from 'lodash.clonedeep';
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ResizableBox } from 'react-resizable';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { pageSizeAtom, schemasAtom } from '../../admin/admin.atoms';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { FieldTag, FieldType, IField, ISchema } from '../../schema';
+import SchemaEditorComponent from '../../schema/component/editor.component';
 import { FieldTool } from '../../schema/util/field-tools';
+import { fSchema } from '../../schema/util/filter-schema';
 import { GridTools } from '../util/grid.tools';
 import { toRestRecordRoute, toRestRoute } from '../util/schema-url';
 import ContentCreateComponent from './create.component';
@@ -46,14 +51,22 @@ import ContentUpdateComponent from './update.component';
 
 type Props = {
   schema: ISchema;
+  triggerShowCreate?: boolean;
+  setTriggerShowCreate?: Dispatch<SetStateAction<boolean>>;
 };
 
-export default function TableComponent({ schema }: Props) {
+export default function TableComponent({
+  schema,
+  triggerShowCreate,
+  setTriggerShowCreate,
+}: Props) {
+  // Global state
   const httpClient = useHttpClientSimple();
   const [browserParams, setBrowserParams] = useSearchParams();
-  const schemas = useRecoilValue(schemasAtom);
+  const [schemas, setSchemas] = useRecoilState(schemasAtom);
 
   const [apiUrl, setApiUrl] = useState(null);
+  const [editSchema, setEditSchema] = useState<ISchema>(null);
 
   // Extended views in drawer
   const [showCreate, setShowCreate] = useState<boolean>(false);
@@ -81,6 +94,12 @@ export default function TableComponent({ schema }: Props) {
 
   // Visuals
   const [fieldWidth, setFieldWidth] = useState<[string, number][]>([]);
+
+  useEffect(() => {
+    if (triggerShowCreate) {
+      setShowCreate(true);
+    }
+  }, [triggerShowCreate]);
 
   useEffect(() => {
     if (browserParams.has('page')) {
@@ -232,10 +251,7 @@ export default function TableComponent({ schema }: Props) {
     <>
       <div className="flex my-2">
         <div className="shrink">
-          <Button.Group size="small">
-            <Button icon={<FileOutlined />} onClick={() => setShowCreate(true)}>
-              New
-            </Button>
+          <Button.Group>
             <Button
               icon={<FilterOutlined />}
               onClick={() => setShowFilter(v => !v)}
@@ -244,7 +260,6 @@ export default function TableComponent({ schema }: Props) {
             </Button>
 
             <Dropdown.Button
-              size="small"
               overlay={
                 <Menu
                   selectable
@@ -288,6 +303,50 @@ export default function TableComponent({ schema }: Props) {
               ) : undefined}
               Refresh
             </Dropdown.Button>
+          </Button.Group>
+        </div>
+
+        <div className="shink ml-1">
+          <Button
+            icon={<DatabaseOutlined />}
+            ghost
+            onClick={() => setEditSchema(schema)}
+          >
+            Edit Schemantics
+          </Button>
+        </div>
+
+        <div className="shrink ml-1">
+          <Button.Group>
+            <Button
+              icon={<UploadOutlined />}
+              onClick={() => setShowCreate(true)}
+            >
+              Import
+            </Button>
+
+            <Button
+              icon={<CopyOutlined />}
+              disabled={!selected.length}
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  JSON.stringify(
+                    cloneDeep(selected).map(r => {
+                      delete r['__ag_rowkey'];
+                      return r;
+                    }),
+                    null,
+                    2,
+                  ),
+                );
+
+                message.success(
+                  `${selected.length} rows has been copied to Your clipboard!`,
+                );
+              }}
+            >
+              Copy
+            </Button>
 
             <Popconfirm
               disabled={!selected.length}
@@ -331,12 +390,11 @@ export default function TableComponent({ schema }: Props) {
 
         <div className="grow text-right">
           <Pagination
-            size="small"
             total={total}
             defaultCurrent={pageCurr}
             current={pageCurr}
             pageSize={pageSize}
-            pageSizeOptions={[10, 20, 50, 100, 500, 1000]}
+            pageSizeOptions={[10, 20, 50, 100, 250, 500, 1000, 2000]}
             showSizeChanger
             showQuickJumper
             showTotal={total => (
@@ -621,6 +679,9 @@ export default function TableComponent({ schema }: Props) {
           schema={schema}
           onClose={() => {
             setShowCreate(false);
+            if (setTriggerShowCreate) {
+              setTriggerShowCreate(false);
+            }
             doRefetch(Date.now());
           }}
         />
@@ -633,6 +694,34 @@ export default function TableComponent({ schema }: Props) {
           onClose={() => {
             setShowEdit(null);
             doRefetch(Date.now());
+          }}
+        />
+      )}
+
+      {editSchema && (
+        <SchemaEditorComponent
+          schema={schema}
+          defaultKey="fields"
+          onClose={newSchema => {
+            if (newSchema) {
+              setSchemas(currentState => {
+                const newState = cloneDeep(currentState);
+                const idx = newState.findIndex(fSchema(newSchema));
+
+                // Replace with the newSchema state
+                if (idx !== -1) {
+                  newState.splice(idx, 1, newSchema);
+                }
+                // Add new schema
+                else {
+                  newState.push(newSchema);
+                }
+
+                return newState;
+              });
+            }
+
+            setEditSchema(null);
           }}
         />
       )}
