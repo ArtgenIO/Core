@@ -146,9 +146,14 @@ export const toODataFilter = (
 
     // Where COL1 = COL2
     if (filter.properties.valueSrc[0] === 'field') {
-      builder.filterPhrase(`${field} ${expOp} ${filter.properties.value[0]}`);
+      builder.filterPhrase(
+        `${field.replace(
+          /\./g,
+          '/',
+        )} ${expOp} ${filter.properties.value[0].replace(/\./g, '/')}`,
+      );
     } else {
-      builder.filterExpression(field, expOp, value);
+      builder.filterExpression(field.replace(/\./g, '/'), expOp, value);
     }
   }
 

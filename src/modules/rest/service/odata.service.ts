@@ -1,11 +1,19 @@
 import { isArray, merge, pick } from 'lodash';
-import { Model, ModelClass, Operator, QueryBuilder, ref } from 'objection';
+import {
+  Model,
+  ModelClass,
+  Operator,
+  QueryBuilder,
+  ref,
+  RelationExpression,
+} from 'objection';
 import parser from 'odata-parser';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { inspect } from 'util';
-import { ILogger, Logger, Service } from '../../../app/container';
+import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldType, ISchema } from '../../schema';
+import { SchemaService } from '../../schema/service/schema.service';
 import {
   fLiteral,
   fLogic,
@@ -15,12 +23,15 @@ import {
 
 type QB = QueryBuilder<Model, Model[]>;
 type AST = IODataAST;
+type RC = RelationExpression<Model>;
 
 @Service()
 export class ODataService {
   constructor(
     @Logger()
     readonly logger: ILogger,
+    @Inject(SchemaService)
+    readonly schema: SchemaService,
   ) {}
 
   /**
@@ -45,6 +56,46 @@ export class ODataService {
     throw new Exception(`Unknown [${op}] operator`);
   }
 
+  protected getRelationFromColumn(property: fPropery): string | null {
+    if (property.name.match('/')) {
+      const [relName, relField] = property.name.split('/');
+      return relName;
+    }
+
+    return null;
+  }
+
+  protected collectRelations(
+    $filter: AST['$filter'],
+    relations: Set<string>,
+  ): Set<string> {
+    switch ($filter.type) {
+      case 'literal':
+        // Nope
+        break;
+
+      case 'functioncall':
+        for (const arg of $filter.args) {
+          this.collectRelations(arg, relations);
+        }
+
+        break;
+
+      case 'property':
+        const match = this.getRelationFromColumn($filter);
+        if (match) {
+          relations.add(match);
+        }
+        break;
+      default:
+        this.collectRelations($filter.left, relations);
+        this.collectRelations($filter.right, relations);
+        break;
+    }
+
+    return relations;
+  }
+
   /**
    * Apply the $filter segment
    */
@@ -53,8 +104,24 @@ export class ODataService {
     qb: QB,
     $filter: AST['$filter'],
   ): QB {
-    const getColumn = (ref: string) =>
-      schema.fields.find(f => f.reference === ref).columnName;
+    const getColumnName = (name: string) => {
+      // Relation condition!
+      if (name.match('/')) {
+        const [relName, relField] = name.split('/');
+        const relation = schema.relations.find(rel => rel.name === relName);
+        const relSchema = this.schema.getSchema(
+          schema.database,
+          relation.target,
+        );
+        const relColumn = relSchema.fields.find(
+          f => f.reference === relField,
+        ).columnName;
+
+        return `_agf_${relName}.${relColumn}`;
+      }
+
+      return schema.fields.find(f => f.reference === name).columnName;
+    };
 
     const isColumn = (side: fLogic) => side.type == 'property';
 
@@ -67,9 +134,10 @@ export class ODataService {
       case 'ge':
         // Where COL = 'val'
         if (isColumn($filter.left) && !isColumn($filter.right)) {
-          const colLeft = getColumn(($filter.left as fPropery).name);
-          const right = $filter.right as fLiteral;
+          const fLeft = $filter.left as fPropery;
+          const colLeft: string = getColumnName(fLeft.name);
 
+          const right = $filter.right as fLiteral;
           const operator = this.mapOperator($filter.type);
 
           if (isArray(right.value)) {
@@ -105,12 +173,20 @@ export class ODataService {
           const left = $filter.left as fPropery;
           const right = $filter.right as fPropery;
 
-          const colLeft = getColumn(left.name);
-          const colRigh = getColumn(right.name);
+          let colLeft = getColumnName(left.name);
+          let colRight = getColumnName(right.name);
+
+          if (colLeft.indexOf('.') === -1) {
+            colLeft = `_agb_.${colLeft}`;
+          }
+
+          if (colRight.indexOf('.') === -1) {
+            colRight = `_agb_.${colRight}`;
+          }
 
           const operator = this.mapOperator($filter.type);
 
-          qb.where(colLeft, operator, ref(colRigh));
+          qb.where(colLeft, operator, ref(colRight));
         }
         // Where COL (like 'xxx%') = true
         else {
@@ -155,7 +231,7 @@ export class ODataService {
             const property = $filter.args.find(
               arg => arg.type === 'property',
             ) as fPropery;
-            const column = getColumn(property.name);
+            const column = getColumnName(property.name);
 
             // Find the substring for it
             const literal = $filter.args.find(
@@ -242,13 +318,18 @@ export class ODataService {
     }
 
     if (fieldSelection.size) {
-      qb.select(
-        Array.from(fieldSelection.values()).map(
-          fRef => schema.fields.find(f => f.reference == fRef).columnName,
-        ),
+      qb.column(
+        Array.from(fieldSelection.values()).map(fRef => {
+          const columnName = schema.fields.find(
+            f => f.reference == fRef,
+          ).columnName;
+
+          return `_agb_.${columnName}`;
+        }),
       );
     }
 
+    // TODO measure with join / sub select for speed
     if (eagerSelection.size) {
       qb.withGraphFetched(
         `[${Array.from(eagerSelection.values()).join(', ')}]`,
@@ -287,6 +368,7 @@ export class ODataService {
     model: ModelClass<Model>,
     schema: ISchema,
     filters: object,
+    forAggregate: boolean = false,
   ): QB {
     // Merge with the defualts, need to pick the valid keys because the lib crashes if non odata params are apssed.
     const options = pick(
@@ -303,29 +385,49 @@ export class ODataService {
     // Convert it into string (the parser only accepts it in this format)
     const queryString = decodeURIComponent(stringify(options));
     const ast: AST = parser.parse(queryString);
+
     const qb = model.query();
 
-    // Select X,Y
-    if (ast?.$select) {
-      this.applySelect(schema, qb, ast.$select);
+    if (!forAggregate) {
+      // Select X,Y
+      if (ast?.$select) {
+        this.applySelect(schema, qb.alias('_agb_'), ast.$select);
+      }
+
+      if (ast?.$orderby) {
+        this.applyOrderBy(schema, qb, ast.$orderby);
+      }
+
+      // We allow the -1 to be converted to no limit.
+      if (ast?.$top && ast.$top != -1) {
+        qb.limit(ast.$top);
+      }
+
+      if (ast?.$skip) {
+        qb.offset(ast.$skip);
+      }
     }
 
     if (ast?.$filter) {
-      this.logger.debug('Filter [%s]', inspect(ast.$filter, false, 8, false));
+      if (1)
+        this.logger.debug('Filter [%s]', inspect(ast.$filter, false, 8, false));
       this.applyConditions(schema, qb, ast.$filter);
-    }
 
-    if (ast?.$orderby) {
-      this.applyOrderBy(schema, qb, ast.$orderby);
-    }
+      // Collect relations to filter for them
+      const relations = new Set<string>();
+      this.collectRelations(ast.$filter, relations);
 
-    // We allow the -1 to be converted to no limit.
-    if (ast?.$top && ast.$top != -1) {
-      qb.limit(ast.$top);
-    }
+      if (relations.size) {
+        const expression: RelationExpression<Model> = {};
 
-    if (ast?.$skip) {
-      qb.offset(ast.$skip);
+        for (const relName of relations.values()) {
+          expression[`_agf_${relName}`] = {
+            $relation: relName,
+          };
+        }
+
+        qb.joinRelated(expression);
+      }
     }
 
     // Debugger

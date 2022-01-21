@@ -1,4 +1,5 @@
 import {
+  Field as FilterFieldProps,
   FieldOrGroup,
   FieldSettings,
   SelectFieldSettings,
@@ -120,12 +121,18 @@ export const toFieldFilter = (f: IField): FieldOrGroup | null => {
     ops.push('some', 'none');
   }
 
-  return {
+  const definition = {
     label: f.title,
     type,
+    fieldName: f.reference,
     operators: f.type == FieldType.ENUM ? ['select_equals'] : ops,
     valueSources,
-    fieldSettings,
-    listValues,
-  };
+  } as FilterFieldProps;
+
+  if (f.type == FieldType.ENUM) {
+    definition.fieldSettings = fieldSettings;
+    definition.listValues = listValues;
+  }
+
+  return definition;
 };

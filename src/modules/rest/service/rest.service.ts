@@ -47,17 +47,18 @@ export class RestService {
         .count('* as count')
         .toKnexQuery();
 
-      const records = (await rowQuery).map(record => record.$toJson());
+      const [rowResult, cntResult] = await Promise.all([rowQuery, cntQuery]);
 
       return {
         meta: {
-          total: parseInt((await cntQuery)[0].count, 10),
-          count: records.length,
+          total: parseInt(cntResult[0].count, 10) ?? 0,
+          count: rowResult.length ?? 0,
         },
-        data: records,
+        data: rowResult.map(record => record.$toJson()),
       };
     } catch (error) {
       this.logger.warn(getErrorMessage(error));
+      console.error(error);
       throw new Exception('Invalid input'); // 400
     }
   }

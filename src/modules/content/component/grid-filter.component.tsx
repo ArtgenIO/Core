@@ -12,7 +12,9 @@ import {
 import AntdConfig from 'react-awesome-query-builder/lib/config/antd';
 import 'react-awesome-query-builder/lib/css/compact_styles.css';
 import 'react-awesome-query-builder/lib/css/styles.css';
+import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
+import { schemasAtom } from '../../admin/admin.atoms';
 import { ISchema } from '../../schema';
 import { toFieldFilter } from '../util/to-field-filter';
 import { toODataFilter } from '../util/to-odata-filter';
@@ -26,6 +28,7 @@ type Props = {
 export default function GridFilterComponent({ schema, setFilter }: Props) {
   const [config, setConfig] = useState<Config>(null);
   const [tree, setTree] = useState<ImmutableTree>(null);
+  const schemas = useRecoilValue(schemasAtom);
 
   // Reset state on unload
   useEffect(() => {
@@ -50,6 +53,29 @@ export default function GridFilterComponent({ schema, setFilter }: Props) {
         config.fields[f.reference] = fieldConfig;
       }
     });
+
+    if (schema.relations) {
+      schema.relations.forEach(rel => {
+        const target = schemas.find(
+          r => r.database === schema.database && r.reference === rel.target,
+        );
+
+        config.fields[rel.name] = {
+          type: '!struct',
+          label: target.title,
+          subfields: {},
+        };
+
+        target.fields.forEach(_rel_f => {
+          const fieldConfig = toFieldFilter(_rel_f);
+
+          if (fieldConfig) {
+            (config.fields[rel.name] as any).subfields[_rel_f.reference] =
+              fieldConfig;
+          }
+        });
+      });
+    }
 
     setConfig(config);
     setTree(
