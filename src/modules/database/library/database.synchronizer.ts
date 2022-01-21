@@ -14,7 +14,10 @@ import { inspect } from 'util';
 import { ILogger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldTag, FieldType, IField, ISchema } from '../../schema';
-import { RelationType } from '../../schema/interface/relation.interface';
+import {
+  IRelation,
+  RelationType,
+} from '../../schema/interface/relation.interface';
 import { isPrimary } from '../../schema/util/field-tools';
 import { createEmptySchema } from '../../schema/util/get-new-schema';
 import { IDatabaseConnection, IEnumeratorStructure } from '../interface';
@@ -33,6 +36,7 @@ interface ChangeStep {
   query: Knex.SchemaBuilder;
 }
 
+// Find column names
 const fColumns = (s: ISchema) => (ref: string[]) =>
   s.fields.filter(f => ref.includes(f.reference)).map(f => f.columnName);
 
@@ -191,7 +195,7 @@ export class DatabaseSynchronizer {
             alterColumns.push(change.path[1] as string);
           }
 
-          // replace a column
+          // Replace a column
           const changedField = knownSchema.fields.find(
             f => f.columnName == change.path[1],
           );
@@ -203,12 +207,13 @@ export class DatabaseSynchronizer {
               t => this.addColumn(t, changedField, typeChecks).alter(),
             ),
           });
-        } else if (
+        }
+        // Removes a column
+        else if (
           change.op === 'remove' &&
           change.path[0] === 'columns' &&
           change.path.length == 2
         ) {
-          // Removes a column
           instructions.push({
             type: 'drop',
             query: this.connection.knex.schema.alterTable(
@@ -216,12 +221,13 @@ export class DatabaseSynchronizer {
               t => t.dropColumn(change.path[1] as string),
             ),
           });
-        } else if (
+        }
+        // Adds a new column
+        else if (
           change.op === 'add' &&
           change.path[0] === 'columns' &&
           change.path.length == 2
         ) {
-          // Adds a new column
           const newField = knownSchema.fields.find(
             f => f.columnName == change.path[1],
           );
@@ -230,7 +236,34 @@ export class DatabaseSynchronizer {
             type: 'create',
             query: this.connection.knex.schema.alterTable(
               knownSchema.tableName,
-              t => this.addColumn(t, newField, typeChecks),
+              table => this.addColumn(table, newField, typeChecks),
+            ),
+          });
+        }
+        // Adds missing relationship
+        else if (
+          change.op === 'add' &&
+          change.path[0] === 'relations' &&
+          change.path.length == 2
+        ) {
+          const newRelation = knownSchema.relations.find(
+            rel =>
+              rel.target === change.value.target &&
+              rel.localField == change.value.localField &&
+              rel.remoteField == change.value.remoteField,
+          );
+
+          if (!newRelation) {
+            this.logger.error('New relation [%s]', change.value);
+
+            throw new Exception('Could not find the new relation!');
+          }
+
+          instructions.push({
+            type: 'foreign',
+            query: this.connection.knex.schema.alterTable(
+              knownSchema.tableName,
+              table => this.addRelation(table, schema, newRelation),
             ),
           });
         } else {
@@ -499,31 +532,64 @@ export class DatabaseSynchronizer {
           schema.tableName,
           table => {
             schema.relations.forEach(rel => {
-              /**
-               * @example Product belongsTo Category, local field is Product.category_id remote field is Category.id
-               * @example User hasOne Avatar, local field is User.id remote field is Avatar.user_id
-               * @example Customer hasMany Order, local field is Customer.id remote field is Order.customer_id
-               */
-              if (rel.kind == RelationType.BELONGS_TO_ONE) {
-                const target = this.connection.getSchema(rel.target);
+              this.addRelation(table, schema, rel);
+            });
 
-                table
-                  .foreign(fColumns(schema)([rel.localField]))
-                  .references(fColumns(target)([rel.remoteField]))
-                  .inTable(target.tableName);
-              }
+            // Searching for relations which refers to this schema.
+            const schemas = this.connection.getSchemas();
 
-              /**
-               * @example Product hasManyThroughMany Orders through the OrderEntry, local field is Product.id -> OrderEntry.product_id && OrderEntry.order_id -> Order.id
-               */
-              if (rel.kind == RelationType.BELONGS_TO_MANY) {
-                // TODO implement
-              }
+            schemas.forEach(remoteSchema => {
+              remoteSchema.relations.forEach(rel => {
+                // Backward link toward this schema
+                if (
+                  rel.kind === RelationType.BELONGS_TO_MANY &&
+                  rel.target === schema.reference
+                ) {
+                  const through = this.connection.getSchema(rel.through);
+
+                  table
+                    .foreign(fColumns(remoteSchema)([rel.remoteField]))
+                    .references(fColumns(through)([rel.throughRemoteField]))
+                    .inTable(through.tableName);
+                }
+              });
             });
           },
         ),
       },
     ];
+  }
+
+  protected addRelation(
+    table: Knex.CreateTableBuilder,
+    schema: ISchema,
+    rel: IRelation,
+  ) {
+    /**
+     * @example Product belongsTo Category, local field is Product.category_id remote field is Category.id
+     * @example User hasOne Avatar, local field is User.id remote field is Avatar.user_id
+     * @example Customer hasMany Order, local field is Customer.id remote field is Order.customer_id
+     */
+    if (rel.kind == RelationType.BELONGS_TO_ONE) {
+      const target = this.connection.getSchema(rel.target);
+
+      table
+        .foreign(fColumns(schema)([rel.localField]))
+        .references(fColumns(target)([rel.remoteField]))
+        .inTable(target.tableName);
+    }
+
+    /**
+     * @example Product hasManyThroughMany Orders through the OrderEntry, local field is Product.id -> OrderEntry.product_id && OrderEntry.order_id -> Order.id
+     */
+    if (rel.kind == RelationType.BELONGS_TO_MANY) {
+      const through = this.connection.getSchema(rel.through);
+
+      table
+        .foreign(fColumns(schema)([rel.localField]))
+        .references(fColumns(through)([rel.throughLocalField]))
+        .inTable(through.tableName);
+    }
   }
 
   /**

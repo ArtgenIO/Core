@@ -123,7 +123,7 @@ export default function TableComponent({ schema }: Props) {
   }, [schema]);
 
   useEffect(() => {
-    const fields = cloneDeep(schema).fields;
+    const _fields = cloneDeep(schema).fields;
 
     let apiUrl = toRestRoute(schema, qb => {
       // Pagination limit
@@ -140,7 +140,7 @@ export default function TableComponent({ schema }: Props) {
         const orderBy = sorters
           // Remove the hidden fields from sorting
           .filter(
-            s => !fields.find(FieldTool.fReference(s[0])).meta.grid.hidden,
+            s => !_fields.find(FieldTool.fReference(s[0])).meta.grid.hidden,
           )
           .map(s => s.join(' '))
           .join(', ');
@@ -151,9 +151,26 @@ export default function TableComponent({ schema }: Props) {
       }
 
       qb.select(
-        fields
+        _fields
           .filter(f => FieldTool.isPrimary(f) || !f.meta.grid.hidden)
-          .map(f => f.reference)
+          .map(f => {
+            let fieldRef = f.reference;
+
+            if (f.meta.grid.replace) {
+              const relation = schema.relations.find(
+                rel => rel.localField === f.reference,
+              );
+
+              // Query the replacement with the field value too.
+              if (relation) {
+                fieldRef = `${fieldRef},${relation.name}/${f.meta.grid.replace}`;
+              } else {
+                console.error('Missing relation?!', f);
+              }
+            }
+
+            return fieldRef;
+          })
           .join(','),
       );
 
@@ -166,7 +183,7 @@ export default function TableComponent({ schema }: Props) {
 
     setBrowserParams(browserParams);
 
-    setFields(fields.sort(GridTools.sortFields));
+    setFields(_fields.sort(GridTools.sortFields));
     setApiUrl(apiUrl + `&--artgen-no-cache=${refetch}`);
   }, [pageCurr, pageSize, sorters, schema, refetch, filter]);
 
@@ -424,9 +441,24 @@ export default function TableComponent({ schema }: Props) {
 
             if (FieldTool.isPrimary(f)) {
               icon = <KeyOutlined />;
+              align = 'center';
             }
 
             const width = fieldWidth.find(r => r[0] === f.reference)[1];
+
+            let dataIndex: string | string[] = f.reference;
+
+            if (f.meta.grid.replace) {
+              const relation = schema.relations.find(
+                rel => rel.localField === f.reference,
+              );
+
+              if (relation) {
+                dataIndex = [relation.name, f.meta.grid.replace];
+              } else {
+                console.error('Missing relation x2?!', f);
+              }
+            }
 
             return (
               <Column
@@ -459,7 +491,7 @@ export default function TableComponent({ schema }: Props) {
                     </div>
                   </ResizableBox>
                 }
-                dataIndex={f.reference}
+                dataIndex={dataIndex}
                 key={f.reference}
                 sortDirections={sortable ? ['ascend', 'descend'] : undefined}
                 filterMode="menu"

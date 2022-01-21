@@ -121,9 +121,7 @@ export default function SchemaEditorComponent({
           <Tabs
             tabPosition="left"
             size="middle"
-            defaultActiveKey={
-              defaultKey ?? 'general' ? 'relations' : 'relations'
-            }
+            defaultActiveKey={defaultKey ?? 'general'}
           >
             <Tabs.TabPane key="general" tab="General">
               <SchemaEditorGeneralComponent

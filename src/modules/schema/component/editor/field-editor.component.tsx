@@ -16,7 +16,9 @@ import camelCase from 'lodash.camelcase';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { FieldType, IField, ISchema } from '../..';
+import { schemasAtom } from '../../../admin/admin.atoms';
 import { FieldTool } from '../../util/field-tools';
 
 type InputLinkedProps = {
@@ -57,6 +59,7 @@ export default function FieldEditor({
   isNewSchema,
   immutableSchema,
 }: Props) {
+  const schemas = useRecoilValue(schemasAtom);
   const [field, setField] = useState<IField>(null);
 
   // Auto generate ref and table for new schema
@@ -65,6 +68,7 @@ export default function FieldEditor({
   const [refReadOnly, setRefReadOnly] = useState(true);
 
   const [isChanged, setIsChanged] = useState(false);
+  const [relatedTo, setRelatedTo] = useState<ISchema>(null);
 
   useEffect(() => {
     const isExistingField = immutableSchema.fields.some(
@@ -77,8 +81,22 @@ export default function FieldEditor({
   }, [immutableField]);
 
   useEffect(() => {
-    if (field && immutableField) {
+    if (field) {
       setIsChanged(!isEqual(field, immutableField));
+
+      const relation = immutableSchema.relations.find(
+        rel => rel.localField === immutableField.reference,
+      );
+
+      if (relation) {
+        setRelatedTo(
+          schemas.find(
+            r =>
+              r.database === immutableSchema.database &&
+              r.reference === relation.target,
+          ),
+        );
+      }
     }
   }, [field]);
 
@@ -479,6 +497,35 @@ export default function FieldEditor({
                 </Select.Option>
               </Select>
             </Form.Item>
+
+            {relatedTo && (
+              <Form.Item label="Display Relation's Field" className="mb-2">
+                <Select
+                  allowClear
+                  className="w-64 mr-2"
+                  placeholder="Local Value"
+                  value={field.meta.grid.replace}
+                  onChange={(newValue: unknown) => {
+                    setField(oldState => {
+                      const newState = cloneDeep(oldState);
+                      newState.meta.grid.replace =
+                        newValue && newValue.toString().length
+                          ? newValue.toString()
+                          : null;
+
+                      return newState;
+                    });
+                  }}
+                >
+                  {relatedTo.fields.map(f => (
+                    <Select.Option key={f.reference} value={f.reference}>
+                      {f.title} [
+                      <span className="text-green-600">{f.type}</span>]
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            )}
 
             <Divider />
             <span className="font-header text-lg">

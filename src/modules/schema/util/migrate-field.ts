@@ -9,6 +9,7 @@ export const migrateField = (field: IField, idx: number = 1): IField => {
     field.meta.grid = {
       order: idx,
       hidden: false,
+      replace: null,
     };
   }
 

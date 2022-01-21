@@ -32,6 +32,8 @@ export interface IField {
     grid?: {
       order: number;
       hidden: boolean;
+      // Replace with the relation's field
+      replace: string | null;
     };
   };
 

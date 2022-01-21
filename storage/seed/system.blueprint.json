@@ -9,85 +9,6 @@
   "schemas": [
     {
       "database": "main",
-      "reference": "Module",
-      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
-      "title": "Modules",
-      "tableName": "__artgen_modules",
-      "fields": [
-        {
-          "title": "Identifier",
-          "reference": "id",
-          "columnName": "id",
-          "type": "uuid",
-          "args": {},
-          "tags": [
-            "primary"
-          ],
-          "meta": {
-            "grid": {
-              "order": 0,
-              "hidden": false
-            }
-          }
-        },
-        {
-          "reference": "name",
-          "title": "Name",
-          "columnName": "name",
-          "type": "text",
-          "args": {},
-          "tags": [
-            "unique"
-          ],
-          "meta": {
-            "grid": {
-              "order": 1,
-              "hidden": false
-            }
-          }
-        },
-        {
-          "title": "Tags",
-          "reference": "tags",
-          "columnName": "tags",
-          "type": "json",
-          "tags": [
-            "tags"
-          ],
-          "args": {},
-          "defaultValue": [],
-          "meta": {
-            "grid": {
-              "order": 2,
-              "hidden": false
-            }
-          }
-        }
-      ],
-      "indices": [],
-      "uniques": [],
-      "relations": [],
-      "tags": [
-        "active"
-      ],
-      "meta": {
-        "artboard": {
-          "position": {
-            "x": 670,
-            "y": 339
-          }
-        },
-        "isFavorite": false
-      },
-      "access": {
-        "create": "protected",
-        "read": "protected",
-        "update": "protected",
-        "delete": "protected"
-      }
-    },
-    {
-      "database": "main",
       "reference": "Blueprint",
       "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
       "title": "Blueprints",
@@ -407,7 +328,8 @@
           "meta": {
             "grid": {
               "order": 1,
-              "hidden": false
+              "hidden": false,
+              "replace": "name"
             }
           }
         },
@@ -546,6 +468,85 @@
             "y": 0
           }
         }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
+    },
+    {
+      "database": "main",
+      "reference": "Module",
+      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "title": "Modules",
+      "tableName": "__artgen_modules",
+      "fields": [
+        {
+          "title": "Identifier",
+          "reference": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "args": {},
+          "tags": [
+            "primary"
+          ],
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "name",
+          "title": "Name",
+          "columnName": "name",
+          "type": "text",
+          "args": {},
+          "tags": [
+            "unique"
+          ],
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "title": "Tags",
+          "reference": "tags",
+          "columnName": "tags",
+          "type": "json",
+          "tags": [
+            "tags"
+          ],
+          "args": {},
+          "defaultValue": [],
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false
+            }
+          }
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [],
+      "tags": [
+        "active"
+      ],
+      "meta": {
+        "artboard": {
+          "position": {
+            "x": 670,
+            "y": 339
+          }
+        },
+        "isFavorite": false
       },
       "access": {
         "create": "protected",
@@ -739,7 +740,8 @@
           "meta": {
             "grid": {
               "order": 2,
-              "hidden": false
+              "hidden": false,
+              "replace": "name"
             }
           }
         },
@@ -846,7 +848,7 @@
           "meta": {
             "grid": {
               "order": 9,
-              "hidden": false
+              "hidden": true
             }
           }
         },

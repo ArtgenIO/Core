@@ -46,5 +46,5 @@ export const toStructure = (schema: ISchema): ITableStructure => {
     };
   }
 
-  return { tableName, relations: [], uniques, indices, columns: columns };
+  return { tableName, relations, uniques, indices, columns: columns };
 };

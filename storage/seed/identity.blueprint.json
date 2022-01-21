@@ -47,21 +47,20 @@
           }
         },
         {
-          "reference": "signUpAt",
-          "columnName": "signUpAt",
-          "title": "Sign Up Date",
-          "type": "timestamp",
+          "reference": "roleId",
+          "columnName": "role_id",
+          "title": "Role Identifier",
+          "type": "uuid",
           "defaultValue": null,
           "meta": {
             "grid": {
-              "order": 2,
-              "hidden": false
+              "order": 1,
+              "hidden": false,
+              "replace": "role"
             }
           },
           "args": {},
-          "tags": [
-            "created"
-          ]
+          "tags": []
         },
         {
           "reference": "password",
@@ -72,7 +71,7 @@
           "args": {},
           "meta": {
             "grid": {
-              "order": 1,
+              "order": 2,
               "hidden": true
             }
           },
@@ -82,6 +81,23 @@
               "config": {},
               "priority": 0
             }
+          ]
+        },
+        {
+          "reference": "signUpAt",
+          "columnName": "signUpAt",
+          "title": "Sign Up Date",
+          "type": "timestamp",
+          "defaultValue": null,
+          "meta": {
+            "grid": {
+              "order": 4,
+              "hidden": false
+            }
+          },
+          "args": {},
+          "tags": [
+            "created"
           ]
         }
       ],
@@ -94,6 +110,13 @@
           "target": "AccessKey",
           "localField": "id",
           "remoteField": "accountId"
+        },
+        {
+          "kind": "belongs-to-one",
+          "name": "accessRole",
+          "target": "AccessRole",
+          "localField": "roleId",
+          "remoteField": "id"
         }
       ],
       "tags": [
@@ -107,7 +130,7 @@
             "y": 0
           }
         },
-        "isFavorite": true
+        "isFavorite": false
       },
       "access": {
         "create": "protected",
@@ -150,7 +173,7 @@
           ],
           "meta": {
             "grid": {
-              "order": 1,
+              "order": 2,
               "hidden": false
             }
           }
@@ -166,8 +189,9 @@
           ],
           "meta": {
             "grid": {
-              "order": 2,
-              "hidden": false
+              "order": 1,
+              "hidden": false,
+              "replace": "email"
             }
           }
         }
