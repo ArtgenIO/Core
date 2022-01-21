@@ -30,9 +30,9 @@ import cloneDeep from 'lodash.clonedeep';
 import React, { useEffect, useState } from 'react';
 import { ResizableBox } from 'react-resizable';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
-import { pageSizeAtom } from '../../admin/admin.atoms';
+import { pageSizeAtom, schemasAtom } from '../../admin/admin.atoms';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { FieldTag, FieldType, IField, ISchema } from '../../schema';
@@ -51,6 +51,7 @@ type Props = {
 export default function TableComponent({ schema }: Props) {
   const httpClient = useHttpClientSimple();
   const [browserParams, setBrowserParams] = useSearchParams();
+  const schemas = useRecoilValue(schemasAtom);
 
   const [apiUrl, setApiUrl] = useState(null);
 
@@ -158,7 +159,7 @@ export default function TableComponent({ schema }: Props) {
 
             if (f.meta.grid.replace) {
               const relation = schema.relations.find(
-                rel => rel.localField === f.reference,
+                rel => rel.localField === fieldRef,
               );
 
               // Query the replacement with the field value too.
@@ -417,54 +418,62 @@ export default function TableComponent({ schema }: Props) {
       >
         {fields
           .filter(f => !f.meta.grid.hidden)
-          .map((f, idx) => {
+          .map((field, idx) => {
+            let dataIndex: string | string[] = field.reference;
+            let _field = field;
+
+            if (field.meta.grid.replace) {
+              const relation = schema.relations.find(
+                rel => rel.localField === field.reference,
+              );
+
+              if (relation) {
+                dataIndex = [relation.name, field.meta.grid.replace];
+                _field = schemas
+                  .find(
+                    r =>
+                      r.database === schema.database &&
+                      r.reference === relation.target,
+                  )
+                  .fields.find(r => r.reference == field.meta.grid.replace);
+              } else {
+                console.error('Missing relation x2?!', field);
+              }
+            }
+
             let icon: React.ReactNode = <FileOutlined />;
             let align: ColumnProps<RowLike>['align'] = 'left';
             let sortable = true;
 
-            if (FieldTool.isInteger(f)) {
+            if (FieldTool.isInteger(_field)) {
               align = 'right';
-            } else if (f.type === FieldType.UUID) {
+            } else if (_field.type === FieldType.UUID) {
               align = 'left';
-            } else if (FieldTool.isDate(f)) {
+            } else if (FieldTool.isDate(_field)) {
               align = 'right';
               icon = <CalendarOutlined />;
-            } else if (FieldTool.isJson(f)) {
+            } else if (FieldTool.isJson(_field)) {
               align = 'center';
               icon = <CodeOutlined />;
               sortable = false;
             }
 
-            if (f.type === FieldType.BOOLEAN) {
+            if (_field.type === FieldType.BOOLEAN) {
               align = 'center';
             }
 
-            if (FieldTool.isPrimary(f)) {
+            if (FieldTool.isPrimary(_field)) {
               icon = <KeyOutlined />;
               align = 'center';
             }
 
-            const width = fieldWidth.find(r => r[0] === f.reference)[1];
-
-            let dataIndex: string | string[] = f.reference;
-
-            if (f.meta.grid.replace) {
-              const relation = schema.relations.find(
-                rel => rel.localField === f.reference,
-              );
-
-              if (relation) {
-                dataIndex = [relation.name, f.meta.grid.replace];
-              } else {
-                console.error('Missing relation x2?!', f);
-              }
-            }
+            const width = fieldWidth.find(r => r[0] === field.reference)[1];
 
             return (
               <Column
                 title={
                   <ResizableBox
-                    key={f.reference}
+                    key={field.reference}
                     width={width - (sortable ? 36 : 12)}
                     height={24}
                     axis="x"
@@ -474,7 +483,7 @@ export default function TableComponent({ schema }: Props) {
                       setFieldWidth(state => {
                         const newState = cloneDeep(state);
 
-                        newState.find(r => r[0] === f.reference)[1] =
+                        newState.find(r => r[0] === field.reference)[1] =
                           data.size.width + (sortable ? 36 : 12);
 
                         return newState;
@@ -487,23 +496,24 @@ export default function TableComponent({ schema }: Props) {
                   >
                     <div className="flex w-full">
                       <div className="shrink mr-1 ml-3">{icon}</div>
-                      <div className="grow">{f.title}</div>
+                      <div className="grow">
+                        {field.title}
+                        {field !== _field ? (
+                          <span className="text-midnight-300">
+                            {' '}
+                            » {_field.title}
+                          </span>
+                        ) : undefined}
+                      </div>
                     </div>
                   </ResizableBox>
                 }
                 dataIndex={dataIndex}
-                key={f.reference}
+                key={field.reference}
                 sortDirections={sortable ? ['ascend', 'descend'] : undefined}
                 filterMode="menu"
                 ellipsis={{
                   showTitle: false,
-                }}
-                onCell={(record, idx) => {
-                  return {
-                    onClick: () => {
-                      console.log('Cell clicked', record);
-                    },
-                  };
                 }}
                 align={align}
                 width={width}
@@ -520,7 +530,7 @@ export default function TableComponent({ schema }: Props) {
                     );
                   }
 
-                  if (f.tags.includes(FieldTag.TAGS)) {
+                  if (_field.tags.includes(FieldTag.TAGS)) {
                     return oVal && oVal.length ? (
                       <>
                         {oVal.map((t, i) => (
@@ -534,7 +544,7 @@ export default function TableComponent({ schema }: Props) {
                     );
                   }
 
-                  if (FieldTool.isJson(f)) {
+                  if (FieldTool.isJson(_field)) {
                     val = (
                       <code className="p-0.5 bg-midnight-800 text-midnight-200 rounded-sm underline">
                         &lt;JSON&gt;
@@ -542,28 +552,29 @@ export default function TableComponent({ schema }: Props) {
                     );
                   }
 
-                  if (FieldTool.isPrimary(f)) {
+                  if (FieldTool.isPrimary(_field)) {
                     classes.push('text-primary-500');
-                  } else if (f.tags.includes(FieldTag.UNIQUE)) {
+                  } else if (_field.tags.includes(FieldTag.UNIQUE)) {
                     classes.push('text-yellow-500');
-                  } else if (f.type === FieldType.INTEGER) {
+                  } else if (_field.type === FieldType.INTEGER) {
                     classes.push('text-green-500');
-                  } else if (FieldTool.isDate(f)) {
+                  } else if (FieldTool.isDate(_field)) {
                     if (oVal) {
                       val = dayjs(oVal).format('YYYY-MM-DD dddd, HH:mm:ss');
                       classes.push('text-pink-500');
                     }
                   }
 
-                  if (f.type === FieldType.BOOLEAN) {
+                  if (_field.type === FieldType.BOOLEAN) {
                     val = (
                       <Switch
+                        disabled={field !== _field}
                         checked={oVal}
                         size="small"
                         checkedChildren="✓"
                         unCheckedChildren={oVal === null ? '∅' : '!'}
                         onChange={newValue => {
-                          record[f.reference] = newValue;
+                          record[field.reference] = newValue;
                           doUpdate(record);
                         }}
                       />
