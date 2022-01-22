@@ -6,6 +6,7 @@ import { RestService } from '../rest/service/rest.service';
 import { ISchema } from '../schema';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { SchemaModule } from '../schema/schema.module';
+import { TelemetryModule } from '../telemetry/telemetry.module';
 import { TransformerModule } from '../transformer/transformer.module';
 import { DatabaseObserver } from './database.observer';
 import { DatabaseConnectionConcrete } from './provider/connection-concrete.provider';
@@ -17,6 +18,7 @@ import { DatabaseService } from './service/database.service';
     moduleRef(() => SchemaModule),
     moduleRef(() => RestModule),
     TransformerModule,
+    TelemetryModule,
   ],
   providers: [
     DatabaseConnectionConcrete,
