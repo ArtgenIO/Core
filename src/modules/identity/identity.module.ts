@@ -1,6 +1,5 @@
 import { IModule, Module } from '../../app/container';
 import { moduleRef } from '../../app/container/module-ref';
-import { IKernel } from '../../app/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
 import { SchemaModule } from '../schema/schema.module';
 import { IdentityGateway } from './gateway/authentication.gateway';
@@ -25,8 +24,4 @@ import { AuthenticationService } from './service/authentication.service';
   ],
   dependsOn: [moduleRef(() => SchemaModule), moduleRef(() => BlueprintModule)],
 })
-export class IdentityModule implements IModule {
-  async onStart(kernel: IKernel) {
-    await (await kernel.get(AuthenticationService)).seed();
-  }
-}
+export class IdentityModule implements IModule {}

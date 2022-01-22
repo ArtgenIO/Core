@@ -99,24 +99,5 @@ export class AuthenticationService {
     return false;
   }
 
-  async seed() {
-    const model = this.schema.getSysModel<AccountModel>(SchemaRef.ACCOUNT);
-    const check = await model.query().limit(1).resultSize();
-
-    if (check) {
-      return;
-    }
-
-    // Seed the demo account
-    this.logger.debug('Seeding [demo] account');
-
-    await model.query().insert({
-      email: 'demo@artgen.io',
-      password: 'demo',
-    });
-
-    this.logger.info(
-      'Demo account is ready under the [demo@artgen.io] email address',
-    );
-  }
+  async seed() {}
 }

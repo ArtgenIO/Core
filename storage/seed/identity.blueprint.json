@@ -753,6 +753,15 @@
         "role": "Administrator",
         "createdAt": "2022-01-21 08:16:37.351"
       }
+    ],
+    "Account": [
+      {
+        "id": "84e014b8-1623-44a4-a803-cdf9b252f331",
+        "email": "demo@artgen.io",
+        "password": "demo",
+        "roleId": "8cb4fe07-a7b1-4c0e-8a4c-8177be15866d",
+        "signUpAt": "2022-01-21 22:16:19.094 +0100"
+      }
     ]
   }
 }
