@@ -15,10 +15,12 @@ export class TelemetryService {
     @Logger()
     readonly logger: ILogger,
   ) {
-    this.tick = setInterval(() => {
-      this.buckets.forEach(b => b.summarize());
-      this.logger.info('Tick [%d]', ++this.tickNth);
-    }, 3_600_000);
+    if (process.env.NODE_ENV !== 'test') {
+      this.tick = setInterval(() => {
+        this.buckets.forEach(b => b.summarize());
+        this.logger.info('Tick [%d]', ++this.tickNth);
+      }, 3_600_000);
+    }
 
     // Init the buckets
     this.buckets.set(BucketKey.HTTP_REQUEST, new Bucket());
