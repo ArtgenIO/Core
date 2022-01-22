@@ -30,7 +30,7 @@ import Column, { ColumnProps } from 'antd/lib/table/Column';
 import { SorterResult } from 'antd/lib/table/interface';
 import dayjs from 'dayjs';
 import cloneDeep from 'lodash.clonedeep';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ResizableBox } from 'react-resizable';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -350,7 +350,7 @@ export default function TableComponent({
 
             <Popconfirm
               disabled={!selected.length}
-              title="Are You sure to delete this extension?"
+              title="Are You sure to delete the selected records?"
               okText="Yes, delete it"
               cancelText="No"
               okType="danger"

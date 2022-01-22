@@ -1,6 +1,5 @@
 import { StarOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { schemasAtom } from '../../admin/admin.atoms';

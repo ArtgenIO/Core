@@ -1,4 +1,4 @@
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import FlowListComponent from './list.component';
 

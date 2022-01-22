@@ -1,6 +1,5 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
-import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';

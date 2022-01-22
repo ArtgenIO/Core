@@ -4,7 +4,7 @@ import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import Search from 'antd/lib/input/Search';
 import Sider from 'antd/lib/layout/Sider';
 import startCase from 'lodash.startcase';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
 import {

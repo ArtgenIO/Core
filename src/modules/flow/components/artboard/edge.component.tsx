@@ -1,6 +1,5 @@
 import { SettingOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import React from 'react';
 import {
   getEdgeCenter,
   getMarkerEnd,

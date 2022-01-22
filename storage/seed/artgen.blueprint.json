@@ -1,8 +1,9 @@
 {
-  "id": "10000000-0000-0000-0000-000000000000",
-  "title": "Artgen",
+  "id": "c01c3f2d-84f5-4531-8bdc-938a982a8830",
+  "title": "Artgen Core",
   "version": "0.1.0",
-  "icon": "settings",
+  "cover": "https://via.placeholder.com/400x250/b5b9c2/0a0d10/?text=Artgen",
+  "description": "Provides the basic schemas and functionality for the Artgen Core instances.",
   "source": "offline",
   "database": "main",
   "schemas": [
@@ -45,6 +46,36 @@
           }
         },
         {
+          "reference": "cover",
+          "title": "cover",
+          "columnName": "cover",
+          "defaultValue": "https://via.placeholder.com/400x250/b5b9c2/0a0d10/?text=Missing+Cover",
+          "type": "text",
+          "args": {},
+          "tags": [],
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false
+            }
+          }
+        },
+        {
+          "reference": "description",
+          "title": "description",
+          "columnName": "description",
+          "defaultValue": "Missing description",
+          "type": "text",
+          "args": {},
+          "tags": [],
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false
+            }
+          }
+        },
+        {
           "reference": "version",
           "title": "Version",
           "columnName": "version",
@@ -54,7 +85,7 @@
           "tags": [],
           "meta": {
             "grid": {
-              "order": 2,
+              "order": 4,
               "hidden": false
             }
           }

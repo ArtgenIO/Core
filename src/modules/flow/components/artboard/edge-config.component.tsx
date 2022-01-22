@@ -10,7 +10,7 @@ import {
   Tabs,
 } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { ArrowHeadType, Edge } from 'react-flow-renderer';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {

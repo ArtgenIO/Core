@@ -1,7 +1,7 @@
 import { Button, Divider, message } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { saveAs } from 'file-saver';
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import { ISchema } from '../..';

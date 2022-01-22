@@ -1,6 +1,6 @@
 import { Layout, Spin } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import { generatePath, Route, Routes, useNavigate } from 'react-router';
 import MenuBlock from '../../admin/component/menu-block.component';
 import FavoriteSchemasComponent from '../../schema/component/favorites.component';

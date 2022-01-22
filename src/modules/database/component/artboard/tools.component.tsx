@@ -10,7 +10,7 @@ import {
   ZoomOutOutlined,
 } from '@ant-design/icons';
 import { Popconfirm } from 'antd';
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { Elements, useZoomPanHelper } from 'react-flow-renderer';
 import { ISchema } from '../../../schema';
 

@@ -1,7 +1,7 @@
 import { FileAddOutlined } from '@ant-design/icons';
 import { Button, Result } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { lastViewedAtom, schemasAtom } from '../../admin/admin.atoms';

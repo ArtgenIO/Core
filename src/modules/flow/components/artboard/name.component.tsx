@@ -1,6 +1,5 @@
 import { EditOutlined } from '@ant-design/icons';
 import { Input, message } from 'antd';
-import React from 'react';
 import { useRecoilState } from 'recoil';
 import { flowAtom } from '../../atom/artboard.atoms';
 

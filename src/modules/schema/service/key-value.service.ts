@@ -8,16 +8,24 @@ type KVModel = IKeyValueRecord<any> & Model;
 
 @Service()
 export class KeyValueService {
+  readonly cache = new Map<string, unknown>();
+
   constructor(
     @Inject(SchemaService)
     readonly schema: SchemaService,
   ) {}
 
   async get<T = string>(key: string, defaultValue: T = null): Promise<T> {
+    if (this.cache.has(key)) {
+      return this.cache.get(key) as T;
+    }
+
     const model = this.schema.getSysModel<KVModel>(SchemaRef.KV);
     const record = await model.query().findById(key);
 
     if (record) {
+      this.cache.set(key, record.value);
+
       return record.value as unknown as T;
     }
 
@@ -27,6 +35,8 @@ export class KeyValueService {
   async set<T = string>(key: string, value: T): Promise<T> {
     const model = this.schema.getSysModel<KVModel>(SchemaRef.KV);
     let record = await model.query().findById(key);
+
+    this.cache.set(key, record.value);
 
     if (!record) {
       record = await model

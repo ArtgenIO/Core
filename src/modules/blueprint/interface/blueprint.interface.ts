@@ -12,6 +12,10 @@ export interface IBlueprint {
    */
   title: string;
 
+  cover: string;
+
+  description: string;
+
   /**
    * SemVer
    */

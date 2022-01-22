@@ -18,7 +18,7 @@ import {
   Tabs,
 } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Edge } from 'react-flow-renderer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';

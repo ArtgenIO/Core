@@ -2,7 +2,7 @@ import { Divider, List, Switch, Typography } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import cloneDeep from 'lodash.clonedeep';
 import upperFirst from 'lodash.upperfirst';
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { ISchema } from '../../interface';
 
 type Props = {

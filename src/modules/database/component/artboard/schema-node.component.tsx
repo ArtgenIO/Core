@@ -1,4 +1,3 @@
-import React from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import Icon from '../../../admin/component/icon.component';
 import { FieldTag, IField, ISchema } from '../../../schema';

@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import React, { lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ADMIN_URL } from '../admin.constants';
 import WelcomeComponent from '../component/welcome.component';
@@ -18,7 +18,7 @@ export default function PageContent() {
     () => import('../../content/component/_router.component'),
   );
   const Apps = lazy(
-    () => import('../../blueprint/component/store/_router.component'),
+    () => import('../../blueprint/component/_router.component'),
   );
 
   return (
@@ -30,7 +30,7 @@ export default function PageContent() {
             <Route path={`${ADMIN_URL}/flow/*`} element={<Flow />} />
             <Route path={`${ADMIN_URL}/database/*`} element={<Database />} />
             <Route path={`${ADMIN_URL}/content/*`} element={<Contents />} />
-            <Route path={`${ADMIN_URL}/cloud-apps/*`} element={<Apps />} />
+            <Route path={`${ADMIN_URL}/cloud-store/*`} element={<Apps />} />
 
             {/* Hygen insert routes above */}
             <Route path="*" element={<Route404 />} />

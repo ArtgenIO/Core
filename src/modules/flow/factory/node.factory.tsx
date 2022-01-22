@@ -1,5 +1,5 @@
 import { kebabCase } from 'lodash';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 

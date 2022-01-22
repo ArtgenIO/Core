@@ -17,7 +17,7 @@ import {
   Tooltip,
 } from 'antd';
 import { QueryBuilder } from 'odata-query-builder';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../../admin/library/http-client';

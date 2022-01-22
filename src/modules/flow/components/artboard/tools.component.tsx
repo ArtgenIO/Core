@@ -9,7 +9,6 @@ import {
   ZoomOutOutlined,
 } from '@ant-design/icons';
 import { message } from 'antd';
-import React from 'react';
 import { Edge } from 'react-flow-renderer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {

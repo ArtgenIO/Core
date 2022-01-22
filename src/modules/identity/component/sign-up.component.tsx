@@ -5,7 +5,6 @@ import {
   LinkedinOutlined,
 } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 export default function SignInComponent() {

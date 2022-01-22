@@ -1,6 +1,6 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Divider, Empty, Input, Tree, TreeDataNode } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useRecoilValue } from 'recoil';
 import { modulesAtom, schemasAtom } from '../../admin/admin.atoms';

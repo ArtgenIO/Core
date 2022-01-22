@@ -1,8 +1,10 @@
+import { v4 } from 'uuid';
 import { ILogger, Inject, Logger, Service } from '../../app/container';
 import { getErrorMessage } from '../../app/kernel';
 import { DatabaseConnectionService } from '../database/service/database-connection.service';
 import { RestService } from '../rest/service/rest.service';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
+import { KeyValueService } from '../schema/service/key-value.service';
 import { IBlueprint } from './interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from './provider/artgen-blueprint.provider';
 
@@ -17,9 +19,18 @@ export class BlueprintService {
     readonly artgenBlueprint: IBlueprint,
     @Inject(DatabaseConnectionService)
     readonly connections: DatabaseConnectionService,
+    @Inject(KeyValueService)
+    readonly kv: KeyValueService,
   ) {}
 
   async seed() {
+    // Check for license key
+    if (!(await this.kv.get('license'))) {
+      await this.kv.set('license', v4());
+    }
+
+    this.logger.info('License key generated');
+
     const exists = await this.rest.read('main', SchemaRef.BLUEPRINT, {
       id: this.artgenBlueprint.id,
     });

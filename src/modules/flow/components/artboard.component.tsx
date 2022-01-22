@@ -1,6 +1,6 @@
 import { Skeleton } from 'antd';
 import { kebabCase } from 'lodash';
-import React, { DragEvent, useEffect, useRef, useState } from 'react';
+import { DragEvent, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
   addEdge,
   ArrowHeadType,
