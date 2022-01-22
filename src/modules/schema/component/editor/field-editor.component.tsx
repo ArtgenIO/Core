@@ -63,12 +63,17 @@ export default function FieldEditor({
   const [field, setField] = useState<IField>(null);
 
   // Auto generate ref and table for new schema
-  const [refLinked, setRefLinked] = useState(true);
-  const [clmLinked, setClmLinked] = useState(true);
+  const [refLinked, setRefLinked] = useState(false);
+  const [clmLinked, setClmLinked] = useState(false);
   const [refReadOnly, setRefReadOnly] = useState(true);
 
   const [isChanged, setIsChanged] = useState(false);
   const [relatedTo, setRelatedTo] = useState<ISchema>(null);
+
+  useEffect(() => {
+    setRefLinked(isNewSchema);
+    setClmLinked(isNewSchema);
+  }, [immutableSchema, immutableField]);
 
   useEffect(() => {
     const isExistingField = immutableSchema.fields.some(

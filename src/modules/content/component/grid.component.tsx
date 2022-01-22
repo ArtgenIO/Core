@@ -312,7 +312,7 @@ export default function TableComponent({
             ghost
             onClick={() => setEditSchema(schema)}
           >
-            Edit Schemantics
+            Schemantics
           </Button>
         </div>
 
