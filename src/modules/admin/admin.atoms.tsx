@@ -68,8 +68,6 @@ export const schemasAtom = atom<ISchema[]>({
           // Deletes
           oldSchemas.forEach(oldSchema => {
             if (!newSchemas.find(fSchema(oldSchema))) {
-              console.warn('Schema is being deleted', oldSchema);
-
               client.delete(
                 `${path}/${oldSchema.database}/${oldSchema.reference}`,
               );

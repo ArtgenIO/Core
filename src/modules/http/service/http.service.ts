@@ -8,6 +8,7 @@ import {
   Service,
 } from '../../../app/container';
 import { getErrorMessage } from '../../../app/kernel';
+import { BucketKey } from '../../telemetry/interface/bucket-key.enum';
 import { TelemetryService } from '../../telemetry/telemetry.service';
 import { IHttpGateway } from '../interface/http-gateway.interface';
 import { HttpUpstreamProvider } from '../provider/http-upstream.provider';
@@ -53,7 +54,7 @@ export class HttpService {
         this.upstream.routing(request.raw, reply.hijack().raw);
       }
 
-      this.telemetry.increment('http.requests');
+      this.telemetry.record(BucketKey.HTTP_REQUEST);
 
       done();
     });

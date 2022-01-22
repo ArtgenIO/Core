@@ -4,6 +4,8 @@ import { UnsupportedDialect } from '..';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { IKernel } from '../../../app/kernel';
 import { ISchema } from '../../schema';
+import { BucketKey } from '../../telemetry/interface/bucket-key.enum';
+import { TelemetryService } from '../../telemetry/telemetry.service';
 import { Dialect, IDatabaseConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
 import { DatabaseConnectionConcrete } from '../provider/connection-concrete.provider';
@@ -22,6 +24,8 @@ export class DatabaseConnectionService {
     readonly kernel: IKernel,
     @Inject(DatabaseConnectionConcrete)
     readonly connectionConcrete: Constructor<IDatabaseConnection>,
+    @Inject(TelemetryService)
+    readonly telemetry: TelemetryService,
   ) {}
 
   /**
@@ -32,11 +36,14 @@ export class DatabaseConnectionService {
     schemas: ISchema[],
   ): Promise<IDatabaseConnection> {
     const dialect = this.getDialectFromDSN(database.dsn);
+    const knex = this.initKnex(database.dsn, dialect);
     const connection = await this.kernel.create(this.connectionConcrete, [
-      this.initKnex(database.dsn, dialect),
+      knex,
       database,
       dialect,
     ]);
+
+    knex.on('query', () => this.telemetry.record(BucketKey.DB_QUERY));
 
     // Store the connection early, we may call on it with the schema manager.
     this.connections.set(database.ref, connection);

@@ -37,6 +37,7 @@ import { getErrorMessage } from './util/extract-error';
 export class Kernel implements IKernel {
   readonly context: IContext;
   readonly logger: ILogger;
+  readonly bootAt: Date = new Date();
 
   /**
    * Used to build the module loading graph, stores the startup dependency links

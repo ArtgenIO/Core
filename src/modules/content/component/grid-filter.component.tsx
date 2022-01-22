@@ -120,7 +120,6 @@ export default function GridFilterComponent({ schema, setFilter }: Props) {
         onChange={(tree, config, action) => {
           // setConfig(config);
           setTree(tree);
-          console.log(Utils.getTree(tree));
           const qb = new QueryBuilder();
 
           qb.filter(fb => {

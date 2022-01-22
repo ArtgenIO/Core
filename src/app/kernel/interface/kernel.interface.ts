@@ -13,6 +13,11 @@ export interface IKernel {
   readonly logger: ILogger;
 
   /**
+   * When the instance started.
+   */
+  readonly bootAt: Date;
+
+  /**
    * Registers kernel modules
    */
   register(modules: Constructor<IModule>[]): boolean;

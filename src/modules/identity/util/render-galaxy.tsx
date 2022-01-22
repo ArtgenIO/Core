@@ -34,8 +34,8 @@ export const renderGalaxy = (mountRef: MutableRefObject<any>) => {
     randomnessPower: 4.9,
     stars: 1000,
     starColor: '#cccccc',
-    insideColor: '#f55726',
-    outsideColor: '#8100ff',
+    insideColor: '#87DBFF',
+    outsideColor: '#080852',
   };
 
   const shape = textureLoader.load('/assets/particle.png');
