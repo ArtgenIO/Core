@@ -45,10 +45,8 @@ export class DatabaseService {
 
     // Ensure that the system schemas are available in the database.
     await this.upsertDatabase(connection.database);
-    await this.schemaService.persistSchemas(connection);
 
     this.logger.debug('Loading custom resources from the database');
-
     const [schemas, databases] = await Promise.all([
       this.schemaService.fetchAll(),
       this.findAll(),

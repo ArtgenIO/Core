@@ -41,7 +41,7 @@ export default function ExtensionEdiorComponent({
     extension.schemas.map(s => s.reference),
   );
   const [selectedFlows, setSelectedFlows] = useState<string[]>(
-    extension.flows.map(wf => wf.id),
+    [], // extension.flows.map(wf => wf.id),
   );
 
   const [{ data: schemasReply, loading: schemasLoading }] = useHttpClient<
@@ -63,7 +63,7 @@ export default function ExtensionEdiorComponent({
       }
 
       if (flowReply) {
-        ext.flows = flowReply.data.filter(wf => selectedFlows.includes(wf.id));
+        //ext.flows = flowReply.data.filter(wf => selectedFlows.includes(wf.id));
       }
 
       return ext;

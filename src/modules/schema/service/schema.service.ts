@@ -4,7 +4,6 @@ import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from '../../blueprint/provider/artgen-blueprint.provider';
 import { IContentModule } from '../../content/interface/content-module.interface';
-import { IDatabaseConnection } from '../../database/interface';
 import { DatabaseConnectionService } from '../../database/service/database-connection.service';
 import { ISchema } from '../interface/schema.interface';
 import { SchemaRef } from '../interface/system-ref.enum';
@@ -24,31 +23,6 @@ export class SchemaService {
     @Inject(ArtgenBlueprintProvider)
     readonly artgenBlueprint: IBlueprint,
   ) {}
-
-  /**
-   * Synchronize the offline schemas into the database, this allows the user
-   * to extend on the system's behavior, the synchronizer will only ensure the
-   * existence of the schema and does not overide it if its present.
-   */
-  async persistSchemas(connection: IDatabaseConnection) {
-    const model = this.getSysModel<SchemaModel>(SchemaRef.SCHEMA);
-
-    // Main connection need to insert the "System" module first.
-    if (connection.database.ref === 'main') {
-      await this.upsertSystemModule();
-    }
-
-    for (const schema of connection.getSchemas()) {
-      const isSchemaExists = await model.query().findOne({
-        database: schema.database,
-        reference: schema.reference,
-      });
-
-      if (!isSchemaExists) {
-        await model.query().insert(schema);
-      }
-    }
-  }
 
   /**
    * Ensure that the "System" module is inserted, otherwise the system resources could not link to it.

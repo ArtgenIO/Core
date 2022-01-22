@@ -17,6 +17,9 @@ export default function PageContent() {
   const Contents = lazy(
     () => import('../../content/component/_router.component'),
   );
+  const Apps = lazy(
+    () => import('../../blueprint/component/store/_router.component'),
+  );
 
   return (
     <Content className="overflow-y-auto overflow-x-hidden h-screen gray-scroll">
@@ -27,6 +30,7 @@ export default function PageContent() {
             <Route path={`${ADMIN_URL}/flow/*`} element={<Flow />} />
             <Route path={`${ADMIN_URL}/database/*`} element={<Database />} />
             <Route path={`${ADMIN_URL}/content/*`} element={<Contents />} />
+            <Route path={`${ADMIN_URL}/cloud-apps/*`} element={<Apps />} />
 
             {/* Hygen insert routes above */}
             <Route path="*" element={<Route404 />} />

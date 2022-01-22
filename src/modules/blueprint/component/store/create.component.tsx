@@ -18,14 +18,12 @@ export default function CreateExtension() {
     version: '0.0.1',
     database: 'main',
     source: 'offline',
-    config: {},
     schemas: [],
-    flows: [],
     content: {},
   });
 
   return (
-    <PageWithHeader header={<PageHeader title="Create Extension" />}>
+    <PageWithHeader header={<PageHeader title="Create Blueprint" />}>
       <div className="content-box px-8 py-8 w-2/3">
         <ExtensionEdiorComponent
           blueprint={extension}
@@ -34,7 +32,7 @@ export default function CreateExtension() {
             client
               .post('/api/rest/main/extension', extension)
               .then(() => message.success('Extension saved!'))
-              .then(() => redirect('/admin/ext/store'));
+              .then(() => redirect('/admin/cloud-apps/store'));
           }}
         />
       </div>

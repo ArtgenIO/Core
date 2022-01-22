@@ -4,17 +4,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
-import CloudExtensions from './list/cloud.component';
-import OfflineExtensions from './list/offline.component';
+import OfflineExtensions from './offline.component';
 
 export default function ExtensionStoreList() {
-  const base = '/admin/ext/store';
+  const base = '/admin/cloud-apps';
 
   return (
     <PageWithHeader
       header={
         <PageHeader
-          title="Extension Store"
+          title="Cloud Apps"
           actions={
             <>
               <Link key="import" to={`${base}/import`}>
@@ -32,7 +31,6 @@ export default function ExtensionStoreList() {
         />
       }
     >
-      <CloudExtensions />
       <OfflineExtensions />
     </PageWithHeader>
   );

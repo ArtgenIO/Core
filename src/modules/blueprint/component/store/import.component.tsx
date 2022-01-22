@@ -67,7 +67,7 @@ export default function ImportExtension() {
               })
               .then(() => {
                 message.success('Extension imported');
-                history('/admin/ext/store');
+                history('/admin/cloud-apps/store');
               })
               .catch(() => {
                 message.error('Could not import extension');

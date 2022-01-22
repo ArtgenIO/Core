@@ -1,5 +1,4 @@
 import { RowLike } from '../../../app/interface/row-like.interface';
-import { IFlow } from '../../flow/interface';
 import { ISchema } from '../../schema';
 
 export interface IBlueprint {
@@ -7,11 +6,6 @@ export interface IBlueprint {
    * UUID
    */
   id: string;
-
-  /**
-   * Custom icon
-   */
-  icon?: string;
 
   /**
    * Display name
@@ -34,9 +28,9 @@ export interface IBlueprint {
   database: string;
 
   /**
-   * KeyValue configurations
+   * Provided schemas
    */
-  config: Record<string, string>;
+  schemas: ISchema[];
 
   /**
    * Provided schemas
@@ -44,14 +38,4 @@ export interface IBlueprint {
   content: {
     [schema: string]: RowLike[];
   };
-
-  /**
-   * Provided schemas
-   */
-  schemas: ISchema[];
-
-  /**
-   * Provided flows
-   */
-  flows: IFlow[];
 }

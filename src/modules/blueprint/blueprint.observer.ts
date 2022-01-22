@@ -17,17 +17,6 @@ export class BlueprintObserver {
   async handleBlueprintDelete(bp: IBlueprint) {
     this.logger.warn('Blueprint deletion detected!');
 
-    for (const flow of bp.flows) {
-      await this.rest
-        .delete('main', SchemaRef.FLOW, {
-          id: flow.id,
-        })
-        .then(() => this.logger.info('Associated flow [%s] deleted', flow.id))
-        .catch(() =>
-          this.logger.error('Cloud not delete [%s] associated flow', flow.id),
-        );
-    }
-
     for (const schema of bp.schemas) {
       await this.rest
         .delete('main', SchemaRef.SCHEMA, {

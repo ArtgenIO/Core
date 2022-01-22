@@ -1,4 +1,5 @@
 import {
+  CloudSyncOutlined,
   DatabaseOutlined,
   FileOutlined,
   HomeOutlined,
@@ -41,6 +42,11 @@ const menuItems: IMenuItem[] = [
     icon: <DatabaseOutlined />,
     path: ADMIN_URL + '/database',
     title: 'Databases',
+  },
+  {
+    icon: <CloudSyncOutlined />,
+    path: ADMIN_URL + '/cloud-apps',
+    title: 'Cloud Apps',
   },
 ];
 

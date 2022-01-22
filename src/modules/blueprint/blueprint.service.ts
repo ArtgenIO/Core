@@ -1,8 +1,4 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { ILogger, Inject, Logger, Service } from '../../app/container';
-import { SEED_DIR } from '../../app/globals';
-import { RowLike } from '../../app/interface/row-like.interface';
 import { getErrorMessage } from '../../app/kernel';
 import { DatabaseConnectionService } from '../database/service/database-connection.service';
 import { RestService } from '../rest/service/rest.service';
@@ -24,20 +20,12 @@ export class BlueprintService {
   ) {}
 
   async seed() {
-    const sysExists = await this.rest.read('main', SchemaRef.BLUEPRINT, {
+    const exists = await this.rest.read('main', SchemaRef.BLUEPRINT, {
       id: this.artgenBlueprint.id,
     });
 
-    if (!sysExists) {
+    if (!exists) {
       await this.install('main', this.artgenBlueprint);
-
-      // Install the identity blueprint too
-      await this.install(
-        'main',
-        JSON.parse(
-          readFileSync(join(SEED_DIR, 'identity.blueprint.json')).toString(),
-        ),
-      );
     }
   }
 
@@ -50,6 +38,7 @@ export class BlueprintService {
     const skippedSchemas = new Set<string>();
 
     // Has content to install
+    // TODO dedupe and order it in dependency order to ensure resources are installed before their dependents.
     if (blueprint?.content) {
       for (const schemaRef in blueprint.content) {
         if (!existingSchemas.some(s => s.reference === schemaRef)) {
@@ -121,36 +110,6 @@ export class BlueprintService {
             schema.reference,
           );
         }
-      }
-    }
-
-    for (const flow of blueprint.flows) {
-      const isExists = await this.rest.read('main', SchemaRef.FLOW, flow);
-
-      if (!isExists) {
-        await this.rest
-          .create('main', SchemaRef.FLOW, flow as unknown as RowLike)
-          .then(() =>
-            this.logger.info(
-              'Flow [%s][%s] installed',
-              blueprint.title,
-              flow.id,
-            ),
-          )
-          .catch(e =>
-            this.logger.warn(
-              'Could not create [%s][%s] flow [%s]',
-              blueprint.title,
-              flow.id,
-              getErrorMessage(e),
-            ),
-          );
-      } else {
-        this.logger.debug(
-          'Flow [%s][%s] already exists',
-          blueprint.title,
-          flow.id,
-        );
       }
     }
 

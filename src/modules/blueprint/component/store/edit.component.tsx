@@ -30,7 +30,7 @@ export default function EditExtension() {
   }
 
   return (
-    <PageWithHeader header={<PageHeader title="Edit Extension" />}>
+    <PageWithHeader header={<PageHeader title="Edit Blueprint" />}>
       <div className="content-box px-8 py-8 w-2/3">
         <ExtensionEdiorComponent
           blueprint={extension}
@@ -39,7 +39,7 @@ export default function EditExtension() {
             client
               .patch(`/api/rest/main/extension/${extension.id}`, extension)
               .then(() => message.success('Extension updated!'))
-              .then(() => history('/admin/ext/store'));
+              .then(() => history('/admin/cloud-apps/store'));
           }}
         />
       </div>
