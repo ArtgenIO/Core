@@ -28,6 +28,18 @@ const customColors = merge(colors, {
     800: '#102d30',
     900: '#091819',
   },
+  success: {
+    50: '#c2fa6e',
+    100: '#a9eb6e',
+    200: '#91dd6e',
+    300: '#7bce6d',
+    400: '#66be6c',
+    500: '#52af6a',
+    600: '#40a067',
+    700: '#2f9062',
+    800: '#1f815d',
+    900: '#107257',
+  },
 });
 
 delete customColors['lightBlue'];

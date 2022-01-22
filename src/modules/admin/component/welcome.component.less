@@ -1,25 +1,28 @@
-.welcome-grid {
-  @apply grid grid-cols-3 gap-4;
+.guide-block:hover {
+  @apply bg-midnight-600 shadow-md;
 
-  > div:hover {
-    @apply bg-midnight-600 shadow-md;
+  > span {
+    @apply text-teal-400;
+  }
+}
 
-    > span {
-      @apply text-teal-400;
-    }
+.guide-block {
+  @apply col-span-3;
+
+  @apply bg-midnight-700 text-center p-12 pb-0 rounded-md;
+  @apply transition-colors duration-300 ease-in-out cursor-pointer;
+
+  > span {
+    @apply block text-primary-500 pb-8 transition-colors duration-300;
+
+    font-size: 8rem;
   }
 
-  > div {
-    @apply bg-midnight-700 text-center p-12 rounded-lg transition-colors duration-300 ease-in-out cursor-pointer;
-
-    > span {
-      @apply block text-primary-500 mb-4 transition-colors duration-300;
-
-      font-size: 18rem;
-    }
-
-    > h1 {
-      @apply font-header text-4xl;
-    }
+  > h1 {
+    @apply font-header text-4xl;
   }
+}
+
+.hello-block {
+  @apply bg-midnight-700 text-center p-12 rounded-md;
 }

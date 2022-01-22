@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { Alert, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import RequestWidget from '../../telemetry/component/requests.component';
 import PageHeader from '../layout/page-header.component';
 import PageWithHeader from '../layout/page-with-header.component';
 import './welcome.component.less';
@@ -51,23 +52,40 @@ export default function WelcomeComponent() {
             <strong className="font-bold">beta preview</strong> status, You can
             go around and test the current state, but please don't try to deploy
             it in production environment. If You have any feedback, don't be shy
-            to share with us on our GitHub page.
-            <br />
-            <span className="italic">Have a nice day!</span>
+            to share with us on our GitHub page.{' '}
+            <i className="bold text-primary-400">Have a nice day!</i>
           </>
         }
       />
 
-      <div className="welcome-grid">
-        <div onClick={() => navigate('/admin/database/artboard/main')}>
+      <div className="grid grid-cols-12 grid-rows-2 gap-4">
+        <div className="col-span-10">
+          <RequestWidget />
+        </div>
+
+        <div className="hello-block col-span-2 !text-justify">
+          <b>Hello, Artisan!</b>
+          <p>
+            This is a placeholder for the dashboard widgets. Take a look around
+            and if You find any useful thing, let us know!
+          </p>
+        </div>
+
+        <div
+          className="guide-block"
+          onClick={() => navigate('/admin/database/artboard/main')}
+        >
           <DatabaseOutlined />
           <h1>Database Manager</h1>
         </div>
-        <div onClick={() => navigate('/admin/content/main/AccessKey?page=1')}>
+        <div
+          className="guide-block"
+          onClick={() => navigate('/admin/content/main/AccessKey?page=1')}
+        >
           <FileOutlined />
           <h1>Content Editor</h1>
         </div>
-        <div onClick={() => navigate('/admin/flow')}>
+        <div className="guide-block" onClick={() => navigate('/admin/flow')}>
           <PartitionOutlined />
           <h1>Low Code Logic</h1>
         </div>

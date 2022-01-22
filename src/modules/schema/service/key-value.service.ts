@@ -36,7 +36,7 @@ export class KeyValueService {
     const model = this.schema.getSysModel<KVModel>(SchemaRef.KV);
     let record = await model.query().findById(key);
 
-    this.cache.set(key, record.value);
+    this.cache.set(key, value);
 
     if (!record) {
       record = await model
