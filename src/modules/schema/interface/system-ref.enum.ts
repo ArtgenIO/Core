@@ -11,4 +11,7 @@ export enum SchemaRef {
   MODULE = 'Module',
   PAGE = 'Page',
   SCHEMA = 'Schema',
+
+  // Admin
+  DASHBOARD = 'Dashboard',
 }

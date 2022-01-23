@@ -1349,6 +1349,86 @@
         "update": "protected",
         "delete": "protected"
       }
+    },
+    {
+      "database": "main",
+      "reference": "Dashboard",
+      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "title": "Dashboards",
+      "tableName": "__artgen_dashboards",
+      "fields": [
+        {
+          "title": "Identifier",
+          "reference": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [
+            "primary"
+          ]
+        },
+        {
+          "reference": "name",
+          "columnName": "name",
+          "title": "Name",
+          "type": "text",
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [
+            "unique"
+          ]
+        },
+        {
+          "reference": "widgets",
+          "columnName": "widgets",
+          "title": "Widgets",
+          "type": "json",
+          "defaultValue": [],
+          "meta": {
+            "grid": {
+              "order": 3,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": []
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [],
+      "tags": [
+        "active"
+      ],
+      "meta": {
+        "isFavorite": false,
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      }
     }
   ],
   "content": {
@@ -1726,6 +1806,53 @@
         "password": "demo",
         "roleId": "8cb4fe07-a7b1-4c0e-8a4c-8177be15866d",
         "signUpAt": "2022-01-21 22:16:19.094 +0100"
+      }
+    ],
+    "Dashboard": [
+      {
+        "id": "4e4fdbcb-37cb-4d62-9cec-25321f1db614",
+        "name": "Demo - Dashboard",
+        "widgets": [
+          {
+            "w": 11,
+            "h": 4,
+            "x": 0,
+            "y": 0,
+            "i": "4b093994-4dc0-4a91-a95f-3b127ea9b338",
+            "moved": false,
+            "static": false,
+            "widget": {
+              "id": "telemetry.http-requests",
+              "header": "Telemetry - HTTP Proxy Server"
+            }
+          },
+          {
+            "w": 12,
+            "h": 4,
+            "x": 0,
+            "y": 4,
+            "i": "10afc64c-b03e-4fb8-a0d6-c282695c723e",
+            "moved": false,
+            "static": false,
+            "widget": {
+              "id": "telemetry.db-query",
+              "header": "Telemetry - Database Queries"
+            }
+          },
+          {
+            "w": 3,
+            "h": 3,
+            "x": 11,
+            "y": 0,
+            "i": "28fe7e94-1b29-4135-95ed-efd519f2d893",
+            "moved": false,
+            "static": false,
+            "widget": {
+              "id": "telemetry.uptime",
+              "header": "Telemetry - Uptime"
+            }
+          }
+        ]
       }
     ]
   }

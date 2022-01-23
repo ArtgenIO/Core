@@ -2,7 +2,6 @@ import { Layout } from 'antd';
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ADMIN_URL } from '../admin.constants';
-import WelcomeComponent from '../component/welcome.component';
 import Route404 from '../route/404.route';
 import PageLoading from './page-loading.component';
 import PageWrapper from './page-wrapper.component';
@@ -27,8 +26,7 @@ export default function PageContent() {
       <PageWrapper>
         <Suspense fallback={<PageLoading />}>
           <Routes>
-            <Route path={`${ADMIN_URL}`} element={<WelcomeComponent />} />
-            <Route path={`${ADMIN_URL}/dash`} element={<Dashboard />} />
+            <Route path={`${ADMIN_URL}`} element={<Dashboard />} />
             <Route path={`${ADMIN_URL}/flow/*`} element={<Flow />} />
             <Route path={`${ADMIN_URL}/database/*`} element={<Database />} />
             <Route path={`${ADMIN_URL}/content/*`} element={<Contents />} />
