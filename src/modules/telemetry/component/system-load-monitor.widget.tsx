@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useHttpClient } from '../../admin/library/use-http-client';
 import { ITelemetryResult } from '../interface/result.interface';
 
-export default function RequestWidget() {
+export default function SystemLoadMonitorWidget() {
   const [{ data: response, loading, error }, refetch] =
     useHttpClient<ITelemetryResult>('/api/telemetry');
 
@@ -29,7 +29,7 @@ export default function RequestWidget() {
         Telemetry - System Load
       </div>
 
-      <div className="bg-midnight-700 rounded-md-b" style={{ height: 280 }}>
+      <div className="bg-midnight-700 rounded-md-b h-full w-full">
         <ResponsiveLine
           theme={{
             background: '#25272b',

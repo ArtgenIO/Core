@@ -57,20 +57,7 @@ export const schemaToJsonSchema = (
         break;
       case FieldType.JSON:
       case FieldType.JSONB:
-        fieldDef.oneOf = [
-          {
-            type: 'object',
-          },
-          {
-            type: 'array',
-          },
-          {
-            type: 'string',
-          },
-          {
-            type: 'number',
-          },
-        ];
+        fieldDef.type = 'string';
         break;
       default:
         fieldDef.type = 'string';

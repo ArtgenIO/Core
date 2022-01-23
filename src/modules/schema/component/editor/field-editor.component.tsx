@@ -71,8 +71,12 @@ export default function FieldEditor({
   const [relatedTo, setRelatedTo] = useState<ISchema>(null);
 
   useEffect(() => {
-    setRefLinked(isNewSchema);
-    setClmLinked(isNewSchema);
+    const isNewField = !immutableSchema.fields.some(
+      f => f.reference === immutableField.reference,
+    );
+
+    setRefLinked(isNewSchema || isNewField);
+    setClmLinked(isNewSchema || isNewField);
   }, [immutableSchema, immutableField]);
 
   useEffect(() => {
@@ -381,7 +385,9 @@ export default function FieldEditor({
                       newValue &&
                       (newValue[0] === '{' || newValue[0] === '[')
                     ) {
-                      newValue = JSON.parse(newValue);
+                      try {
+                        newValue = JSON.parse(newValue);
+                      } catch (error) {}
                     } else if (field.type === FieldType.BOOLEAN) {
                       if (
                         newValue === 'true' ||

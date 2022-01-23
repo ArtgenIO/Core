@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import { Alert, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import RequestWidget from '../../telemetry/component/requests.component';
+import SystemLoadMonitorWidget from '../../telemetry/component/system-load-monitor.widget';
 import PageHeader from '../layout/page-header.component';
 import PageWithHeader from '../layout/page-with-header.component';
 import './welcome.component.less';
@@ -59,8 +59,8 @@ export default function WelcomeComponent() {
       />
 
       <div className="grid grid-cols-12 grid-rows-2 gap-4">
-        <div className="col-span-10">
-          <RequestWidget />
+        <div className="col-span-10" style={{ height: 260 }}>
+          <SystemLoadMonitorWidget />
         </div>
 
         <div className="hello-block col-span-2 !text-justify">

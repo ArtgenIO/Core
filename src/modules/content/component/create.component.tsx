@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { ISchema } from '../../schema';
+import { getUiWidget } from '../util/get-ui-schema';
 import { schemaToJsonSchema } from '../util/schema-to-jsonschema';
 import { toRestRoute } from '../util/schema-url';
 
@@ -15,9 +16,14 @@ type Props = {
 export default function ContentCreateComponent({ schema, onClose }: Props) {
   const httpClient = useHttpClientSimple();
   const [formSchema, setFormSchema] = useState({});
+  const [uiSchema, setUiSchema] = useState<any>({});
 
   useEffect(() => {
-    setFormSchema(schemaToJsonSchema(schema, CrudAction.CREATE, true));
+    const formSchema = schemaToJsonSchema(schema, CrudAction.CREATE, true);
+    const uiSchema = getUiWidget(schema);
+
+    setFormSchema(formSchema);
+    setUiSchema(uiSchema);
 
     return () => {
       setFormSchema({});
@@ -43,7 +49,11 @@ export default function ContentCreateComponent({ schema, onClose }: Props) {
       title={`Create New ${schema.title}`}
       onClose={onClose}
     >
-      <Form schema={formSchema} onSubmit={form => doCreate(form)}>
+      <Form
+        schema={formSchema}
+        onSubmit={form => doCreate(form)}
+        uiSchema={uiSchema}
+      >
         <Button type="primary" htmlType="submit">
           Create
         </Button>

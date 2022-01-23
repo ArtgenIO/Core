@@ -20,6 +20,7 @@ export default function PageContent() {
   const Apps = lazy(
     () => import('../../blueprint/component/_router.component'),
   );
+  const Dashboard = lazy(() => import('../component/dashboard.component'));
 
   return (
     <Content className="overflow-y-auto overflow-x-hidden h-screen gray-scroll">
@@ -27,6 +28,7 @@ export default function PageContent() {
         <Suspense fallback={<PageLoading />}>
           <Routes>
             <Route path={`${ADMIN_URL}`} element={<WelcomeComponent />} />
+            <Route path={`${ADMIN_URL}/dash`} element={<Dashboard />} />
             <Route path={`${ADMIN_URL}/flow/*`} element={<Flow />} />
             <Route path={`${ADMIN_URL}/database/*`} element={<Database />} />
             <Route path={`${ADMIN_URL}/content/*`} element={<Contents />} />
