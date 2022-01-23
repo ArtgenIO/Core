@@ -11,8 +11,8 @@ export class Bucket {
   }
 
   summarize() {
-    this.measurments.shift();
-    this.measurments.push(this.hits);
+    this.measurments.unshift(this.hits);
+    this.measurments.pop();
     this.hits = 0;
   }
 }
