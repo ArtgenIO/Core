@@ -1,3 +1,5 @@
+import { DeleteOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import { lazy } from 'react';
 import { IDashGridElement } from '../interface/dash-grid.interface';
 
@@ -15,9 +17,13 @@ const Widgets = {
 
 type Props = {
   widget: IDashGridElement['widget'];
+  onDeleteWidget: () => void;
 };
 
-export default function RenderWidgetComponent({ widget }: Props) {
+export default function RenderWidgetComponent({
+  widget,
+  onDeleteWidget,
+}: Props) {
   const Widget = Widgets[widget.id];
 
   return (
@@ -25,8 +31,18 @@ export default function RenderWidgetComponent({ widget }: Props) {
       className="h-full border-midnight-600 border-solid rounded-md"
       style={{ borderWidth: '1px' }}
     >
-      <div className="bg-midnight-800 rounded-t-md font-header text-lg indent-4 py-1 text-midnight-50 h-8">
-        {widget.header}
+      <div className="bg-midnight-800 rounded-t-md font-header text-lg leading-8 text-midnight-50 h-8">
+        <div className="flex">
+          <div className="grow">{widget.header}</div>
+          <div className="shrink pr-2">
+            <Button
+              icon={<DeleteOutlined />}
+              onClick={() => onDeleteWidget()}
+              className="hover:text-red-500 hover:border-red-500"
+              size="small"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="bg-midnight-700" style={{ height: 'calc(100% - 44px)' }}>

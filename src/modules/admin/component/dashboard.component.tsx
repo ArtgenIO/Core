@@ -4,7 +4,7 @@ import {
   MediumOutlined,
   SmileOutlined,
 } from '@ant-design/icons';
-import { Button, message, notification, Tabs } from 'antd';
+import { Button, Input, notification, Tabs } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import { useEffect, useState } from 'react';
 import GridLayout from 'react-grid-layout';
@@ -77,7 +77,24 @@ export default function DashboardPage() {
     <PageWithHeader
       header={
         <PageHeader
-          title={name}
+          title={
+            <Input
+              value={name}
+              bordered={false}
+              size="large"
+              className="text-4xl leading-3 my-0 p-0"
+              onChange={e => setName(e.target.value)}
+              onBlur={e =>
+                setDashboards(oldState => {
+                  const newState = cloneDeep(oldState);
+                  const selected = newState.find(dash => dash.id === active);
+                  selected.name = e.target.value;
+
+                  return newState;
+                })
+              }
+            />
+          }
           actions={
             <>
               <a
@@ -115,6 +132,8 @@ export default function DashboardPage() {
                 }}
                 onEdit={(e, action) => {
                   if (action === 'add') {
+                    const newId = v4();
+
                     setDashboards(oldState => {
                       const newState = cloneDeep(oldState);
                       let highestOrder = 0;
@@ -126,7 +145,7 @@ export default function DashboardPage() {
                       });
 
                       const newDash = {
-                        id: v4(),
+                        id: newId,
                         name: `New Dashboard ${oldState.length + 1}`,
                         order: highestOrder + 1,
                         widgets: [],
@@ -136,6 +155,8 @@ export default function DashboardPage() {
 
                       return newState;
                     });
+
+                    setTimeout(() => setActive(newId), 50);
                   } else {
                     if (dashboards.length === 1) {
                       notification.error({
@@ -146,8 +167,6 @@ export default function DashboardPage() {
                         const newState = cloneDeep(oldState).filter(
                           dash => dash.id !== e,
                         );
-
-                        message.error(e);
 
                         return newState;
                       });
@@ -183,7 +202,20 @@ export default function DashboardPage() {
         >
           {widgets.map(el => (
             <div key={el.i}>
-              <RenderWidgetComponent widget={el.widget} />
+              <RenderWidgetComponent
+                widget={el.widget}
+                onDeleteWidget={() => {
+                  setDashboards(oldState => {
+                    const newState = cloneDeep(oldState);
+                    const activeRef = newState.find(dash => dash.id === active);
+                    activeRef.widgets = activeRef.widgets.filter(
+                      w => w.i !== el.i,
+                    );
+
+                    return newState;
+                  });
+                }}
+              />
             </div>
           ))}
         </GridLayout>
@@ -196,7 +228,7 @@ export default function DashboardPage() {
               const newState = cloneDeep(oldState);
               const activeRef = newState.find(dash => dash.id === active);
               activeRef.widgets.push(
-                Object.assign(widget, {
+                Object.assign(cloneDeep(widget), {
                   x: 0,
                   y: 0,
                   i: v4(),

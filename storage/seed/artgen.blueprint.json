@@ -1825,7 +1825,7 @@
     "Dashboard": [
       {
         "id": "4e4fdbcb-37cb-4d62-9cec-25321f1db614",
-        "name": "Demo - Dashboard",
+        "name": "Telemetry Board",
         "widgets": [
           {
             "w": 11,
