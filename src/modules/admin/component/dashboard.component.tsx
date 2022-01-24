@@ -1,75 +1,75 @@
-import { GithubFilled, MediumOutlined, SmileOutlined } from '@ant-design/icons';
-import { Alert, Button, message } from 'antd';
+import {
+  AppstoreAddOutlined,
+  GithubFilled,
+  MediumOutlined,
+  SmileOutlined,
+} from '@ant-design/icons';
+import { Button, message, notification, Tabs } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
-import isEqual from 'lodash.isequal';
 import { useEffect, useState } from 'react';
 import GridLayout from 'react-grid-layout';
-import { toRestSysRoute } from '../../content/util/schema-url';
-import { IFindResponse } from '../../rest/interface/find-reponse.interface';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
+import { useRecoilState } from 'recoil';
+import { v4 } from 'uuid';
 import { IDashGridElement } from '../interface/dash-grid.interface';
-import { IDashboard } from '../interface/dashboard.interface';
 import PageHeader from '../layout/page-header.component';
 import PageWithHeader from '../layout/page-with-header.component';
 import { useHttpClientSimple } from '../library/http-client';
-import { useHttpClient } from '../library/use-http-client';
+import { dashboardsAtom, lastViewedDashAtom } from './dashboard.atom';
 import './dashboard.component.less';
+import WidgetDrawerComponent from './widget-drawer.component';
 import RenderWidgetComponent from './widgets.collection';
 
 export default function DashboardPage() {
   const client = useHttpClientSimple();
 
-  const [dashboards, setDashboards] = useState<IDashboard[]>([]);
-  const [elements, setElements] = useState<IDashGridElement[]>(null);
-  const [selected, setSelected] = useState<string>(null);
-  const [title, setTitle] = useState('Dashboard');
+  const [dashboards, setDashboards] = useRecoilState(dashboardsAtom);
+  const [active, setActive] = useRecoilState(lastViewedDashAtom);
 
-  const [{ data: response, loading, error }] = useHttpClient<
-    IFindResponse<IDashboard>
-  >(toRestSysRoute(SchemaRef.DASHBOARD, q => q.top(100)));
+  // Selected dashboard
+  const [showSider, setShowSider] = useState(false);
+  const [widgets, setWidgets] = useState([]);
+  const [name, setName] = useState('Dashbaords');
 
   useEffect(() => {
-    if (response) {
-      if (response.data.length) {
-        setDashboards(response.data);
-        setSelected(response.data[0].id);
+    if (dashboards.length) {
+      if (!active) {
+        setActive(dashboards[0].id);
+      }
+    }
+  }, [dashboards]);
+
+  useEffect(() => {
+    if (active) {
+      const d = dashboards.find(d => d.id === active);
+
+      if (d) {
+        setName(d.name);
+        setWidgets(d.widgets);
       } else {
-        message.warn('No dashboard?!');
+        if (dashboards.length) {
+          setActive(dashboards[0].id);
+        }
       }
     }
-  }, [response]);
+  }, [active, dashboards]);
 
-  useEffect(() => {
-    if (selected) {
-      const dash = dashboards.find(d => d.id === selected);
-
-      setTitle(dash.name);
-      setElements(dash.widgets);
-    }
-  }, [selected]);
-
-  const onLayoutChange = (currentGridState, allLayouts) => {
+  const onLayoutChange = (currentGridState: IDashGridElement[], allLayouts) => {
     if (currentGridState) {
-      const original = dashboards.find(d => d.id === selected);
-      const dashboard = cloneDeep(original);
+      setDashboards(oldState => {
+        const newState = cloneDeep(oldState);
 
-      dashboard.widgets.forEach(widget => {
-        const el = currentGridState.find(e => e.i === widget.i);
-        widget.w = el.w;
-        widget.h = el.h;
-        widget.x = el.x;
-        widget.y = el.y;
+        const activeRef = newState.find(d => d.id === active);
+
+        activeRef.widgets.forEach(widget => {
+          const el = currentGridState.find(e => e.i === widget.i);
+          widget.w = el.w;
+          widget.h = el.h;
+          widget.x = el.x;
+          widget.y = el.y;
+        });
+
+        return newState;
       });
-
-      if (!isEqual(original, dashboard)) {
-        client
-          .patch(
-            toRestSysRoute(SchemaRef.DASHBOARD) + `/${dashboard.id}`,
-            dashboard,
-          )
-          .then(() => message.success('Dashboard updated'))
-          .catch(() => message.warning('Could not save the dashboard state!'));
-      }
     }
   };
 
@@ -77,7 +77,7 @@ export default function DashboardPage() {
     <PageWithHeader
       header={
         <PageHeader
-          title={title}
+          title={name}
           actions={
             <>
               <a
@@ -95,41 +95,118 @@ export default function DashboardPage() {
               </a>
             </>
           }
+          footer={
+            <div style={{ borderBottom: '1px solid #37393f' }}>
+              <Tabs
+                activeKey={active}
+                type="editable-card"
+                size="small"
+                tabBarExtraContent={{
+                  right: (
+                    <Button
+                      size="large"
+                      className="ml-1 border-b-0"
+                      icon={<AppstoreAddOutlined />}
+                      onClick={() => setShowSider(true)}
+                    >
+                      Add Widgets
+                    </Button>
+                  ),
+                }}
+                onEdit={(e, action) => {
+                  if (action === 'add') {
+                    setDashboards(oldState => {
+                      const newState = cloneDeep(oldState);
+                      let highestOrder = 0;
+
+                      oldState.forEach(dash => {
+                        if (dash.order > highestOrder) {
+                          highestOrder = dash.order + 1;
+                        }
+                      });
+
+                      const newDash = {
+                        id: v4(),
+                        name: `New Dashboard ${oldState.length + 1}`,
+                        order: highestOrder + 1,
+                        widgets: [],
+                      };
+
+                      newState.push(newDash);
+
+                      return newState;
+                    });
+                  } else {
+                    if (dashboards.length === 1) {
+                      notification.error({
+                        message: 'You have to have at least one dashboard!',
+                      });
+                    } else {
+                      setDashboards(oldState => {
+                        const newState = cloneDeep(oldState).filter(
+                          dash => dash.id !== e,
+                        );
+
+                        message.error(e);
+
+                        return newState;
+                      });
+                    }
+                  }
+                }}
+                onChange={selectedId => {
+                  setActive(selectedId);
+                }}
+              >
+                {dashboards.map(dash => (
+                  <Tabs.TabPane
+                    id={dash.id}
+                    key={dash.id}
+                    tab={dash.name}
+                    closable={dashboards.length > 1}
+                  ></Tabs.TabPane>
+                ))}
+              </Tabs>
+            </div>
+          }
         />
       }
     >
-      <Alert
-        type="info"
-        className="mb-1 ml-2"
-        icon={<SmileOutlined className="text-xl mr-4" />}
-        showIcon
-        message={
-          <>
-            Artgen Core is in&nbsp;
-            <strong className="font-bold">beta preview</strong> status, You can
-            go around and test the current state, but please don't try to deploy
-            it in production environment. If You have any feedback, don't be shy
-            to share with us on our GitHub page.{' '}
-            <i className="bold text-primary-400">Have a nice day!</i>
-          </>
-        }
-      />
-
-      {elements && (
+      {active && (
         <GridLayout
-          width={window.innerWidth - 100}
+          width={window.innerWidth - 88}
           cols={14}
-          className="text-center"
-          layout={elements}
+          className="text-center -ml-3"
+          layout={widgets}
           rowHeight={60}
           onLayoutChange={onLayoutChange}
         >
-          {elements.map(el => (
+          {widgets.map(el => (
             <div key={el.i}>
               <RenderWidgetComponent widget={el.widget} />
             </div>
           ))}
         </GridLayout>
+      )}
+      {showSider && (
+        <WidgetDrawerComponent
+          onClose={() => setShowSider(false)}
+          onAdd={(widget: IDashGridElement) => {
+            setDashboards(oldState => {
+              const newState = cloneDeep(oldState);
+              const activeRef = newState.find(dash => dash.id === active);
+              activeRef.widgets.push(
+                Object.assign(widget, {
+                  x: 0,
+                  y: 0,
+                  i: v4(),
+                } as Pick<IDashGridElement, 'x' | 'y' | 'i'>),
+              );
+
+              return newState;
+            });
+          }}
+        />
       )}
     </PageWithHeader>
   );

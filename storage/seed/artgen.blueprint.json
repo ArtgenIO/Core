@@ -1387,9 +1387,23 @@
             }
           },
           "args": {},
-          "tags": [
-            "unique"
-          ]
+          "tags": []
+        },
+        {
+          "reference": "order",
+          "columnName": "order",
+          "title": "Sort Order",
+          "type": "int",
+          "defaultValue": 100,
+          "meta": {
+            "grid": {
+              "order": 3,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": []
         },
         {
           "reference": "widgets",
@@ -1399,7 +1413,7 @@
           "defaultValue": [],
           "meta": {
             "grid": {
-              "order": 3,
+              "order": 4,
               "hidden": false,
               "replace": null
             }
