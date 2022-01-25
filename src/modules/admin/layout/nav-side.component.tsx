@@ -4,6 +4,7 @@ import {
   FileOutlined,
   HomeOutlined,
   LayoutOutlined,
+  LineChartOutlined,
   PartitionOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Spin } from 'antd';
@@ -48,6 +49,11 @@ const menuItems: IMenuItem[] = [
     icon: <LayoutOutlined />,
     path: ADMIN_URL + '/page',
     title: 'Page Builder',
+  },
+  {
+    icon: <LineChartOutlined />,
+    path: ADMIN_URL + '/analytics',
+    title: 'Analytics',
   },
   {
     icon: <CloudOutlined />,
