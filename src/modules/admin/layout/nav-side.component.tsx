@@ -2,9 +2,9 @@ import {
   CloudOutlined,
   DatabaseOutlined,
   FileOutlined,
+  FundOutlined,
   HomeOutlined,
   LayoutOutlined,
-  LineChartOutlined,
   PartitionOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Spin } from 'antd';
@@ -51,7 +51,7 @@ const menuItems: IMenuItem[] = [
     title: 'Page Builder',
   },
   {
-    icon: <LineChartOutlined />,
+    icon: <FundOutlined />,
     path: ADMIN_URL + '/analytics',
     title: 'Analytics',
   },

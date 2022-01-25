@@ -2,6 +2,7 @@ export enum SchemaRef {
   // Identity
   ACCOUNT = 'Account',
   ACCESS_KEY = 'AccessKey',
+  ACCESS_ROLE = 'AccessRole',
 
   // Core
   BLUEPRINT = 'Blueprint',

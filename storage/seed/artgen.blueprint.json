@@ -1234,16 +1234,16 @@
             "grid": {
               "order": 1,
               "hidden": false,
-              "replace": null
+              "replace": "role"
             }
           },
           "args": {},
           "tags": []
         },
         {
-          "reference": "action",
-          "columnName": "action",
-          "title": "Action",
+          "reference": "operation",
+          "columnName": "operation",
+          "title": "Operation",
           "type": "enum",
           "meta": {
             "grid": {
@@ -1263,6 +1263,61 @@
           "tags": []
         },
         {
+          "reference": "action",
+          "columnName": "action",
+          "title": "Action",
+          "type": "enum",
+          "meta": {
+            "grid": {
+              "order": 3,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "defaultValue": "Allow",
+          "args": {
+            "values": [
+              "Allow",
+              "Deny"
+            ]
+          },
+          "tags": []
+        },
+        {
+          "reference": "database",
+          "columnName": "database",
+          "title": "Database",
+          "type": "text",
+          "meta": {
+            "grid": {
+              "order": 4,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [
+            "indexed"
+          ]
+        },
+        {
+          "reference": "schemaRef",
+          "columnName": "schemaRef",
+          "title": "Schema",
+          "type": "text",
+          "meta": {
+            "grid": {
+              "order": 5,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [
+            "indexed"
+          ]
+        },
+        {
           "title": "Created Date",
           "reference": "createdAt",
           "columnName": "created_at",
@@ -1270,7 +1325,7 @@
           "args": {},
           "meta": {
             "grid": {
-              "order": 3,
+              "order": 6,
               "hidden": false,
               "replace": null
             }
@@ -1788,6 +1843,11 @@
       {
         "id": "8cb4fe07-a7b1-4c0e-8a4c-8177be15866d",
         "role": "Administrator",
+        "createdAt": "2022-01-21 08:16:37.351"
+      },
+      {
+        "id": "18574f6a-9401-4bc7-93ad-7aab4f345b83",
+        "role": "Staff",
         "createdAt": "2022-01-21 08:16:37.351"
       }
     ],
