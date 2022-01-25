@@ -13,22 +13,19 @@ import { v4 } from 'uuid';
 import { IDashGridElement } from '../interface/dash-grid.interface';
 import PageHeader from '../layout/page-header.component';
 import PageWithHeader from '../layout/page-with-header.component';
-import { useHttpClientSimple } from '../library/http-client';
 import { dashboardsAtom, lastViewedDashAtom } from './dashboard.atom';
 import './dashboard.component.less';
 import WidgetDrawerComponent from './widget-drawer.component';
 import RenderWidgetComponent from './widgets.collection';
 
 export default function DashboardPage() {
-  const client = useHttpClientSimple();
-
   const [dashboards, setDashboards] = useRecoilState(dashboardsAtom);
   const [active, setActive] = useRecoilState(lastViewedDashAtom);
 
   // Selected dashboard
   const [showSider, setShowSider] = useState(false);
   const [widgets, setWidgets] = useState([]);
-  const [name, setName] = useState('Dashbaords');
+  const [name, setName] = useState('Dashboards');
 
   useEffect(() => {
     if (dashboards.length) {

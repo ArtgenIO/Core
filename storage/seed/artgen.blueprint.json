@@ -578,7 +578,7 @@
         {
           "reference": "title",
           "columnName": "title",
-          "title": "title",
+          "title": "Page Title",
           "type": "text",
           "tags": [],
           "args": {},
@@ -590,23 +590,9 @@
           }
         },
         {
-          "reference": "domain",
-          "columnName": "domain",
-          "title": "Domain",
-          "type": "text",
-          "tags": [],
-          "args": {},
-          "meta": {
-            "grid": {
-              "order": 2,
-              "hidden": false
-            }
-          }
-        },
-        {
           "reference": "path",
           "columnName": "path",
-          "title": "path",
+          "title": "Path",
           "type": "text",
           "tags": [],
           "defaultValue": "/page/x",
@@ -654,15 +640,7 @@
         }
       ],
       "indices": [],
-      "uniques": [
-        {
-          "name": "domain_path_unq",
-          "fields": [
-            "domain",
-            "path"
-          ]
-        }
-      ],
+      "uniques": [],
       "relations": [],
       "tags": [
         "active",

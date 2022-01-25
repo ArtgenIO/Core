@@ -3,6 +3,7 @@ import {
   DatabaseOutlined,
   FileOutlined,
   HomeOutlined,
+  LayoutOutlined,
   PartitionOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Spin } from 'antd';
@@ -42,6 +43,11 @@ const menuItems: IMenuItem[] = [
     icon: <DatabaseOutlined />,
     path: ADMIN_URL + '/database',
     title: 'Databases',
+  },
+  {
+    icon: <LayoutOutlined />,
+    path: ADMIN_URL + '/page',
+    title: 'Page Builder',
   },
   {
     icon: <CloudOutlined />,

@@ -1,6 +1,7 @@
 import Form from '@rjsf/antd';
 import { Button, Drawer, message } from 'antd';
 import { useEffect, useState } from 'react';
+import { RowLike } from '../../../app/interface/row-like.interface';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { ISchema } from '../../schema';
@@ -30,9 +31,9 @@ export default function ContentCreateComponent({ schema, onClose }: Props) {
     };
   }, [schema]);
 
-  const doCreate = async (form: any) => {
+  const doCreate = async (form: { formData: RowLike }) => {
     try {
-      await httpClient.post<any>(toRestRoute(schema), form.formData);
+      await httpClient.post<RowLike>(toRestRoute(schema), form.formData);
       message.success(`New record created!`);
 
       onClose();
@@ -49,11 +50,7 @@ export default function ContentCreateComponent({ schema, onClose }: Props) {
       title={`Create New ${schema.title}`}
       onClose={onClose}
     >
-      <Form
-        schema={formSchema}
-        onSubmit={form => doCreate(form)}
-        uiSchema={uiSchema}
-      >
+      <Form schema={formSchema} onSubmit={doCreate} uiSchema={uiSchema}>
         <Button type="primary" htmlType="submit">
           Create
         </Button>

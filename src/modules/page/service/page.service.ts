@@ -19,7 +19,7 @@ export class PageService {
     const model = this.schema.getSysModel<PageModel>(SchemaRef.PAGE);
     const pages = await model
       .query()
-      .select(['id', 'title', 'domain', 'path', '__artgen_tags']);
+      .select(['id', 'title', 'path', '__artgen_tags']);
 
     return pages.map(p => p.$toJson());
   }
