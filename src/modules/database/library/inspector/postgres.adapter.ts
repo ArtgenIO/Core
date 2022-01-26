@@ -14,12 +14,72 @@ export class PostgresAdapter extends BaseAdapter implements IAdapter {
     return result[0].count == 1;
   }
 
+  protected genericTypes(): RegExp[] {
+    return [
+      /^bigint/i,
+      /^int8/i,
+      /^bigserial/i,
+      /^serial8/i,
+      /^bit/i,
+      /^bit varying/i,
+      /^boolean/i,
+      /^bool/i,
+      /^box/i,
+      /^bytea/i,
+      /^character/i,
+      /^char/i,
+      /^character varying/i,
+      /^varchar/i,
+      /^cidr/i,
+      /^circle/i,
+      /^date/i,
+      /^double precision/i,
+      /^float8/i,
+      /^inet/i,
+      /^integer/i,
+      /^int/i,
+      /^int4/i,
+      /^interval/i,
+      /^line/i,
+      /^json/i,
+      /^macaddr/i,
+      /^jsonb/i,
+      /^money/i,
+      /^lseg/i,
+      /^decimal/i,
+      /^macaddr8/i,
+      /^pg_lsn/i,
+      /^numeric/i,
+      /^point/i,
+      /^path/i,
+      /^real/i,
+      /^pg_snapshot/i,
+      /^smallint/i,
+      /^polygon/i,
+      /^smallserial/i,
+      /^float4/i,
+      /^serial/i,
+      /^int2/i,
+      /^text/i,
+      /^serial2/i,
+      /^timetz/i,
+      /^serial4/i,
+      /^tsquery/i,
+      /^time/i,
+      /^txid_snapshot/i,
+      /^timestamp/i,
+      /^xml/i,
+      /^tsvector/i,
+      /^uuid/i,
+    ];
+  }
+
   async enumerators(
     tableName: string,
     columns: Column[],
   ): Promise<IEnumeratorStructure[]> {
     const enumColumns = columns
-      .filter(col => col.data_type === 'USER-DEFINED')
+      .filter(col => !this.genericTypes().some(p => p.test(col.data_type)))
       .map(c => c.name);
 
     if (enumColumns.length) {
