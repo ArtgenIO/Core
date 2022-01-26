@@ -16,9 +16,10 @@ type Response = {
 
 type Props = {
   setShowSignUp: Dispatch<SetStateAction<boolean>>;
+  canSignUp: boolean;
 };
 
-export default function SignInComponent({ setShowSignUp }: Props) {
+export default function SignInComponent({ setShowSignUp, canSignUp }: Props) {
   const setJwt = useSetRecoilState(jwtAtom);
 
   const doSignIn = (values: Credentials) => {
@@ -89,7 +90,7 @@ export default function SignInComponent({ setShowSignUp }: Props) {
 
         <Form.Item>
           <Button
-            className="test--sign-in"
+            className="test--sign-in-btn"
             type="primary"
             htmlType="submit"
             size="middle"
@@ -100,13 +101,20 @@ export default function SignInComponent({ setShowSignUp }: Props) {
           </Button>
         </Form.Item>
 
-        <div className="mb-5 text-right">
-          Don't have an account?&nbsp;
-          <Tooltip title="Not yet implemented">
-            <a onClick={() => setShowSignUp(true)}>Sign Up</a>
-          </Tooltip>
-          &nbsp;now!
-        </div>
+        {canSignUp && (
+          <div className="mb-5 text-right">
+            Don't have an account?&nbsp;
+            <Tooltip title="Not yet implemented">
+              <a
+                className="test--switch-sign-up"
+                onClick={() => setShowSignUp(true)}
+              >
+                Sign Up
+              </a>
+            </Tooltip>
+            &nbsp;now!
+          </div>
+        )}
       </Form>
     </>
   );

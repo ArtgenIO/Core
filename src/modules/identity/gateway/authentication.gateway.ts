@@ -22,6 +22,7 @@ export class IdentityGateway implements IHttpGateway {
     upstream.get('/api/identity/status', async (req, rep) => {
       return {
         canSignUp:
+          process.env.NODE_ENV !== 'production' ||
           process.env.ARTGEN_DEMO == '1' ||
           (await this.service.isSignUpAvailable()),
       };

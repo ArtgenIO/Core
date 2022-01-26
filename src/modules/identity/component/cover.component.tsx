@@ -11,15 +11,16 @@ type IDentityStatusResponse = {
 
 export default function AuthLayoutComponent() {
   const [showSignUp, setShowSignUp] = useState(false);
+  const [canSignUp, setCanSignUp] = useState(false);
 
   useEffect(() => {
     axios.get<IDentityStatusResponse>('/api/identity/status').then(reply => {
-      setShowSignUp(reply.data.canSignUp);
+      setCanSignUp(reply.data.canSignUp);
     });
   }, []);
 
   return (
-    <section className="auth-layout">
+    <section className="auth-layout test--auth-cover">
       <div className="left-panel">
         <GalaxyComponent />
         <div className="cover" />
@@ -40,10 +41,13 @@ export default function AuthLayoutComponent() {
           <div className="cover" />
         </div>
         <div className="content">
-          {showSignUp ? (
+          {showSignUp && canSignUp ? (
             <SignUpComponent setShowSignUp={setShowSignUp} />
           ) : (
-            <SignInComponent setShowSignUp={setShowSignUp} />
+            <SignInComponent
+              setShowSignUp={setShowSignUp}
+              canSignUp={canSignUp}
+            />
           )}
         </div>
       </div>

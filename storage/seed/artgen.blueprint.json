@@ -1823,7 +1823,7 @@
             "targetNodeId": "token.sign.1",
             "sourceHandle": "result",
             "targetHandle": "accountId",
-            "transform": "{{ $output.record.id }}"
+            "transform": "{{ $output.result.id }}"
           },
           {
             "id": "8d165757-851c-4690-8595-ac3077a29d9f",

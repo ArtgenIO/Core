@@ -1,4 +1,3 @@
-import isArray from 'lodash.isarray';
 import FilterBuilder from 'odata-query-builder';
 import { JsonItem } from 'react-awesome-query-builder';
 import { IODataOperator } from '../../rest/interface/odata-op.interface';
@@ -23,7 +22,7 @@ export const toODataFilter = (
         let children = filter.children1;
 
         // Can be and array of filters
-        if (isArray(children)) {
+        if (Array.isArray(children)) {
           children = children as [JsonItem];
 
           for (const child of children) {

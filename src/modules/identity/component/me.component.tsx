@@ -19,6 +19,7 @@ export default function MeComponent({ onClose }: Props) {
       title="The Artisan"
       closable
       onClose={() => onClose()}
+      className="test--me-drawer"
     >
       <div className="text-center">
         <Avatar

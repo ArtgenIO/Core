@@ -79,7 +79,7 @@ export default function DashboardPage() {
               value={name}
               bordered={false}
               size="large"
-              className="text-4xl leading-3 my-0 p-0"
+              className="text-4xl leading-3 my-0 p-0 test--dashboard-title"
               onChange={e => setName(e.target.value)}
               onBlur={e =>
                 setDashboards(oldState => {
@@ -114,6 +114,7 @@ export default function DashboardPage() {
               <Tabs
                 activeKey={active}
                 type="editable-card"
+                className="test--dashboard-tabs"
                 size="small"
                 tabBarExtraContent={{
                   right: (

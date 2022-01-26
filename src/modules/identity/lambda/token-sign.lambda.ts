@@ -45,8 +45,10 @@ export class TokenSignLambda implements ILambda {
 
   async invoke(ctx: FlowSession) {
     const config = ctx.getConfig<SignOptions>();
+    const accountId = ctx.getInput<string>('accountId');
+
     const payload: IJwtPayload = {
-      aid: ctx.getInput<string>('accountId'),
+      aid: accountId,
       roles: [],
     };
     const secret = await this.authService.getJwtSecret();

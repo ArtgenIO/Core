@@ -57,6 +57,7 @@ export default function SignUpComponent({ setShowSignUp }: Props) {
         onFinish={doSignUp}
         layout="vertical"
         requiredMark={false}
+        className=""
       >
         <Form.Item
           label="Email Address:"
@@ -88,7 +89,7 @@ export default function SignUpComponent({ setShowSignUp }: Props) {
 
         <Form.Item>
           <Button
-            className="test--sign-up bg-success-400 border-success-500 text-white hover:text-white hover:bg-success-300"
+            className="test--sign-up-btn bg-success-400 border-success-500 text-white hover:text-white hover:bg-success-300"
             htmlType="submit"
             size="middle"
             block
@@ -100,7 +101,12 @@ export default function SignUpComponent({ setShowSignUp }: Props) {
 
         <div className="mb-5 text-right">
           Already have an account?&nbsp;
-          <a onClick={() => setShowSignUp(false)}>Sign In</a>
+          <a
+            onClick={() => setShowSignUp(false)}
+            className="test--switch-sign-in"
+          >
+            Sign In
+          </a>
           &nbsp;here!
         </div>
       </Form>

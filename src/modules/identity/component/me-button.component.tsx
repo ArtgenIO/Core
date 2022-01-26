@@ -14,7 +14,7 @@ export default function MeButtonComponent() {
   return (
     <>
       <div
-        className="w-full absolute bottom-0 py-2 cursor-pointer text-center bg-midnight-800 hover:bg-midnight-750 border-midnight-600"
+        className="test-me-button w-full absolute bottom-0 py-2 cursor-pointer text-center bg-midnight-800 hover:bg-midnight-750 border-midnight-600"
         onClick={() => setShowProfile(true)}
         style={{ borderWidth: '1px 0 0 0', borderStyle: 'solid' }}
       >

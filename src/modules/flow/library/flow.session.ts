@@ -1,6 +1,5 @@
 import Ajv from 'ajv';
 import * as jsonSchemaInst from 'json-schema-instantiator';
-import isArray from 'lodash.isarray';
 import merge from 'lodash.merge';
 import nunjucks, { Environment } from 'nunjucks';
 import { ILogger } from '../../../app/container';
@@ -386,7 +385,7 @@ export class FlowSession {
                 targetHandle.schema,
               );
 
-              if (!isArray(targetInput)) {
+              if (!Array.isArray(targetInput)) {
                 // Merge when the type is a POJO
                 targetInput = merge(handleDefaults, output);
               }
