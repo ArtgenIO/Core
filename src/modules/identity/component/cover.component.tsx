@@ -1,8 +1,23 @@
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import './cover.component.less';
 import GalaxyComponent from './galaxy.component';
 import SignInComponent from './sign-in.component';
+import SignUpComponent from './sign-up.component';
+
+type IDentityStatusResponse = {
+  canSignUp: boolean;
+};
 
 export default function AuthLayoutComponent() {
+  const [showSignUp, setShowSignUp] = useState(false);
+
+  useEffect(() => {
+    axios.get<IDentityStatusResponse>('/api/identity/status').then(reply => {
+      setShowSignUp(reply.data.canSignUp);
+    });
+  }, []);
+
   return (
     <section className="auth-layout">
       <div className="left-panel">
@@ -14,11 +29,7 @@ export default function AuthLayoutComponent() {
         </div>
         <div className="subtext">
           Having trouble? Click&nbsp;
-          <a
-            href="https://github.com/ArtgenIO/Core/wiki"
-            target="_blank"
-            title="Troubleshoot"
-          >
+          <a href="https://docs.artgen.io" target="_blank" title="Troubleshoot">
             here
           </a>
           &nbsp;for help.
@@ -29,7 +40,11 @@ export default function AuthLayoutComponent() {
           <div className="cover" />
         </div>
         <div className="content">
-          <SignInComponent />
+          {showSignUp ? (
+            <SignUpComponent setShowSignUp={setShowSignUp} />
+          ) : (
+            <SignInComponent setShowSignUp={setShowSignUp} />
+          )}
         </div>
       </div>
     </section>

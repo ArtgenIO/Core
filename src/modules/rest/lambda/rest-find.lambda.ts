@@ -134,7 +134,7 @@ export class RestFindLambda implements ILambda {
   ) {}
 
   async invoke(session: FlowSession) {
-    const conditions = session.getInput<RowLike>('conditions');
+    const inputConditions = session.getInput<RowLike>('conditions');
     const config = session.getConfig<Config>();
 
     try {
@@ -148,7 +148,7 @@ export class RestFindLambda implements ILambda {
       }
 
       // Config based conditions
-      if (config.conditions) {
+      if (config.conditions && !inputConditions) {
         for (const condition of config.conditions) {
           q.where(
             schema.fields.find(f => f.reference == condition.field).columnName,
@@ -156,11 +156,8 @@ export class RestFindLambda implements ILambda {
             condition.value,
           );
         }
-      }
-
-      // Input based conditions
-      if (conditions) {
-        //q.where(conditions);
+      } else {
+        q.where(inputConditions);
       }
 
       if (config.offset) {

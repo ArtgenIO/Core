@@ -1,64 +1,107 @@
-import {
-  FacebookOutlined,
-  GithubOutlined,
-  GoogleOutlined,
-  LinkedinOutlined,
-} from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
-import { Link } from 'react-router-dom';
+import { MehOutlined, UnlockOutlined } from '@ant-design/icons';
+import { Button, Divider, Form, Input, notification } from 'antd';
+import axios from 'axios';
+import { Dispatch, SetStateAction } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { jwtAtom } from '../../admin/admin.atoms';
 
-export default function SignInComponent() {
+type Credentials = {
+  email: string;
+  password: string;
+};
+
+type Response = {
+  accessToken: string;
+};
+
+type Props = {
+  setShowSignUp: Dispatch<SetStateAction<boolean>>;
+};
+
+export default function SignUpComponent({ setShowSignUp }: Props) {
+  const setJwt = useSetRecoilState(jwtAtom);
+
+  const doSignUp = (values: Credentials) => {
+    axios
+      .post<Response>('/api/identity/signup', values)
+      .then(response => {
+        notification.success({
+          icon: <UnlockOutlined className="text-green-400" />,
+          message: 'Sign Up Successful!',
+          description: 'Welcome, Artisan!, have a wondeful day <3',
+          placement: 'bottomRight',
+        });
+
+        setJwt(response.data.accessToken);
+      })
+      .catch(() => {
+        notification.error({
+          icon: <MehOutlined className="text-red-400" />,
+          message: 'Sign Up Failed!',
+          description: 'Please check your credentials',
+          placement: 'bottomRight',
+        });
+      });
+  };
+
   return (
     <>
-      <h1 className="my-4 w-100 content-center" id="js-hexa">
-        <div className="hexa"></div>
+      <h1 className="header">Artgen Core</h1>
+      <h1 className="w-full content-center">
+        <div className="logo"></div>
       </h1>
-      <h1
-        className="my-4 w-100 content-center text-5xl"
-        style={{ fontWeight: 100 }}
-        id="js-logo"
-      >
-        Artgen
-      </h1>
-      <div className="py-6 space-x-2 social">
-        <FacebookOutlined />
-        <GoogleOutlined />
-        <LinkedinOutlined />
-        <GithubOutlined />
-      </div>
-      <p className="misc-text">or use your email account</p>
       <Form
-        name="basic"
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 16 }}
-        initialValues={{ remember: true }}
-        autoComplete="off"
+        name="sign-in"
+        size="large"
+        autoComplete="on"
+        onFinish={doSignUp}
+        layout="vertical"
+        requiredMark={false}
       >
         <Form.Item
-          label="Email Address"
+          label="Email Address:"
           name="email"
-          rules={[{ required: true, message: 'Please input your username!' }]}
+          rules={[
+            { required: true, message: 'Please input your email address!' },
+          ]}
         >
-          <Input />
+          <Input
+            className="test--email-address bg-midnight-800"
+            placeholder="example@artgen.io"
+            type="email"
+            autoFocus
+          />
         </Form.Item>
 
         <Form.Item
-          label="Password"
+          label="Password:"
           name="password"
           rules={[{ required: true, message: 'Please input your password!' }]}
         >
-          <Input.Password />
+          <Input.Password
+            className="test--password bg-midnight-800"
+            placeholder="********"
+          />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-          <Button type="primary" htmlType="submit" block>
-            Sign In
+        <Divider />
+
+        <Form.Item>
+          <Button
+            className="test--sign-up bg-success-400 border-success-500 text-white hover:text-white hover:bg-success-300"
+            htmlType="submit"
+            size="middle"
+            block
+            icon={<UnlockOutlined />}
+          >
+            Sign Up!
           </Button>
         </Form.Item>
 
-        <div className="mb-5 text-right mr-10">
-          Don't have an account? <Link to={'/admin/auth/signup'}>Sign Up</Link>{' '}
-          now!
+        <div className="mb-5 text-right">
+          Already have an account?&nbsp;
+          <a onClick={() => setShowSignUp(false)}>Sign In</a>
+          &nbsp;here!
         </div>
       </Form>
     </>

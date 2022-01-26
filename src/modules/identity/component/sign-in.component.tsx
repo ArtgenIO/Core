@@ -1,14 +1,7 @@
 import { MehOutlined, UnlockOutlined } from '@ant-design/icons';
-import {
-  Alert,
-  Button,
-  Divider,
-  Form,
-  Input,
-  notification,
-  Tooltip,
-} from 'antd';
+import { Button, Divider, Form, Input, notification, Tooltip } from 'antd';
 import axios from 'axios';
+import { Dispatch, SetStateAction } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { jwtAtom } from '../../admin/admin.atoms';
 
@@ -21,7 +14,11 @@ type Response = {
   accessToken: string;
 };
 
-export default function SignInComponent() {
+type Props = {
+  setShowSignUp: Dispatch<SetStateAction<boolean>>;
+};
+
+export default function SignInComponent({ setShowSignUp }: Props) {
   const setJwt = useSetRecoilState(jwtAtom);
 
   const doSignIn = (values: Credentials) => {
@@ -53,17 +50,7 @@ export default function SignInComponent() {
       <h1 className="w-full content-center">
         <div className="logo"></div>
       </h1>
-      <Alert
-        type="info"
-        className="text-left mb-4 mt-48 md:mt-4"
-        message={
-          <>
-            Use <strong className="font-bold">demo@artgen.io</strong> with the
-            password <strong className="font-bold">demo</strong>
-          </>
-        }
-        showIcon
-      />
+
       <Form
         name="sign-in"
         size="large"
@@ -116,7 +103,7 @@ export default function SignInComponent() {
         <div className="mb-5 text-right">
           Don't have an account?&nbsp;
           <Tooltip title="Not yet implemented">
-            <a className="line-through">Sign Up</a>
+            <a onClick={() => setShowSignUp(true)}>Sign Up</a>
           </Tooltip>
           &nbsp;now!
         </div>

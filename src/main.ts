@@ -32,11 +32,6 @@ export async function main(modules: Constructor<IModule>[]): Promise<IKernel> {
     process.on('SIGINT', shutdown.bind(shutdown));
     process.on('SIGTERM', shutdown.bind(shutdown));
 
-    // Demo mode restarts every 30 minute, it rebuilds the database in case someone breaks it, yep Norbi, I mean You!... :D
-    if (process.env?.ARTGEN_DEMO === '1') {
-      setTimeout(() => kernel.stop(), 1_800_000);
-    }
-
     // Boostrap the application!
     if (await kernel.boostrap()) {
       await kernel.start();

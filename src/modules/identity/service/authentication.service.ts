@@ -99,5 +99,14 @@ export class AuthenticationService {
     return false;
   }
 
-  async seed() {}
+  async isSignUpAvailable() {
+    const model = this.schema.getSysModel<AccountModel>(SchemaRef.ACCOUNT);
+    const result = (await model
+      .query()
+      .limit(1)
+      .count('* as count')
+      .toKnexQuery()) as unknown as { count: string }[];
+
+    return !parseInt(result[0].count, 10);
+  }
 }

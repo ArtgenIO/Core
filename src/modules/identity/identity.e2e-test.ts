@@ -27,6 +27,15 @@ describe('Identity (e2e)', () => {
     beforeAll(async () => {
       const srv = await getServer();
 
+      await srv.inject({
+        method: 'POST',
+        url: '/api/identity/signup',
+        payload: {
+          email: 'demo@artgen.io',
+          password: 'demo',
+        },
+      });
+
       const response = await srv.inject({
         method: 'POST',
         url: '/api/authentication/jwt/sign-in',

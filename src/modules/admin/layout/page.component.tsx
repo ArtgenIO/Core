@@ -1,19 +1,23 @@
 import { Layout } from 'antd';
+import { Suspense } from 'react';
 import AuthenticationWrapperComponent from '../../identity/component/wrapper.component';
 import NavSide from './nav-side.component';
 import PageContent from './page-content.component';
 import PageDrawer from './page-drawer.component';
+import PageLoading from './page-loading.component';
 
 export default function PageComponent() {
   return (
-    <AuthenticationWrapperComponent>
-      <Layout className="h-screen">
-        <NavSide />
+    <Suspense fallback={<PageLoading />}>
+      <AuthenticationWrapperComponent>
         <Layout className="h-screen">
-          <PageContent />
+          <NavSide />
+          <Layout className="h-screen">
+            <PageContent />
+          </Layout>
+          <PageDrawer />
         </Layout>
-        <PageDrawer />
-      </Layout>
-    </AuthenticationWrapperComponent>
+      </AuthenticationWrapperComponent>
+    </Suspense>
   );
 }

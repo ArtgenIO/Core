@@ -1540,7 +1540,6 @@
       },
       {
         "id": "51c0abf2-5924-4fdf-a920-a1b3487f6710",
-        "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
         "name": "Sign In",
         "nodes": [
           {
@@ -1559,23 +1558,6 @@
             "position": [
               88.66666666666666,
               203.33333333333334
-            ]
-          },
-          {
-            "id": "rest.find.1",
-            "type": "rest.find",
-            "config": {
-              "database": "main",
-              "fields": [
-                "id",
-                "password"
-              ],
-              "schema": "Account"
-            },
-            "title": "Find Account",
-            "position": [
-              250.66666666666663,
-              203.08333333333337
             ]
           },
           {
@@ -1647,6 +1629,26 @@
             "position": [
               897.1467175777061,
               -71.80098784951204
+            ]
+          },
+          {
+            "id": "rest.find.1",
+            "type": "rest.find",
+            "config": {
+              "database": "main",
+              "fields": [
+                "id",
+                "password"
+              ],
+              "offset": 0,
+              "limit": 1,
+              "failOnEmpty": true,
+              "schema": "Account"
+            },
+            "title": "Find Account",
+            "position": [
+              250.66666666666663,
+              203.08333333333337
             ]
           }
         ],
@@ -1727,19 +1729,8 @@
       },
       {
         "id": "ced473f0-522c-47db-a88c-f0f981d93f9e",
-        "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
         "name": "Sign Up",
         "nodes": [
-          {
-            "id": "auth.sign.in.44",
-            "type": "auth.sign.in",
-            "config": {},
-            "title": "Sign JWT",
-            "position": [
-              662.5574827119007,
-              -76.18026377771865
-            ]
-          },
           {
             "id": "terminate.http.182",
             "type": "terminate.http",
@@ -1750,18 +1741,6 @@
             "position": [
               845,
               22.20833333333337
-            ]
-          },
-          {
-            "id": "terminate.http.127",
-            "type": "terminate.http",
-            "config": {
-              "statusCode": "200"
-            },
-            "title": "HTTP Created",
-            "position": [
-              850,
-              -132.29166666666663
             ]
           },
           {
@@ -1778,11 +1757,37 @@
             ]
           },
           {
+            "id": "terminate.http.127",
+            "type": "terminate.http",
+            "config": {
+              "transform": "{{ $input.response | toJson }}",
+              "statusCode": "200"
+            },
+            "title": "HTTP Created",
+            "position": [
+              850,
+              -133.29166666666663
+            ]
+          },
+          {
+            "id": "token.sign.1",
+            "type": "token.sign",
+            "config": {
+              "expiresIn": "8h"
+            },
+            "title": "Sign JWT",
+            "position": [
+              641,
+              -112
+            ]
+          },
+          {
             "id": "trigger.http.26",
             "type": "trigger.http",
             "config": {
-              "path": "/api/$auth/signup",
+              "path": "/api/identity/signup",
               "method": "POST",
+              "statusCode": "200",
               "authentication": "public",
               "responseFormat": "application/json",
               "response": "{\"ack\": true}",
@@ -1813,28 +1818,20 @@
             "transform": ""
           },
           {
-            "id": "b490c0b8-d92a-4a38-8f13-3e38259f43af",
-            "sourceNodeId": "auth.sign.in.44",
-            "targetNodeId": "terminate.http.182",
-            "sourceHandle": "error",
-            "targetHandle": "response",
-            "transform": ""
-          },
-          {
-            "id": "e85f0ddc-ce06-479b-9cd0-1bbaceaca2ae",
+            "id": "6dfc8768-7ef0-410c-971f-61c1093bc9a7",
             "sourceNodeId": "rest.create.1",
-            "targetNodeId": "auth.sign.in.44",
+            "targetNodeId": "token.sign.1",
             "sourceHandle": "result",
-            "targetHandle": "credentials",
-            "transform": "{{ $nodes['trigger.http.26'].output.request.body | toJson }}"
+            "targetHandle": "accountId",
+            "transform": "{{ $output.record.id }}"
           },
           {
-            "id": "06bd0979-1f8d-44a7-ad69-4b9b4713ead5",
-            "sourceNodeId": "auth.sign.in.44",
+            "id": "8d165757-851c-4690-8595-ac3077a29d9f",
+            "sourceNodeId": "token.sign.1",
             "targetNodeId": "terminate.http.127",
-            "sourceHandle": "jwt",
+            "sourceHandle": "token",
             "targetHandle": "response",
-            "transform": "{{ $data| toJson }}"
+            "transform": "{\"accessToken\": \"{{ $output.token }}\"}"
           }
         ]
       }
@@ -1849,15 +1846,6 @@
         "id": "18574f6a-9401-4bc7-93ad-7aab4f345b83",
         "role": "Staff",
         "createdAt": "2022-01-21 08:16:37.351"
-      }
-    ],
-    "Account": [
-      {
-        "id": "84e014b8-1623-44a4-a803-cdf9b252f331",
-        "email": "demo@artgen.io",
-        "password": "demo",
-        "roleId": "8cb4fe07-a7b1-4c0e-8a4c-8177be15866d",
-        "signUpAt": "2022-01-21 22:16:19.094 +0100"
       }
     ],
     "Dashboard": [
