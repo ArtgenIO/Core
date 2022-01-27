@@ -87,7 +87,7 @@ export default function TitleComponent({ schema }: Props) {
           </Select>
         </div>
 
-        <div>{schema.title}</div>
+        <div className="test--content-title">{schema.title}</div>
 
         <div className="ml-2 leading-none text-sm">
           {schema.tags.map(t => (

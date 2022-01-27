@@ -19,6 +19,7 @@ import './nav-side.component.less';
 const { Sider } = Layout;
 
 type IMenuItem = {
+  className: string;
   icon: ReactNode;
   title: string;
   path: string;
@@ -29,36 +30,43 @@ const menuItems: IMenuItem[] = [
     icon: <HomeOutlined />,
     path: ADMIN_URL,
     title: 'Dashboard',
+    className: 'test--nav-dashboard',
   },
   {
     icon: <FileOutlined />,
     path: ADMIN_URL + '/content',
     title: 'Content',
+    className: 'test--nav-content',
   },
   {
     icon: <PartitionOutlined />,
     path: ADMIN_URL + '/flow',
     title: 'Flow',
+    className: 'test--nav-flow',
   },
   {
     icon: <DatabaseOutlined />,
     path: ADMIN_URL + '/database',
     title: 'Databases',
+    className: 'test--nav-database',
   },
   {
     icon: <LayoutOutlined />,
     path: ADMIN_URL + '/page',
     title: 'Page Builder',
+    className: 'test--nav-page',
   },
   {
     icon: <FundOutlined />,
     path: ADMIN_URL + '/analytics',
     title: 'Analytics',
+    className: 'test--nav-analytics',
   },
   {
     icon: <CloudOutlined />,
     path: ADMIN_URL + '/cloud-store',
     title: 'Cloud Store',
+    className: 'test--nav-store',
   },
 ];
 
@@ -102,7 +110,9 @@ const NavSide = () => {
           <Menu className="menu" defaultSelectedKeys={selected} mode="inline">
             {menuItems.map(menu => (
               <Menu.Item key={`k-${snakeCase(menu.title)}`} icon={menu.icon}>
-                <Link to={menu.path}>{menu.title}</Link>
+                <Link to={menu.path} className={menu.className}>
+                  {menu.title}
+                </Link>
               </Menu.Item>
             ))}
           </Menu>

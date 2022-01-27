@@ -64,4 +64,28 @@ describe('Admin', () => {
       randomName,
     );
   });
+
+  it('should be able to visit the content editor', () => {
+    cy.get('.test--nav-content').should('exist');
+
+    cy.get('.test--nav-content').click();
+    cy.get('.test--content-tree').should('exist');
+    cy.get('.test--content-title').should('contain.text', 'Accounts');
+  });
+
+  it('should be able to visit the flow editor', () => {
+    cy.get('.test--nav-flow').should('exist');
+  });
+
+  it('should be able to visit the database editor', () => {
+    cy.get('.test--nav-database').should('exist');
+  });
+
+  it('should be able to visit the page editor', () => {
+    cy.get('.test--nav-page').should('exist');
+  });
+
+  it('should be able to visit the store', () => {
+    cy.get('.test--nav-store').should('exist');
+  });
 });
