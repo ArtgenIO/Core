@@ -50,7 +50,10 @@ export class HttpService {
 
     this.proxy.addHook('onRequest', (request, reply, done) => {
       if (this.upstream) {
-        this.logger.debug('Proxy [%s][%s]', request.method, request.url);
+        if (!request.url.match(/@fs/)) {
+          this.logger.debug('Proxy [%s][%s]', request.method, request.url);
+        }
+
         this.upstream.routing(request.raw, reply.hijack().raw);
       }
 

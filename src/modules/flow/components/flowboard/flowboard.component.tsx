@@ -18,9 +18,8 @@ import ReactFlow, {
   OnLoadParams,
 } from 'react-flow-renderer';
 import { useParams } from 'react-router';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
-import { schemasAtom } from '../../../admin/admin.atoms';
 import MenuBlock from '../../../admin/component/menu-block.component';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
@@ -50,9 +49,6 @@ import FlowExportComponent from './serializer.component';
 import ArtboardToolsComponent from './tools.component';
 
 export default function FlowBoardComponent() {
-  // Global
-  const schemas = useRecoilValue(schemasAtom);
-
   // Page state
   const [showCatalog, setShowCatalog] = useState(false);
   const [showExport, setShowExport] = useState(false);
@@ -60,10 +56,10 @@ export default function FlowBoardComponent() {
 
   // Router
   const flowId: string = useParams().id;
-  const httpClient = useHttpClientSimple();
+  const client = useHttpClientSimple();
 
   // Local state
-  const flowWrapper = useRef(null);
+  const wrapper = useRef(null);
   const [customNodes, setCustomNodes] = useState<NodeTypesType>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -109,7 +105,7 @@ export default function FlowBoardComponent() {
   };
 
   const onDrop = (event: DragEvent) => {
-    const bounds = flowWrapper.current.getBoundingClientRect();
+    const bounds = wrapper.current.getBoundingClientRect();
 
     setIsFlowChanged(true);
 
@@ -130,8 +126,8 @@ export default function FlowBoardComponent() {
 
   useEffect(() => {
     (async () => {
-      const nodes = await httpClient.get<ILambdaMeta[]>('/api/lambda');
-      const flow = await httpClient.get<IFlow>(
+      const nodes = await client.get<ILambdaMeta[]>('/api/lambda');
+      const flow = await client.get<IFlow>(
         `${toRestSysRoute(SchemaRef.FLOW)}/${flowId}`,
       );
 
@@ -228,7 +224,7 @@ export default function FlowBoardComponent() {
       </Sider>
 
       <Layout className="flowboard">
-        <div className="w-full h-full bg-midnight-800" ref={flowWrapper}>
+        <div className="w-full h-full bg-midnight-800" ref={wrapper}>
           {!isLoading && (
             <ReactFlow
               onConnect={onConnect}

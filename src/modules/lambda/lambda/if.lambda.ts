@@ -15,8 +15,8 @@ type Config = {
   tags: 'lambda',
 })
 @Lambda({
-  type: 'if',
-  icon: 'if.png',
+  type: 'compare',
+  icon: 'compare.png',
   description: 'IF compare subject against a defined value',
   handles: [
     new InputHandleDTO('subject', {
@@ -78,7 +78,7 @@ type Config = {
     required: ['operator', 'against', 'negate'],
   },
 })
-export class IfLambda implements ILambda {
+export class CompareLambda implements ILambda {
   async invoke(session: FlowSession) {
     const subject = session.getInput('subject');
     const { operator, against, negate } = session.getConfig<Config>();

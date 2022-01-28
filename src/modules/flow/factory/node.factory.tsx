@@ -1,7 +1,9 @@
+import { Avatar } from 'antd';
 import { kebabCase } from 'lodash';
 import { ReactNode } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
+import { INode } from '../interface';
 
 export class NodeFactory {
   /**
@@ -11,14 +13,16 @@ export class NodeFactory {
     node: ILambdaMeta,
     doOpenNodeConfig: (elementId: string) => void,
   ): ReactNode {
-    return (props: NodeProps) => {
+    const totalInputs = node.handles.filter(
+      h => h.direction === 'input',
+    ).length;
+    const totalOutputs = node.handles.filter(
+      h => h.direction === 'output',
+    ).length;
+
+    return (props: NodeProps<INode>) => {
       const handles = [];
-      const totalInputs = node.handles.filter(
-        h => h.direction === 'input',
-      ).length;
-      const totalOutputs = node.handles.filter(
-        h => h.direction === 'output',
-      ).length;
+
       let nthInput = 0;
       let nthOutput = 0;
 
@@ -55,18 +59,26 @@ export class NodeFactory {
 
       return (
         <div
-          className="node-component"
+          className="flow-node"
           onDoubleClick={() => doOpenNodeConfig(props.id)}
         >
           {handles}
-          <div className="node-label">{props.data.title}</div>
-          <div className="text-center node-content relative">
-            <img
-              src={`/assets/icons/${node.icon ?? 'lambda.png'}`}
-              width="48"
-              height="48"
-              draggable={false}
-            />
+          <div className="node-label">
+            {props.data.type.replace(/\./g, ' / ')}
+          </div>
+          <div className="node-content">
+            <div className="flex">
+              <div className="shrink">
+                <Avatar
+                  src={`/assets/icons/${node.icon ?? 'lambda.png'}`}
+                  draggable={false}
+                  size={26}
+                  shape="square"
+                  className="logo"
+                />
+              </div>
+              <div className="grow title">{props.data.title}</div>
+            </div>
           </div>
         </div>
       );

@@ -5,7 +5,6 @@ import { SchemaModule } from '../schema/schema.module';
 import { IdentityGateway } from './gateway/authentication.gateway';
 import { HashCompareLambda } from './lambda/hash-compare.lambda';
 import { HashCreateLambda } from './lambda/hash-create.lambda';
-import { SignInLambda } from './lambda/sign-in.lambda';
 import { TokenSignLambda } from './lambda/token-sign.lambda';
 import { AuthenticationHandlerProvider } from './provider/authentication-handler.provider';
 import { AuthenticatorProvider } from './provider/authenticator.provider';
@@ -19,7 +18,6 @@ import { AuthenticationService } from './service/authentication.service';
     HashCompareLambda,
     HashCreateLambda,
     IdentityGateway,
-    SignInLambda,
     TokenSignLambda,
   ],
   dependsOn: [moduleRef(() => SchemaModule), moduleRef(() => BlueprintModule)],

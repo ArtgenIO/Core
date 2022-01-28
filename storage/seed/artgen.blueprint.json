@@ -1498,42 +1498,66 @@
     "Flow": [
       {
         "id": "2ecfd7bd-d051-46d4-9e8e-a1229dd1857f",
-        "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
-        "name": "Lambdas",
+        "moduleId": null,
+        "name": "Lambda List",
         "nodes": [
           {
-            "id": "lambda.read.184",
+            "id": "lambda.read.1",
             "type": "lambda.read",
+            "config": {},
+            "title": "Lambda Read",
             "position": [
-              853.3333333333334,
-              190.66666666666669
-            ],
-            "config": {}
+              841.3333333333334,
+              257.6666666666667
+            ]
           },
           {
-            "id": "trigger.http.146",
-            "type": "trigger.http",
+            "id": "terminate.http.1",
+            "type": "terminate.http",
+            "config": {
+              "transform": "{{ $input.response | toJson }}",
+              "statusCode": "200"
+            },
+            "title": "HTTP Ok",
             "position": [
-              657.8333333333334,
-              157.91666666666669
-            ],
+              1139,
+              342
+            ]
+          },
+          {
+            "id": "trigger.http.1",
+            "type": "trigger.http",
             "config": {
               "path": "/api/lambda",
               "method": "GET",
+              "statusCode": "200",
               "authentication": "protected",
               "responseFormat": "application/json",
-              "response": "{{ $nodes['lambda.read.184'].output.result | toJson }}",
+              "response": "{{ $nodes['lambda.read.1'].output.result | toJson }}",
               "waitForLastNode": "true"
-            }
+            },
+            "title": "HTTP Endpoint",
+            "position": [
+              503.83333333333337,
+              201.91666666666669
+            ]
           }
         ],
         "edges": [
           {
             "id": "de3aa052-5708-4320-aea0-3c72277be1ed",
-            "sourceNodeId": "trigger.http.146",
-            "targetNodeId": "lambda.read.184",
+            "sourceNodeId": "trigger.http.1",
+            "targetNodeId": "lambda.read.1",
             "sourceHandle": "request",
             "targetHandle": "query",
+            "transform": ""
+          },
+          {
+            "id": "cde658fc-b288-4df7-9b1e-3ac610348ca9",
+            "sourceNodeId": "lambda.read.1",
+            "targetNodeId": "terminate.http.1",
+            "sourceHandle": "result",
+            "targetHandle": "response",
             "transform": ""
           }
         ]
@@ -1561,7 +1585,7 @@
             ]
           },
           {
-            "id": "if.1",
+            "id": "compare.1",
             "type": "if",
             "config": {
               "operator": "==",
@@ -1672,7 +1696,7 @@
           {
             "id": "33c08b27-fc56-4e1d-9c78-9ccffb629dfc",
             "sourceNodeId": "length.1",
-            "targetNodeId": "if.1",
+            "targetNodeId": "compare.1",
             "sourceHandle": "length",
             "targetHandle": "subject",
             "transform": ""
@@ -1687,7 +1711,7 @@
           },
           {
             "id": "12690074-0cac-4f33-ba78-a84b5a12c2a5",
-            "sourceNodeId": "if.1",
+            "sourceNodeId": "compare.1",
             "targetNodeId": "terminate.http.1",
             "sourceHandle": "no",
             "targetHandle": "response",
@@ -1695,7 +1719,7 @@
           },
           {
             "id": "6c369397-bf96-4ee4-8b81-7966823f0fb0",
-            "sourceNodeId": "if.1",
+            "sourceNodeId": "compare.1",
             "targetNodeId": "hash.compare.1",
             "sourceHandle": "yes",
             "targetHandle": "elements",

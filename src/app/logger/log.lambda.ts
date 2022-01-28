@@ -2,40 +2,32 @@ import { FlowSession } from '../../modules/flow/library/flow.session';
 import { Lambda } from '../../modules/lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../modules/lambda/dto/input-handle.dto';
 import { ILambda } from '../../modules/lambda/interface/lambda.interface';
-import { ILogger, Logger, Service } from '../container';
+import { Service } from '../container';
 
 @Service({
   tags: 'lambda',
 })
 @Lambda({
   type: 'log',
-  icon: 'log.png',
-  description: 'Log with debug level',
+  icon: 'log.svg',
+  description: 'Write message into STDOut',
   handles: [new InputHandleDTO('message')],
   config: {
+    title: 'Log Level',
     type: 'string',
     enum: ['debug', 'info', 'warn', 'error'],
     default: 'debug',
-    title: 'Level',
   },
 })
 export class LogLambda implements ILambda {
-  constructor(
-    @Logger()
-    readonly logger: ILogger,
-  ) {}
-
   async invoke(ctx: FlowSession) {
-    const instance = this.logger.child({
-      scope: `Flow:${ctx.flow.id.substring(0, 8)}`,
-    });
-    const level = ctx.getConfig();
-    let msg = ctx.getInput('message');
+    const level = ctx.getConfig<string>();
+    let message = ctx.getInput('message');
 
-    if (typeof msg === 'object') {
-      msg = JSON.stringify(msg, null, 2);
+    if (typeof message === 'object') {
+      message = JSON.stringify(ctx.getInput('message'), null, 2);
     }
 
-    instance.log(level as string, '%s', msg);
+    ctx.logger.log(level, '%s', message);
   }
 }
