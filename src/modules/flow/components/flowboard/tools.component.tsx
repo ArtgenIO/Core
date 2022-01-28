@@ -3,26 +3,31 @@ import {
   ExpandOutlined,
   PlusSquareOutlined,
   SettingOutlined,
-  UnlockOutlined,
   VerticalLeftOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons';
 import { message } from 'antd';
+import { Dispatch, SetStateAction } from 'react';
 import { Edge } from 'react-flow-renderer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  catalogCollapsedAtom,
   elementsAtom,
   flowInstanceAtom,
   selectedElementIdAtom,
   selectedNodeIdAtom,
 } from '../../atom/artboard.atoms';
-import ArtboardDownload from './download.component';
 import ArtboardSave from './save.component';
 
-export default function ArtboardToolsComponent() {
-  const [isCollapsed, setCollapsed] = useRecoilState(catalogCollapsedAtom);
+type Props = {
+  showCatalog: boolean;
+  setShowCatalog: Dispatch<SetStateAction<boolean>>;
+};
+
+export default function ArtboardToolsComponent({
+  showCatalog,
+  setShowCatalog,
+}: Props) {
   const flowInstance = useRecoilValue(flowInstanceAtom);
   const selectedElementId = useRecoilValue(selectedElementIdAtom);
   const setSelectedNodeId = useSetRecoilState(selectedNodeIdAtom);
@@ -59,20 +64,15 @@ export default function ArtboardToolsComponent() {
           className="rounded-t-md"
           onClick={e => {
             e.stopPropagation();
-            setCollapsed(state => !state);
+            setShowCatalog(state => !state);
           }}
         >
-          {isCollapsed ? <PlusSquareOutlined /> : <VerticalLeftOutlined />}
+          {!showCatalog ? <PlusSquareOutlined /> : <VerticalLeftOutlined />}
 
-          <div>{isCollapsed ? 'Create Node' : 'Close Catalog'}</div>
+          <div>{showCatalog ? 'Create Node' : 'Close Catalog'}</div>
         </div>
 
         <ArtboardSave />
-
-        <div onClick={() => message.info('Not yet implemented')}>
-          <UnlockOutlined />
-          <div>Authentication</div>
-        </div>
 
         <div onClick={() => flowInstance.zoomIn()}>
           <ZoomInOutlined />
@@ -88,8 +88,6 @@ export default function ArtboardToolsComponent() {
           <ExpandOutlined />
           <div>Zoom To Fit</div>
         </div>
-
-        <ArtboardDownload />
       </div>
 
       <div className="absolute right-4 bottom-4 w-10 rounded-md artboard-tools text-center">

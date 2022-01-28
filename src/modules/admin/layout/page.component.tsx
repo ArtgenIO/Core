@@ -3,7 +3,6 @@ import { Suspense } from 'react';
 import AuthenticationWrapperComponent from '../../identity/component/wrapper.component';
 import NavSide from './nav-side.component';
 import PageContent from './page-content.component';
-import PageDrawer from './page-drawer.component';
 import PageLoading from './page-loading.component';
 
 export default function PageComponent() {
@@ -15,7 +14,6 @@ export default function PageComponent() {
           <Layout className="h-screen">
             <PageContent />
           </Layout>
-          <PageDrawer />
         </Layout>
       </AuthenticationWrapperComponent>
     </Suspense>

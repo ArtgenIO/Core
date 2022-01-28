@@ -38,11 +38,6 @@ export const selectedElementIdAtom = atom<string>({
   default: null,
 });
 
-export const catalogCollapsedAtom = atom<boolean>({
-  key: 'catalogCollapsed',
-  default: true,
-});
-
 export const flowChangedAtom = atom<boolean>({
   key: 'flowChanged',
   default: false,

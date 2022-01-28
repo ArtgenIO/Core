@@ -156,7 +156,7 @@ export default function SchemaEditorComponent({
             </Tabs.TabPane>
 
             <Tabs.TabPane key="indices" tab="Serialize">
-              <SchemaExportComponent schema={schema} setSchema={setSchema} />
+              <SchemaExportComponent schema={schema} />
             </Tabs.TabPane>
 
             <Tabs.TabPane

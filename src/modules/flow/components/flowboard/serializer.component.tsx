@@ -1,31 +1,37 @@
-import { Button, Divider, message } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
+import { Button, Divider, Drawer, message } from 'antd';
 import { saveAs } from 'file-saver';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
-import { ISchema } from '../../interface';
+import { IFlow } from '../../interface';
 
 type Props = {
-  schema: Partial<ISchema>;
+  flow: IFlow;
+  onClose: () => void;
 };
 
-export default function SchemaExportComponent({ schema }: Props) {
+export default function FlowExportComponent({ flow, onClose }: Props) {
   const doDownload = () => {
-    const fileName = `schema-${schema.database}-${schema.reference}.json`;
-    const fileContent = new Blob([JSON.stringify(schema, null, 2)], {
+    const fileName = `flow-${flow.name}-${flow.id.substring(
+      0,
+      8,
+    )}-${new Date().toISOString()}.json`;
+    const fileContent = new Blob([JSON.stringify(flow, null, 2)], {
       type: 'application/json',
     });
 
     saveAs(fileContent, fileName);
+    onClose();
   };
 
   const doCopy = () => {
-    navigator.clipboard.writeText(JSON.stringify(schema, null, 2));
-    message.success('Schema copied to Your clipboard!', 2);
+    navigator.clipboard.writeText(JSON.stringify(flow, null, 2));
+    message.success('Flow copied to Your clipboard!', 2);
+
+    onClose();
   };
 
   return (
-    <ErrorBoundary>
+    <Drawer visible onClose={onClose} width="40vw" maskClosable>
       <Button.Group className="w-full">
         <Button block type="primary" ghost onClick={doDownload}>
           Download as JSON
@@ -43,8 +49,8 @@ export default function SchemaExportComponent({ schema }: Props) {
         showLineNumbers={true}
         selected
       >
-        {JSON.stringify(schema, null, 2)}
+        {JSON.stringify(flow, null, 2)}
       </SyntaxHighlighter>
-    </ErrorBoundary>
+    </Drawer>
   );
 }

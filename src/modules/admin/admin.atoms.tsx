@@ -1,5 +1,4 @@
 import { diff } from 'just-diff';
-import { ReactChild } from 'react';
 import { atom, DefaultValue, useRecoilValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
 import { IContentModule } from '../content/interface/content-module.interface';
@@ -31,11 +30,6 @@ export const pageSizeAtom = atom<number>({
   key: 'pageSize',
   default: 20,
   effects_UNSTABLE: [persistAtom],
-});
-
-export const pageDrawerAtom = atom<ReactChild>({
-  key: 'pageDrawer',
-  default: undefined,
 });
 
 export const schemasAtom = atom<ISchema[]>({
