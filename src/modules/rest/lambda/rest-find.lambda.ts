@@ -1,6 +1,7 @@
 import { Inject, Service } from '../../../app/container';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { getErrorMessage } from '../../../app/kernel';
+import { IFlow } from '../../flow/interface';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
@@ -133,6 +134,8 @@ export class RestFindLambda implements ILambda {
     readonly service: SchemaService,
   ) {}
 
+  async onInit(flow: IFlow): Promise<void> {}
+
   async invoke(session: FlowSession) {
     const inputConditions = session.getInput<RowLike>('conditions');
     const config = session.getConfig<Config>();
@@ -157,7 +160,9 @@ export class RestFindLambda implements ILambda {
           );
         }
       } else {
-        q.where(inputConditions);
+        if (inputConditions) {
+          q.where(inputConditions);
+        }
       }
 
       if (config.offset) {
@@ -173,8 +178,8 @@ export class RestFindLambda implements ILambda {
       if (config.failOnEmpty && !records.length) {
         return {
           error: {
-            message: 'Empty',
-            code: 0,
+            message: 'No Rows',
+            code: 1404,
           },
         };
       }

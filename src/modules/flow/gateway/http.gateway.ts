@@ -86,6 +86,8 @@ export class LogicHttpGateway implements IHttpGateway {
         if (isProtected) {
           swaggerSecurity.push({
             jwt: [],
+            accessKeyQuery: [],
+            accessKeyHeader: [],
           });
         }
 

@@ -376,7 +376,7 @@ export class FlowSession {
             h => h.id === edge.targetHandle,
           );
 
-          let targetInput = output as string | [];
+          let targetInput = output as string | [] | boolean | null | number;
 
           // Init a default config for the node
           if (typeof targetInput === 'object') {
@@ -412,6 +412,14 @@ export class FlowSession {
                 throw new Error(`Input is not a JSON`);
               }
             }
+          }
+
+          if (targetInput === 'false') {
+            targetInput = false;
+          } else if (targetInput === 'true') {
+            targetInput = true;
+          } else if (targetInput === 'null') {
+            targetInput = null;
           }
 
           // Configure the next node's input

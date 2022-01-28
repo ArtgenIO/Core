@@ -1,4 +1,6 @@
-import { Skeleton } from 'antd';
+import { BuildOutlined, PlayCircleOutlined } from '@ant-design/icons';
+import { Layout, Menu } from 'antd';
+import Sider from 'antd/lib/layout/Sider';
 import { kebabCase } from 'lodash';
 import { DragEvent, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
@@ -14,6 +16,7 @@ import { useParams } from 'react-router';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { pageDrawerAtom } from '../../admin/admin.atoms';
+import MenuBlock from '../../admin/component/menu-block.component';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
@@ -32,13 +35,13 @@ import { NodeFactory } from '../factory/node.factory';
 import { IFlow } from '../interface/flow.interface';
 import { createNode } from '../util/create-node';
 import { unserializeFlow } from '../util/unserialize-flow';
-import './artboard.component.less';
 import ArtboardCatalogComponent from './artboard/catalog.component';
 import ArtboardNodeConfigComponent from './artboard/config.component';
 import ArtboardEdgeConfigComponent from './artboard/edge-config.component';
 import CustomEdge from './artboard/edge.component';
 import FlowNameComponent from './artboard/name.component';
 import ArtboardToolsComponent from './artboard/tools.component';
+import './flowboard.component.less';
 
 export default function FlowArtboardComponent() {
   // Page state
@@ -54,7 +57,7 @@ export default function FlowArtboardComponent() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Artboard state
-  const setFlow = useSetRecoilState(flowAtom);
+  const [flow, setFlow] = useRecoilState(flowAtom);
   const [elements, setElements] = useRecoilState(elementsAtom);
   const [lambdaMetas, setLambdaMetas] = useRecoilState(lambdaMetasAtom);
   const [flowInstance, setFlowInstance] = useRecoilState(flowInstanceAtom);
@@ -151,11 +154,38 @@ export default function FlowArtboardComponent() {
   }, [flowId]);
 
   return (
-    <>
-      <div className="h-screen bg-midnight-800 flowboard">
-        <Skeleton loading={isLoading}>
-          <ReactFlowProvider>
-            <div className="w-full h-full" ref={flowWrapper}>
+    <Layout hasSider>
+      <Sider width={220} className="h-screen depth-2 overflow-auto gray-scroll">
+        <MenuBlock title="Triggers">
+          {flow && (
+            <Menu className="compact">
+              {flow.nodes
+                .filter(node => node.type.match('trigger'))
+                .map(node => (
+                  <Menu.Item icon={<PlayCircleOutlined />}>
+                    {node.title}
+                  </Menu.Item>
+                ))}
+            </Menu>
+          )}
+        </MenuBlock>
+        <MenuBlock title="Nodes">
+          {flow && (
+            <Menu className="compact">
+              {flow.nodes
+                .filter(node => !node.type.match('trigger'))
+                .map(node => (
+                  <Menu.Item icon={<BuildOutlined />}>{node.title}</Menu.Item>
+                ))}
+            </Menu>
+          )}
+        </MenuBlock>
+      </Sider>
+
+      <Layout className="flowboard">
+        <ReactFlowProvider>
+          <div className="w-full h-full bg-midnight-800" ref={flowWrapper}>
+            {!isLoading && (
               <ReactFlow
                 onConnect={onConnect}
                 elements={elements}
@@ -193,10 +223,10 @@ export default function FlowArtboardComponent() {
                 <ArtboardToolsComponent />
                 <FlowNameComponent />
               </ReactFlow>
-            </div>
-          </ReactFlowProvider>
-        </Skeleton>
-      </div>
-    </>
+            )}
+          </div>
+        </ReactFlowProvider>
+      </Layout>
+    </Layout>
   );
 }
