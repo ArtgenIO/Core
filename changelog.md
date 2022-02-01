@@ -1,6 +1,6 @@
 ### Version 0.2.0
 
-- Installable as NPM package for easy test runs
+- Beta release
 
 ### Version 0.1.10
 
