@@ -1586,7 +1586,7 @@
           },
           {
             "id": "compare.1",
-            "type": "if",
+            "type": "compare",
             "config": {
               "operator": "==",
               "against": true,
@@ -1753,6 +1753,7 @@
       },
       {
         "id": "ced473f0-522c-47db-a88c-f0f981d93f9e",
+        "moduleId": null,
         "name": "Sign Up",
         "nodes": [
           {
@@ -1875,7 +1876,7 @@
     "Dashboard": [
       {
         "id": "4e4fdbcb-37cb-4d62-9cec-25321f1db614",
-        "name": "Telemetry Board",
+        "name": "Beta Dashboard",
         "widgets": [
           {
             "w": 11,

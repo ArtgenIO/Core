@@ -6,7 +6,7 @@
 [![Docker Image Version](https://img.shields.io/docker/v/artgenio/core)](https://hub.docker.com/r/artgenio/core)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/artgenio/core)](https://github.com/ArtgenIO/Core/commits/main)
 [![Coverage Status](https://coveralls.io/repos/github/ArtgenIO/Core/badge.svg?branch=main)](https://coveralls.io/github/ArtgenIO/Core?branch=main)
-[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+![License](https://img.shields.io/github/license/artgenio/core?label=License)
 
 ### Get Started!
 
@@ -26,7 +26,7 @@ then visit the [http://localhost:7200](http://localhost:7200) address for the de
 
 ---
 
-Currently the project in the **alpha preview** phase, nothing is finalized and we are just experimenting with solutions, the proof of concept works and the goal is clear, but the features will be documented when they reach a stable enough status to be used in a beta preview like environment.
+Currently the project in the **beta** phase, we are in feature freeze and preparing for the 1.0.0 by fixing every bug, streamlining the UX and implementing the common usecases.
 
 ### Database Support
 

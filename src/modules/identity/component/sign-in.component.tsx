@@ -47,7 +47,7 @@ export default function SignInComponent({ setShowSignUp, canSignUp }: Props) {
 
   return (
     <>
-      <h1 className="header">Artgen Core</h1>
+      <h1 className="header">Artgen Core <span className='text-success-400'>// Beta</span></h1>
       <h1 className="w-full content-center">
         <div className="logo"></div>
       </h1>
