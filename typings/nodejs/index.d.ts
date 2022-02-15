@@ -7,5 +7,8 @@ declare namespace NodeJS {
 
     NODE_ENV: 'production' | 'development' | 'test';
     PORT: string;
+
+    ARTGEN_MEILI_HOST: string;
+    ARTGEN_MEILI_KEY: string;
   }
 }

@@ -13,5 +13,9 @@ export const migrateField = (field: IField, idx: number = 1): IField => {
     };
   }
 
+  if (!field.searchable) {
+    field.searchable = false;
+  }
+
   return field;
 };

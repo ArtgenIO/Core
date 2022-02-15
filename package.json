@@ -96,6 +96,7 @@
     "lodash.startcase": "^4.4.0",
     "lodash.upperfirst": "^4.3.1",
     "mariadb": "^2.5.5",
+    "meilisearch": "^0.24.0",
     "moleculer": "^0.14.18",
     "mysql2": "^2.3.3-rc.0",
     "nanoid": "^3.1.30",

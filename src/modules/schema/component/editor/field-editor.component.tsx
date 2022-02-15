@@ -648,6 +648,24 @@ export default function FieldEditor({
                 </List.Item>
               )}
             ></List>
+
+            <Divider />
+            <h2 className="font-header text-lg">Searchable</h2>
+            <p>
+              Should the field be included when building search index for the
+              content, excessive or redundant data can overwhelm the search
+              engine!
+            </p>
+            <Switch
+              checked={!!field.searchable}
+              onChange={checked =>
+                setField(oldState => {
+                  const newState = cloneDeep(oldState);
+                  newState.searchable = !!checked;
+                  return newState;
+                })
+              }
+            />
           </Form>
         </Drawer>
       )}

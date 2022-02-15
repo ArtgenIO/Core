@@ -46,7 +46,17 @@ services:
     volumes:
       - ag_mysqldb:/var/lib/mysql
 
+  ag-search:
+    image: getmeili/meilisearch:latest
+    hostname: ag-search
+    restart: unless-stopped
+    ports:
+      - 7700:7700
+    volumes:
+      - ag_search:/data.ms
+
 volumes:
   ag_postgresql:
   ag_mysqldb:
+  ag_search:
   ag_mariadb:

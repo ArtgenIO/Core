@@ -71,4 +71,9 @@ export interface IField {
    * Behavior tags.
    */
   tags: FieldTag[];
+
+  /**
+   * Should include in the search indexing.
+   */
+  searchable?: boolean;
 }
