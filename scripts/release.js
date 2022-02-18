@@ -1,5 +1,5 @@
 const { Select } = require('enquirer');
-const { readFileSync, writeFileSync, write } = require('fs');
+const { readFileSync, writeFileSync } = require('fs');
 const { join } = require('path');
 const { parse, stringify } = require('semver-utils');
 const { execSync } = require('child_process');

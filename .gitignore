@@ -123,3 +123,5 @@ dist
 /build/
 
 /*.db
+
+/scripts/.temp_env
