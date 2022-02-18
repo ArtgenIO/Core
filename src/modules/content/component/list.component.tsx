@@ -62,14 +62,17 @@ export default function ContentListComponent() {
           <PageHeader
             title={schema ? <TitleComponent schema={schema} /> : <>Loading</>}
             actions={
-              <Button
-                icon={<FileAddOutlined />}
-                type="primary"
-                onClick={() => setTriggerShowCreate(true)}
-                className="bg-gradient-to-r from-green-400 to-primary-600 border-midnight-800"
-              >
-                Create New Record
-              </Button>
+              <>
+                <Button
+                  icon={<FileAddOutlined />}
+                  type="primary"
+                  key="create"
+                  onClick={() => setTriggerShowCreate(true)}
+                  className="bg-gradient-to-r from-green-400 to-primary-600 border-midnight-800"
+                >
+                  Create New Record
+                </Button>
+              </>
             }
           />
         }

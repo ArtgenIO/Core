@@ -60,8 +60,8 @@ export class OpenApiService {
     };
   }
 
-  getResourceURL(schema: ISchema): string {
-    return `/api/rest/${kebabCase(schema.database)}/${kebabCase(
+  getResourceURL(schema: ISchema, cause: string = 'rest'): string {
+    return `/api/${cause}/${kebabCase(schema.database)}/${kebabCase(
       schema.reference,
     )}`;
   }

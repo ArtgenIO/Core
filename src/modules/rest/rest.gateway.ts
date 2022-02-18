@@ -15,6 +15,7 @@ import { SchemaService } from '../schema/service/schema.service';
 import { CrudAction } from './interface/crud-action.enum';
 import { OpenApiService } from './service/openapi.service';
 import { RestService } from './service/rest.service';
+import { SearchService } from './service/search.service';
 
 @Service({
   tags: 'http:gateway',
@@ -29,6 +30,8 @@ export class RestGateway implements IHttpGateway {
     readonly openApi: OpenApiService,
     @Inject(SchemaService)
     readonly schema: SchemaService,
+    @Inject(SearchService)
+    readonly search: SearchService,
     @Inject(Kernel)
     readonly kernel: IKernel,
   ) {}
@@ -38,6 +41,7 @@ export class RestGateway implements IHttpGateway {
     const authPrehandler = await this.kernel.get<RouteHandlerMethod>(
       AuthenticationHandlerProvider,
     );
+    const hasSearch = await this.search.isAvailable();
 
     await httpServer.register(NoCachePlugin);
 
@@ -211,6 +215,81 @@ export class RestGateway implements IHttpGateway {
           }
         },
       );
+
+      if (hasSearch) {
+        // Search query
+        httpServer.get(
+          this.openApi.getResourceURL(schema, 'search') + '/:term',
+          {
+            //schema: this.openApi.toFastifySchema(schema, CrudAction.CREATE),
+            schema: {
+              tags: ['Search'],
+            },
+            preHandler:
+              schema.access.create !== 'public' ? authPrehandler : null,
+          },
+          async (
+            req: FastifyRequest<{ Params: { term: string } }>,
+            reply: FastifyReply,
+          ): Promise<unknown> => {
+            try {
+              const response = await this.search.query(
+                schema.database,
+                schema.reference,
+                req.params.term,
+              );
+
+              reply.statusCode = 200;
+              reply.header('content-type', 'application/json');
+
+              return JSON.stringify(response);
+            } catch (error) {
+              reply.statusCode = 400;
+
+              return {
+                statusCode: 400,
+                error: 'Bad Request',
+              };
+            }
+          },
+        );
+
+        // Search reindex
+        httpServer.patch(
+          this.openApi.getResourceURL(schema, 'search'),
+          {
+            //schema: this.openApi.toFastifySchema(schema, CrudAction.CREATE),
+            schema: {
+              tags: ['Search'],
+            },
+            preHandler:
+              schema.access.create !== 'public' ? authPrehandler : null,
+          },
+          async (
+            req: FastifyRequest<{ Params: { term: string } }>,
+            reply: FastifyReply,
+          ): Promise<unknown> => {
+            try {
+              const response = await this.search.index(
+                schema.database,
+                schema.reference,
+              );
+
+              reply.statusCode = 201;
+              reply.header('content-type', 'application/json');
+
+              return JSON.stringify(response);
+            } catch (error) {
+              reply.statusCode = 400;
+
+              return {
+                statusCode: 400,
+                error: 'Bad Request',
+              };
+            }
+          },
+        );
+      }
 
       this.logger.info(
         'REST routes for [%s/%s] registered',

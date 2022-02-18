@@ -8,6 +8,7 @@ import { RestGateway } from './rest.gateway';
 import { ODataService } from './service/odata.service';
 import { OpenApiService } from './service/openapi.service';
 import { RestService } from './service/rest.service';
+import { SearchService } from './service/search.service';
 
 @Module({
   imports: [moduleRef(() => SchemaModule), UpgradeModule],
@@ -18,6 +19,7 @@ import { RestService } from './service/rest.service';
     RestGateway,
     RestCreateLambda,
     RestFindLambda,
+    SearchService,
   ],
 })
 export class RestModule {}
