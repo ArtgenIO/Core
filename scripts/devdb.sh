@@ -16,7 +16,7 @@ do
             echo "export ARTGEN_DATABASE_DSN=postgres://artgen:artgen@localhost:3307/artgen" > .temp_env
             ;;
         "SQLite (Memory)")
-            echo "export ARTGEN_DATABASE_DSN=:sqlite:memory:" > .temp_env
+            echo "export ARTGEN_DATABASE_DSN=sqlite::memory:" > .temp_env
             ;;
         *) echo "Invalid Option $REPLY";;
     esac

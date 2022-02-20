@@ -64,16 +64,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --ignore-engines
 
-      - name: Run API tests (MariaDB)
+      - name: Run tests (MariaDB)
         run:  yarn test
-        env:
-          ARTGEN_DATABASE_DSN: mariadb://artgen:artgen@localhost:3306/artgen
-
-      - name: Run build
-        run: yarn build
-
-      - name: Run UI tests (MariaDB)
-        run: yarn test:cy
         env:
           ARTGEN_DATABASE_DSN: mariadb://artgen:artgen@localhost:3306/artgen
 
@@ -107,18 +99,11 @@ jobs:
       - name: Install development dependencies
         run: yarn install --ignore-engines
 
-      - name: Run API tests (MySQL)
+      - name: Run tests (MySQL)
         run: yarn test
         env:
           ARTGEN_DATABASE_DSN: mysql://artgen:artgen@localhost:3306/artgen
 
-      - name: Run build
-        run: yarn build
-
-      - name: Run UI tests (MySQL)
-        run: yarn test:cy
-        env:
-          ARTGEN_DATABASE_DSN: mysql://artgen:artgen@localhost:3306/artgen
 
   test-sqlite:
     name: Testing (SQLite)
@@ -138,18 +123,10 @@ jobs:
       - name: Install development dependencies
         run: yarn install --ignore-engines
 
-      - name: Run API tests (SQLite)
+      - name: Run tests (SQLite)
         run: yarn test
         env:
-          ARTGEN_DATABASE_DSN: sqlite:./test-api.db
-
-      - name: Run build
-        run: yarn build
-
-      - name: Run UI tests (SQLite)
-        run: yarn test:cy
-        env:
-          ARTGEN_DATABASE_DSN: sqlite:./test-ui.db
+          ARTGEN_DATABASE_DSN: sqlite:./test-01.db
 
   test-postgres:
     name: Testing (Postgres)
@@ -181,16 +158,8 @@ jobs:
       - name: Install development dependencies
         run: yarn install --ignore-engines
 
-      - name: Run API tests (PostgreSQL)
+      - name: Run tests (PostgreSQL)
         run: yarn test
-        env:
-          ARTGEN_DATABASE_DSN: postgres://artgen:artgen@localhost:5432/artgen
-
-      - name: Run build
-        run: yarn build
-
-      - name: Run UI tests (PostgreSQL)
-        run: yarn test:cy
         env:
           ARTGEN_DATABASE_DSN: postgres://artgen:artgen@localhost:5432/artgen
 
@@ -212,18 +181,10 @@ jobs:
         run: yarn install --ignore-engines
 
       - name: Run type checking
-        run: yarn test:types
+        run: yarn test:type
 
-      - name: Run API tests
-        run: yarn test:cov
-        env:
-          ARTGEN_DATABASE_DSN: "sqlite::memory:"
-
-      - name: Run build
-        run: yarn build
-
-      - name: Run UI tests
-        run: yarn test:cy
+      - name: Run tests (Common)
+        run: yarn test
         env:
           ARTGEN_DATABASE_DSN: "sqlite::memory:"
 

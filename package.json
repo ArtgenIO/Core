@@ -34,20 +34,22 @@
   "scripts": {
     "build:docker": "docker build . --target=production -t artgenio/core:dev",
     "build:api": "tsc -p tsconfig.prod.json",
-    "build:ui": " vite build --config ./src/modules/admin/vite.config.js",
+    "build:ui": "vite build --config ./src/modules/admin/vite.config.js",
     "build": "yarn build:api && yarn build:ui",
     "lint": "eslint --fix .",
     "pretest:unit": "eslint .",
     "start:dev": "tsnd src/main.ts",
     "start:watch": "tsnd src/main.ts --watch",
     "start": "NODE_ENV=production node build/main.js",
-    "test:types": "tsc -p tsconfig.prod.json --noEmit",
-    "test:cov": "jest -i",
-    "test:cy": "ARTGEN_DEMO=1 start-test 'yarn start' http-get://127.0.0.1:7200/admin 'cypress run'",
-    "test:cy-dev": "start-test 'yarn start:dev' http-get://127.0.0.1:7200/admin 'cypress run'",
-    "test:watch": "jest --watch --collectCoverage=0",
-    "test": "jest -i --collectCoverage=0",
-    "test:debug": "node --inspect --inspect-brk node_modules/.bin/jest -i --collectCoverage=0"
+    "test": "yarn run test:type && yarn run test:api && yarn run test:ui && yarn run test:merge",
+    "test:type": "tsc -p tsconfig.prod.json --noEmit",
+    "test:api": "jest -i",
+    "pretest:ui": "CYPRESS_COVERAGE=1 yarn build",
+    "test:ui": "ARTGEN_DEMO=1 start-test 'NODE_ENV=production nyc --silent node build/main.js' http-get://127.0.0.1:7200/admin 'cypress run'",
+    "test:merge": "nyc report",
+    "test:cy:dev": "start-test 'yarn start:dev' http-get://127.0.0.1:7200/admin 'cypress run'",
+    "test:api:dev": "jest -i --collectCoverage=0",
+    "test:api:debug": "node --inspect --inspect-brk node_modules/.bin/jest -i --collectCoverage=0"
   },
   "publishConfig": {
     "access": "public"
@@ -126,6 +128,7 @@
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@cypress/code-coverage": "^3.9.12",
     "@heroicons/react": "^1.0.5",
     "@nivo/core": "^0.74.0",
     "@nivo/line": "^0.74.0",
@@ -163,6 +166,7 @@
     "antd": "^4.16.13",
     "autoprefixer": "^10.3.7",
     "axios-hooks": "^3.0.0",
+    "coveralls": "^3.1.1",
     "cypress": "^9.0.0",
     "enquirer": "^2.3.6",
     "file-saver": "^2.0.5",
@@ -170,11 +174,13 @@
     "grapesjs-blocks-basic": "^0.1.8",
     "grapesjs-preset-webpage": "^0.1.11",
     "grapesjs-react": "^4.0.1-alpha",
+    "istanbul": "^0.4.5",
     "jest": "^27.0.6",
     "less": "^4.1.2",
     "lru-cache": "^6.0.0",
     "md5": "^2.3.0",
     "middie": "^5.3.0",
+    "nyc": "^15.1.0",
     "openapi-types": "^9.1.0",
     "postcss": "^8.3.9",
     "prettier": "^2.4.1",
@@ -191,6 +197,7 @@
     "react-transition-group": "^4.4.2",
     "recoil": "^0.4.0",
     "recoil-persist": "^3.0.0",
+    "rollup-plugin-istanbul": "^3.0.0",
     "semver-utils": "^1.1.4",
     "start-server-and-test": "^1.14.0",
     "tailwindcss": "^3.0.0",
@@ -202,5 +209,13 @@
     "typescript": "^4.3.5",
     "vite": "^2.6.10",
     "vite-react-jsx": "^1.1.2"
+  },
+  "nyc": {
+    "report-dir": "coverage",
+    "reporter": [
+      "json",
+      "lcov",
+      "text"
+    ]
   }
 }

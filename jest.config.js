@@ -12,7 +12,8 @@ const config = {
 
   // Coverage configuration
   collectCoverage: true,
-  coverageReporters: ['lcov', 'text'],
+  coverageReporters: ['json', 'text'],
+  coverageDirectory: './.nyc_output',
   collectCoverageFrom: [
     './src/**/*.ts',
     '!./src/**/index.ts',
@@ -20,10 +21,10 @@ const config = {
   ],
   coverageThreshold: {
     global: {
-      statements: 10,
-      functions: 10,
-      lines: 10,
-      branches: 10,
+      statements: 1,
+      functions: 1,
+      lines: 1,
+      branches: 1,
     },
   },
 

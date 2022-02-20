@@ -2,5 +2,12 @@
   "video": false,
   "watchForFileChanges": false,
   "experimentalSourceRewriting": false,
-  "screenshotOnRunFailure": false
+  "screenshotOnRunFailure": false,
+  "viewportWidth": 1600,
+  "viewportHeight": 900,
+  "env": {
+    "codeCoverage": {
+      "url": "http://localhost:7200/__coverage__"
+    }
+  }
 }

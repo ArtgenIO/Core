@@ -10,5 +10,7 @@ declare namespace NodeJS {
 
     ARTGEN_MEILI_HOST: string;
     ARTGEN_MEILI_KEY: string;
+
+    CYPRESS_COVERAGE: '1' | undefined;
   }
 }

@@ -67,6 +67,17 @@ export class AdminGateway implements IHttpGateway {
       await httpServer.register(middie);
       httpServer.use('/admin', middlewares);
 
+      /* istanbul ignore next */
+      if (global.__coverage__) {
+        httpServer.get('/__coverage__', (req, res) => {
+          res.send(
+            JSON.stringify({
+              coverage: global.__coverage__ || null,
+            }),
+          );
+        });
+      }
+
       this.logger.info('Vite build [Admin] registered at [GET][/admin]');
     }
   }
