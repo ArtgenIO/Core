@@ -16,11 +16,29 @@
     }
   }
 
+  .flow-node.trigger {
+    .logo {
+      @apply bg-yellow-500;
+    }
+  }
+
+  .flow-node.terminate {
+    .logo {
+      @apply bg-red-500;
+    }
+  }
+
+  .flow-node.log {
+    .logo {
+      @apply bg-cyan-500;
+    }
+  }
+
   .react-flow__node {
     @apply bg-midnight-100 text-midnight-900;
     @apply rounded-sm shadow-sm shadow-midnight-900 p-0;
 
-    width: 260px;
+    width: 220px;
     height: 36px;
   }
 
@@ -33,8 +51,7 @@
   }
 
   .react-flow__edge-artgen-edge:hover .react-flow__edge-path {
-    stroke: #46bdc6;
-    filter: drop-shadow(0px 0px 2px rgb(200 255 0 / 0.4));
+    @apply stroke-yellow-500;
   }
 
   .react-flow__handle.handle-custom {
@@ -42,37 +59,31 @@
 
     width: 14px;
     height: 14px;
-    z-index: 2;
+    z-index: 4;
   }
 
-  .react-flow__handle.react-flow__handle-left {
-    left: -7px;
-    border-radius: 2px 14px 14px 2px;
-
-    @apply bg-primary-500;
+  .react-flow__handle.react-flow__handle-top {
+    @apply bg-primary-500 border-midnight-500;
+    border-width: 3px;
+    top: -8px;
   }
 
-  .react-flow__handle.react-flow__handle-left:hover {
-    border-color: #37393f;
+  .react-flow__handle.react-flow__handle-bottom {
+    @apply bg-midnight-700 border-success-700;
+    border-width: 3px;
+    bottom: -8px;
   }
 
-  .react-flow__handle.react-flow__handle-right {
-    right: -7px;
-    border-radius: 100%;
-
-    @apply bg-success-700;
-  }
-
-  .react-flow__handle.react-flow__handle-right:hover {
+  .react-flow__handle.react-flow__handle-bottom:hover {
     border-color: #37393f;
   }
 
   .handle-set-2.handle-set-nth-1 {
-    margin-top: -9px;
+    margin-left: 36px;
   }
 
   .handle-set-2.handle-set-nth-2 {
-    margin-top: 9px;
+    margin-left: -36px;
   }
 
   .react-flow__handle.handle-error,
@@ -80,17 +91,15 @@
   .react-flow__handle.handle-no,
   .react-flow__handle.handle-failed,
   .react-flow__handle.handle-false {
-    @apply bg-red-800;
+    @apply border-red-400;
   }
 
   .artboard-edit-button {
-    background-color: #37393f;
-    border-color: #37393f;
-    color: #fff;
+    @apply text-midnight-50 bg-midnight-600 border-midnight-300;
   }
 
   .artboard-edit-button.has-transform {
-    color: #ff6b6b;
+    @apply text-teal-500;
   }
 
   .react-flow__node:not(.selected) .artboard-edit-button {

@@ -1507,8 +1507,8 @@
             "config": {},
             "title": "Lambda Read",
             "position": [
-              841.3333333333334,
-              257.6666666666667
+              831.3333333333334,
+              208.66666666666669
             ]
           },
           {
@@ -1520,8 +1520,8 @@
             },
             "title": "HTTP Ok",
             "position": [
-              1139,
-              342
+              832,
+              331
             ]
           },
           {
@@ -1538,8 +1538,8 @@
             },
             "title": "HTTP Endpoint",
             "position": [
-              503.83333333333337,
-              201.91666666666669
+              832.8333333333334,
+              86.91666666666669
             ]
           }
         ],
@@ -1563,7 +1563,117 @@
         ]
       },
       {
+        "id": "ced473f0-522c-47db-a88c-f0f981d93f9e",
+        "moduleId": null,
+        "name": "Sign Up",
+        "nodes": [
+          {
+            "id": "terminate.http.182",
+            "type": "terminate.http",
+            "config": {
+              "statusCode": "400"
+            },
+            "title": "HTTP Error",
+            "position": [
+              388,
+              -21.79166666666663
+            ]
+          },
+          {
+            "id": "rest.create.1",
+            "type": "rest.create",
+            "config": {
+              "database": "main",
+              "schema": "Account"
+            },
+            "title": "Create Account",
+            "position": [
+              502.98025579572163,
+              -157.7185463598183
+            ]
+          },
+          {
+            "id": "terminate.http.127",
+            "type": "terminate.http",
+            "config": {
+              "transform": "{{ $input.response | toJson }}",
+              "statusCode": "200"
+            },
+            "title": "HTTP Created",
+            "position": [
+              684,
+              80.70833333333337
+            ]
+          },
+          {
+            "id": "token.sign.1",
+            "type": "token.sign",
+            "config": {
+              "expiresIn": "8h"
+            },
+            "title": "Sign JWT",
+            "position": [
+              647,
+              -29
+            ]
+          },
+          {
+            "id": "trigger.http.26",
+            "type": "trigger.http",
+            "config": {
+              "path": "/api/identity/signup",
+              "method": "POST",
+              "statusCode": "200",
+              "authentication": "public",
+              "responseFormat": "application/json",
+              "response": "{\"ack\": true}",
+              "waitForLastNode": "true"
+            },
+            "title": "SignUp EP",
+            "position": [
+              497.5,
+              -288.4166666666667
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "id": "ccd1444c-5a31-4666-bd08-9d3fcc3bcfd1",
+            "sourceNodeId": "trigger.http.26",
+            "targetNodeId": "rest.create.1",
+            "sourceHandle": "request",
+            "targetHandle": "record",
+            "transform": "{{ $data.body | toJson }}"
+          },
+          {
+            "id": "99cb86e8-524f-4cfd-b896-930277803ea2",
+            "sourceNodeId": "rest.create.1",
+            "targetNodeId": "terminate.http.182",
+            "sourceHandle": "error",
+            "targetHandle": "response",
+            "transform": ""
+          },
+          {
+            "id": "6dfc8768-7ef0-410c-971f-61c1093bc9a7",
+            "sourceNodeId": "rest.create.1",
+            "targetNodeId": "token.sign.1",
+            "sourceHandle": "result",
+            "targetHandle": "accountId",
+            "transform": "{{ $output.result.id }}"
+          },
+          {
+            "id": "8d165757-851c-4690-8595-ac3077a29d9f",
+            "sourceNodeId": "token.sign.1",
+            "targetNodeId": "terminate.http.127",
+            "sourceHandle": "token",
+            "targetHandle": "response",
+            "transform": "{\"accessToken\": \"{{ $output.token }}\"}"
+          }
+        ]
+      },
+      {
         "id": "51c0abf2-5924-4fdf-a920-a1b3487f6710",
+        "moduleId": null,
         "name": "Sign In",
         "nodes": [
           {
@@ -1580,8 +1690,8 @@
             },
             "title": "HTTP Endpoint",
             "position": [
-              88.66666666666666,
-              203.33333333333334
+              350.66666666666663,
+              -197.66666666666666
             ]
           },
           {
@@ -1594,8 +1704,8 @@
             },
             "title": "If Found",
             "position": [
-              547.4166666666666,
-              88.89583333333337
+              515.4166666666666,
+              156.89583333333337
             ]
           },
           {
@@ -1604,8 +1714,8 @@
             "config": null,
             "title": "Count",
             "position": [
-              394.91666666666663,
-              92.95833333333337
+              481.91666666666663,
+              35.95833333333337
             ]
           },
           {
@@ -1616,8 +1726,8 @@
             },
             "title": "Success",
             "position": [
-              1071.4166666666665,
-              -71.64358877512277
+              994.4166666666665,
+              487.3564112248772
             ]
           },
           {
@@ -1629,8 +1739,8 @@
             },
             "title": "Fail",
             "position": [
-              885.1666666666666,
-              328.08333333333337
+              332.16666666666663,
+              481.08333333333337
             ]
           },
           {
@@ -1639,8 +1749,8 @@
             "config": null,
             "title": "CHK Passwd",
             "position": [
-              722.2326274056248,
-              17.129489116421098
+              638.2326274056248,
+              315.1294891164211
             ]
           },
           {
@@ -1651,8 +1761,8 @@
             },
             "title": "Sign JWT",
             "position": [
-              897.1467175777061,
-              -71.80098784951204
+              859.1467175777061,
+              411.199012150488
             ]
           },
           {
@@ -1671,8 +1781,8 @@
             },
             "title": "Find Account",
             "position": [
-              250.66666666666663,
-              203.08333333333337
+              367.66666666666663,
+              -65.91666666666663
             ]
           }
         ],
@@ -1752,111 +1862,120 @@
         ]
       },
       {
-        "id": "ced473f0-522c-47db-a88c-f0f981d93f9e",
+        "id": "acd71c85-b813-44d7-a967-aae71225d0e7",
         "moduleId": null,
-        "name": "Sign Up",
+        "name": "Reindex Schema",
         "nodes": [
           {
-            "id": "terminate.http.182",
-            "type": "terminate.http",
-            "config": {
-              "statusCode": "400"
-            },
-            "title": "HTTP Error",
-            "position": [
-              845,
-              22.20833333333337
-            ]
-          },
-          {
-            "id": "rest.create.1",
-            "type": "rest.create",
-            "config": {
-              "database": "main",
-              "schema": "Account"
-            },
-            "title": "Create Account",
-            "position": [
-              487.98025579572163,
-              6.281453640181695
-            ]
-          },
-          {
-            "id": "terminate.http.127",
-            "type": "terminate.http",
-            "config": {
-              "transform": "{{ $input.response | toJson }}",
-              "statusCode": "200"
-            },
-            "title": "HTTP Created",
-            "position": [
-              850,
-              -133.29166666666663
-            ]
-          },
-          {
-            "id": "token.sign.1",
-            "type": "token.sign",
-            "config": {
-              "expiresIn": "8h"
-            },
-            "title": "Sign JWT",
-            "position": [
-              641,
-              -112
-            ]
-          },
-          {
-            "id": "trigger.http.26",
+            "id": "trigger.http.1",
             "type": "trigger.http",
             "config": {
-              "path": "/api/identity/signup",
-              "method": "POST",
+              "path": "/api/reindex/:schema",
+              "method": "GET",
               "statusCode": "200",
               "authentication": "public",
               "responseFormat": "application/json",
-              "response": "{\"ack\": true}",
+              "response": "{\"ack\":true}",
               "waitForLastNode": "true"
             },
-            "title": "SignUp EP",
+            "title": "Trigger EP",
             "position": [
-              263.5,
-              5.583333333333311
+              902.3333333333333,
+              87
+            ]
+          },
+          {
+            "id": "content.meili.index.1",
+            "type": "content.meili.index",
+            "config": null,
+            "title": "Content Meili Index 1",
+            "position": [
+              1015,
+              367
+            ]
+          },
+          {
+            "id": "log.1",
+            "type": "log",
+            "config": "error",
+            "title": "Log 1",
+            "position": [
+              750.6666666666667,
+              512.6666666666667
+            ]
+          },
+          {
+            "id": "terminate.http.1",
+            "type": "terminate.http",
+            "config": {
+              "transform": "{{ $data | toJson }}",
+              "statusCode": "200"
+            },
+            "title": "Terminate Http 1",
+            "position": [
+              1071.6666666666667,
+              518.6666666666667
+            ]
+          },
+          {
+            "id": "rest.find.1",
+            "type": "rest.find",
+            "config": {
+              "database": "main",
+              "fields": [],
+              "conditions": [],
+              "offset": 0,
+              "limit": 100000,
+              "failOnEmpty": true,
+              "schema": "Users"
+            },
+            "title": "Rest Find 1",
+            "position": [
+              879.0000000000001,
+              240.41666666666669
             ]
           }
         ],
         "edges": [
           {
-            "id": "ccd1444c-5a31-4666-bd08-9d3fcc3bcfd1",
-            "sourceNodeId": "trigger.http.26",
-            "targetNodeId": "rest.create.1",
-            "sourceHandle": "request",
-            "targetHandle": "record",
-            "transform": "{{ $data.body | toJson }}"
-          },
-          {
-            "id": "99cb86e8-524f-4cfd-b896-930277803ea2",
-            "sourceNodeId": "rest.create.1",
-            "targetNodeId": "terminate.http.182",
-            "sourceHandle": "error",
+            "id": "c2ef3b5f-617b-43e4-997b-4d614aade33e",
+            "sourceNodeId": "content.meili.index.1",
+            "targetNodeId": "terminate.http.1",
+            "sourceHandle": "result",
             "targetHandle": "response",
             "transform": ""
           },
           {
-            "id": "6dfc8768-7ef0-410c-971f-61c1093bc9a7",
-            "sourceNodeId": "rest.create.1",
-            "targetNodeId": "token.sign.1",
-            "sourceHandle": "result",
-            "targetHandle": "accountId",
-            "transform": "{{ $output.result.id }}"
+            "id": "7ec5bb88-aad9-4d56-85ad-130a2d73c9f3",
+            "sourceNodeId": "content.meili.index.1",
+            "targetNodeId": "log.1",
+            "sourceHandle": "error",
+            "targetHandle": "message",
+            "transform": ""
           },
           {
-            "id": "8d165757-851c-4690-8595-ac3077a29d9f",
-            "sourceNodeId": "token.sign.1",
-            "targetNodeId": "terminate.http.127",
-            "sourceHandle": "token",
-            "targetHandle": "response",
-            "transform": "{\"accessToken\": \"{{ $output.token }}\"}"
+            "id": "8bea57c0-3c03-4f54-9c13-ca3f730d09a2",
+            "sourceNodeId": "rest.find.1",
+            "targetNodeId": "log.1",
+            "sourceHandle": "error",
+            "targetHandle": "message",
+            "transform": ""
+          },
+          {
+            "id": "77f7ab08-bbdd-4594-8a8e-cdbe3d5e99ab",
+            "sourceNodeId": "rest.find.1",
+            "targetNodeId": "content.meili.index.1",
+            "sourceHandle": "records",
+            "targetHandle": "input",
+            "transform": "{ \"index\": \"flows\", \"documents\":  {{ $data | toJson }} }"
+          },
+          {
+            "id": "2598c9a7-4f71-4097-bae8-1f64f6616656",
+            "sourceNodeId": "trigger.http.1",
+            "targetNodeId": "rest.find.1",
+            "sourceHandle": "request",
+            "targetHandle": "conditions",
+            "transform": "{{ null }}"
           }
         ]
       }

@@ -1,8 +1,8 @@
 import {
   DeleteOutlined,
+  EyeOutlined,
   LoginOutlined,
   LogoutOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 import Form from '@rjsf/antd';
 import {
@@ -10,17 +10,18 @@ import {
   Button,
   Descriptions,
   Divider,
+  Drawer,
   Empty,
   Input,
   List,
   message,
-  Modal,
   Tabs,
 } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import { useEffect, useState } from 'react';
 import { Edge } from 'react-flow-renderer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { ILambdaHandle } from '../../../lambda/interface/handle.interface';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
 import {
   elementsAtom,
@@ -29,6 +30,7 @@ import {
   selectedNodeIdAtom,
 } from '../../atom/artboard.atoms';
 import { CustomNode, CustomNodeData } from '../../interface/custom-node';
+import HandleSchemaComponent from './handle-schema';
 
 export default function ArtboardNodeConfigComponent() {
   // Artboard states
@@ -43,6 +45,7 @@ export default function ArtboardNodeConfigComponent() {
   const [configSchema, setConfigSchema] = useState(null);
   const [nodeData, setNodeData] = useState<CustomNodeData>(null);
   const [lambdaMeta, setLambdaMeta] = useState<ILambdaMeta>(null);
+  const [showHandleSchema, setShowHandleSchema] = useState<ILambdaHandle>(null);
 
   useEffect(() => {
     if (selectedNodeId) {
@@ -93,21 +96,32 @@ export default function ArtboardNodeConfigComponent() {
   };
 
   return (
-    <Modal
-      centered
+    <Drawer
       width="50%"
       title={
-        <>
-          <SettingOutlined /> Node [{selectedNodeId}]
-        </>
+        <div className="flex w-full">
+          <div className="grow">Node » {selectedNodeId}</div>
+          <div className="shrink">
+            <div className="-mt-1">
+              <Button
+                className="text-red-500 border-red-500 hover:text-red-200 hover:border-red-200"
+                block
+                icon={<DeleteOutlined />}
+                onClick={() => doDeleteNode(selectedNodeId)}
+              >
+                Delete Node
+              </Button>
+            </div>
+          </div>
+        </div>
       }
       visible
       closable
       maskClosable
       footer={null}
-      onCancel={() => setSelectedNodeId(null)}
+      onClose={() => setSelectedNodeId(null)}
     >
-      <Tabs tabPosition="left" style={{ minHeight: 400 }} size="large">
+      <Tabs tabPosition="left" size="large" defaultActiveKey="handles">
         <Tabs.TabPane tab="Information" key="info">
           {lambdaMeta ? (
             <>
@@ -153,17 +167,6 @@ export default function ArtboardNodeConfigComponent() {
                   {lambdaMeta.description}
                 </Descriptions.Item>
               </Descriptions>
-              <Divider />
-              <div className="text-right">
-                <Button
-                  danger
-                  type="primary"
-                  onClick={() => doDeleteNode(selectedNodeId)}
-                  icon={<DeleteOutlined />}
-                >
-                  Delete Node
-                </Button>
-              </div>
             </>
           ) : (
             <></>
@@ -216,7 +219,18 @@ export default function ArtboardNodeConfigComponent() {
               size="large"
               bordered
               renderItem={handle => (
-                <List.Item key={handle.id} actions={[<>Disconnect</>]}>
+                <List.Item
+                  key={handle.id}
+                  actions={[
+                    <Button
+                      size="small"
+                      icon={<EyeOutlined />}
+                      onClick={() => setShowHandleSchema(handle)}
+                    >
+                      Schema
+                    </Button>,
+                  ]}
+                >
                   <List.Item.Meta
                     avatar={
                       <Avatar
@@ -251,6 +265,13 @@ export default function ArtboardNodeConfigComponent() {
           )}
         </Tabs.TabPane>
       </Tabs>
-    </Modal>
+
+      {showHandleSchema && (
+        <HandleSchemaComponent
+          handle={showHandleSchema}
+          onClose={() => setShowHandleSchema(null)}
+        />
+      )}
+    </Drawer>
   );
 }

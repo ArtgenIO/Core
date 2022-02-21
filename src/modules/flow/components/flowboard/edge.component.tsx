@@ -50,8 +50,8 @@ export default function CustomEdge({
         markerEnd={markerEnd}
       />
       <foreignObject
-        width="36"
-        height="36"
+        width="32"
+        height="32"
         x={edgeCenterX - 24 / 2}
         y={edgeCenterY - 24 / 2}
         requiredExtensions="http://www.w3.org/1999/xhtml"

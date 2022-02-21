@@ -14,8 +14,10 @@ import ReactFlow, {
   ArrowHeadType,
   Background,
   BackgroundVariant,
+  isNode,
   NodeTypesType,
   OnLoadParams,
+  useZoomPanHelper,
 } from 'react-flow-renderer';
 import { useParams } from 'react-router';
 import { useRecoilState, useSetRecoilState } from 'recoil';
@@ -62,15 +64,39 @@ export default function FlowBoardComponent() {
   const wrapper = useRef(null);
   const [customNodes, setCustomNodes] = useState<NodeTypesType>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedMenuNodes, setSelectedMenuNodes] = useState([]);
+  const { zoomIn, zoomOut, fitView, setCenter } = useZoomPanHelper();
 
   // Artboard state
   const [flow, setFlow] = useRecoilState(flowAtom);
   const [elements, setElements] = useRecoilState(elementsAtom);
   const [lambdaMetas, setLambdaMetas] = useRecoilState(lambdaMetasAtom);
   const [flowInstance, setFlowInstance] = useRecoilState(flowInstanceAtom);
-  const setSelectedNodeId = useSetRecoilState(selectedNodeIdAtom);
+  const [selectedNodeId, setSelectedNodeId] =
+    useRecoilState(selectedNodeIdAtom);
   const setIsFlowChanged = useSetRecoilState(flowChangedAtom);
   const setSelectedElementId = useSetRecoilState(selectedElementIdAtom);
+
+  useEffect(() => {
+    setSelectedMenuNodes([selectedNodeId]);
+
+    if (selectedNodeId) {
+      zoomTo(selectedNodeId);
+    }
+  }, [selectedNodeId]);
+
+  const zoomTo = (nodeId: string) => {
+    if (flowInstance) {
+      const el = flowInstance
+        .getElements()
+        .filter(isNode)
+        .find(e => e.id === nodeId);
+
+      if (el) {
+        setCenter(el.position.x + 400, el.position.y + 200, 1.5, 1000);
+      }
+    }
+  };
 
   const onConnect = params =>
     setElements(els => {
@@ -210,11 +236,15 @@ export default function FlowBoardComponent() {
 
         <MenuBlock title="Nodes">
           {flow && (
-            <Menu className="compact">
+            <Menu selectedKeys={selectedMenuNodes} className="compact">
               {flow.nodes
                 .filter(node => !node.type.match('trigger'))
                 .map(node => (
-                  <Menu.Item key={node.id} icon={<BuildOutlined />}>
+                  <Menu.Item
+                    key={node.id}
+                    icon={<BuildOutlined />}
+                    onClick={() => setSelectedNodeId(node.id)}
+                  >
                     {node.title}
                   </Menu.Item>
                 ))}
@@ -258,7 +288,6 @@ export default function FlowBoardComponent() {
                 color="#37393f"
               />
 
-              <ArtboardNodeConfigComponent />
               <ArtboardEdgeConfigComponent />
               <ArtboardToolsComponent
                 showCatalog={showCatalog}
@@ -268,6 +297,8 @@ export default function FlowBoardComponent() {
             </ReactFlow>
           )}
         </div>
+
+        {selectedNodeId && <ArtboardNodeConfigComponent />}
 
         <ArtboardCatalogComponent
           showCatalog={showCatalog}

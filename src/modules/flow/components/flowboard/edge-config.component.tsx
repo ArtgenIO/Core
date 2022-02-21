@@ -1,23 +1,34 @@
-import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import {
+  BuildOutlined,
+  DeleteOutlined,
+  LoginOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons';
+import {
+  Alert,
   Button,
   Descriptions,
   Divider,
+  Drawer,
   Form,
   Input,
+  List,
   message,
-  Modal,
   Tabs,
 } from 'antd';
+import Avatar from 'antd/lib/avatar/avatar';
 import { useForm } from 'antd/lib/form/Form';
-import { useEffect } from 'react';
-import { ArrowHeadType, Edge } from 'react-flow-renderer';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useEffect, useState } from 'react';
+import { ArrowHeadType, Edge, isNode, Node } from 'react-flow-renderer';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { ILambdaHandle } from '../../../lambda/interface/handle.interface';
 import {
   elementsAtom,
   flowChangedAtom,
+  lambdaMetasAtom,
   selectedEdgeIdAtom,
 } from '../../atom/artboard.atoms';
+import HandleSchemaComponent from './handle-schema';
 
 export default function ArtboardEdgeConfigComponent() {
   // Artboard states
@@ -25,6 +36,16 @@ export default function ArtboardEdgeConfigComponent() {
     useRecoilState(selectedEdgeIdAtom);
   const [elements, setElements] = useRecoilState(elementsAtom);
   const setIsFlowChanged = useSetRecoilState(flowChangedAtom);
+  const [showHandleSchema, setShowHandleSchema] = useState<ILambdaHandle>(null);
+  const [edge, setEdge] = useState<Edge>(null);
+
+  const [sourceNode, setSourceNode] = useState<Node>(null);
+  const [targetNode, setTargetNode] = useState<Node>(null);
+
+  const [sourceHandle, setSourceHandle] = useState<ILambdaHandle>(null);
+  const [targetHandle, setTargetHandle] = useState<ILambdaHandle>(null);
+
+  const lambdaMetas = useRecoilValue(lambdaMetasAtom);
 
   const onDeleteEdge = (edgeId: string) => {
     setElements(els => {
@@ -42,36 +63,69 @@ export default function ArtboardEdgeConfigComponent() {
   useEffect(() => {
     if (selectedEdgeId) {
       // Local state
-      const element = elements.find(el => el.id == selectedEdgeId);
+      const edge = elements.find(el => el.id == selectedEdgeId) as Edge;
 
       form.setFieldsValue({
-        transform: element.data.transform ?? '',
+        transform: edge.data.transform ?? '',
       });
-    }
 
-    return () => {};
+      const sourceNode = elements.find(el => el.id === edge.source) as Node;
+      const targetNode = elements.find(el => el.id === edge.target) as Node;
+
+      setEdge(edge);
+
+      setSourceNode(sourceNode);
+      setTargetNode(targetNode);
+
+      setSourceHandle(
+        lambdaMetas
+          .find(lam => lam.type == sourceNode.data.type)
+          .handles.find(h => h.id == edge.sourceHandle),
+      );
+      setTargetHandle(
+        lambdaMetas
+          .find(lam => lam.type == targetNode.data.type)
+          .handles.find(h => h.id == edge.targetHandle),
+      );
+    } else {
+      setEdge(null);
+    }
   }, [selectedEdgeId]);
 
-  if (!selectedEdgeId) {
+  if (!edge) {
     return <></>;
   }
 
   return (
-    <Modal
+    <Drawer
       title={
-        <>
-          <SettingOutlined /> Edge [{selectedEdgeId}]
-        </>
+        <div className="flex w-full">
+          <div className="grow">
+            <span className="text-primary-500">Edge</span> {edge.source} »{' '}
+            {edge.target}
+          </div>
+          <div className="shrink">
+            <div className="-mt-1">
+              <Button
+                className="text-red-500 border-red-500 hover:text-red-200 hover:border-red-200"
+                block
+                icon={<DeleteOutlined />}
+                onClick={() => onDeleteEdge(selectedEdgeId)}
+              >
+                Delete Edge
+              </Button>
+            </div>
+          </div>
+        </div>
       }
       visible
       closable
       maskClosable
-      centered
       width="50%"
       footer={null}
-      onCancel={() => setSelectedEdgeId(null)}
+      onClose={() => setSelectedEdgeId(null)}
     >
-      <Tabs tabPosition="left" style={{ minHeight: 400 }} size="large">
+      <Tabs tabPosition="left" defaultActiveKey="config" size="large">
         <Tabs.TabPane tab="Information" key="info">
           <>
             <Descriptions
@@ -83,24 +137,43 @@ export default function ArtboardEdgeConfigComponent() {
               <Descriptions.Item label="Identifier">
                 {selectedEdgeId}
               </Descriptions.Item>
+
+              <Descriptions.Item label="Source">
+                {sourceNode.id} // {sourceNode.data.type} » {edge.sourceHandle}
+              </Descriptions.Item>
+
+              <Descriptions.Item label="Target">
+                {targetNode.id} // {targetNode.data.type} » {edge.targetHandle}
+              </Descriptions.Item>
             </Descriptions>
-            <Divider />
-            <div className="text-right">
-              <Button
-                danger
-                type="primary"
-                onClick={() => onDeleteEdge(selectedEdgeId)}
-                icon={<DeleteOutlined />}
-              >
-                Delete Edge
-              </Button>
-            </div>
           </>
         </Tabs.TabPane>
 
         <Tabs.TabPane tab="Configuration" key="config">
+          <Button.Group className="w-full">
+            <Button
+              block
+              icon={<LoginOutlined className="text-success-400" />}
+              key="source"
+              onClick={() => setShowHandleSchema(sourceHandle)}
+            >
+              Show [Source] Handle
+            </Button>
+            <Button
+              block
+              key="target"
+              icon={<LogoutOutlined className="text-primary-400" />}
+              onClick={() => setShowHandleSchema(targetHandle)}
+            >
+              Show [Target] Handle
+            </Button>
+          </Button.Group>
+
+          <Divider />
+
           <Form
             form={form}
+            layout="vertical"
             name="basic"
             onChange={formData => {
               setElements(els => {
@@ -131,12 +204,55 @@ export default function ArtboardEdgeConfigComponent() {
               setIsFlowChanged(true);
             }}
           >
-            <Form.Item label="Transformation" name="transform">
-              <Input />
+            <Alert
+              type="info"
+              message="Handles carry data between the source node's output and the target node's input, you can transform the target's input data while transfering"
+              className="mb-2"
+            />
+            <Form.Item name="transform">
+              <Input.TextArea
+                rows={12}
+                className="bg-midnight-800 text-white font-code"
+              />
             </Form.Item>
           </Form>
+
+          <Divider />
+
+          <List
+            dataSource={elements.filter(isNode)}
+            size="large"
+            bordered
+            renderItem={node => (
+              <List.Item key={node.id}>
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      shape="square"
+                      size="large"
+                      className="bg-yellow-400"
+                      icon={<BuildOutlined />}
+                    />
+                  }
+                  description={
+                    <>
+                      <b>Type:</b> <span>{node.data.type}</span>
+                    </>
+                  }
+                  title={node.id}
+                />
+              </List.Item>
+            )}
+          ></List>
         </Tabs.TabPane>
       </Tabs>
-    </Modal>
+
+      {showHandleSchema && (
+        <HandleSchemaComponent
+          handle={showHandleSchema}
+          onClose={() => setShowHandleSchema(null)}
+        />
+      )}
+    </Drawer>
   );
 }

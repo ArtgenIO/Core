@@ -10,27 +10,27 @@ export class NodeFactory {
    * Convert node meta into a react flow component
    */
   static fromMeta(
-    node: ILambdaMeta,
-    doOpenNodeConfig: (elementId: string) => void,
+    lambda: ILambdaMeta,
+    onDoubleClick: (elementId: string) => void,
   ): ReactNode {
-    const totalInputs = node.handles.filter(
+    const totalInputs = lambda.handles.filter(
       h => h.direction === 'input',
     ).length;
-    const totalOutputs = node.handles.filter(
+    const totalOutputs = lambda.handles.filter(
       h => h.direction === 'output',
     ).length;
 
-    return (props: NodeProps<INode>) => {
+    return (nodeProps: NodeProps<INode>) => {
       const handles = [];
 
       let nthInput = 0;
       let nthOutput = 0;
 
-      for (const handle of node.handles) {
-        const hKey = [node.type, handle.direction, handle.id].join('.');
+      for (const handle of lambda.handles) {
+        const hKey = [lambda.type, handle.direction, handle.id].join('.');
         const hType = handle.direction == 'input' ? 'target' : 'source';
         const hPos =
-          handle.direction == 'input' ? Position.Left : Position.Right;
+          handle.direction == 'input' ? Position.Top : Position.Bottom;
         const classes = [`handle-${kebabCase(handle.id)}`, 'handle-custom'];
 
         if (handle.direction === 'input' && totalInputs > 1) {
@@ -42,8 +42,6 @@ export class NodeFactory {
           classes.push('handle-set-' + totalOutputs);
           classes.push('handle-set-nth-' + ++nthOutput);
         }
-
-        // onConnect validator here
 
         handles.push(
           <Handle
@@ -57,27 +55,37 @@ export class NodeFactory {
         );
       }
 
+      const classes = ['flow-node'];
+
+      if (lambda.type.match('trigger')) {
+        classes.push('trigger');
+      } else if (lambda.type.match('terminate')) {
+        classes.push('terminate');
+      } else if (lambda.type === 'log') {
+        classes.push('log');
+      }
+
       return (
         <div
-          className="flow-node"
-          onDoubleClick={() => doOpenNodeConfig(props.id)}
+          className={classes.join(' ')}
+          onDoubleClick={() => onDoubleClick(nodeProps.id)}
         >
           {handles}
           <div className="node-label">
-            {props.data.type.replace(/\./g, ' / ')}
+            {nodeProps.data.type.replace(/\./g, ' / ')}
           </div>
           <div className="node-content">
             <div className="flex">
               <div className="shrink">
                 <Avatar
-                  src={`/assets/icons/${node.icon ?? 'lambda.png'}`}
+                  src={`/assets/icons/${lambda.icon ?? 'lambda.png'}`}
                   draggable={false}
                   size={26}
                   shape="square"
                   className="logo"
                 />
               </div>
-              <div className="grow title">{props.data.title}</div>
+              <div className="grow title">{nodeProps.data.title}</div>
             </div>
           </div>
         </div>
