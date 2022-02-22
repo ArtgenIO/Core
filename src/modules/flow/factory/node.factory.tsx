@@ -80,7 +80,7 @@ export class NodeFactory {
                 <Avatar
                   src={`/assets/icons/${lambda.icon ?? 'lambda.png'}`}
                   draggable={false}
-                  size={26}
+                  size={34}
                   shape="square"
                   className="logo"
                 />

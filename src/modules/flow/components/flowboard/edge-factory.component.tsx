@@ -41,12 +41,23 @@ export const SmartEdgeFactory =
       targetY,
     });
 
+    const classes = [
+      'smart-edge',
+      'react-flow__edge',
+      'react-flow__edge-smoothstep',
+      'animated',
+    ];
+
     return (
-      <>
+      <g
+        className={classes.join(' ')}
+        style={{ pointerEvents: 'all' }}
+        onClick={() => onClick(id)}
+      >
         <path
           id={id}
           style={style}
-          className="react-flow__edge-path"
+          className="react-flow__edge-path animated"
           d={edgePath}
           markerEnd={markerEnd}
         />
@@ -58,7 +69,6 @@ export const SmartEdgeFactory =
           requiredExtensions="http://www.w3.org/1999/xhtml"
         >
           <Button
-            onClick={() => onClick(id)}
             type="primary"
             shape="circle"
             size="small"
@@ -68,6 +78,6 @@ export const SmartEdgeFactory =
             icon={<SettingOutlined className="opacity-80 hover:opacity-100" />}
           />
         </foreignObject>
-      </>
+      </g>
     );
   };

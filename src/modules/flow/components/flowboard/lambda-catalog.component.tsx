@@ -74,7 +74,7 @@ export default function FlowboardLambdaCatalog({
       onClose={() => setShowCatalog(false)}
     >
       <ErrorBoundary>
-        <div className="px-2">
+        <div className="px-1">
           <Input
             onChange={e => setSearch(e.target.value)}
             allowClear
@@ -106,7 +106,7 @@ export default function FlowboardLambdaCatalog({
                 avatar={
                   <Avatar
                     src={`/assets/icons/${lambda.icon ?? 'lambda.png'}`}
-                    className="rounded-lg w-12 h-12 p-1 bg-midnight-100"
+                    className="rounded-lg w-12 h-12 p-1.5 bg-midnight-800"
                   />
                 }
                 title={

@@ -1,10 +1,26 @@
 .flowboard {
   .flow-node {
+    border-radius: 1px;
+
+    background: #25282b;
+    color: #cfd2d9;
+    font-family: 'Courier New', Courier, monospace;
+
+    width: 220px;
+    height: 36px;
+
+    box-shadow: #000 0px 0px 5px 1px;
+    border: 1px solid #37393f;
+
     .node-content {
       @apply relative;
 
       .logo {
-        @apply mt-1 ml-2 bg-midnight-700 p-1 text-midnight-50 stroke-white;
+        @apply text-midnight-50 stroke-white;
+
+        background-color: #151719;
+        padding: 4px;
+        border-radius: 1px 0 0 1px;
       }
 
       .title {
@@ -24,7 +40,7 @@
 
   .flow-node.terminate {
     .logo {
-      @apply bg-red-500;
+      @apply bg-success-400;
     }
   }
 
@@ -32,14 +48,6 @@
     .logo {
       @apply bg-cyan-500;
     }
-  }
-
-  .react-flow__node {
-    @apply bg-midnight-100 text-midnight-900;
-    @apply rounded-sm shadow-sm shadow-midnight-900 p-0;
-
-    width: 220px;
-    height: 36px;
   }
 
   .react-flow__node.selected {
@@ -63,14 +71,15 @@
   }
 
   .react-flow__handle.react-flow__handle-top {
-    @apply bg-primary-500 border-midnight-500;
-    border-width: 3px;
+    @apply border-midnight-500;
+    border-width: 2px;
     top: -8px;
+    background-color: #cfd2d9;
   }
 
   .react-flow__handle.react-flow__handle-bottom {
-    @apply bg-midnight-700 border-success-700;
-    border-width: 3px;
+    background-color: #555;
+    border-width: 1px;
     bottom: -8px;
   }
 
@@ -79,11 +88,12 @@
   }
 
   .handle-set-2.handle-set-nth-1 {
-    margin-left: 36px;
+    @apply border-success-400;
+    margin-left: -30px;
   }
 
   .handle-set-2.handle-set-nth-2 {
-    margin-left: -36px;
+    margin-left: 30px;
   }
 
   .react-flow__handle.handle-error,
@@ -94,8 +104,18 @@
     @apply border-red-400;
   }
 
+  .smart-edge {
+    @apply cursor-pointer;
+  }
+  .smart-edge:hover {
+    .artboard-edit-button {
+      opacity: 1;
+    }
+  }
+
   .artboard-edit-button {
     @apply text-midnight-50 bg-midnight-600 border-midnight-300;
+    opacity: 0;
   }
 
   .artboard-edit-button.has-transform {
