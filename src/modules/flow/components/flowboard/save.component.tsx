@@ -1,24 +1,21 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { OnLoadParams } from 'react-flow-renderer';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { SchemaRef } from '../../../schema/interface/system-ref.enum';
-import {
-  flowAtom,
-  flowChangedAtom,
-  flowInstanceAtom,
-} from '../../atom/artboard.atoms';
 import { IFlow } from '../../interface/flow.interface';
 import { serializeFlow } from '../../util/serialize-flow';
 
 const SAVING_NOTIFICATION = 'saving-flow';
 
-export default function ArtboardSave() {
+type Props = {
+  flowInstance: OnLoadParams;
+  flow: IFlow;
+};
+
+export default function FlowboardSave({ flowInstance, flow }: Props) {
   const httpClient = useHttpClientSimple();
-  const flow = useRecoilValue(flowAtom);
-  const flowInstance = useRecoilValue(flowInstanceAtom);
-  const [isFlowChanged, setIsFlowChanged] = useRecoilState(flowChangedAtom);
 
   const doSaveFlow = () => {
     const serializedFlow: IFlow = serializeFlow(
@@ -34,8 +31,6 @@ export default function ArtboardSave() {
           message: 'Saved successfully!',
           placement: 'bottomRight',
         });
-
-        setIsFlowChanged(false);
       })
       .catch(error => {
         notification.error({
@@ -48,10 +43,7 @@ export default function ArtboardSave() {
   };
 
   return (
-    <div
-      onClick={() => doSaveFlow()}
-      className={isFlowChanged ? 'text-yellow-500' : ''}
-    >
+    <div onClick={() => doSaveFlow()}>
       <SaveOutlined />
       <div>Save Changes</div>
     </div>

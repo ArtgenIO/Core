@@ -18,27 +18,30 @@ import {
   Tabs,
 } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
-import { useEffect, useState } from 'react';
-import { Edge } from 'react-flow-renderer';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Edge, Elements } from 'react-flow-renderer';
+import { useRecoilValue } from 'recoil';
 import { ILambdaHandle } from '../../../lambda/interface/handle.interface';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
-import {
-  elementsAtom,
-  flowChangedAtom,
-  lambdaMetasAtom,
-  selectedNodeIdAtom,
-} from '../../atom/artboard.atoms';
+import { lambdaMetasAtom } from '../../atom/artboard.atoms';
 import { CustomNode, CustomNodeData } from '../../interface/custom-node';
-import HandleSchemaComponent from './handle-schema';
+import HandleSchemaComponent from './handle-schema.component';
 
-export default function ArtboardNodeConfigComponent() {
+type Props = {
+  selectedNodeId: string | null;
+  setSelectedNodeId: Dispatch<SetStateAction<string>>;
+  elements: Elements;
+  setElements: Dispatch<SetStateAction<Elements>>;
+};
+
+export default function FlowBoardNodeConfig({
+  selectedNodeId,
+  setSelectedNodeId,
+  elements,
+  setElements,
+}: Props) {
   // Artboard states
   const lambdas = useRecoilValue(lambdaMetasAtom);
-  const [selectedNodeId, setSelectedNodeId] =
-    useRecoilState(selectedNodeIdAtom);
-  const [elements, setElements] = useRecoilState(elementsAtom);
-  const setIsFlowChanged = useSetRecoilState(flowChangedAtom);
 
   // Local state
   const [configValue, setConfigValue] = useState(null);
@@ -153,7 +156,7 @@ export default function ArtboardNodeConfigComponent() {
                         return newElements;
                       });
 
-                      setIsFlowChanged(true);
+                      console.log('node config changed');
                     }}
                   />
                 </Descriptions.Item>
@@ -197,7 +200,7 @@ export default function ArtboardNodeConfigComponent() {
                   return newElements;
                 });
 
-                setIsFlowChanged(true);
+                console.log('node config changed');
               }}
             >
               <></>

@@ -9,30 +9,35 @@ import {
 } from '@ant-design/icons';
 import { message } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
-import { Edge } from 'react-flow-renderer';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  elementsAtom,
-  flowInstanceAtom,
-  selectedElementIdAtom,
-  selectedNodeIdAtom,
-} from '../../atom/artboard.atoms';
-import ArtboardSave from './save.component';
+  Edge,
+  Elements,
+  OnLoadParams,
+  useZoomPanHelper,
+} from 'react-flow-renderer';
+import { IFlow } from '../../interface';
+import FlowboardSave from './save.component';
 
 type Props = {
   showCatalog: boolean;
   setShowCatalog: Dispatch<SetStateAction<boolean>>;
+  setSelectedNodeId: Dispatch<SetStateAction<string>>;
+  focusedElementId: string;
+  setElements: Dispatch<SetStateAction<Elements>>;
+  flowInstance: OnLoadParams;
+  flow: IFlow;
 };
 
-export default function ArtboardToolsComponent({
+export default function FlowboardTools({
   showCatalog,
   setShowCatalog,
+  setSelectedNodeId,
+  focusedElementId,
+  setElements,
+  flowInstance,
+  flow,
 }: Props) {
-  const flowInstance = useRecoilValue(flowInstanceAtom);
-  const selectedElementId = useRecoilValue(selectedElementIdAtom);
-  const setSelectedNodeId = useSetRecoilState(selectedNodeIdAtom);
-  const [elements, setElements] = useRecoilState(elementsAtom);
-
+  const { zoomIn, zoomOut, fitView } = useZoomPanHelper();
   const doDeleteNode = (nodeId: string) => {
     setElements(els => {
       return els.filter(el => {
@@ -72,30 +77,30 @@ export default function ArtboardToolsComponent({
           <div>{showCatalog ? 'Create Node' : 'Close Catalog'}</div>
         </div>
 
-        <ArtboardSave />
+        <FlowboardSave flow={flow} flowInstance={flowInstance} />
 
-        <div onClick={() => flowInstance.zoomIn()}>
+        <div onClick={() => zoomIn()}>
           <ZoomInOutlined />
           <div>Zoom In</div>
         </div>
 
-        <div onClick={() => flowInstance.zoomOut()}>
+        <div onClick={() => zoomOut()}>
           <ZoomOutOutlined />
           <div>Zoom Out</div>
         </div>
 
-        <div onClick={() => flowInstance.fitView()}>
+        <div onClick={() => fitView()}>
           <ExpandOutlined />
           <div>Zoom To Fit</div>
         </div>
       </div>
 
       <div className="absolute right-4 bottom-4 w-10 rounded-md artboard-tools text-center">
-        {selectedElementId ? (
+        {focusedElementId ? (
           <>
             <div
               className="rounded-t-md"
-              onClick={() => setSelectedNodeId(selectedElementId)}
+              onClick={() => setSelectedNodeId(focusedElementId)}
             >
               <SettingOutlined />
               <div>Configure Node</div>
@@ -103,7 +108,7 @@ export default function ArtboardToolsComponent({
 
             <div
               className="rounded-b-md"
-              onClick={() => doDeleteNode(selectedElementId)}
+              onClick={() => doDeleteNode(focusedElementId)}
             >
               <DeleteOutlined />
               <div>Delete Node</div>

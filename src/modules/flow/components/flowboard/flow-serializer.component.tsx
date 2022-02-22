@@ -9,7 +9,7 @@ type Props = {
   onClose: () => void;
 };
 
-export default function FlowExportComponent({ flow, onClose }: Props) {
+export default function FlowBoardSerializer({ flow, onClose }: Props) {
   const doDownload = () => {
     const fileName = `flow-${flow.name}-${flow.id.substring(
       0,

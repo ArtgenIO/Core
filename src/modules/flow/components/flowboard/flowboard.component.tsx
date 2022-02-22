@@ -14,43 +14,38 @@ import ReactFlow, {
   ArrowHeadType,
   Background,
   BackgroundVariant,
+  Elements,
   isNode,
   NodeTypesType,
   OnLoadParams,
   useZoomPanHelper,
 } from 'react-flow-renderer';
 import { useParams } from 'react-router';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import MenuBlock from '../../../admin/component/menu-block.component';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
 import { SchemaRef } from '../../../schema/interface/system-ref.enum';
-import {
-  elementsAtom,
-  flowAtom,
-  flowChangedAtom,
-  flowInstanceAtom,
-  lambdaMetasAtom,
-  selectedElementIdAtom,
-  selectedNodeIdAtom,
-} from '../../atom/artboard.atoms';
+import { lambdaMetasAtom } from '../../atom/artboard.atoms';
 import { NodeFactory } from '../../factory/node.factory';
 import { IFlow } from '../../interface/flow.interface';
 import { createNode } from '../../util/create-node';
 import { unserializeFlow } from '../../util/unserialize-flow';
-import ArtboardCatalogComponent from './catalog.component';
-import ArtboardNodeConfigComponent from './config.component';
 import FlowContextExplorerComponent from './context-explorer.component';
 import ArtboardEdgeConfigComponent from './edge-config.component';
-import CustomEdge from './edge.component';
+import { SmartEdgeFactory } from './edge-factory.component';
+import FlowboardName from './flow-name.component';
+import FlowBoardSerializer from './flow-serializer.component';
+import FlowboardTools from './flow-tools.component';
 import './flowboard.component.less';
-import FlowNameComponent from './name.component';
-import FlowExportComponent from './serializer.component';
-import ArtboardToolsComponent from './tools.component';
+import FlowboardLambdaCatalog from './lambda-catalog.component';
+import FlowBoardNodeConfig from './node-config.component';
 
 export default function FlowBoardComponent() {
+  const [flow, setFlow] = useState<IFlow>(null);
+
   // Page state
   const [showCatalog, setShowCatalog] = useState(false);
   const [showExport, setShowExport] = useState(false);
@@ -65,17 +60,16 @@ export default function FlowBoardComponent() {
   const [customNodes, setCustomNodes] = useState<NodeTypesType>({});
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMenuNodes, setSelectedMenuNodes] = useState([]);
-  const { zoomIn, zoomOut, fitView, setCenter } = useZoomPanHelper();
+  const { setCenter } = useZoomPanHelper();
 
   // Artboard state
-  const [flow, setFlow] = useRecoilState(flowAtom);
-  const [elements, setElements] = useRecoilState(elementsAtom);
+
   const [lambdaMetas, setLambdaMetas] = useRecoilState(lambdaMetasAtom);
-  const [flowInstance, setFlowInstance] = useRecoilState(flowInstanceAtom);
-  const [selectedNodeId, setSelectedNodeId] =
-    useRecoilState(selectedNodeIdAtom);
-  const setIsFlowChanged = useSetRecoilState(flowChangedAtom);
-  const setSelectedElementId = useSetRecoilState(selectedElementIdAtom);
+  const [flowInstance, setFlowInstance] = useState<OnLoadParams>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string>(null);
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string>(null);
+  const [focusedElementId, setFocusedElementId] = useState<string>(null);
+  const [elements, setElements] = useState<Elements>([]);
 
   useEffect(() => {
     setSelectedMenuNodes([selectedNodeId]);
@@ -127,13 +121,13 @@ export default function FlowBoardComponent() {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
 
-    setIsFlowChanged(true);
+    console.log('Drag over');
   };
 
   const onDrop = (event: DragEvent) => {
     const bounds = wrapper.current.getBoundingClientRect();
 
-    setIsFlowChanged(true);
+    console.log('Drop over');
 
     if (event.dataTransfer.getData('application/reactflow')) {
       event.preventDefault();
@@ -152,25 +146,27 @@ export default function FlowBoardComponent() {
 
   useEffect(() => {
     (async () => {
-      const nodes = await client.get<ILambdaMeta[]>('/api/lambda');
-      const flow = await client.get<IFlow>(
-        `${toRestSysRoute(SchemaRef.FLOW)}/${flowId}`,
-      );
+      const [lambdaReply, flowReply] = await Promise.all([
+        client.get<ILambdaMeta[]>('/api/lambda'),
+        client.get<IFlow>(`${toRestSysRoute(SchemaRef.FLOW)}/${flowId}`),
+      ]);
 
       const customNodes: NodeTypesType = {};
-      for (const node of nodes.data) {
+
+      for (const node of lambdaReply.data) {
         customNodes[kebabCase(node.type)] = NodeFactory.fromMeta(
           node,
           setSelectedNodeId,
         );
       }
+
       setCustomNodes(customNodes);
-      setLambdaMetas(nodes.data);
-      setFlow(flow.data);
-      setElements(unserializeFlow(flow.data));
+      setLambdaMetas(lambdaReply.data);
+      setFlow(flowReply.data);
+      setElements(unserializeFlow(flowReply.data));
       setIsLoading(false);
 
-      if (!flow.data.nodes.length) {
+      if (!flowReply.data.nodes.length) {
         setShowCatalog(true);
       }
     })();
@@ -268,16 +264,20 @@ export default function FlowBoardComponent() {
               onDragOver={onDragOver}
               onSelectionChange={elements => {
                 if (elements?.length) {
-                  setSelectedElementId(elements[0].id);
+                  setFocusedElementId(elements[0].id);
                 } else {
-                  setSelectedElementId(null);
+                  setFocusedElementId(null);
                 }
               }}
-              onChange={() => setIsFlowChanged(true)}
+              onChange={() => {
+                console.log('Changed');
+              }}
               nodeTypes={customNodes}
               defaultZoom={1.5}
               edgeTypes={{
-                'artgen-edge': CustomEdge,
+                'artgen-edge': SmartEdgeFactory({
+                  onClick: setSelectedEdgeId,
+                }),
               }}
               onClick={() => setShowCatalog(false)}
             >
@@ -288,25 +288,46 @@ export default function FlowBoardComponent() {
                 color="#37393f"
               />
 
-              <ArtboardEdgeConfigComponent />
-              <ArtboardToolsComponent
+              {selectedEdgeId && (
+                <ArtboardEdgeConfigComponent
+                  selectedEdgeId={selectedEdgeId}
+                  setSelectedEdgeId={setSelectedEdgeId}
+                  elements={elements}
+                  setElements={setElements}
+                />
+              )}
+              <FlowboardTools
                 showCatalog={showCatalog}
                 setShowCatalog={setShowCatalog}
+                setSelectedNodeId={setSelectedNodeId}
+                focusedElementId={focusedElementId}
+                setElements={setElements}
+                flowInstance={flowInstance}
+                flow={flow}
               />
-              <FlowNameComponent />
+              <FlowboardName flow={flow} setFlow={setFlow} />
             </ReactFlow>
           )}
         </div>
 
-        {selectedNodeId && <ArtboardNodeConfigComponent />}
+        {selectedNodeId && (
+          <FlowBoardNodeConfig
+            selectedNodeId={selectedNodeId}
+            setSelectedNodeId={setSelectedNodeId}
+            elements={elements}
+            setElements={setElements}
+          />
+        )}
 
-        <ArtboardCatalogComponent
+        <FlowboardLambdaCatalog
           showCatalog={showCatalog}
           setShowCatalog={setShowCatalog}
+          setElements={setElements}
+          flowInstance={flowInstance}
         />
 
         {showExport && (
-          <FlowExportComponent
+          <FlowBoardSerializer
             flow={flow}
             onClose={() => setShowExport(false)}
           />

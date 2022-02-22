@@ -3,13 +3,10 @@ import { Avatar, Button, Divider, Drawer, Input, List } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import startCase from 'lodash.startcase';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { Elements, OnLoadParams } from 'react-flow-renderer';
+import { useRecoilValue } from 'recoil';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
-import {
-  elementsAtom,
-  flowInstanceAtom,
-  lambdaMetasAtom,
-} from '../../atom/artboard.atoms';
+import { lambdaMetasAtom } from '../../atom/artboard.atoms';
 import { createNode } from '../../util/create-node';
 
 /**
@@ -44,15 +41,17 @@ const onDragStart = (event, nodeType: string) => {
 type Props = {
   showCatalog: boolean;
   setShowCatalog: Dispatch<SetStateAction<boolean>>;
+  setElements: Dispatch<SetStateAction<Elements>>;
+  flowInstance: OnLoadParams;
 };
 
-export default function ArtboardCatalogComponent({
+export default function FlowboardLambdaCatalog({
   showCatalog,
   setShowCatalog,
+  setElements,
+  flowInstance,
 }: Props) {
   const lambdaMetas = useRecoilValue(lambdaMetasAtom);
-  const setElements = useSetRecoilState(elementsAtom);
-  const flowInstance = useRecoilValue(flowInstanceAtom);
   const [search, setSearch] = useState('');
 
   // Called when the user adds a new node with the + button

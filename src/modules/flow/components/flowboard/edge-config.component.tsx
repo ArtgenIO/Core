@@ -18,24 +18,33 @@ import {
 } from 'antd';
 import Avatar from 'antd/lib/avatar/avatar';
 import { useForm } from 'antd/lib/form/Form';
-import { useEffect, useState } from 'react';
-import { ArrowHeadType, Edge, isNode, Node } from 'react-flow-renderer';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { ILambdaHandle } from '../../../lambda/interface/handle.interface';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
-  elementsAtom,
-  flowChangedAtom,
-  lambdaMetasAtom,
-  selectedEdgeIdAtom,
-} from '../../atom/artboard.atoms';
-import HandleSchemaComponent from './handle-schema';
+  ArrowHeadType,
+  Edge,
+  Elements,
+  isNode,
+  Node,
+} from 'react-flow-renderer';
+import { useRecoilValue } from 'recoil';
+import { ILambdaHandle } from '../../../lambda/interface/handle.interface';
+import { lambdaMetasAtom } from '../../atom/artboard.atoms';
+import HandleSchemaComponent from './handle-schema.component';
 
-export default function ArtboardEdgeConfigComponent() {
+type Props = {
+  setSelectedEdgeId: Dispatch<SetStateAction<string>>;
+  selectedEdgeId: string;
+  elements: Elements;
+  setElements: Dispatch<SetStateAction<Elements>>;
+};
+
+export default function ArtboardEdgeConfigComponent({
+  selectedEdgeId,
+  setSelectedEdgeId,
+  elements,
+  setElements,
+}: Props) {
   // Artboard states
-  const [selectedEdgeId, setSelectedEdgeId] =
-    useRecoilState(selectedEdgeIdAtom);
-  const [elements, setElements] = useRecoilState(elementsAtom);
-  const setIsFlowChanged = useSetRecoilState(flowChangedAtom);
   const [showHandleSchema, setShowHandleSchema] = useState<ILambdaHandle>(null);
   const [edge, setEdge] = useState<Edge>(null);
 
@@ -201,7 +210,7 @@ export default function ArtboardEdgeConfigComponent() {
               });
 
               // Close
-              setIsFlowChanged(true);
+              console.log('Edge changed');
             }}
           >
             <Alert
