@@ -18,14 +18,14 @@ export class EventService {
     readonly kernel: IKernel,
   ) {}
 
-  async register(kernel: IKernel) {
-    // Register event observers.
-    const event = await kernel.context.get<EventEmitter2>(EventEmitter2.name);
+  async register() {
+    // Clear already hooked listeners
+    this.bus.removeAllListeners();
 
-    for (const key of kernel.context.findByTag<Constructor<unknown>>(
+    for (const key of this.kernel.context.findByTag<Constructor<unknown>>(
       'observer',
     )) {
-      const observer = await key.getValue(kernel.context);
+      const observer = await key.getValue(this.kernel.context);
       const metadatas = MetadataInspector.getAllMethodMetadata<OnParams>(
         ON_META_KEY,
         observer,
@@ -41,7 +41,7 @@ export class EventService {
             handler = debounce(handler, mdata.options.debounce);
           }
 
-          event['on'](mdata.event, handler, mdata.options);
+          this.bus['on'](mdata.event, handler, mdata.options);
 
           this.logger.debug('Event handler [%s] registered', mdata.event);
         }
@@ -75,6 +75,13 @@ export class EventService {
             data: eventData,
           });
 
+          this.logger.info(
+            'CRON flow triggered [%s] with [%s] as session identifier, by event [%s]',
+            flow.id,
+            session.id,
+            config.eventName,
+          );
+
           const elapsed = Date.now() - startAt;
           this.logger.info(
             'FlowSession [%s] executed in [%d] ms',
@@ -88,10 +95,8 @@ export class EventService {
     }
   }
 
-  async deregister(kernel: IKernel) {
+  async deregister() {
     // Deregister event handlers.
-    (
-      await kernel.context.get<EventEmitter2>(EventEmitter2.name)
-    ).removeAllListeners();
+    this.bus.removeAllListeners();
   }
 }

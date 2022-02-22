@@ -8,21 +8,31 @@ import { CronTriggerConfig } from './lambda/cron.trigger';
 
 @Service()
 export class SchedulerService {
+  protected jobs = new Map<string, schedule.Job>();
+
   constructor(
     @Logger()
     readonly logger: ILogger,
     @Inject(FlowService)
     readonly flowService: FlowService,
+    @Inject('Kernel')
+    readonly kernel: IKernel,
   ) {}
 
-  async register(kernel: IKernel) {
-    await Promise.all([
-      this.registerDecorators(kernel),
-      this.registerFlows(kernel),
-    ]);
+  deregister() {
+    this.jobs.forEach((job, name) => {
+      this.logger.info('Canceling job [%s]', name);
+      job.cancel();
+    });
   }
 
-  protected async registerFlows(kernel: IKernel) {
+  async register() {
+    this.deregister();
+
+    await Promise.all([this.registerDecorators(), this.registerFlows()]);
+  }
+
+  protected async registerFlows() {
     this.logger.debug('Registering flows');
 
     for (const flow of await this.flowService.findAll()) {
@@ -43,6 +53,8 @@ export class SchedulerService {
           session.trigger(trigger.id, {});
         });
 
+        this.jobs.set(name, job);
+
         this.logger.info(
           'Flow job [%s] scheduled [%s] next execution [%s]',
           name,
@@ -53,13 +65,13 @@ export class SchedulerService {
     }
   }
 
-  protected async registerDecorators(kernel: IKernel) {
+  protected async registerDecorators() {
     this.logger.debug('Registering decorators');
 
-    for (const key of kernel.context.findByTag<Constructor<unknown>>(
+    for (const key of this.kernel.context.findByTag<Constructor<unknown>>(
       'scheduler',
     )) {
-      const scheduler = await key.getValue(kernel.context);
+      const scheduler = await key.getValue(this.kernel.context);
       const metadata = MetadataInspector.getAllMethodMetadata<JobParams>(
         JOB_META_KEY,
         scheduler,
