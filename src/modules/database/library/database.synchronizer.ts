@@ -815,6 +815,9 @@ export class DatabaseSynchronizer {
       case 'CHARACTER':
         type = FieldType.CHAR;
         break;
+      case 'FLOAT':
+        type = FieldType.FLOAT;
+        break;
       case 'TINYINT':
         type = FieldType.TINYINT;
         break;

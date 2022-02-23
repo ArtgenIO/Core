@@ -1540,8 +1540,8 @@
           "reference": "elapsedTime",
           "columnName": "elapsedTime",
           "title": "Elapsed Time",
-          "type": "float",
-          "defaultValue": "0",
+          "type": "int",
+          "defaultValue": 0,
           "meta": {
             "grid": {
               "order": 2,
