@@ -378,6 +378,23 @@
           "args": {},
           "tags": [],
           "searchable": false
+        },
+        {
+          "reference": "captureContext",
+          "columnName": "capture_context",
+          "title": "Capture Context",
+          "type": "boolean",
+          "defaultValue": false,
+          "meta": {
+            "grid": {
+              "order": 6,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [],
+          "searchable": false
         }
       ],
       "indices": [],
