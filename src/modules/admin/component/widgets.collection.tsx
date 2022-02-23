@@ -13,6 +13,9 @@ const Widgets = {
   'telemetry.uptime': lazy(
     () => import('../../telemetry/component/uptime.widget'),
   ),
+  'flow.executions': lazy(
+    () => import('../../flow/components/widget/execution.widget'),
+  ),
 };
 
 type Props = {

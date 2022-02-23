@@ -1476,6 +1476,131 @@
         "update": "protected",
         "delete": "protected"
       }
+    },
+    {
+      "database": "main",
+      "title": "Flow Executions",
+      "reference": "FlowExecution",
+      "tableName": "__artgen_flow_executions",
+      "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "fields": [
+        {
+          "title": "Identifier",
+          "reference": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [
+            "primary"
+          ],
+          "searchable": false
+        },
+        {
+          "reference": "flowId",
+          "columnName": "flow_id",
+          "title": "Flow ID",
+          "type": "uuid",
+          "defaultValue": null,
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [],
+          "searchable": false
+        },
+        {
+          "reference": "elapsedTime",
+          "columnName": "elapsedTime",
+          "title": "Elapsed Time",
+          "type": "float",
+          "defaultValue": "0",
+          "meta": {
+            "grid": {
+              "order": 2,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [],
+          "searchable": false
+        },
+        {
+          "reference": "context",
+          "columnName": "context",
+          "title": "Context",
+          "type": "json",
+          "defaultValue": {},
+          "meta": {
+            "grid": {
+              "order": 3,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [],
+          "searchable": false
+        },
+        {
+          "title": "Created Date",
+          "reference": "createdAt",
+          "columnName": "created_at",
+          "type": "timestamp",
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 4,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "tags": [
+            "created"
+          ],
+          "searchable": false
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [
+        {
+          "kind": "belongs-to-one",
+          "name": "flow",
+          "target": "Flow",
+          "localField": "flowId",
+          "remoteField": "id"
+        }
+      ],
+      "tags": [
+        "active"
+      ],
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      },
+      "meta": {
+        "isFavorite": false,
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      }
     }
   ],
   "content": {
@@ -2011,9 +2136,9 @@
             }
           },
           {
-            "w": 12,
+            "w": 7,
             "h": 4,
-            "x": 0,
+            "x": 7,
             "y": 4,
             "i": "10afc64c-b03e-4fb8-a0d6-c282695c723e",
             "moved": false,
@@ -2035,6 +2160,19 @@
               "id": "telemetry.uptime",
               "header": "Telemetry - Uptime"
             }
+          },
+          {
+            "w": 7,
+            "h": 4,
+            "minW": 4,
+            "minH": 2,
+            "widget": {
+              "id": "flow.executions",
+              "header": "Flow - Executions"
+            },
+            "x": 0,
+            "y": 4,
+            "i": "53644247-ac9f-4cfc-b17a-96e531a4f821"
           }
         ]
       }

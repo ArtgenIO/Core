@@ -4,6 +4,8 @@ import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { SchemaService } from '../../schema/service/schema.service';
+import { BucketKey } from '../../telemetry/interface/bucket-key.enum';
+import { TelemetryService } from '../../telemetry/telemetry.service';
 import { IFlow } from '../interface/flow.interface';
 import { FlowSession } from '../library/flow.session';
 
@@ -18,6 +20,8 @@ export class FlowService {
     readonly lambda: LambdaService,
     @Inject(SchemaService)
     readonly schema: SchemaService,
+    @Inject(TelemetryService)
+    readonly telemetry: TelemetryService,
   ) {}
 
   async findAll(): Promise<IFlow[]> {
@@ -39,6 +43,8 @@ export class FlowService {
     if (!actionId) {
       actionId = v4();
     }
+
+    this.telemetry.record(BucketKey.FLOW_EXEC, 1);
 
     return new FlowSession(
       this.logger.child({ scope: `Flow.${id.substring(0, 8)}` }),

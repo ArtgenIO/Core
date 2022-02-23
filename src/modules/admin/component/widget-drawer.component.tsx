@@ -38,6 +38,16 @@ const widgets: Omit<IDashGridElement, 'i' | 'x' | 'y'>[] = [
       header: 'Telemetry - Uptime',
     },
   },
+  {
+    w: 7,
+    h: 4,
+    minW: 4,
+    minH: 2,
+    widget: {
+      id: 'flow.executions',
+      header: 'Flow - Executions',
+    },
+  },
 ];
 
 export default function WidgetDrawerComponent({ onClose, onAdd }: Props) {

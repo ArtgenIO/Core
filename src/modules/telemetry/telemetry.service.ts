@@ -25,6 +25,7 @@ export class TelemetryService {
     // Init the buckets
     this.buckets.set(BucketKey.HTTP_REQUEST, new Bucket());
     this.buckets.set(BucketKey.DB_QUERY, new Bucket());
+    this.buckets.set(BucketKey.FLOW_EXEC, new Bucket());
   }
 
   clearTick() {
