@@ -1,3 +1,4 @@
+import { EventEmitter2 } from 'eventemitter2';
 import { createLogger } from 'winston';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
@@ -21,7 +22,13 @@ describe(FlowSession.name, () => {
     };
     const lambda = createLambdaService([]);
     const sessionId = 'testid';
-    const session = new FlowSession(createLogger(), lambda, testWf, sessionId);
+    const session = new FlowSession(
+      createLogger(),
+      lambda,
+      new EventEmitter2(),
+      testWf,
+      sessionId,
+    );
 
     expect(session.id).toBe('testid');
     expect(session.flow).toBe(testWf);
