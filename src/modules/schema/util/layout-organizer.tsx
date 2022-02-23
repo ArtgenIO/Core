@@ -1,9 +1,11 @@
 import dagre from 'dagre/dist/dagre.js';
-import { Elements, isNode } from 'react-flow-renderer';
+import { Elements, isNode, Node } from 'react-flow-renderer';
+
+type DHeight = (el: Node) => number;
 
 export const createLayouOrganizer = (
   nodeWidth: number = 300,
-  nodeHeight: number = 220,
+  nodeHeight: number | DHeight = 220,
 ) => {
   const planner = new dagre.graphlib.Graph();
   planner.setDefaultEdgeLabel(() => ({}));
@@ -15,7 +17,7 @@ export const createLayouOrganizer = (
       if (isNode(el)) {
         planner.setNode(el.id, {
           width: nodeWidth,
-          height: el.data.schema.fields.length * 26 + 40,
+          height: typeof nodeHeight == 'number' ? nodeHeight : nodeHeight(el),
         });
       } else {
         planner.setEdge(el.source, el.target);

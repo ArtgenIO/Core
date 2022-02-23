@@ -52,7 +52,7 @@ export class EventService {
     const flowService = await this.kernel.get(FlowService);
     const flows = await flowService.findAll();
 
-    for (const flow of flows) {
+    for (const flow of flows.filter(f => f.isActive)) {
       const trigger = flow.nodes.find(node => node.type === 'trigger.event');
 
       if (trigger) {

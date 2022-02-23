@@ -1,13 +1,14 @@
 import {
   ApartmentOutlined,
+  BugOutlined,
   BuildOutlined,
   ClusterOutlined,
   CodeOutlined,
-  PlayCircleOutlined,
+  SwitcherOutlined,
 } from '@ant-design/icons';
-import { Avatar, Layout, Menu } from 'antd';
+import { Avatar, Empty, Layout, Menu, message, Switch } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
-import { kebabCase } from 'lodash';
+import { cloneDeep, kebabCase } from 'lodash';
 import { DragEvent, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
   addEdge,
@@ -28,6 +29,7 @@ import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
 import { SchemaRef } from '../../../schema/interface/system-ref.enum';
+import { createLayouOrganizer } from '../../../schema/util/layout-organizer';
 import { lambdaMetasAtom } from '../../atom/artboard.atoms';
 import { NodeFactory } from '../../factory/node.factory';
 import { IFlow } from '../../interface/flow.interface';
@@ -70,6 +72,8 @@ export default function FlowBoardComponent() {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string>(null);
   const [focusedElementId, setFocusedElementId] = useState<string>(null);
   const [elements, setElements] = useState<Elements>([]);
+
+  const layoutOrganizer = createLayouOrganizer(300, 60);
 
   useEffect(() => {
     setSelectedMenuNodes([selectedNodeId]);
@@ -163,7 +167,7 @@ export default function FlowBoardComponent() {
       setCustomNodes(customNodes);
       setLambdaMetas(lambdaReply.data);
       setFlow(flowReply.data);
-      setElements(unserializeFlow(flowReply.data));
+      setElements(layoutOrganizer(unserializeFlow(flowReply.data), 'TB'));
       setIsLoading(false);
 
       if (!flowReply.data.nodes.length) {
@@ -212,20 +216,60 @@ export default function FlowBoardComponent() {
               >
                 Serialize
               </Menu.Item>
-            </Menu>
-          )}
-        </MenuBlock>
 
-        <MenuBlock title="Triggers">
-          {flow && (
-            <Menu className="compact">
-              {flow.nodes
-                .filter(node => node.type.match('trigger'))
-                .map(node => (
-                  <Menu.Item key={node.id} icon={<PlayCircleOutlined />}>
-                    {node.title}
-                  </Menu.Item>
-                ))}
+              <Menu.Item key="active" icon={<SwitcherOutlined />}>
+                Active
+                <Switch
+                  size="small"
+                  className="float-right mt-2"
+                  checked={flow.isActive}
+                  onChange={newValue =>
+                    setFlow(oldState => {
+                      const newState = cloneDeep(oldState);
+                      newState.isActive = newValue;
+
+                      client.patch(
+                        toRestSysRoute(SchemaRef.FLOW) + `/${newState.id}`,
+                        newState,
+                      );
+
+                      message.info(
+                        `Flow is ${newValue ? 'activated' : 'inactivated'}`,
+                      );
+
+                      return newState;
+                    })
+                  }
+                ></Switch>
+              </Menu.Item>
+
+              <Menu.Item key="capture" icon={<BugOutlined />}>
+                Capture Context
+                <Switch
+                  size="small"
+                  className="float-right mt-2"
+                  checked={flow.captureContext}
+                  onChange={newValue =>
+                    setFlow(oldState => {
+                      const newState = cloneDeep(oldState);
+                      newState.captureContext = newValue;
+
+                      client.patch(
+                        toRestSysRoute(SchemaRef.FLOW) + `/${newState.id}`,
+                        newState,
+                      );
+
+                      message.info(
+                        `Flow's context capture is ${
+                          newValue ? 'activated' : 'inactivated'
+                        }`,
+                      );
+
+                      return newState;
+                    })
+                  }
+                ></Switch>
+              </Menu.Item>
             </Menu>
           )}
         </MenuBlock>
@@ -234,7 +278,7 @@ export default function FlowBoardComponent() {
           {flow && (
             <Menu selectedKeys={selectedMenuNodes} className="compact">
               {flow.nodes
-                .filter(node => !node.type.match('trigger'))
+                .sort((a, b) => (a.position[0] < b.position[0] ? 1 : -1))
                 .map(node => (
                   <Menu.Item
                     key={node.id}
@@ -244,6 +288,14 @@ export default function FlowBoardComponent() {
                     {node.title}
                   </Menu.Item>
                 ))}
+            </Menu>
+          )}
+        </MenuBlock>
+
+        <MenuBlock title="Captured Contexts">
+          {flow && (
+            <Menu selectable={false} className="compact">
+              <Empty description="No Context Captured Yet" />
             </Menu>
           )}
         </MenuBlock>

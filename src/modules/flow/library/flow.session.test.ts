@@ -16,6 +16,8 @@ describe(FlowSession.name, () => {
       name: 'testname',
       nodes: [],
       edges: [],
+      captureContext: false,
+      isActive: true,
     };
     const lambda = createLambdaService([]);
     const sessionId = 'testid';

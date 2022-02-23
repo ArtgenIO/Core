@@ -8,6 +8,7 @@ export enum SchemaRef {
   BLUEPRINT = 'Blueprint',
   DATABASE = 'Database',
   FLOW = 'Flow',
+  FLOW_EXEC = 'FlowExecution',
   KV = 'KeyValueStorage',
   MODULE = 'Module',
   PAGE = 'Page',

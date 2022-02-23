@@ -361,6 +361,23 @@
               "hidden": true
             }
           }
+        },
+        {
+          "reference": "isActive",
+          "columnName": "isActive",
+          "title": "Is Active",
+          "type": "boolean",
+          "defaultValue": true,
+          "meta": {
+            "grid": {
+              "order": 5,
+              "hidden": false,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [],
+          "searchable": false
         }
       ],
       "indices": [],

@@ -35,7 +35,9 @@ export class SchedulerService {
   protected async registerFlows() {
     this.logger.debug('Registering flows');
 
-    for (const flow of await this.flowService.findAll()) {
+    for (const flow of (await this.flowService.findAll()).filter(
+      f => f.isActive,
+    )) {
       const triggers = flow.nodes.filter(t => t.type === 'trigger.cron');
 
       for (const trigger of triggers) {

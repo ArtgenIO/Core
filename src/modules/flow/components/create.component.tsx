@@ -37,6 +37,8 @@ export default function CreateFlowComponent({ onClose }: Props) {
             name: fdata.name,
             nodes: [],
             edges: [],
+            captureContext: false,
+            isActive: false,
           }).then(id => {
             redirect(`/admin/flow/artboard/${id}`);
             onClose();

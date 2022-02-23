@@ -38,7 +38,10 @@ export default function DatabaseArtboardComponent() {
   const [showEditor, setShowEditor] = useState<ISchema>(null);
   const [selectedNode, setSelectedNode] = useState<ISchema>(null);
 
-  const layoutOrganizer = createLayouOrganizer();
+  const layoutOrganizer = createLayouOrganizer(
+    300,
+    el => el.data.schema.fields.length * 26 + 40,
+  );
 
   useEffect(() => {
     if (search.has('schema')) {

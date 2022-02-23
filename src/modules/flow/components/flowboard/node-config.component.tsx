@@ -124,7 +124,7 @@ export default function FlowBoardNodeConfig({
       footer={null}
       onClose={() => setSelectedNodeId(null)}
     >
-      <Tabs tabPosition="left" size="large" defaultActiveKey="handles">
+      <Tabs tabPosition="left" size="large" defaultActiveKey="config">
         <Tabs.TabPane tab="Information" key="info">
           {lambdaMeta ? (
             <>

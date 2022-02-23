@@ -1,3 +1,4 @@
+import { EventEmitter2 } from 'eventemitter2';
 import { Model } from 'objection';
 import { v4 } from 'uuid';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
@@ -22,6 +23,8 @@ export class FlowService {
     readonly schema: SchemaService,
     @Inject(TelemetryService)
     readonly telemetry: TelemetryService,
+    @Inject(EventEmitter2)
+    readonly bus: EventEmitter2,
   ) {}
 
   async findAll(): Promise<IFlow[]> {
@@ -49,6 +52,7 @@ export class FlowService {
     return new FlowSession(
       this.logger.child({ scope: `Flow.${id.substring(0, 8)}` }),
       this.lambda,
+      this.bus,
       flow.$toJson(),
       actionId,
     );

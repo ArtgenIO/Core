@@ -13,7 +13,9 @@ import {
   message,
   Popconfirm,
   Skeleton,
+  Switch,
 } from 'antd';
+import cloneDeep from 'lodash.clonedeep';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
@@ -28,7 +30,7 @@ import CreateFlowComponent from './create.component';
 export default function FlowListComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [flows, setFlows] = useState<IFlow[]>([]);
-  const httpClient = useHttpClientSimple();
+  const client = useHttpClientSimple();
   const navigate = useNavigate();
 
   const [showCreate, setShowCreate] = useState<boolean>(false);
@@ -38,7 +40,7 @@ export default function FlowListComponent() {
 
     if (flow) {
       try {
-        await httpClient.delete(`${toRestSysRoute(SchemaRef.FLOW)}/${id}`);
+        await client.delete(`${toRestSysRoute(SchemaRef.FLOW)}/${id}`);
 
         setFlows(wfs => wfs.filter(wf => wf.id !== id));
 
@@ -55,7 +57,7 @@ export default function FlowListComponent() {
   };
 
   useEffect(() => {
-    httpClient
+    client
       .get<IFindResponse<IFlow>>(toRestSysRoute(SchemaRef.FLOW))
       .then(response => {
         setFlows(response.data.data);
@@ -89,10 +91,10 @@ export default function FlowListComponent() {
             bordered
             dataSource={flows}
             size="small"
-            renderItem={row => (
+            renderItem={flow => (
               <List.Item
-                key={row.id}
-                onClick={() => navigate(`/admin/flow/artboard/${row.id}`)}
+                key={flow.id}
+                onClick={() => navigate(`/admin/flow/artboard/${flow.id}`)}
               >
                 <List.Item.Meta
                   avatar={
@@ -103,7 +105,33 @@ export default function FlowListComponent() {
                       icon={<FileOutlined />}
                     />
                   }
-                  title={row.name}
+                  title={flow.name}
+                />
+
+                <Switch
+                  title="Is Active"
+                  checked={flow.isActive}
+                  onClick={(v, e) => e.stopPropagation()}
+                  onChange={newValue =>
+                    setFlows(oldState => {
+                      const newState = cloneDeep(oldState);
+
+                      const f = newState.find(r => r.id === flow.id);
+                      f.isActive = newValue;
+
+                      client.patch(
+                        toRestSysRoute(SchemaRef.FLOW) + `/${f.id}`,
+                        f,
+                      );
+
+                      message.info(
+                        `Flow is ${newValue ? 'activated' : 'inactivated'}`,
+                      );
+
+                      return newState;
+                    })
+                  }
+                  className="mr-2"
                 />
 
                 <Popconfirm
@@ -113,7 +141,7 @@ export default function FlowListComponent() {
                   placement="left"
                   icon={<QuestionCircleOutlined />}
                   onConfirm={e => {
-                    doDeleteFlow(row.id);
+                    doDeleteFlow(flow.id);
                     e.stopPropagation();
                   }}
                 >

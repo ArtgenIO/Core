@@ -31,7 +31,7 @@ export class LogicHttpGateway implements IHttpGateway {
   async register(httpServer: FastifyInstance): Promise<void> {
     const preHandler = this.authHandler;
 
-    for (const flow of await this.flowSvc.findAll()) {
+    for (const flow of (await this.flowSvc.findAll()).filter(f => f.isActive)) {
       const triggers = flow.nodes.filter(t => t.type === 'trigger.http');
 
       for (const trigger of triggers) {

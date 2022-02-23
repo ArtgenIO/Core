@@ -1,4 +1,5 @@
 import Ajv from 'ajv';
+import { EventEmitter2 } from 'eventemitter2';
 import * as jsonSchemaInst from 'json-schema-instantiator';
 import merge from 'lodash.merge';
 import nunjucks, { Environment } from 'nunjucks';
@@ -44,6 +45,7 @@ export class FlowSession {
   constructor(
     readonly logger: ILogger,
     readonly lambda: LambdaService,
+    readonly bus: EventEmitter2,
     readonly flow: IFlow,
     readonly id: string,
   ) {
@@ -245,6 +247,7 @@ export class FlowSession {
    * Invoke a trigger with request data and format the response based in the config
    */
   async trigger(triggerId: string, request: any): Promise<ITriggerOutput> {
+    const startedAt = Date.now();
     // Store the trigger data
     this.ctx.$trigger = request;
     this.initialTriggerId = triggerId;
@@ -281,6 +284,15 @@ export class FlowSession {
         });
       }
     }
+
+    this.bus.emit(
+      `flow.${this.flow.id}.finished`,
+      this.id,
+      this.flow,
+      this.getContext(),
+      this.stackTrace,
+      startedAt,
+    );
 
     return {
       meta: {

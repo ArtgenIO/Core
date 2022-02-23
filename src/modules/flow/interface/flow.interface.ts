@@ -26,4 +26,14 @@ export interface IFlow {
    * Edges between nodes
    */
   edges: IEdge[];
+
+  /**
+   * Should store the execution contexts?
+   */
+  captureContext: boolean;
+
+  /**
+   * Generic switch to inactive flows.
+   */
+  isActive: boolean;
 }
