@@ -9,6 +9,7 @@ export const serializeFlow = (original: IFlow, elements: Elements): IFlow => {
     name: original.name,
     nodes: elements.filter(isNode).map(serializeNode),
     edges: elements.filter(isEdge).map(serializeEdge),
+    captureContext: original.captureContext,
     isActive: original.isActive,
   };
 
