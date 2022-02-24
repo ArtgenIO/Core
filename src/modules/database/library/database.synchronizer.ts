@@ -158,11 +158,13 @@ export class DatabaseSynchronizer {
         queries.length,
       );
 
-      queries.forEach(q => this.logger.debug('SQL [%s]', q.toQuery()));
-
       changeQueries += queries.length;
 
-      await Promise.all(queries);
+      for (const q of queries) {
+        this.logger.debug('SQL [%s]', q.toQuery());
+
+        await q;
+      }
     }
 
     this.logger.info('Finished in [%d] ms', Date.now() - startAt);
