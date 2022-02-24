@@ -51,17 +51,23 @@ export default function DatabaseToolsComponent({
           <div>Organize Structure</div>
         </div>
 
-        <div onClick={() => zoomIn()}>
+        <div onClick={() => zoomIn(1000)}>
           <ZoomInOutlined />
           <div>Zoom In</div>
         </div>
 
-        <div onClick={() => zoomOut()}>
+        <div onClick={() => zoomOut(1000)}>
           <ZoomOutOutlined />
           <div>Zoom Out</div>
         </div>
 
-        <div onClick={() => fitView()}>
+        <div
+          onClick={() =>
+            fitView({
+              duration: 1000,
+            })
+          }
+        >
           <ExpandOutlined />
           <div>Zoom To Fit</div>
         </div>

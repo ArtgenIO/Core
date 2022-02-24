@@ -3,6 +3,7 @@ import { Observer, On } from '../event';
 import { RestService } from '../rest/service/rest.service';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IFlow, IFlowSessionContext } from './interface';
+import { ICapturedContext } from './interface/captured-context.interface';
 
 @Observer()
 export class FlowObserver {
@@ -22,12 +23,14 @@ export class FlowObserver {
     startedAt: number,
   ) {
     if (flow.captureContext) {
-      await this.rest.create('main', SchemaRef.FLOW_EXEC, {
+      const capturedContext: Omit<ICapturedContext, 'createdAt'> = {
         id: sessionId,
         flowId: flow.id,
         elapsedTime: Date.now() - startedAt,
         context: ctx,
-      });
+      };
+
+      await this.rest.create('main', SchemaRef.FLOW_EXEC, capturedContext);
 
       this.logger.info('Flow [%s] session [%s] stored', flow.id, sessionId);
     }

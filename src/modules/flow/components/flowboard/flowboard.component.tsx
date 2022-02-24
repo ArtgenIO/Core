@@ -1,12 +1,11 @@
 import {
-  ApartmentOutlined,
   BugOutlined,
   BuildOutlined,
   ClusterOutlined,
   CodeOutlined,
   SwitcherOutlined,
 } from '@ant-design/icons';
-import { Avatar, Empty, Layout, Menu, message, Switch } from 'antd';
+import { Avatar, Layout, Menu, message, Switch } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import { cloneDeep, kebabCase } from 'lodash';
 import { DragEvent, useEffect, useRef, useState } from 'react';
@@ -28,13 +27,16 @@ import MenuBlock from '../../../admin/component/menu-block.component';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
+import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
 import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 import { createLayouOrganizer } from '../../../schema/util/layout-organizer';
 import { lambdaMetasAtom } from '../../atom/artboard.atoms';
 import { NodeFactory } from '../../factory/node.factory';
+import { ICapturedContext } from '../../interface/captured-context.interface';
 import { IFlow } from '../../interface/flow.interface';
 import { createNode } from '../../util/create-node';
 import { unserializeFlow } from '../../util/unserialize-flow';
+import ContextListComponent from '../_menu/context-list.component';
 import FlowContextExplorerComponent from './context-explorer.component';
 import ArtboardEdgeConfigComponent from './edge-config.component';
 import { SmartEdgeFactory } from './edge-factory.component';
@@ -63,9 +65,12 @@ export default function FlowBoardComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMenuNodes, setSelectedMenuNodes] = useState([]);
   const { setCenter } = useZoomPanHelper();
+  const [capturedContexts, setCapturedContexts] = useState<ICapturedContext[]>(
+    [],
+  );
+  const [appliedContext, setAppliedContext] = useState<ICapturedContext>(null);
 
   // Artboard state
-
   const [lambdaMetas, setLambdaMetas] = useRecoilState(lambdaMetasAtom);
   const [flowInstance, setFlowInstance] = useState<OnLoadParams>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string>(null);
@@ -175,6 +180,17 @@ export default function FlowBoardComponent() {
       }
     })();
 
+    client
+      .get<IFindResponse<ICapturedContext>>(
+        toRestSysRoute(SchemaRef.FLOW_EXEC, q =>
+          q
+            .filter(f => f.filterExpression('id', '=', flowId))
+            .top(10)
+            .orderBy('createdAt desc'),
+        ),
+      )
+      .then(reply => setCapturedContexts(reply.data.data));
+
     return () => {
       setFlow(null);
       setElements([]);
@@ -183,14 +199,14 @@ export default function FlowBoardComponent() {
 
   return (
     <Layout hasSider>
-      <Sider width={220} className="h-screen depth-2 overflow-auto gray-scroll">
+      <Sider width={240} className="h-screen depth-2 overflow-auto gray-scroll">
         <MenuBlock title="Flow">
           <div className="text-center py-2">
             <Avatar
               src={
                 <ClusterOutlined className="text-9xl text-midnight-100 text-center mt-8" />
               }
-              size={200}
+              size={220}
               className="bg-midnight-800 rounded-3xl"
               shape="square"
             />
@@ -201,14 +217,6 @@ export default function FlowBoardComponent() {
               style={{ borderTop: '1px solid #333' }}
               selectable={false}
             >
-              <Menu.Item
-                key="context"
-                icon={<ApartmentOutlined />}
-                onClick={() => setShowExplorer(true)}
-              >
-                Context Explorer
-              </Menu.Item>
-
               <Menu.Item
                 key="export"
                 icon={<CodeOutlined />}
@@ -292,13 +300,12 @@ export default function FlowBoardComponent() {
           )}
         </MenuBlock>
 
-        <MenuBlock title="Captured Contexts">
-          {flow && (
-            <Menu selectable={false} className="compact">
-              <Empty description="No Context Captured Yet" />
-            </Menu>
-          )}
-        </MenuBlock>
+        <ContextListComponent
+          flow={flow}
+          capturedContexts={capturedContexts}
+          setAppliedContext={setAppliedContext}
+          setShowExplorer={setShowExplorer}
+        />
       </Sider>
 
       <Layout className="flowboard">
@@ -390,6 +397,7 @@ export default function FlowBoardComponent() {
             flow={flow}
             lambdas={lambdaMetas}
             onClose={() => setShowExplorer(false)}
+            appliedContext={appliedContext}
           />
         )}
       </Layout>
