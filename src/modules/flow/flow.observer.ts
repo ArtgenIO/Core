@@ -18,8 +18,8 @@ export class FlowObserver {
   async onFlowFinished(
     sessionId: string,
     flow: IFlow,
-    ctx: IFlowSessionContext,
-    stackTrace: string,
+    context: IFlowSessionContext,
+    debugTrace: [string, number][],
     startedAt: number,
   ) {
     if (flow.captureContext) {
@@ -27,7 +27,8 @@ export class FlowObserver {
         id: sessionId,
         flowId: flow.id,
         elapsedTime: Date.now() - startedAt,
-        context: ctx,
+        debugTrace,
+        context,
       };
 
       await this.rest.create('main', SchemaRef.FLOW_EXEC, capturedContext);

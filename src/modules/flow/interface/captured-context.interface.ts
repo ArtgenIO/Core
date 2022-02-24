@@ -5,5 +5,6 @@ export interface ICapturedContext {
   flowId: string;
   elapsedTime: number;
   context: IFlowSessionContext;
+  debugTrace: [string, number][];
   createdAt: Date | string;
 }

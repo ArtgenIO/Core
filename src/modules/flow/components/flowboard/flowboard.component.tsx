@@ -184,9 +184,9 @@ export default function FlowBoardComponent() {
       .get<IFindResponse<ICapturedContext>>(
         toRestSysRoute(SchemaRef.FLOW_EXEC, q =>
           q
-            .filter(f => f.filterExpression('id', '=', flowId))
-            .top(10)
-            .orderBy('createdAt desc'),
+            .filter(f => f.filterExpression('flowId', 'eq', flowId))
+            .orderBy('createdAt desc')
+            .top(5),
         ),
       )
       .then(reply => setCapturedContexts(reply.data.data));
@@ -199,7 +199,7 @@ export default function FlowBoardComponent() {
 
   return (
     <Layout hasSider>
-      <Sider width={240} className="h-screen depth-2 overflow-auto gray-scroll">
+      <Sider width={260} className="h-screen depth-2 overflow-auto gray-scroll">
         <MenuBlock title="Flow">
           <div className="text-center py-2">
             <Avatar

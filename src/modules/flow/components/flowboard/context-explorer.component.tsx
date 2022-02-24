@@ -20,6 +20,7 @@ export default function FlowContextExplorerComponent({
   appliedContext,
 }: Props) {
   const [contextCode, setContextCode] = useState<string>('');
+  const [debugTrace, setDebugTrace] = useState<string>('');
 
   useEffect(() => {
     setContextCode(
@@ -27,16 +28,32 @@ export default function FlowContextExplorerComponent({
         ? JSON.stringify(appliedContext.context, null, 2)
         : 'Select a context',
     );
+
+    setDebugTrace(
+      appliedContext
+        ? JSON.stringify(appliedContext.debugTrace, null, 2)
+        : '---',
+    );
   }, [appliedContext]);
 
   return (
     <Drawer
       visible
-      width="30vw"
+      width="50vw"
       onClose={onClose}
       maskClosable
       title="Context Explorer"
     >
+      <SyntaxHighlighter
+        className="bg-midnight-800 rounded-sm"
+        language="json"
+        style={nord}
+        showLineNumbers={true}
+        selected
+      >
+        {debugTrace}
+      </SyntaxHighlighter>
+
       <SyntaxHighlighter
         className="bg-midnight-800 rounded-sm"
         language="json"

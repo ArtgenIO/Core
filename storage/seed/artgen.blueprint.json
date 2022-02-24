@@ -1513,13 +1513,13 @@
     },
     {
       "database": "main",
-      "title": "Flow Executions",
       "reference": "FlowExecution",
-      "tableName": "__artgen_flow_executions",
       "moduleId": "c2046325-9d0e-42a4-aa55-1116fdd97913",
+      "title": "Flow Executions",
+      "tableName": "__artgen_flow_executions",
       "fields": [
         {
-          "title": "Identifier",
+          "title": "Session ID",
           "reference": "id",
           "columnName": "id",
           "type": "uuid",
@@ -1546,7 +1546,7 @@
             "grid": {
               "order": 1,
               "hidden": false,
-              "replace": null
+              "replace": "name"
             }
           },
           "args": {},
@@ -1557,8 +1557,8 @@
           "reference": "elapsedTime",
           "columnName": "elapsedTime",
           "title": "Elapsed Time",
-          "type": "int",
-          "defaultValue": 0,
+          "type": "float",
+          "defaultValue": "0",
           "meta": {
             "grid": {
               "order": 2,
@@ -1579,7 +1579,7 @@
           "meta": {
             "grid": {
               "order": 3,
-              "hidden": false,
+              "hidden": true,
               "replace": null
             }
           },
@@ -1588,14 +1588,14 @@
           "searchable": false
         },
         {
-          "title": "Created Date",
+          "title": "Finished At",
           "reference": "createdAt",
           "columnName": "created_at",
           "type": "timestamp",
           "args": {},
           "meta": {
             "grid": {
-              "order": 4,
+              "order": 5,
               "hidden": false,
               "replace": null
             }
@@ -1603,6 +1603,23 @@
           "tags": [
             "created"
           ],
+          "searchable": false
+        },
+        {
+          "reference": "debugTrace",
+          "columnName": "debugTrace",
+          "title": "Debug Trace",
+          "type": "json",
+          "defaultValue": [],
+          "meta": {
+            "grid": {
+              "order": 4,
+              "hidden": true,
+              "replace": null
+            }
+          },
+          "args": {},
+          "tags": [],
           "searchable": false
         }
       ],
@@ -1620,12 +1637,6 @@
       "tags": [
         "active"
       ],
-      "access": {
-        "create": "protected",
-        "read": "protected",
-        "update": "protected",
-        "delete": "protected"
-      },
       "meta": {
         "isFavorite": false,
         "artboard": {
@@ -1634,6 +1645,12 @@
             "y": 0
           }
         }
+      },
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
       }
     }
   ],

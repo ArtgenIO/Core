@@ -13,6 +13,8 @@ import { IFlow } from '../interface/flow.interface';
 import isJSON = require('is-json');
 
 export class FlowSession {
+  protected startedAt: number;
+
   /**
    * Execution context for data travel
    */
@@ -42,6 +44,8 @@ export class FlowSession {
    */
   protected stackTrace: string[] = [];
 
+  protected debugTrace: [string, number][] = [];
+
   constructor(
     readonly logger: ILogger,
     readonly lambda: LambdaService,
@@ -49,6 +53,7 @@ export class FlowSession {
     readonly flow: IFlow,
     readonly id: string,
   ) {
+    this.startedAt = Date.now();
     this.ctx = this.createContext();
     this.renderer = this.createRenderer();
   }
@@ -290,7 +295,7 @@ export class FlowSession {
       this.id,
       this.flow,
       this.getContext(),
-      this.stackTrace,
+      this.debugTrace,
       startedAt,
     );
 
@@ -323,7 +328,9 @@ export class FlowSession {
    */
   protected async invokeNode(nodeId: string): Promise<void> {
     this.stackTrace.push(nodeId);
-    this.logger.debug('Invoking [%s]', nodeId);
+    this.debugTrace.push([nodeId, Date.now() - this.startedAt]);
+
+    this.logger.debug('Invoking [%d][%s]', this.debugTrace.length, nodeId);
 
     // Resolve the lambda to the node type
     const lambda = this.getLambda(nodeId);
