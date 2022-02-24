@@ -25,6 +25,8 @@ export default function PageContent() {
     () => import('../../analytics/component/_index.component'),
   );
 
+  const Develop = lazy(() => import('../component/develop/_router.component'));
+
   return (
     <Content className="overflow-y-auto overflow-x-hidden h-screen gray-scroll">
       <PageWrapper>
@@ -37,6 +39,7 @@ export default function PageContent() {
             <Route path={`${ADMIN_URL}/cloud-store/*`} element={<Apps />} />
             <Route path={`${ADMIN_URL}/page/*`} element={<Page />} />
             <Route path={`${ADMIN_URL}/analytics/*`} element={<Analytics />} />
+            <Route path={`${ADMIN_URL}/develop/*`} element={<Develop />} />
 
             {/* Hygen insert routes above */}
             <Route path="*" element={<Route404 />} />
