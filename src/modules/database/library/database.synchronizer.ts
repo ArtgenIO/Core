@@ -419,7 +419,7 @@ export class DatabaseSynchronizer {
     }
 
     // Field modifiers
-    if (f.args.unsigned) {
+    if (f.args?.unsigned) {
       col = col.unsigned();
     }
 

@@ -4,6 +4,7 @@ import {
   FileOutlined,
   PartitionOutlined,
   QuestionCircleOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
@@ -17,7 +18,7 @@ import {
 } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../admin/library/http-client';
@@ -74,13 +75,21 @@ export default function FlowListComponent() {
             icon: <PartitionOutlined />,
           }}
           actions={
-            <Button
-              onClick={() => setShowCreate(true)}
-              type="primary"
-              icon={<FileAddOutlined />}
-            >
-              New Flow
-            </Button>
+            <>
+              <Link to={'/admin/flow/import'}>
+                <Button type="ghost" icon={<UploadOutlined />} key="import">
+                  Import Flow
+                </Button>
+              </Link>
+              <Button
+                onClick={() => setShowCreate(true)}
+                type="primary"
+                icon={<FileAddOutlined />}
+                key="new"
+              >
+                New Flow
+              </Button>
+            </>
           }
         />
       }
