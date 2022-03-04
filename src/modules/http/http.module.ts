@@ -4,6 +4,7 @@ import { IKernel } from '../../app/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
 import { RestModule } from '../rest/rest.module';
 import { TelemetryModule } from '../telemetry/telemetry.module';
+import { ReverseProxyGateway } from './gateway/reverse-proxy.gateway';
 import { HttpObserver } from './http.observer';
 import { DnsQueryLambda } from './lambda/dns-query.lambda';
 import { HttpRequestLambda } from './lambda/http-request.lambda';
@@ -25,6 +26,7 @@ import { HttpService } from './service/http.service';
     DnsQueryLambda,
     HttpUpstreamProvider,
     HttpProxyProvider,
+    ReverseProxyGateway,
   ],
 })
 export class HttpModule implements IModule {

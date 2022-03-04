@@ -14,6 +14,8 @@ export enum SchemaRef {
   PAGE = 'Page',
   SCHEMA = 'Schema',
 
+  REV_PROXY = 'ReverseProxy',
+
   // Admin
   DASHBOARD = 'Dashboard',
 }

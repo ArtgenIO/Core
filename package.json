@@ -70,6 +70,7 @@
     "dependency-graph": "^0.11.0",
     "dotenv-defaults": "^3.0.0",
     "eventemitter2": "^6.4.5",
+    "fast-proxy": "^2.1.0",
     "fastify": "^3.20.1",
     "fastify-cors": "^6.0.2",
     "fastify-disablecache": "^2.0.5",

@@ -5,6 +5,7 @@ import pov from 'point-of-view';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { ROOT_DIR } from '../../../app/globals';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
+import { KeyValueService } from '../../schema/service/key-value.service';
 import { PageService } from '../service/page.service';
 
 @Service({
@@ -16,6 +17,8 @@ export class PageGateway implements IHttpGateway {
     readonly logger: ILogger,
     @Inject(PageService)
     readonly service: PageService,
+    @Inject(KeyValueService)
+    readonly kv: KeyValueService,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
@@ -31,14 +34,25 @@ export class PageGateway implements IHttpGateway {
     this.logger.info('Plugin [PoV] registered');
 
     const routes = await this.service.loadRoutes();
+    const constraints: { host?: string } = {};
 
-    httpServer.get('/', (req, rep) => {
+    const host = await this.kv.get(
+      'artgen.http.host',
+      process.env.ARTGEN_HTTP_HOST + ':' + process.env.ARTGEN_HTTP_PORT,
+    );
+
+    if (host) {
+      constraints.host = host;
+    }
+
+    httpServer.get('/', { constraints }, (req, rep) => {
       rep.redirect('/admin');
     });
 
     for (const page of routes) {
       httpServer.get(
         '/' + page.path,
+        { constraints },
         async (req: FastifyRequest, res: FastifyReply): Promise<string> => {
           res.header('content-type', 'text/html');
           return this.service.getHtml(page.id);

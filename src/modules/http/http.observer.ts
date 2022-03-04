@@ -17,6 +17,11 @@ export class HttpObserver {
     this.__update = debounce(() => this.service.updateUpstream(), 300);
   }
 
+  @On('crud.main.ReverseProxy.*')
+  async onReverseProxyChange() {
+    this.__update();
+  }
+
   @On('crud.main.Schema.created')
   async onSchemaCread() {
     this.__update();
@@ -24,7 +29,7 @@ export class HttpObserver {
 
   @On('crud.main.Schema.deleted')
   async onSchemaDelete() {
-    this.service.updateUpstream();
+    this.__update();
   }
 
   @On('crud.main.Schema.updated')
