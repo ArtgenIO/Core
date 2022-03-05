@@ -21,16 +21,6 @@ describe('Application (e2e)', () => {
 
   afterAll(async () => await app.stop());
 
-  test('should redirect the [home] page', async () => {
-    const srv = await getServer();
-
-    const response = await srv.inject({
-      url: '/',
-    });
-
-    expect(response.statusCode).toBe(302);
-  });
-
   test('should serve the [admin] page', async () => {
     const srv = await getServer();
 
