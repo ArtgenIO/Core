@@ -51,7 +51,7 @@ export class PageGateway implements IHttpGateway {
 
     for (const page of routes) {
       httpServer.get(
-        '/' + page.path,
+        '/' + page.path.replace(/^\//, ''),
         { constraints },
         async (req: FastifyRequest, res: FastifyReply): Promise<string> => {
           res.header('content-type', 'text/html');
