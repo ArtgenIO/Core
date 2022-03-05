@@ -38,12 +38,17 @@ export class PageGateway implements IHttpGateway {
 
     const host = await this.kv.get(
       'artgen.http.host',
-      process.env.ARTGEN_HTTP_HOST + ':' + process.env.ARTGEN_HTTP_PORT,
+      process.env.ARTGEN_HTTP_HOST +
+        (process.env.ARTGEN_HTTP_PORT == '80'
+          ? ''
+          : `:${process.env.ARTGEN_HTTP_PORT}`),
     );
 
     if (host) {
       constraints.host = host;
     }
+
+    this.logger.info('Admin redirection at [GET][%s][/] -> [/admin]', host);
 
     httpServer.get('/', { constraints }, (req, rep) => {
       rep.redirect('/admin');

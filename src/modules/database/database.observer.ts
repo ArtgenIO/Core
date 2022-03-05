@@ -2,6 +2,7 @@ import { ILogger, Inject, Logger } from '../../app/container';
 import { getErrorMessage } from '../../app/kernel';
 import { Observer, On } from '../event';
 import { ISchema } from '../schema';
+import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IDatabase } from './interface';
 import { DatabaseConnectionService } from './service/database-connection.service';
 
@@ -14,7 +15,7 @@ export class DatabaseObserver {
     readonly connections: DatabaseConnectionService,
   ) {}
 
-  @On('crud.main.Schema.created')
+  @On(`crud.main.${SchemaRef.SCHEMA}.created`)
   async handleSchemaCreate(schema: ISchema) {
     this.logger.warn(
       "Associating the [%s] schema with it's conneciton",
@@ -29,7 +30,7 @@ export class DatabaseObserver {
     }
   }
 
-  @On('crud.main.Schema.updated')
+  @On(`crud.main.${SchemaRef.SCHEMA}.updated`)
   async handleSchemaUpdate(newSchema: ISchema) {
     this.logger.warn('Updating [%s] schema association', newSchema.reference);
 
@@ -41,7 +42,7 @@ export class DatabaseObserver {
     }
   }
 
-  @On('crud.main.Schema.deleted')
+  @On(`crud.main.${SchemaRef.SCHEMA}.deleted`)
   async handleSchemaDelete(schema: ISchema) {
     this.logger.warn("Deleting [%s] schema's table", schema.reference);
 
@@ -53,7 +54,7 @@ export class DatabaseObserver {
     }
   }
 
-  @On('crud.main.Database.created')
+  @On(`crud.main.${SchemaRef.DATABASE}.created`)
   async handleDatabaseCreate(database: IDatabase) {
     try {
       const connection = this.connections.findOne(database.ref);
@@ -70,7 +71,7 @@ export class DatabaseObserver {
     }
   }
 
-  @On('crud.main.Database.deleted')
+  @On(`crud.main.${SchemaRef.DATABASE}.deleted`)
   async handleDatabaseDelete(database: IDatabase) {
     this.logger.warn(
       'Database [%s] deleted, closing the connection...',

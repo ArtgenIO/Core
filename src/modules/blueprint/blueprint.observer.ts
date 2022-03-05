@@ -13,7 +13,7 @@ export class BlueprintObserver {
     readonly rest: RestService,
   ) {}
 
-  @On('crud.main.Blueprint.deleted')
+  @On(`crud.main.${SchemaRef.BLUEPRINT}.deleted`)
   async handleBlueprintDelete(bp: IBlueprint) {
     this.logger.warn('Blueprint deletion detected!');
 
