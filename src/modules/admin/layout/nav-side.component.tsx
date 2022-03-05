@@ -2,6 +2,7 @@ import {
   CloudOutlined,
   DatabaseOutlined,
   FileOutlined,
+  FormOutlined,
   FundOutlined,
   HomeOutlined,
   LayoutOutlined,
@@ -43,6 +44,12 @@ const menuItems: IMenuItem[] = [
     path: ADMIN_URL + '/flow',
     title: 'Flow',
     className: 'test--nav-flow',
+  },
+  {
+    icon: <FormOutlined />,
+    path: ADMIN_URL + '/form',
+    title: 'Form',
+    className: 'test--nav-form',
   },
   {
     icon: <DatabaseOutlined />,

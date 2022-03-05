@@ -4,6 +4,7 @@ import { ContentModule } from '../modules/content/content.module';
 import { DatabaseModule } from '../modules/database/database.module';
 import { EventModule } from '../modules/event';
 import { FlowModule } from '../modules/flow/flow.module';
+import { FormModule } from '../modules/form/form.module';
 import { HttpModule } from '../modules/http/http.module';
 import { IdentityModule } from '../modules/identity/identity.module';
 import { LambdaModule } from '../modules/lambda/lambda.module';
@@ -28,6 +29,7 @@ import { LogLambda } from './logger/log.lambda';
     DatabaseModule,
     EventModule,
     FlowModule,
+    FormModule,
     HttpModule,
     IdentityModule,
     LambdaModule,
@@ -37,10 +39,10 @@ import { LogLambda } from './logger/log.lambda';
     SchedulerModule,
     SchemaModule,
     SecurityModule,
+    TelemetryModule,
     TransformerModule,
     UpgradeModule,
     ValidatorModule,
-    TelemetryModule,
   ],
   providers: [LogLambda],
 })
