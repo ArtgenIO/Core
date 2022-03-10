@@ -287,7 +287,7 @@ export default function FlowBoardComponent() {
             <Menu selectedKeys={selectedMenuNodes} className="compact">
               {flow.nodes
                 .sort((a, b) => (a.position[0] < b.position[0] ? 1 : -1))
-                .map(node => (
+                .map((node, x) => (
                   <Menu.Item
                     key={node.id}
                     icon={<BuildOutlined />}

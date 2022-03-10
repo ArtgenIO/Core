@@ -21,8 +21,9 @@ export default function ContextListComponent({
 }: Props) {
   return (
     <MenuBlock title="Captured Contexts">
-      {flow && (
+      {(flow && capturedContexts.length && (
         <Menu
+          key="contexts"
           className="compact"
           onSelect={info => {
             if (info.selectedKeys.length) {
@@ -35,24 +36,17 @@ export default function ContextListComponent({
             }
           }}
         >
-          {capturedContexts.length ? (
-            capturedContexts.map(ctx => (
-              <Menu.Item key={ctx.id} icon={<EyeInvisibleOutlined />}>
-                <span className="text-info-500 font-code">
-                  {ctx.id.substring(0, 8)}
-                </span>
-                /
-                <span className="text-success-500">
-                  {ctx.debugTrace.length}
-                </span>{' '}
-                {dayjs(ctx.createdAt).format('HH:mm:ss')}
-              </Menu.Item>
-            ))
-          ) : (
-            <Empty description="No Context Captured Yet" />
-          )}
+          {capturedContexts.map(ctx => (
+            <Menu.Item key={ctx.id} icon={<EyeInvisibleOutlined />}>
+              <span className="text-info-500 font-code">
+                {ctx.id.substring(0, 8)}
+              </span>
+              /<span className="text-success-500">{ctx.debugTrace.length}</span>{' '}
+              {dayjs(ctx.createdAt).format('HH:mm:ss')}
+            </Menu.Item>
+          ))}
         </Menu>
-      )}
+      )) || <Empty key="Empty" description="No Context Captured Yet" />}
     </MenuBlock>
   );
 }

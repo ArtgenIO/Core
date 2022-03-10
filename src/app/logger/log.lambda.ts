@@ -13,21 +13,26 @@ import { Service } from '../container';
   description: 'Write message into STDOut',
   handles: [new InputHandleDTO('message')],
   config: {
-    title: 'Log Level',
-    type: 'string',
-    enum: ['debug', 'info', 'warn', 'error'],
-    default: 'debug',
+    type: 'object',
+    properties: {
+      level: {
+        title: 'Log Level',
+        type: 'string',
+        enum: ['debug', 'info', 'warn', 'error'],
+        default: 'debug',
+      },
+    },
   },
 })
 export class LogLambda implements ILambda {
   async invoke(ctx: FlowSession) {
-    const level = ctx.getConfig<string>();
+    const config = ctx.getConfig<{ level: string }>();
     let message = ctx.getInput('message');
 
     if (typeof message === 'object') {
       message = JSON.stringify(ctx.getInput('message'), null, 2);
     }
 
-    ctx.logger.log(level, '%s', message);
+    ctx.logger.log(config.level, '%s', message);
   }
 }

@@ -1,4 +1,5 @@
 import {
+  CopyOutlined,
   DeleteOutlined,
   EyeOutlined,
   LoginOutlined,
@@ -19,7 +20,7 @@ import {
 } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Edge, Elements } from 'react-flow-renderer';
+import { Edge, Elements, Node } from 'react-flow-renderer';
 import { useRecoilValue } from 'recoil';
 import { ILambdaHandle } from '../../../lambda/interface/handle.interface';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
@@ -92,10 +93,27 @@ export default function FlowBoardNodeConfig({
         return el.id !== nodeId;
       });
     });
+  };
 
-    message.warn('Node has been removed');
+  const doDupeNode = (nodeId: string) => {
+    setElements(els => {
+      const dupe = cloneDeep(els.find(el => el.id === nodeId) as Node);
+      dupe.id =
+        dupe.id.replace(/\d+$/, '') +
+        (parseInt(dupe.id.replace(/^.+\.(\d+)$/, '$1'), 10) + 1).toString();
 
-    setSelectedNodeId(null);
+      dupe.position.y = dupe.position.y + 100;
+      dupe.position.x = dupe.position.x + 100;
+
+      const newState = cloneDeep(els);
+      newState.push(dupe);
+
+      setSelectedNodeId(dupe.id);
+
+      return newState;
+    });
+
+    message.success('Node has been duplicated!');
   };
 
   return (
@@ -104,10 +122,24 @@ export default function FlowBoardNodeConfig({
       title={
         <div className="flex w-full">
           <div className="grow">Node » {selectedNodeId}</div>
+
+          <div className="shrink">
+            <div className="-mt-1 pr-2">
+              <Button
+                className="text-purple-500 border-purple-500 hover:text-purple-200 hover:border-purple-200 inline-block"
+                block
+                icon={<CopyOutlined />}
+                onClick={() => doDupeNode(selectedNodeId)}
+              >
+                Duplicate Node
+              </Button>
+            </div>
+          </div>
+
           <div className="shrink">
             <div className="-mt-1">
               <Button
-                className="text-red-500 border-red-500 hover:text-red-200 hover:border-red-200"
+                className="text-red-500 border-red-500 hover:text-red-200 hover:border-red-200  inline-block"
                 block
                 icon={<DeleteOutlined />}
                 onClick={() => doDeleteNode(selectedNodeId)}

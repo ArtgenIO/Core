@@ -66,6 +66,7 @@ export class FlowSession {
 
     renderer.addFilter('toJson', JSON.stringify);
     renderer.addFilter('toObject', JSON.parse);
+    renderer.addGlobal('timestamp', Date.now());
 
     return renderer;
   }
@@ -241,11 +242,47 @@ export class FlowSession {
     return !!this.ctx.$input[handleId];
   }
 
+  protected renderConfig(config: unknown) {
+    switch (typeof config) {
+      case 'string':
+        if (this.isTemplateSyntax(config)) {
+          config = this.renderSyntax(config);
+        }
+        break;
+      case 'object':
+        if (Array.isArray(config)) {
+          config.forEach(i => this.renderConfig(i));
+        } else {
+          for (const k in config) {
+            if (Object.prototype.hasOwnProperty.call(config, k)) {
+              let val = this.renderConfig(config[k]);
+
+              if (this.isTemplateSyntax(k)) {
+                delete config[k];
+                config[this.renderSyntax(k)] = val;
+              } else {
+                config[k] = val;
+              }
+            }
+          }
+        }
+        break;
+    }
+
+    return config;
+  }
+
   /**
    * Access to the node's config from the lambda's execution context
    */
   getConfig<T = unknown>(): T {
-    return this.ctx.$nodes[this.activeNodeId].config as T;
+    const config = this.ctx.$nodes[this.activeNodeId].config as T;
+
+    if (config) {
+      return this.renderConfig(config) as T;
+    }
+
+    return config;
   }
 
   /**

@@ -1,5 +1,6 @@
 import { inject } from '@loopback/context';
 import { IContext, Service } from '../../../app/container';
+import { IFlow } from '../../flow/interface';
 import { Lambda } from '../decorator/lambda.decorator';
 import { InputHandleDTO } from '../dto/input-handle.dto';
 import { OutputHandleDTO } from '../dto/output-handle.dto';
@@ -26,11 +27,16 @@ export class ReadLambdaLambda implements ILambda {
     readonly ctx: IContext,
   ) {}
 
+  async onInit(flow: IFlow): Promise<void> {}
+
   async invoke() {
+    const lambdas = (await this.ctx.get<LambdaService>(LambdaService.name))
+      .findAll()
+      .map(r => r.meta)
+      .sort((a, b) => (a.type > b.type ? 1 : -1));
+
     return {
-      result: (await this.ctx.get<LambdaService>(LambdaService.name))
-        .findAll()
-        .map(r => r.meta),
+      result: lambdas,
     };
   }
 }

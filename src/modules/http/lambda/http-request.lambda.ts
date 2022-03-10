@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import client, { AxiosError, AxiosRequestConfig } from 'axios';
 import { Service } from '../../../app/container';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
@@ -12,6 +12,11 @@ type Input = {
 
 type Config = {
   userAgent: string;
+  url: string;
+  method: 'GET' | 'POST' | 'DELETE' | 'PATCH' | 'PUT' | 'OPTIONS' | 'HEAD';
+  body: string | null;
+  timeout: number;
+  headers: { header: string; value: string }[];
 };
 
 @Service({
@@ -34,40 +39,99 @@ type Config = {
     }),
     new OutputHandleDTO('result', {
       type: 'object',
+      properties: {
+        data: {},
+        statusText: {
+          type: 'string',
+        },
+        status: {
+          type: 'number',
+        },
+        headers: {
+          type: 'object',
+        },
+      },
     }),
     new OutputHandleDTO('error', {
       type: 'object',
-      properties: {
-        message: {
-          type: 'string',
-        },
-        code: {},
-      },
-      required: ['message', 'code'],
     }),
   ],
   config: {
     type: 'object',
     properties: {
+      url: {
+        type: 'string',
+        title: 'Target URL',
+        default: null,
+      },
       userAgent: {
         type: 'string',
+        title: 'User Agent',
         default: 'Artgen HTTP Request Lambda 1.0',
       },
+      method: {
+        title: 'HTTP Verb',
+        default: 'GET',
+        enum: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+      },
+      body: {
+        title: 'Request Body',
+        default: null,
+        type: 'string',
+      },
+      timeout: {
+        title: 'Timeout In Milliseconds',
+        default: 30_000,
+        type: 'number',
+      },
+      headers: {
+        title: 'Extra Headers',
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            header: {
+              title: 'Header',
+              type: 'string',
+            },
+            value: {
+              title: 'Value',
+              type: 'string',
+            },
+          },
+        },
+      },
     },
-    required: ['userAgent'],
+    required: ['userAgent', 'method', 'url'],
   },
 })
 export class HttpRequestLambda implements ILambda {
   async invoke(ctx: FlowSession) {
-    const target = ctx.getInput('target') as Input;
     const config = ctx.getConfig<Config>();
 
     try {
-      const response = await axios.get(target.url, {
+      const extraHeaders: { [header: string]: string } = {};
+
+      if (config.headers) {
+        for (const h of config.headers) {
+          extraHeaders[h.header] = h.value;
+        }
+      }
+
+      const request: AxiosRequestConfig = {
+        url: config.url,
+        method: config.method,
+        data: config.body ?? undefined,
         headers: {
           'user-agent': config.userAgent.toString(),
+          ...extraHeaders,
         },
-      });
+        timeout: config.timeout,
+      };
+
+      console.log(request);
+
+      const response = await client.request(request);
 
       return {
         result: {
@@ -79,7 +143,7 @@ export class HttpRequestLambda implements ILambda {
       return {
         error: {
           message: (error as AxiosError).message,
-          code: (error as AxiosError).code,
+          code: (error as AxiosError).code ?? -1,
         },
       };
     }
