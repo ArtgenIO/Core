@@ -46,7 +46,9 @@ export default function SignUpComponent({ setShowSignUp }: Props) {
 
   return (
     <>
-      <h1 className="header">Artgen Core <span className='text-success-400'>// Beta</span></h1>
+      <h1 className="header">
+        Artgen <span className="text-success-400">// Join Us</span>
+      </h1>
       <h1 className="w-full content-center">
         <div className="logo"></div>
       </h1>
@@ -89,13 +91,13 @@ export default function SignUpComponent({ setShowSignUp }: Props) {
 
         <Form.Item>
           <Button
-            className="test--sign-up-btn bg-success-400 border-success-500 text-white hover:text-white hover:bg-success-300"
+            className="test--sign-up-btn success"
             htmlType="submit"
             size="middle"
             block
             icon={<UnlockOutlined />}
           >
-            Sign Up!
+            Join Now!
           </Button>
         </Form.Item>
 

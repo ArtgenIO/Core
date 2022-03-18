@@ -5,6 +5,7 @@ import {
   CopyOutlined,
   DatabaseOutlined,
   DeleteOutlined,
+  DownloadOutlined,
   DownOutlined,
   EditOutlined,
   FileOutlined,
@@ -249,7 +250,7 @@ export default function TableComponent({
 
   return (
     <>
-      <div className="flex my-2">
+      <div className="flex my-2 bg-midnight-600 rounded-sm">
         <div className="shrink">
           <Button.Group>
             <Button
@@ -309,15 +310,21 @@ export default function TableComponent({
         <div className="shink ml-1">
           <Button
             icon={<DatabaseOutlined />}
-            ghost
             onClick={() => setEditSchema(schema)}
           >
             Schemantics
           </Button>
         </div>
 
-        <div className="shrink ml-1">
+        <div className="grow ml-1 text-right">
           <Button.Group>
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={() => setShowCreate(true)}
+            >
+              Export
+            </Button>
+
             <Button
               icon={<UploadOutlined />}
               onClick={() => setShowCreate(true)}
@@ -387,344 +394,346 @@ export default function TableComponent({
             </Popconfirm>
           </Button.Group>
         </div>
-
-        <div className="grow text-right">
-          <Pagination
-            total={total}
-            defaultCurrent={pageCurr}
-            current={pageCurr}
-            pageSize={pageSize}
-            pageSizeOptions={[10, 20, 50, 100, 250, 500, 1000, 2000]}
-            showSizeChanger
-            showQuickJumper
-            showTotal={total => (
-              <span>
-                <span className="text-green-500">
-                  {total ? total.toLocaleString() : 0}
-                </span>{' '}
-                Record
-              </span>
-            )}
-            onChange={(_pageNth, _pageSize) => {
-              setPageCurr(_pageNth);
-              setPageSize(_pageSize);
-            }}
-          />
-        </div>
       </div>
 
       {showFilter ? (
         <GridFilterComponent schema={schema} setFilter={setFilter} />
       ) : undefined}
 
-      <Table
-        className="ag-table"
-        rowKey="__ag_rowkey"
-        dataSource={rows}
-        pagination={false}
-        loading={loading}
-        onRow={(record, idx) => {
-          return {
-            onDoubleClick: () => setShowEdit(record),
-          };
-        }}
-        rowSelection={{
-          type: 'checkbox',
-          fixed: 'left',
-          selectedRowKeys: selectedKey,
-          onChange: (keys, selectedRows) => {
-            setSelected(selectedRows);
-            setSelectedKey(keys);
-          },
-          selections: [
-            Table.SELECTION_ALL,
-            Table.SELECTION_INVERT,
-            Table.SELECTION_NONE,
-          ],
-        }}
-        scroll={{
-          x: '100%',
-        }}
-        tableLayout="fixed"
-        size="small"
-        onChange={(pagination, filters, sorter, extra) => {
-          // Multisort
-          if (sorter instanceof Array) {
-            setSorters(
-              sorter.map(s => [
-                s.column.key.toString(),
-                s.order == 'ascend' ? 'asc' : 'desc',
-              ]),
-            );
-          } else {
-            // Single sort
-            sorter = sorter as SorterResult<RowLike>;
-
-            if (sorter.column) {
-              setSorters([
-                [
-                  sorter.column.key.toString(),
-                  sorter.order == 'ascend' ? 'asc' : 'desc',
-                ],
-              ]);
-            } else {
-              setSorters([]); // Sort removed
-            }
-          }
-        }}
-        bordered
-      >
-        {fields
-          .filter(f => !f.meta.grid.hidden)
-          .map((field, idx) => {
-            let dataIndex: string | string[] = field.reference;
-            let _field = field;
-
-            if (field.meta.grid.replace) {
-              const relation = schema.relations.find(
-                rel => rel.localField === field.reference,
+      <div style={{ minHeight: 320 }}>
+        <Table
+          className="ag-table"
+          rowKey="__ag_rowkey"
+          dataSource={rows}
+          pagination={false}
+          loading={loading}
+          onRow={(record, idx) => {
+            return {
+              onDoubleClick: () => setShowEdit(record),
+            };
+          }}
+          rowSelection={{
+            type: 'checkbox',
+            fixed: 'left',
+            selectedRowKeys: selectedKey,
+            onChange: (keys, selectedRows) => {
+              setSelected(selectedRows);
+              setSelectedKey(keys);
+            },
+            selections: [
+              Table.SELECTION_ALL,
+              Table.SELECTION_INVERT,
+              Table.SELECTION_NONE,
+            ],
+          }}
+          scroll={{
+            x: '100%',
+          }}
+          tableLayout="fixed"
+          size="small"
+          onChange={(pagination, filters, sorter, extra) => {
+            // Multisort
+            if (sorter instanceof Array) {
+              setSorters(
+                sorter.map(s => [
+                  s.column.key.toString(),
+                  s.order == 'ascend' ? 'asc' : 'desc',
+                ]),
               );
+            } else {
+              // Single sort
+              sorter = sorter as SorterResult<RowLike>;
 
-              if (relation) {
-                dataIndex = [relation.name, field.meta.grid.replace];
-                _field = schemas
-                  .find(
-                    r =>
-                      r.database === schema.database &&
-                      r.reference === relation.target,
-                  )
-                  .fields.find(r => r.reference == field.meta.grid.replace);
+              if (sorter.column) {
+                setSorters([
+                  [
+                    sorter.column.key.toString(),
+                    sorter.order == 'ascend' ? 'asc' : 'desc',
+                  ],
+                ]);
               } else {
-                console.error('Missing relation x2?!', field);
+                setSorters([]); // Sort removed
               }
             }
+          }}
+          bordered
+        >
+          {fields
+            .filter(f => !f.meta.grid.hidden)
+            .map((field, idx) => {
+              let dataIndex: string | string[] = field.reference;
+              let _field = field;
 
-            let icon: React.ReactNode = <FileOutlined />;
-            let align: ColumnProps<RowLike>['align'] = 'left';
-            let sortable = true;
+              if (field.meta.grid.replace) {
+                const relation = schema.relations.find(
+                  rel => rel.localField === field.reference,
+                );
 
-            if (FieldTool.isInteger(_field)) {
-              align = 'right';
-            } else if (_field.type === FieldType.UUID) {
-              align = 'left';
-            } else if (FieldTool.isDate(_field)) {
-              align = 'right';
-              icon = <CalendarOutlined />;
-            } else if (FieldTool.isJson(_field)) {
-              align = 'center';
-              icon = <CodeOutlined />;
-              sortable = false;
-            }
-
-            if (_field.type === FieldType.BOOLEAN) {
-              align = 'center';
-            }
-
-            if (FieldTool.isPrimary(_field)) {
-              icon = <KeyOutlined />;
-              align = 'center';
-            }
-
-            const width = fieldWidth.find(r => r[0] === field.reference)[1];
-
-            return (
-              <Column
-                title={
-                  <ResizableBox
-                    key={field.reference}
-                    width={width - (sortable ? 36 : 12)}
-                    height={24}
-                    axis="x"
-                    minConstraints={[100, 24]}
-                    maxConstraints={[4000, 24]}
-                    onResize={(e, data) =>
-                      setFieldWidth(state => {
-                        const newState = cloneDeep(state);
-
-                        newState.find(r => r[0] === field.reference)[1] =
-                          data.size.width + (sortable ? 36 : 12);
-
-                        return newState;
-                      })
-                    }
-                    resizeHandles={['w']}
-                    onClick={e => {
-                      e.stopPropagation(); // Capture the event from the sorter
-                    }}
-                  >
-                    <div className="flex w-full">
-                      <div className="shrink mr-1 ml-3">{icon}</div>
-                      <div className="grow">
-                        {field.title}
-                        {field !== _field ? (
-                          <span className="text-midnight-300">
-                            {' '}
-                            » {_field.title}
-                          </span>
-                        ) : undefined}
-                      </div>
-                    </div>
-                  </ResizableBox>
+                if (relation) {
+                  dataIndex = [relation.name, field.meta.grid.replace];
+                  _field = schemas
+                    .find(
+                      r =>
+                        r.database === schema.database &&
+                        r.reference === relation.target,
+                    )
+                    .fields.find(r => r.reference == field.meta.grid.replace);
+                } else {
+                  console.error('Missing relation x2?!', field);
                 }
-                dataIndex={dataIndex}
-                key={field.reference}
-                sortDirections={sortable ? ['ascend', 'descend'] : undefined}
-                filterMode="menu"
-                ellipsis={{
-                  showTitle: false,
-                }}
-                align={align}
-                width={width}
-                sorter={sortable ? { multiple: idx } : false}
-                render={(val, record: RowLike) => {
-                  const classes = [];
-                  const oVal = val;
+              }
 
-                  if (oVal === null) {
-                    val = (
-                      <code className="p-0.5 bg-midnight-800 text-purple-500 rounded-sm underline">
-                        &lt;NULL&gt;
-                      </code>
-                    );
+              let icon: React.ReactNode = <FileOutlined />;
+              let align: ColumnProps<RowLike>['align'] = 'left';
+              let sortable = true;
+
+              if (FieldTool.isInteger(_field)) {
+                align = 'right';
+              } else if (_field.type === FieldType.UUID) {
+                align = 'left';
+              } else if (FieldTool.isDate(_field)) {
+                align = 'right';
+                icon = <CalendarOutlined />;
+              } else if (FieldTool.isJson(_field)) {
+                align = 'center';
+                icon = <CodeOutlined />;
+                sortable = false;
+              }
+
+              if (_field.type === FieldType.BOOLEAN) {
+                align = 'center';
+              }
+
+              if (FieldTool.isPrimary(_field)) {
+                icon = <KeyOutlined />;
+                align = 'center';
+              }
+
+              const width = fieldWidth.find(r => r[0] === field.reference)[1];
+
+              return (
+                <Column
+                  title={
+                    <ResizableBox
+                      key={field.reference}
+                      width={width - (sortable ? 36 : 12)}
+                      height={24}
+                      axis="x"
+                      minConstraints={[100, 24]}
+                      maxConstraints={[4000, 24]}
+                      onResize={(e, data) =>
+                        setFieldWidth(state => {
+                          const newState = cloneDeep(state);
+
+                          newState.find(r => r[0] === field.reference)[1] =
+                            data.size.width + (sortable ? 36 : 12);
+
+                          return newState;
+                        })
+                      }
+                      resizeHandles={['w']}
+                      onClick={e => {
+                        e.stopPropagation(); // Capture the event from the sorter
+                      }}
+                    >
+                      <div className="flex w-full">
+                        <div className="shrink mr-1 ml-3">{icon}</div>
+                        <div className="grow">
+                          {field.title}
+                          {field !== _field ? (
+                            <span className="text-midnight-300">
+                              {' '}
+                              » {_field.title}
+                            </span>
+                          ) : undefined}
+                        </div>
+                      </div>
+                    </ResizableBox>
                   }
+                  dataIndex={dataIndex}
+                  key={field.reference}
+                  sortDirections={sortable ? ['ascend', 'descend'] : undefined}
+                  filterMode="menu"
+                  ellipsis={{
+                    showTitle: false,
+                  }}
+                  align={align}
+                  width={width}
+                  sorter={sortable ? { multiple: idx } : false}
+                  render={(val, record: RowLike) => {
+                    const classes = [];
+                    const oVal = val;
 
-                  if (_field.tags.includes(FieldTag.TAGS)) {
-                    return oVal && oVal.length ? (
-                      <>
-                        {oVal.map((t, i) => (
-                          <Tag key={t + i.toString()} color="magenta">
-                            {t}
-                          </Tag>
-                        ))}
-                      </>
-                    ) : (
-                      <>---</>
-                    );
-                  }
-
-                  if (FieldTool.isJson(_field)) {
-                    val = (
-                      <code className="p-0.5 bg-midnight-800 text-midnight-200 rounded-sm underline">
-                        &lt;JSON&gt;
-                      </code>
-                    );
-                  }
-
-                  if (FieldTool.isPrimary(_field)) {
-                    classes.push('text-primary-500');
-                  } else if (_field.tags.includes(FieldTag.UNIQUE)) {
-                    classes.push('text-yellow-500');
-                  } else if (_field.type === FieldType.INTEGER) {
-                    classes.push('text-green-500');
-                  } else if (FieldTool.isDate(_field)) {
-                    if (oVal) {
-                      val = dayjs(oVal).format('YYYY-MM-DD dddd, HH:mm:ss');
-                      classes.push('text-pink-500');
-                    }
-                  }
-
-                  if (_field.type === FieldType.BOOLEAN) {
-                    val = (
-                      <Switch
-                        disabled={field !== _field}
-                        checked={oVal}
-                        size="small"
-                        checkedChildren="✓"
-                        unCheckedChildren={oVal === null ? '∅' : '!'}
-                        onChange={newValue => {
-                          record[field.reference] = newValue;
-                          doUpdate(record);
-                        }}
-                      />
-                    );
-
-                    // Display the null value
                     if (oVal === null) {
                       val = (
-                        <Tooltip title="null" placement="left">
-                          {val}
-                        </Tooltip>
+                        <code className="p-0.5 bg-midnight-800 text-purple-500 rounded-sm underline">
+                          &lt;NULL&gt;
+                        </code>
                       );
                     }
+
+                    if (_field.tags.includes(FieldTag.TAGS)) {
+                      return oVal && oVal.length ? (
+                        <>
+                          {oVal.map((t, i) => (
+                            <Tag key={t + i.toString()} color="magenta">
+                              {t}
+                            </Tag>
+                          ))}
+                        </>
+                      ) : (
+                        <>---</>
+                      );
+                    }
+
+                    if (FieldTool.isJson(_field)) {
+                      val = (
+                        <code className="p-0.5 bg-midnight-800 text-midnight-200 rounded-sm underline">
+                          &lt;JSON&gt;
+                        </code>
+                      );
+                    }
+
+                    if (FieldTool.isPrimary(_field)) {
+                      classes.push('text-primary-500');
+                    } else if (_field.tags.includes(FieldTag.UNIQUE)) {
+                      classes.push('text-yellow-500');
+                    } else if (_field.type === FieldType.INTEGER) {
+                      classes.push('text-green-500');
+                    } else if (FieldTool.isDate(_field)) {
+                      if (oVal) {
+                        val = dayjs(oVal).format('YYYY-MM-DD dddd, HH:mm:ss');
+                        classes.push('text-pink-500');
+                      }
+                    }
+
+                    if (_field.type === FieldType.BOOLEAN) {
+                      val = (
+                        <Switch
+                          disabled={field !== _field}
+                          checked={oVal}
+                          size="small"
+                          checkedChildren="✓"
+                          unCheckedChildren={oVal === null ? '∅' : '!'}
+                          onChange={newValue => {
+                            record[field.reference] = newValue;
+                            doUpdate(record);
+                          }}
+                        />
+                      );
+
+                      // Display the null value
+                      if (oVal === null) {
+                        val = (
+                          <Tooltip title="null" placement="left">
+                            {val}
+                          </Tooltip>
+                        );
+                      }
+                    }
+
+                    return <span className={classes.join(' ')}>{val}</span>;
+                  }}
+                ></Column>
+              );
+            })}
+
+          <Column
+            title="Actions"
+            fixed="right"
+            align="center"
+            width={80}
+            render={(v, record) => (
+              <div className="text-center inline-block" style={{ width: 50 }}>
+                <Button.Group size="small">
+                  <Button
+                    key="edit"
+                    className="hover:text-green-500 hover:border-green-500"
+                    icon={<EditOutlined />}
+                    onClick={() => setShowEdit(record as RowLike)}
+                  ></Button>
+                </Button.Group>
+              </div>
+            )}
+          ></Column>
+        </Table>
+
+        {showCreate && (
+          <ContentCreateComponent
+            schema={schema}
+            onClose={() => {
+              setShowCreate(false);
+              if (setTriggerShowCreate) {
+                setTriggerShowCreate(false);
+              }
+              doRefetch(Date.now());
+            }}
+          />
+        )}
+
+        {showEdit && (
+          <ContentUpdateComponent
+            content={showEdit}
+            schema={schema}
+            onClose={() => {
+              setShowEdit(null);
+              doRefetch(Date.now());
+            }}
+          />
+        )}
+
+        {editSchema && (
+          <SchemaEditorComponent
+            schema={schema}
+            defaultKey="fields"
+            onClose={newSchema => {
+              if (newSchema) {
+                setSchemas(currentState => {
+                  const newState = cloneDeep(currentState);
+                  const idx = newState.findIndex(fSchema(newSchema));
+
+                  // Replace with the newSchema state
+                  if (idx !== -1) {
+                    newState.splice(idx, 1, newSchema);
+                  }
+                  // Add new schema
+                  else {
+                    newState.push(newSchema);
                   }
 
-                  return <span className={classes.join(' ')}>{val}</span>;
-                }}
-              ></Column>
-            );
-          })}
+                  return newState;
+                });
+              }
 
-        <Column
-          title="Actions"
-          fixed="right"
-          align="center"
-          width={80}
-          render={(v, record) => (
-            <div className="text-center inline-block" style={{ width: 50 }}>
-              <Button.Group size="small">
-                <Button
-                  key="edit"
-                  className="hover:text-green-500 hover:border-green-500"
-                  icon={<EditOutlined />}
-                  onClick={() => setShowEdit(record as RowLike)}
-                ></Button>
-              </Button.Group>
-            </div>
+              setEditSchema(null);
+            }}
+          />
+        )}
+      </div>
+
+      <div className="mt-4 w-full bg-midnight-600 py-1 px-4 rounded-md text-right">
+        <Pagination
+          total={total}
+          defaultCurrent={pageCurr}
+          current={pageCurr}
+          pageSize={pageSize}
+          pageSizeOptions={[10, 20, 50, 100, 250, 500, 1000, 2000]}
+          showSizeChanger
+          showQuickJumper
+          showTotal={total => (
+            <span>
+              <span className="text-green-500">
+                {total ? total.toLocaleString() : 0}
+              </span>{' '}
+              Record
+            </span>
           )}
-        ></Column>
-      </Table>
-
-      {showCreate && (
-        <ContentCreateComponent
-          schema={schema}
-          onClose={() => {
-            setShowCreate(false);
-            if (setTriggerShowCreate) {
-              setTriggerShowCreate(false);
-            }
-            doRefetch(Date.now());
+          onChange={(_pageNth, _pageSize) => {
+            setPageCurr(_pageNth);
+            setPageSize(_pageSize);
           }}
         />
-      )}
-
-      {showEdit && (
-        <ContentUpdateComponent
-          content={showEdit}
-          schema={schema}
-          onClose={() => {
-            setShowEdit(null);
-            doRefetch(Date.now());
-          }}
-        />
-      )}
-
-      {editSchema && (
-        <SchemaEditorComponent
-          schema={schema}
-          defaultKey="fields"
-          onClose={newSchema => {
-            if (newSchema) {
-              setSchemas(currentState => {
-                const newState = cloneDeep(currentState);
-                const idx = newState.findIndex(fSchema(newSchema));
-
-                // Replace with the newSchema state
-                if (idx !== -1) {
-                  newState.splice(idx, 1, newSchema);
-                }
-                // Add new schema
-                else {
-                  newState.push(newSchema);
-                }
-
-                return newState;
-              });
-            }
-
-            setEditSchema(null);
-          }}
-        />
-      )}
+      </div>
     </>
   );
 }

@@ -16,7 +16,7 @@ export default function MeComponent({ onClose }: Props) {
     <Drawer
       width={350}
       visible
-      title="The Artisan"
+      title="Artisan"
       closable
       onClose={() => onClose()}
       className="test--me-drawer"
@@ -33,7 +33,6 @@ export default function MeComponent({ onClose }: Props) {
       <Divider />
       <Button
         block
-        danger
         key="profile"
         icon={<LogoutOutlined />}
         onClick={() => {
@@ -44,7 +43,8 @@ export default function MeComponent({ onClose }: Props) {
             placement: 'bottomRight',
           });
         }}
-        className="test--sign-out"
+        ghost
+        className="test--sign-out error"
       >
         Sign Out
       </Button>

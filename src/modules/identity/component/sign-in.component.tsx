@@ -47,7 +47,9 @@ export default function SignInComponent({ setShowSignUp, canSignUp }: Props) {
 
   return (
     <>
-      <h1 className="header">Artgen Core <span className='text-success-400'>// Beta</span></h1>
+      <h1 className="header">
+        Artgen <span className="text-info-400">// Sign In</span>
+      </h1>
       <h1 className="w-full content-center">
         <div className="logo"></div>
       </h1>
@@ -90,8 +92,7 @@ export default function SignInComponent({ setShowSignUp, canSignUp }: Props) {
 
         <Form.Item>
           <Button
-            className="test--sign-in-btn"
-            type="primary"
+            className="test--sign-in-btn info"
             htmlType="submit"
             size="middle"
             block
