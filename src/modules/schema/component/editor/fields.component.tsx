@@ -21,6 +21,7 @@ import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FieldType, IField, ISchema } from '../..';
 import { GridTools } from '../../../content/util/grid.tools';
+import { FieldTag } from '../../interface';
 import { FieldTool } from '../../util/field-tools';
 import { migrateField } from '../../util/migrate-field';
 import FieldEditor from './field-editor.component';
@@ -77,7 +78,7 @@ export default function SchemaEditorFieldsComponent({
         defaultValue: null,
         meta: {},
         args: {},
-        tags: [],
+        tags: [FieldTag.NULLABLE],
       },
       schema.fields.length,
     );

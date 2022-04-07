@@ -8,4 +8,5 @@ export enum FieldTag {
   NULLABLE = 'nullable',
   INDEX = 'index',
   UNIQUE = 'unique',
+  TENANT = 'tenant',
 }

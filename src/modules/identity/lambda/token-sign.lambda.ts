@@ -1,10 +1,14 @@
 import { sign, SignOptions } from 'jsonwebtoken';
+import { Model } from 'objection';
 import { Inject, Service } from '../../../app/container';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
+import { SchemaService } from '../../schema/service/schema.service';
+import { IAccount } from '../interface/account.interface';
 import { IJwtPayload } from '../interface/jwt-payload.interface';
 import { AuthenticationService } from '../service/authentication.service';
 
@@ -41,15 +45,21 @@ export class TokenSignLambda implements ILambda {
   constructor(
     @Inject(AuthenticationService)
     readonly authService: AuthenticationService,
+    @Inject(SchemaService)
+    readonly schemaService: SchemaService,
   ) {}
 
   async invoke(ctx: FlowSession) {
     const config = ctx.getConfig<SignOptions>();
     const accountId = ctx.getInput<string>('accountId');
+    const accountModel = this.schemaService.getSysModel<IAccount & Model>(
+      SchemaRef.ACCOUNT,
+    );
+    const account = await accountModel.query().findById(accountId);
 
     const payload: IJwtPayload = {
       aid: accountId,
-      roles: [],
+      tid: account.groupId,
     };
     const secret = await this.authService.getJwtSecret();
 

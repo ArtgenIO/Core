@@ -7,7 +7,7 @@ export interface IJwtPayload extends JwtPayload {
   aid: string;
 
   /**
-   * Assigned roles
+   * Tenant ID
    */
-  roles: string[];
+  tid: string;
 }

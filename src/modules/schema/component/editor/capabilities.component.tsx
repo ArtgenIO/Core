@@ -2,6 +2,7 @@ import { List, Switch, Typography } from 'antd';
 import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction } from 'react';
 import { FieldTag, FieldType, ISchema } from '../..';
+import { RelationType } from '../../interface/relation.interface';
 import { migrateField } from '../../util/migrate-field';
 
 export default function SchemaEditorCapabilitiesComponent({
@@ -27,6 +28,7 @@ export default function SchemaEditorCapabilitiesComponent({
     f.tags.includes(FieldTag.VERSION),
   );
   const hasTags = !!schema.fields.find(f => f.tags.includes(FieldTag.TAGS));
+  const hasTenant = !!schema.fields.find(f => f.tags.includes(FieldTag.TENANT));
 
   return (
     <>
@@ -308,6 +310,66 @@ export default function SchemaEditorCapabilitiesComponent({
                 } else {
                   update.fields = update.fields.filter(
                     f => !f.tags.includes(FieldTag.TAGS),
+                  );
+                }
+
+                return update;
+              });
+            }}
+          />
+        </List.Item>
+
+        <List.Item key="tenant">
+          <List.Item.Meta
+            title={<span className="font-header text-lg">Multi Tenant</span>}
+            description="Applies a tenant level limitation, and each interaction will be limited to the tenant's group."
+            avatar={
+              <span className="material-icons-outlined bg-midnight-800 p-2.5 rounded-sm">
+                local_offer
+              </span>
+            }
+          ></List.Item.Meta>
+          <Switch
+            defaultChecked={hasTenant}
+            onChange={isOn => {
+              setSchema(current => {
+                const update = cloneDeep(current);
+
+                if (isOn) {
+                  update.fields.push(
+                    migrateField(
+                      {
+                        title: 'Tenant ID',
+                        reference: 'tenantId',
+                        columnName: 'tenant_id',
+                        type: FieldType.UUID,
+                        tags: [FieldTag.TENANT],
+                        meta: {
+                          grid: {
+                            order: update.fields.length,
+                            hidden: false,
+                            replace: 'name',
+                          },
+                        },
+                        args: {},
+                      },
+                      update.fields.length,
+                    ),
+                  );
+
+                  update.relations.push({
+                    kind: RelationType.BELONGS_TO_ONE,
+                    localField: 'tenantId',
+                    remoteField: 'id',
+                    name: 'tenant',
+                    target: 'AccountGroup',
+                  });
+                } else {
+                  update.fields = update.fields.filter(
+                    f => !f.tags.includes(FieldTag.TENANT),
+                  );
+                  update.relations = update.relations.filter(
+                    r => r.name !== 'tenant',
                   );
                 }
 

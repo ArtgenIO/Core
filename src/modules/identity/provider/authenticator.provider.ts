@@ -4,6 +4,7 @@ import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { UniqueTokenStrategy } from 'passport-unique-token';
 import isUUID from 'validator/lib/isUUID';
 import { ILogger, Inject, Logger, Service } from '../../../app/container';
+import { IJwtPayload } from '../interface/jwt-payload.interface';
 import { AuthenticationService } from '../service/authentication.service';
 
 @Service(Authenticator)
@@ -25,15 +26,26 @@ export class AuthenticatorProvider implements Provider<Authenticator> {
         {
           jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
           secretOrKey: jwtSecret,
+          passReqToCallback: true,
         },
-        (payload: any, done) => {
+        (req, payload: IJwtPayload, done) => {
           this.service
             .getAccountByID(payload.aid)
             .then(acc => {
               if (!acc) {
                 done(null, false, 'Account does not exists!');
+              } else if (acc.groupId != payload.tid) {
+                done(null, false, 'Wrong tenant id!');
               } else {
-                done(null, acc);
+                // Verify tenant
+                if (
+                  req.params?.tenantId &&
+                  req.params.tenantId != acc.groupId
+                ) {
+                  done(null, false, 'Invalid tenant id!');
+                } else {
+                  done(null, acc);
+                }
               }
             })
             .catch(e => {
@@ -50,8 +62,9 @@ export class AuthenticatorProvider implements Provider<Authenticator> {
           tokenQuery: 'access-key',
           tokenHeader: 'X-Access-Key',
           failOnMissing: true,
+          passReqToCallback: true,
         },
-        (token: string, done) => {
+        (req, token: string, done) => {
           if (!isUUID(token)) {
             return done(null, false, 'Invalid format');
           }
@@ -61,6 +74,11 @@ export class AuthenticatorProvider implements Provider<Authenticator> {
             .then(acc => {
               if (!acc) {
                 done(null, false, 'Unknown access key!');
+              } else if (
+                req.params?.tenantId &&
+                req.params.tenantId != acc.groupId
+              ) {
+                done(null, false, 'Wrong tenant id!');
               } else {
                 done(null, acc);
               }

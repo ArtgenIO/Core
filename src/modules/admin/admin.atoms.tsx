@@ -105,7 +105,7 @@ export const profileAtom = atom<Omit<IAccount, 'password'>>({
               q
                 .select('id,email')
                 .top(1)
-                .filter(f => f.filterExpression('id', '=', jwt.aid)),
+                .filter(f => f.filterExpression('id', 'eq', jwt.aid)),
             ),
           )
           .then(r => r.data.data[0]),

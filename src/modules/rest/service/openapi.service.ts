@@ -3,7 +3,7 @@ import { JSONSchema7Definition, JSONSchema7Object } from 'json-schema';
 import { kebabCase } from 'lodash';
 import { OpenAPIV3 } from 'openapi-types';
 import { Inject, Service } from '../../../app/container';
-import { FieldType, ISchema } from '../../schema';
+import { FieldTag, FieldType, ISchema } from '../../schema';
 import { FieldTool, isPrimary } from '../../schema/util/field-tools';
 import { VersionProvider } from '../../upgrade/provider/version.provider';
 import { UpgradeService } from '../../upgrade/upgrade.service';
@@ -60,21 +60,29 @@ export class OpenApiService {
     };
   }
 
-  getResourceURL(schema: ISchema, cause: string = 'rest'): string {
-    return `/api/${cause}/${kebabCase(schema.database)}/${kebabCase(
-      schema.reference,
-    )}`;
+  getResourceURL(
+    schema: ISchema,
+    cause: string = 'rest',
+    isTenant: boolean = false,
+  ): string {
+    return `/api/${cause}${isTenant ? '/:tenantId' : ''}/${kebabCase(
+      schema.database,
+    )}/${kebabCase(schema.reference)}`;
   }
 
-  getRecordURL(schema: ISchema) {
+  getRecordURL(schema: ISchema, isTenant: boolean = false) {
     const primaryKeys = schema.fields.filter(isPrimary);
     const record =
       '/:' + primaryKeys.map(f => kebabCase(f.reference)).join('/:');
 
-    return this.getResourceURL(schema) + record;
+    return this.getResourceURL(schema, 'rest', isTenant) + record;
   }
 
-  toFastifySchema(schema: ISchema, action: CrudAction): FastifySchema {
+  toFastifySchema(
+    schema: ISchema,
+    action: CrudAction,
+    isTenant: boolean = false,
+  ): FastifySchema {
     let isProtected: boolean = true;
 
     switch (action) {
@@ -93,8 +101,14 @@ export class OpenApiService {
         break;
     }
 
+    const tags = ['Rest'];
+
+    if (isTenant) {
+      tags.push('Tenant');
+    }
+
     const definition: FastifySchema = {
-      tags: ['Rest'],
+      tags,
       security: isProtected
         ? [
             {
@@ -116,7 +130,14 @@ export class OpenApiService {
           description: 'Created',
           ...(this.getJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
         };
-        definition.body = this.getJsonSchema(schema, CrudAction.CREATE);
+        definition.body = this.getJsonSchema(
+          schema,
+          CrudAction.CREATE,
+          isTenant,
+        );
+        if (isTenant) {
+          definition.params = this.getUrlParamsTenant();
+        }
         break;
 
       case CrudAction.READ:
@@ -124,17 +145,28 @@ export class OpenApiService {
         definition.response[404] = this.getNotFoundResponseSchema();
         definition.response[200] = {
           description: 'OK',
-          ...(this.getJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
+          ...(this.getJsonSchema(
+            schema,
+            CrudAction.READ,
+            isTenant,
+          ) as JSONSchema7Object),
         };
-        definition.params = this.getUrlParamsSchema(schema);
+        definition.params = this.getUrlParamsSchema(schema, isTenant);
         break;
 
       case CrudAction.FIND:
         definition.response[400] = this.getBadRequestResponseSchema();
         definition.response[200] = {
           description: 'OK',
-          ...(this.getJsonSchema(schema, CrudAction.FIND) as JSONSchema7Object),
+          ...(this.getJsonSchema(
+            schema,
+            CrudAction.FIND,
+            isTenant,
+          ) as JSONSchema7Object),
         };
+        if (isTenant) {
+          definition.params = this.getUrlParamsTenant();
+        }
         break;
 
       case CrudAction.UPDATE:
@@ -142,10 +174,18 @@ export class OpenApiService {
         definition.response[404] = this.getNotFoundResponseSchema();
         definition.response[200] = {
           description: 'OK',
-          ...(this.getJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
+          ...(this.getJsonSchema(
+            schema,
+            CrudAction.READ,
+            isTenant,
+          ) as JSONSchema7Object),
         };
-        definition.body = this.getJsonSchema(schema, CrudAction.CREATE);
-        definition.params = this.getUrlParamsSchema(schema);
+        definition.body = this.getJsonSchema(
+          schema,
+          CrudAction.CREATE,
+          isTenant,
+        );
+        definition.params = this.getUrlParamsSchema(schema, isTenant);
         break;
 
       case CrudAction.DELETE:
@@ -153,16 +193,24 @@ export class OpenApiService {
         definition.response[404] = this.getNotFoundResponseSchema();
         definition.response[200] = {
           description: 'OK',
-          ...(this.getJsonSchema(schema, CrudAction.READ) as JSONSchema7Object),
+          ...(this.getJsonSchema(
+            schema,
+            CrudAction.READ,
+            isTenant,
+          ) as JSONSchema7Object),
         };
-        definition.params = this.getUrlParamsSchema(schema);
+        definition.params = this.getUrlParamsSchema(schema, isTenant);
         break;
     }
 
     return definition;
   }
 
-  getJsonSchema(schema: ISchema, action: CrudAction): JSONSchema7Definition {
+  getJsonSchema(
+    schema: ISchema,
+    action: CrudAction,
+    isTenant: boolean = false,
+  ): JSONSchema7Definition {
     let jschema: JSONSchema7Definition = {
       type: 'object',
       properties: {},
@@ -185,6 +233,11 @@ export class OpenApiService {
         if (FieldTool.isCapability(field)) {
           continue;
         }
+      }
+
+      // Tenant, and is tenant field
+      if (isTenant && field.tags.includes(FieldTag.TENANT)) {
+        continue;
       }
 
       const isNullable = FieldTool.isNullable(field);
@@ -288,13 +341,25 @@ export class OpenApiService {
     return jschema;
   }
 
-  protected getUrlParamsSchema(schema: ISchema): JSONSchema7Definition {
+  protected getUrlParamsSchema(
+    schema: ISchema,
+    isTenant: boolean = false,
+  ): JSONSchema7Definition {
     const primaryKeys = schema.fields.filter(isPrimary);
     const definition: JSONSchema7Definition = {
       type: 'object',
       properties: {},
       required: primaryKeys.map(pk => kebabCase(pk.reference)),
     };
+
+    if (isTenant) {
+      definition.required.push('tenantId');
+      definition.properties['tenantId'] = {
+        title: 'Tenant ID',
+        type: 'string',
+        description: 'Tenant identifier',
+      };
+    }
 
     primaryKeys.forEach(
       pk =>
@@ -303,6 +368,23 @@ export class OpenApiService {
           type: 'string',
         }),
     );
+
+    return definition;
+  }
+
+  protected getUrlParamsTenant(): JSONSchema7Definition {
+    const definition: JSONSchema7Definition = {
+      type: 'object',
+      properties: {},
+      required: [],
+    };
+
+    definition.required.push('tenantId');
+    definition.properties['tenantId'] = {
+      title: 'Tenant ID',
+      type: 'string',
+      description: 'Tenant identifier',
+    };
 
     return definition;
   }

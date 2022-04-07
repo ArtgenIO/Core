@@ -1,5 +1,3 @@
-import { compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 import { Model } from 'objection';
 import { ILogger, Inject, Logger } from '../../../app/container';
@@ -8,7 +6,6 @@ import { KeyValueService } from '../../schema/service/key-value.service';
 import { SchemaService } from '../../schema/service/schema.service';
 import { IAccessKey } from '../interface/access-key.interface';
 import { IAccount } from '../interface/account.interface';
-import { IJwtPayload } from '../interface/jwt-payload.interface';
 
 type AccountModel = IAccount & Model;
 
@@ -38,37 +35,6 @@ export class AuthenticationService {
     }
 
     return this.jwtSecret;
-  }
-
-  async sigInWithCredentials(credentials: {
-    email: string;
-    password: string;
-  }): Promise<string | false> {
-    const model = this.schema.getSysModel<AccountModel>(SchemaRef.ACCOUNT);
-
-    const account = await model.query().findOne({
-      email: credentials.email,
-    });
-
-    if (account) {
-      const isPasswordValid = await compare(
-        credentials.password,
-        account.password,
-      );
-
-      if (isPasswordValid) {
-        const payload: IJwtPayload = {
-          aid: account.id,
-          roles: [],
-        };
-
-        return sign(payload, await this.getJwtSecret(), {
-          expiresIn: '8h',
-        });
-      }
-    }
-
-    return false;
   }
 
   async getAccountByID(id: string): Promise<IAccount | false> {

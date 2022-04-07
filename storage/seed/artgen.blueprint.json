@@ -1000,7 +1000,7 @@
             "grid": {
               "order": 1,
               "hidden": false,
-              "replace": "group"
+              "replace": "name"
             }
           },
           "args": {},
@@ -1297,9 +1297,9 @@
           ]
         },
         {
-          "reference": "group",
-          "columnName": "group",
-          "title": "Group",
+          "reference": "name",
+          "columnName": "name",
+          "title": "Name",
           "type": "text",
           "defaultValue": "",
           "meta": {
@@ -2330,7 +2330,7 @@
     "AccountGroup": [
       {
         "id": "b0ea6d23-e62b-4f9b-b0ac-2e7110011342",
-        "group": "System",
+        "name": "System",
         "createdAt": "2022-04-07 20:17:21.521"
       }
     ],

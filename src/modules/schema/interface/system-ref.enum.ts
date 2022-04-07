@@ -3,6 +3,7 @@ export enum SchemaRef {
   ACCOUNT = 'Account',
   ACCESS_KEY = 'AccessKey',
   ACCESS_ROLE = 'AccessRole',
+  ACCOUNT_GROUP = 'AccountGroup',
 
   // Core
   BLUEPRINT = 'Blueprint',
