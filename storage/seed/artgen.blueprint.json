@@ -979,12 +979,28 @@
           "columnName": "role_id",
           "title": "Role Identifier",
           "type": "uuid",
-          "defaultValue": null,
+          "defaultValue": "8cb4fe07-a7b1-4c0e-8a4c-8177be15866d",
           "meta": {
             "grid": {
               "order": 1,
               "hidden": false,
               "replace": "role"
+            }
+          },
+          "args": {},
+          "tags": []
+        },
+        {
+          "reference": "groupId",
+          "columnName": "group_id",
+          "title": "Group Identifier",
+          "type": "uuid",
+          "defaultValue": "b0ea6d23-e62b-4f9b-b0ac-2e7110011342",
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false,
+              "replace": "group"
             }
           },
           "args": {},
@@ -1041,9 +1057,16 @@
         },
         {
           "kind": "belongs-to-one",
-          "name": "accessRole",
+          "name": "role",
           "target": "AccessRole",
           "localField": "roleId",
+          "remoteField": "id"
+        },
+        {
+          "kind": "belongs-to-one",
+          "name": "group",
+          "target": "AccountGroup",
+          "localField": "groupId",
           "remoteField": "id"
         }
       ],
@@ -1157,7 +1180,7 @@
     },
     {
       "database": "main",
-      "title": "Access Roles",
+      "title": "Roles",
       "reference": "AccessRole",
       "tableName": "__artgen_access_roles",
       "fields": [
@@ -1237,9 +1260,89 @@
     },
     {
       "database": "main",
+      "title": "Groups",
+      "reference": "AccountGroup",
+      "tableName": "__artgen_account_groups",
+      "fields": [
+        {
+          "title": "Identifier",
+          "reference": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "meta": {
+            "grid": {
+              "order": 0,
+              "hidden": false
+            }
+          },
+          "args": {},
+          "tags": [
+            "primary"
+          ]
+        },
+        {
+          "title": "Created Date",
+          "reference": "createdAt",
+          "columnName": "created_at",
+          "type": "timestamp",
+          "args": {},
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          },
+          "tags": [
+            "created"
+          ]
+        },
+        {
+          "reference": "group",
+          "columnName": "group",
+          "title": "Group",
+          "type": "text",
+          "defaultValue": "",
+          "meta": {
+            "grid": {
+              "order": 1,
+              "hidden": false
+            }
+          },
+          "args": {},
+          "tags": [
+            "unique"
+          ]
+        }
+      ],
+      "indices": [],
+      "uniques": [],
+      "relations": [],
+      "tags": [
+        "active",
+        "system"
+      ],
+      "access": {
+        "create": "protected",
+        "read": "protected",
+        "update": "protected",
+        "delete": "protected"
+      },
+      "meta": {
+        "isFavorite": false,
+        "artboard": {
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535"
+    },
+    {
+      "database": "main",
       "reference": "AccessControl",
       "moduleId": "d01ab3a7-8ffc-4dd3-b706-ef194e460535",
-      "title": "Access Control",
+      "title": "Rules",
       "tableName": "__artgen_access_control",
       "fields": [
         {
@@ -1393,7 +1496,7 @@
       "relations": [
         {
           "kind": "belongs-to-one",
-          "name": "accessRole",
+          "name": "role",
           "target": "AccessRole",
           "localField": "accessRoleId",
           "remoteField": "id"
@@ -1832,7 +1935,7 @@
     "Module": [
       {
         "id": "c2046325-9d0e-42a4-aa55-1116fdd97913",
-        "name": "Artgen",
+        "name": "System",
         "tags": [
           "system"
         ]
@@ -2215,13 +2318,20 @@
     "AccessRole": [
       {
         "id": "8cb4fe07-a7b1-4c0e-8a4c-8177be15866d",
-        "role": "Administrator",
+        "role": "System",
         "createdAt": "2022-01-21 08:16:37.351"
       },
       {
         "id": "18574f6a-9401-4bc7-93ad-7aab4f345b83",
         "role": "Staff",
         "createdAt": "2022-01-21 08:16:37.351"
+      }
+    ],
+    "AccountGroup": [
+      {
+        "id": "b0ea6d23-e62b-4f9b-b0ac-2e7110011342",
+        "group": "System",
+        "createdAt": "2022-04-07 20:17:21.521"
       }
     ],
     "Dashboard": [
