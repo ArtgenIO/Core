@@ -1,9 +1,8 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import Title from 'antd/lib/typography/Title';
-import { ReactNode } from 'react';
 
-export default function PageWrapper(props: { children?: ReactNode }) {
+export default function PageWrapper(props: { children: React.ReactNode }) {
   return (
     <ErrorBoundary
       message={

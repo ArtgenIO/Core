@@ -1,59 +1,22 @@
 .auth-layout {
-  @apply min-h-screen flex items-stretch text-midnight-50 absolute top-0 left-0 right-0 bottom-0 z-50;
+  @apply min-h-screen flex items-center text-midnight-50 z-50;
 
-  .left-panel {
-    @apply lg:flex lg:w-1/2 xl:w-2/3 2xl:w-3/4 hidden bg-no-repeat bg-cover relative items-center;
-  }
-
-  .right-panel {
-    @apply w-full lg:w-1/2 xl:w-1/3 2xl:w-1/4 flex items-center justify-center text-center md:px-8 px-4 z-0 bg-midnight-800 border-midnight-500 relative pt-8;
-
-    border-style: solid;
-    border-width: 0 0 0 1px;
-
-    > .content {
-      @apply w-full py-6 z-20;
-    }
-  }
-
-  .cover {
-    @apply absolute inset-0 z-0;
-  }
-
-  .moto {
-    @apply px-16 z-10 text-midnight-50;
-
-    > h1 {
-      @apply font-cursive text-5xl;
-    }
-
-    > p {
-      @apply text-2xl font-thin -mt-4 italic text-midnight-300;
-    }
-  }
-
-  .mobile-panel {
-    @apply fixed lg:hidden z-10 inset-0  items-center;
-  }
-
-  .subtext {
-    @apply bottom-0 absolute p-4 text-center right-0 left-0 flex justify-center space-x-4;
-
-    > a {
-      @apply !text-midnight-300;
-    }
+  > div {
+    @apply w-full md:w-1/2 lg:w-1/3 mx-4 md:mx-auto bg-midnight-600 p-8 rounded-md relative;
   }
 
   .logo {
-    @apply hidden md:flex h-32 w-32 items-center justify-center mx-auto mt-8 lg:-mt-8;
+    @apply flex h-32 w-32 items-center justify-center mx-auto mt-12;
     @apply bg-center bg-no-repeat;
 
-    background-image: url('../../admin/assets/img/logo/stroke.svg');
+    background-image: url('../../admin/assets/img/logo/colour.svg');
     background-size: contain;
   }
 
   .header {
-    @apply text-5xl top-0 absolute left-0 right-0 font-header border-solid border-midnight-600 pt-1 bg-midnight-900;
+    @apply text-3xl text-center top-0 left-0 right-0 absolute;
+    @apply font-header border-solid border-midnight-600 pt-1 bg-midnight-900;
+    @apply rounded-t-md;
 
     border-width: 0 0 1px 0;
     border-style: solid;

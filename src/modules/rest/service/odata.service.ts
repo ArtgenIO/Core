@@ -1,4 +1,4 @@
-import { isArray, merge, pick } from 'lodash';
+import { merge, pick } from 'lodash';
 import {
   Model,
   ModelClass,
@@ -140,7 +140,7 @@ export class ODataService {
           const right = $filter.right as fLiteral;
           const operator = this.mapOperator($filter.type);
 
-          if (isArray(right.value)) {
+          if (Array.isArray(right.value)) {
             // Null primitive comparison
             if (right.value[0] === 'null') {
               if ($filter.type === 'eq') {

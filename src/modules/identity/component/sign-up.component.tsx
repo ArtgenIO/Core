@@ -45,7 +45,7 @@ export default function SignUpComponent({ setShowSignUp }: Props) {
   };
 
   return (
-    <>
+    <div>
       <h1 className="header">
         Artgen <span className="text-success-400">// Join Us</span>
       </h1>
@@ -112,6 +112,6 @@ export default function SignUpComponent({ setShowSignUp }: Props) {
           &nbsp;here!
         </div>
       </Form>
-    </>
+    </div>
   );
 }
