@@ -3,10 +3,11 @@ import { Avatar, Button, Divider, Drawer, Input, List } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import startCase from 'lodash.startcase';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { Elements, OnLoadParams } from 'react-flow-renderer';
+import { ReactFlowInstance } from 'react-flow-renderer';
 import { useRecoilValue } from 'recoil';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
 import { lambdaMetasAtom } from '../../atom/artboard.atoms';
+import { Elements } from '../../interface/elements.interface';
 import { createNode } from '../../util/create-node';
 
 /**
@@ -42,7 +43,7 @@ type Props = {
   showCatalog: boolean;
   setShowCatalog: Dispatch<SetStateAction<boolean>>;
   setElements: Dispatch<SetStateAction<Elements>>;
-  flowInstance: OnLoadParams;
+  flowInstance: ReactFlowInstance;
 };
 
 export default function FlowboardLambdaCatalog({
@@ -56,7 +57,7 @@ export default function FlowboardLambdaCatalog({
 
   // Called when the user adds a new node with the + button
   const addNode = (node: ILambdaMeta) => {
-    const element = createNode(node, flowInstance.getElements());
+    const element = createNode(node, flowInstance.getNodes());
     // TODO: find better position, like the further right center without collision, rightest + 70px top: (max.top max.bottom / 2)
     element.position = { x: 0, y: 0 };
 

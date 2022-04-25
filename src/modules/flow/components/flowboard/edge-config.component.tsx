@@ -19,16 +19,11 @@ import {
 import Avatar from 'antd/lib/avatar/avatar';
 import { useForm } from 'antd/lib/form/Form';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import {
-  ArrowHeadType,
-  Edge,
-  Elements,
-  isNode,
-  Node,
-} from 'react-flow-renderer';
+import { Edge, isNode, MarkerType, Node } from 'react-flow-renderer';
 import { useRecoilValue } from 'recoil';
 import { ILambdaHandle } from '../../../lambda/interface/handle.interface';
 import { lambdaMetasAtom } from '../../atom/artboard.atoms';
+import { Elements } from '../../interface/elements.interface';
 import HandleSchemaComponent from './handle-schema.component';
 
 type Props = {
@@ -196,7 +191,7 @@ export default function ArtboardEdgeConfigComponent({
                   sourceHandle: oldEdge.sourceHandle,
                   targetHandle: oldEdge.targetHandle,
                   type: oldEdge.type,
-                  arrowHeadType: ArrowHeadType.ArrowClosed,
+                  markerEnd: MarkerType.ArrowClosed,
                   data: {
                     ...oldEdge.data,
                     transform: form.getFieldValue('transform') ?? '',

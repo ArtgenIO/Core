@@ -1,6 +1,5 @@
 import { Avatar } from 'antd';
 import { kebabCase } from 'lodash';
-import { ReactNode } from 'react';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import { INode } from '../interface';
@@ -12,7 +11,7 @@ export class NodeFactory {
   static fromMeta(
     lambda: ILambdaMeta,
     onDoubleClick: (elementId: string) => void,
-  ): ReactNode {
+  ) {
     const totalInputs = lambda.handles.filter(
       h => h.direction === 'input',
     ).length;

@@ -1,5 +1,6 @@
 import dagre from 'dagre/dist/dagre.js';
-import { Elements, isNode, Node } from 'react-flow-renderer';
+import { isNode, Node } from 'react-flow-renderer';
+import { Elements } from '../../flow/interface/elements.interface';
 
 type DHeight = (el: Node) => number;
 

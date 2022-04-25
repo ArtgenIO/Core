@@ -9,13 +9,9 @@ import {
 } from '@ant-design/icons';
 import { message } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
-import {
-  Edge,
-  Elements,
-  OnLoadParams,
-  useZoomPanHelper,
-} from 'react-flow-renderer';
+import { Edge, ReactFlowInstance, useReactFlow } from 'react-flow-renderer';
 import { IFlow } from '../../interface';
+import { Elements } from '../../interface/elements.interface';
 import FlowboardSave from './save.component';
 
 type Props = {
@@ -24,7 +20,7 @@ type Props = {
   setSelectedNodeId: Dispatch<SetStateAction<string>>;
   focusedElementId: string;
   setElements: Dispatch<SetStateAction<Elements>>;
-  flowInstance: OnLoadParams;
+  flowInstance: ReactFlowInstance;
   flow: IFlow;
 };
 
@@ -37,7 +33,7 @@ export default function FlowboardTools({
   flowInstance,
   flow,
 }: Props) {
-  const { zoomIn, zoomOut, fitView } = useZoomPanHelper();
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
   const doDeleteNode = (nodeId: string) => {
     setElements(els => {
       return els.filter(el => {
@@ -79,12 +75,12 @@ export default function FlowboardTools({
 
         <FlowboardSave flow={flow} flowInstance={flowInstance} />
 
-        <div onClick={() => zoomIn(1000)}>
+        <div onClick={() => zoomIn({ duration: 1000 })}>
           <ZoomInOutlined />
           <div>Zoom In</div>
         </div>
 
-        <div onClick={() => zoomOut(1000)}>
+        <div onClick={() => zoomOut({ duration: 1000 })}>
           <ZoomOutOutlined />
           <div>Zoom Out</div>
         </div>

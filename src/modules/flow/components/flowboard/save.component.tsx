@@ -1,6 +1,6 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
-import { OnLoadParams } from 'react-flow-renderer';
+import { ReactFlowInstance } from 'react-flow-renderer';
 import { useHttpClientSimple } from '../../../admin/library/http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { SchemaRef } from '../../../schema/interface/system-ref.enum';
@@ -10,7 +10,7 @@ import { serializeFlow } from '../../util/serialize-flow';
 const SAVING_NOTIFICATION = 'saving-flow';
 
 type Props = {
-  flowInstance: OnLoadParams;
+  flowInstance: ReactFlowInstance;
   flow: IFlow;
 };
 
@@ -18,10 +18,10 @@ export default function FlowboardSave({ flowInstance, flow }: Props) {
   const httpClient = useHttpClientSimple();
 
   const doSaveFlow = () => {
-    const serializedFlow: IFlow = serializeFlow(
-      flow,
-      flowInstance.getElements(),
-    );
+    const serializedFlow: IFlow = serializeFlow(flow, [
+      ...flowInstance.getNodes(),
+      ...flowInstance.getEdges(),
+    ]);
 
     httpClient
       .patch(`${toRestSysRoute(SchemaRef.FLOW)}/${flow.id}`, serializedFlow)

@@ -1,5 +1,5 @@
-import { Elements } from 'react-flow-renderer';
 import { IFlow } from '../interface';
+import { Elements } from '../interface/elements.interface';
 import { unserializeEdge } from './unserialize-edge';
 import { unserializeNode } from './unserialize-node';
 

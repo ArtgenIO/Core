@@ -20,12 +20,13 @@ import {
 } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Edge, Elements, Node } from 'react-flow-renderer';
+import { Edge, Node } from 'react-flow-renderer';
 import { useRecoilValue } from 'recoil';
 import { ILambdaHandle } from '../../../lambda/interface/handle.interface';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
 import { lambdaMetasAtom } from '../../atom/artboard.atoms';
 import { CustomNode, CustomNodeData } from '../../interface/custom-node';
+import { Elements } from '../../interface/elements.interface';
 import HandleSchemaComponent from './handle-schema.component';
 
 type Props = {

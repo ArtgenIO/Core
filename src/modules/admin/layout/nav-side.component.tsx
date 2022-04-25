@@ -2,10 +2,7 @@ import {
   CloudOutlined,
   DatabaseOutlined,
   FileOutlined,
-  FormOutlined,
-  FundOutlined,
   HomeOutlined,
-  LayoutOutlined,
   PartitionOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Spin } from 'antd';
@@ -45,30 +42,14 @@ const menuItems: IMenuItem[] = [
     title: 'Flow',
     className: 'test--nav-flow',
   },
-  {
-    icon: <FormOutlined />,
-    path: ADMIN_URL + '/form',
-    title: 'Form',
-    className: 'test--nav-form',
-  },
+
   {
     icon: <DatabaseOutlined />,
     path: ADMIN_URL + '/database',
     title: 'Databases',
     className: 'test--nav-database',
   },
-  {
-    icon: <LayoutOutlined />,
-    path: ADMIN_URL + '/page',
-    title: 'Page Builder',
-    className: 'test--nav-page',
-  },
-  {
-    icon: <FundOutlined />,
-    path: ADMIN_URL + '/analytics',
-    title: 'Analytics',
-    className: 'test--nav-analytics',
-  },
+
   {
     icon: <CloudOutlined />,
     path: ADMIN_URL + '/cloud-store',

@@ -1,8 +1,8 @@
 import { startCase } from 'lodash';
 import kebabCase from 'lodash.kebabcase';
-import { Elements } from 'react-flow-renderer';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import { CustomNode } from '../interface/custom-node';
+import { Elements } from '../interface/elements.interface';
 import { updateNodeConfig } from './update-node-config';
 
 export const createNode = (

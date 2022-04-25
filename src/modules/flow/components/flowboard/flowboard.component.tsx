@@ -11,14 +11,13 @@ import { cloneDeep, kebabCase } from 'lodash';
 import { DragEvent, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
   addEdge,
-  ArrowHeadType,
   Background,
   BackgroundVariant,
-  Elements,
+  isEdge,
   isNode,
-  NodeTypesType,
-  OnLoadParams,
-  useZoomPanHelper,
+  MarkerType,
+  NodeTypes,
+  useReactFlow,
 } from 'react-flow-renderer';
 import { useParams } from 'react-router';
 import { useRecoilState } from 'recoil';
@@ -33,6 +32,7 @@ import { createLayouOrganizer } from '../../../schema/util/layout-organizer';
 import { lambdaMetasAtom } from '../../atom/artboard.atoms';
 import { NodeFactory } from '../../factory/node.factory';
 import { ICapturedContext } from '../../interface/captured-context.interface';
+import { Elements } from '../../interface/elements.interface';
 import { IFlow } from '../../interface/flow.interface';
 import { createNode } from '../../util/create-node';
 import { unserializeFlow } from '../../util/unserialize-flow';
@@ -61,10 +61,9 @@ export default function FlowBoardComponent() {
 
   // Local state
   const wrapper = useRef(null);
-  const [customNodes, setCustomNodes] = useState<NodeTypesType>({});
+  const [customNodes, setCustomNodes] = useState<NodeTypes>({});
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMenuNodes, setSelectedMenuNodes] = useState([]);
-  const { setCenter } = useZoomPanHelper();
   const [capturedContexts, setCapturedContexts] = useState<ICapturedContext[]>(
     [],
   );
@@ -72,7 +71,7 @@ export default function FlowBoardComponent() {
 
   // Artboard state
   const [lambdaMetas, setLambdaMetas] = useRecoilState(lambdaMetasAtom);
-  const [flowInstance, setFlowInstance] = useState<OnLoadParams>(null);
+  const flowInstance = useReactFlow();
   const [selectedNodeId, setSelectedNodeId] = useState<string>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string>(null);
   const [focusedElementId, setFocusedElementId] = useState<string>(null);
@@ -90,13 +89,13 @@ export default function FlowBoardComponent() {
 
   const zoomTo = (nodeId: string) => {
     if (flowInstance) {
-      const el = flowInstance
-        .getElements()
-        .filter(isNode)
-        .find(e => e.id === nodeId);
+      const el = flowInstance.getNodes().find(e => e.id === nodeId);
 
       if (el) {
-        setCenter(el.position.x + 400, el.position.y + 200, 1.5, 1000);
+        flowInstance.setCenter(el.position.x + 400, el.position.y + 200, {
+          zoom: 1.5,
+          duration: 1000,
+        });
       }
     }
   };
@@ -120,9 +119,9 @@ export default function FlowBoardComponent() {
         {
           ...params,
           type: 'artgen-edge',
-          arrowHeadType: ArrowHeadType.ArrowClosed,
+          markerEnd: MarkerType.Arrow,
         },
-        els,
+        els as any,
       );
     });
 
@@ -143,7 +142,7 @@ export default function FlowBoardComponent() {
 
       const type = event.dataTransfer.getData('application/reactflow');
       const node: ILambdaMeta = lambdaMetas.find(node => node.type === type);
-      const element = createNode(node, flowInstance.getElements());
+      const element = createNode(node, flowInstance.getNodes());
       element.position = flowInstance.project({
         x: event.clientX - bounds.left,
         y: event.clientY - bounds.top,
@@ -160,7 +159,7 @@ export default function FlowBoardComponent() {
         client.get<IFlow>(`${toRestSysRoute(SchemaRef.FLOW)}/${flowId}`),
       ]);
 
-      const customNodes: NodeTypesType = {};
+      const customNodes: any = {};
 
       for (const node of lambdaReply.data) {
         customNodes[kebabCase(node.type)] = NodeFactory.fromMeta(
@@ -313,17 +312,13 @@ export default function FlowBoardComponent() {
           {!isLoading && (
             <ReactFlow
               onConnect={onConnect}
-              elements={elements}
-              onLoad={(instance: OnLoadParams) => {
-                setFlowInstance(instance);
-
-                instance.fitView();
-              }}
+              defaultNodes={elements.filter(isNode)}
+              defaultEdges={elements.filter(isEdge)}
               onDrop={onDrop}
               onDragOver={onDragOver}
               onSelectionChange={elements => {
-                if (elements?.length) {
-                  setFocusedElementId(elements[0].id);
+                if (elements?.nodes?.length) {
+                  setFocusedElementId(elements.nodes[0].id);
                 } else {
                   setFocusedElementId(null);
                 }
@@ -333,11 +328,13 @@ export default function FlowBoardComponent() {
               }}
               nodeTypes={customNodes}
               defaultZoom={1.5}
-              edgeTypes={{
-                'artgen-edge': SmartEdgeFactory({
-                  onClick: setSelectedEdgeId,
-                }),
-              }}
+              edgeTypes={
+                {
+                  'artgen-edge': SmartEdgeFactory({
+                    onClick: setSelectedEdgeId,
+                  }),
+                } as any
+              }
               onClick={() => setShowCatalog(false)}
             >
               <Background

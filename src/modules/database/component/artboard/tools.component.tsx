@@ -11,7 +11,8 @@ import {
 } from '@ant-design/icons';
 import { Popconfirm } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
-import { Elements, useZoomPanHelper } from 'react-flow-renderer';
+import { useReactFlow } from 'react-flow-renderer';
+import { Elements } from '../../../flow/interface/elements.interface';
 import { ISchema } from '../../../schema';
 
 export default function DatabaseToolsComponent({
@@ -29,7 +30,7 @@ export default function DatabaseToolsComponent({
   doRemove: (schema: ISchema) => void;
   selectedNode: ISchema;
 }) {
-  const { zoomIn, zoomOut, fitView } = useZoomPanHelper();
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
 
   return (
     <>
@@ -51,12 +52,12 @@ export default function DatabaseToolsComponent({
           <div>Organize Structure</div>
         </div>
 
-        <div onClick={() => zoomIn(1000)}>
+        <div onClick={() => zoomIn({ duration: 1000 })}>
           <ZoomInOutlined />
           <div>Zoom In</div>
         </div>
 
-        <div onClick={() => zoomOut(1000)}>
+        <div onClick={() => zoomOut({ duration: 1000 })}>
           <ZoomOutOutlined />
           <div>Zoom Out</div>
         </div>

@@ -61,8 +61,8 @@ This feature is still in heavy development, but the system is capable of mapping
 - Rest API Generator
 - OData API Generator
 - Built In Customizable User Management
-- Customizable Dashboard (coming soon)
-- CRON Scheduled Flows (coming soon)
+- Customizable Dashboard
+- CRON Scheduled Flows
 - GraphQL API generator (coming soon)
 - Chart / Analytics builder (under development)
 

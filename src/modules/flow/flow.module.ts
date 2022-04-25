@@ -8,7 +8,6 @@ import { RestModule } from '../rest/rest.module';
 import { TelemetryModule } from '../telemetry/telemetry.module';
 import { FlowObserver } from './flow.observer';
 import { LogicHttpGateway } from './gateway/http.gateway';
-import { FlowRpcGateway } from './gateway/rpc.gateway';
 import { FlowService } from './service/flow.service';
 
 @Module({
@@ -19,6 +18,6 @@ import { FlowService } from './service/flow.service';
     TelemetryModule,
   ],
   dependsOn: [IdentityModule, moduleRef(() => DatabaseModule)],
-  providers: [FlowService, LogicHttpGateway, FlowRpcGateway, FlowObserver],
+  providers: [FlowService, LogicHttpGateway, FlowObserver],
 })
 export class FlowModule implements IModule {}

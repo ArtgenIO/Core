@@ -1,20 +1,18 @@
-const { merge } = require('lodash');
 const { join } = require('path');
-const colors = require('tailwindcss/colors');
 
-const customColors = merge(colors, {
+const customColors = {
   midnight: {
-    50: '#E5E7EB',
-    100: '#CBCFD7',
-    200: '#989FAF',
-    300: '#677084',
-    400: '#3E4450',
-    500: '#15171B',
-    600: '#121417',
-    700: '#0D0F11',
-    750: '#0D0F11',
-    800: '#090A0B',
-    900: '#040506',
+    50: '#eceff1',
+    100: '#cfd8dc',
+    200: '#b0bec5',
+    300: '#90a4ae',
+    400: '#78909c',
+    500: '#607d8b',
+    600: '#546e7a',
+    700: '#455a64',
+    750: '#37474f',
+    800: '#37474f',
+    900: '#263238',
   },
   primary: {
     DEFAULT: '#46bdc6',
@@ -80,25 +78,21 @@ const customColors = merge(colors, {
     800: '#7C430F',
     900: '#4A2509',
   },
-});
-
-delete customColors['lightBlue'];
-delete customColors['warmGray'];
-delete customColors['trueGray'];
-delete customColors['coolGray'];
-delete customColors['blueGray'];
-
+};
 /** @type {import("@types/tailwindcss/tailwind-config").TailwindConfig} */
 const config = {
   mode: 'jit',
   content: [join(__dirname, './src/**/*.{tsx,html}')],
+
   theme: {
     fontFamily: {
       header: ['Bebas Neue', 'cursive'],
       code: ['Courier New', 'Courier', 'monospace'],
       cursive: ['Gruppo', 'cursive'],
     },
-    colors: customColors,
+    extend: {
+      colors: customColors,
+    },
   },
   plugins: [require('tailwindcss-scrollbar')],
 };

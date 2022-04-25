@@ -1,8 +1,7 @@
 import cloneDeep from 'lodash.clonedeep';
-import { Edge, Elements, isNode, Node } from 'react-flow-renderer';
+import { Edge, isNode, Node } from 'react-flow-renderer';
+import { Elements } from '../../flow/interface/elements.interface';
 import { ISchema } from '../interface';
-
-let offsetX = 0;
 
 /**
  * Responsible to serialize between schema list state and node/edge elements state.

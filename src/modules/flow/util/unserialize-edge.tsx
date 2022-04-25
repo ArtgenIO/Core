@@ -1,4 +1,4 @@
-import { ArrowHeadType, Edge } from 'react-flow-renderer';
+import { Edge, MarkerType } from 'react-flow-renderer';
 import { IEdge } from '../interface';
 
 export const unserializeEdge = (serialized: IEdge): Edge => {
@@ -9,7 +9,7 @@ export const unserializeEdge = (serialized: IEdge): Edge => {
     sourceHandle: serialized.sourceHandle,
     targetHandle: serialized.targetHandle,
     type: 'artgen-edge',
-    arrowHeadType: ArrowHeadType.ArrowClosed,
+    markerEnd: MarkerType.ArrowClosed,
     data: {
       transform: serialized.transform ?? '',
     },

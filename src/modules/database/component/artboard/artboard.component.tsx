@@ -1,17 +1,16 @@
 import cloneDeep from 'lodash.clonedeep';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactFlow, {
   Background,
   BackgroundVariant,
-  Elements,
+  isEdge,
   isNode,
-  Node,
-  OnLoadParams,
-  useZoomPanHelper,
+  useReactFlow,
 } from 'react-flow-renderer';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { schemasAtom } from '../../../admin/admin.atoms';
+import { Elements } from '../../../flow/interface/elements.interface';
 import { ISchema } from '../../../schema';
 import SchemaEditorComponent from '../../../schema/component/editor.component';
 import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
@@ -28,12 +27,10 @@ export default function DatabaseArtboardComponent() {
   const { ref } = useParams();
   const [schemas, setSchemas] = useRecoilState(schemasAtom);
   const [search, setSearch] = useSearchParams();
-  const { setCenter } = useZoomPanHelper();
 
   // Artboard state
   const flowWrapper = useRef(null);
-  const [flowInstance, setFlowInstance] =
-    useState<OnLoadParams<{ schema: ISchema }>>(null);
+  const flowInstance = useReactFlow<{ schema: ISchema }>();
   const [elements, setElements] = useState<Elements>([]);
   const [showEditor, setShowEditor] = useState<ISchema>(null);
   const [selectedNode, setSelectedNode] = useState<ISchema>(null);
@@ -58,13 +55,14 @@ export default function DatabaseArtboardComponent() {
   const zoomTo = (target: ISchema) => {
     if (flowInstance) {
       const el = flowInstance
-        .getElements()
-        .find(
-          e => isNode(e) && e.data.schema.reference == target.reference,
-        ) as Node<{ schema: ISchema }>;
+        .getNodes()
+        .find(e => e.data.schema.reference == target.reference);
 
       if (el) {
-        setCenter(el.position.x + 400, el.position.y + 200, 1.5, 1000);
+        flowInstance.setCenter(el.position.x + 400, el.position.y + 200, {
+          duration: 1000,
+          zoom: 1.5,
+        });
       }
     }
   };
@@ -114,19 +112,24 @@ export default function DatabaseArtboardComponent() {
     setSelectedNode(null);
   };
 
+  const nodeTypesMemo = useMemo(
+    () => ({
+      schema: createSchemaNode(schemas, s => setShowEditor(s)),
+    }),
+    [],
+  );
+
   return (
     <>
       <div className="h-screen bg-midnight-800">
         <div className="w-full h-full" ref={flowWrapper}>
           <ReactFlow
-            elements={elements}
-            onLoad={(instance: OnLoadParams) => setFlowInstance(instance)}
-            nodeTypes={{
-              schema: createSchemaNode(schemas, s => setShowEditor(s)),
-            }}
+            defaultNodes={elements.filter(isNode)}
+            defaultEdges={elements.filter(isEdge)}
+            nodeTypes={nodeTypesMemo as any}
             defaultZoom={1.2}
-            onSelectionChange={(selections: Elements<{ schema: ISchema }>) => {
-              if (selections?.length) {
+            onSelectionChange={selections => {
+              if (selections?.nodes?.length) {
                 if (isNode(selections[0])) {
                   setSelectedNode(selections[0].data.schema);
                 }

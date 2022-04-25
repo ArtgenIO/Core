@@ -31,7 +31,7 @@ export default function SystemLoadMonitorWidget() {
   return (
     <ResponsiveLine
       theme={{
-        background: '#25272b',
+        background: '#263238',
         textColor: '#cfd2d9',
         grid: {
           line: {

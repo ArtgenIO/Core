@@ -6,14 +6,11 @@ import { Inject, Service } from '../../../app/container';
 import { FieldTag, FieldType, ISchema } from '../../schema';
 import { FieldTool, isPrimary } from '../../schema/util/field-tools';
 import { VersionProvider } from '../../upgrade/provider/version.provider';
-import { UpgradeService } from '../../upgrade/upgrade.service';
 import { CrudAction } from '../interface/crud-action.enum';
 
 @Service()
 export class OpenApiService {
   constructor(
-    @Inject(UpgradeService)
-    readonly upgradeService: UpgradeService,
     @Inject(VersionProvider)
     readonly localVersion: string,
   ) {}
