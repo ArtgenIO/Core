@@ -12,7 +12,9 @@ export interface ITableStructure {
   columns: {
     [name: string]: IColumnSchema;
   };
-  relations: Pick<IRelation, 'target' | 'localField' | 'remoteField'>[];
+  relations: {
+    [hash: string]: Pick<IRelation, 'target' | 'localField' | 'remoteField'>;
+  };
   uniques: { fields: string[] }[];
   indices: ISchema['indices'];
 }

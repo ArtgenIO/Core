@@ -1,3 +1,4 @@
+import objectHash from 'object-hash';
 import { ITableStructure } from '../..';
 import { FieldType, ISchema } from '../../../schema';
 import { RelationType } from '../../../schema/interface/relation.interface';
@@ -9,8 +10,9 @@ export const toStructure = (schema: ISchema): ITableStructure => {
 
   // Ensure no spaces are messing up the table name.
   const tableName = schema.tableName.trim();
+
   // Sort the relations by name.
-  const relations = Array.from(schema.relations)
+  const relationsArray = Array.from(schema.relations)
     .sort(sortByName)
     .filter(
       r =>
@@ -22,12 +24,14 @@ export const toStructure = (schema: ISchema): ITableStructure => {
       localField: r.localField,
       remoteField: r.remoteField,
     }));
+
   // Sort the uniques
   const uniques = Array.from(schema.uniques)
     .sort(sortByName)
     .map(unq => ({
       fields: unq.fields.sort(sortByValue),
     }));
+
   // Sort the indices
   const indices = Array.from(schema.indices).sort(sortByName);
   const columns = {};
@@ -44,6 +48,12 @@ export const toStructure = (schema: ISchema): ITableStructure => {
       type: f.type === FieldType.JSONB ? FieldType.JSON : f.type,
       args: f.args,
     };
+  }
+
+  const relations = {};
+
+  for (const r of relationsArray) {
+    relations[objectHash(r)] = r;
   }
 
   return { tableName, relations, uniques, indices, columns: columns };
