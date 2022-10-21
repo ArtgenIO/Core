@@ -4,7 +4,6 @@ import {
   WarningOutlined,
 } from '@ant-design/icons';
 import { Button, Drawer, message, Popconfirm, Tabs } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import isEqual from 'lodash.isequal';
 import { Suspense, useEffect, useState } from 'react';
 import { ISchema } from '..';
@@ -117,7 +116,7 @@ export default function SchemaEditorComponent({
       }}
     >
       <Suspense fallback={<PageLoading />}>
-        <ErrorBoundary>
+        <>
           <Tabs
             tabPosition="left"
             size="middle"
@@ -166,7 +165,7 @@ export default function SchemaEditorComponent({
               <DangerZoneComponent schema={schema} setSchema={setSchema} />
             </Tabs.TabPane>
           </Tabs>
-        </ErrorBoundary>
+        </>
       </Suspense>
     </Drawer>
   );

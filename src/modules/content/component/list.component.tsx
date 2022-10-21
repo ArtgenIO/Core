@@ -1,6 +1,5 @@
 import { FileAddOutlined } from '@ant-design/icons';
 import { Button, Result } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -56,7 +55,7 @@ export default function ContentListComponent() {
   }
 
   return (
-    <ErrorBoundary>
+    <>
       <PageWithHeader
         header={
           <PageHeader
@@ -85,6 +84,6 @@ export default function ContentListComponent() {
           />
         ) : undefined}
       </PageWithHeader>
-    </ErrorBoundary>
+    </>
   );
 }

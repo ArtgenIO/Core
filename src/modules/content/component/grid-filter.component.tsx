@@ -1,4 +1,3 @@
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { QueryBuilder } from 'odata-query-builder';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
@@ -113,7 +112,7 @@ export default function GridFilterComponent({ schema, setFilter }: Props) {
   }
 
   return (
-    <ErrorBoundary>
+    <>
       <Query
         {...config}
         value={tree}
@@ -131,6 +130,6 @@ export default function GridFilterComponent({ schema, setFilter }: Props) {
         }}
         renderBuilder={renderBuilder}
       />
-    </ErrorBoundary>
+    </>
   );
 }

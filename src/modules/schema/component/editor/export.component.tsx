@@ -1,5 +1,4 @@
 import { Button, Divider, message } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { saveAs } from 'file-saver';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
@@ -25,7 +24,7 @@ export default function SchemaExportComponent({ schema }: Props) {
   };
 
   return (
-    <ErrorBoundary>
+    <>
       <Button.Group className="w-full">
         <Button block type="primary" ghost onClick={doDownload}>
           Download as JSON
@@ -45,6 +44,6 @@ export default function SchemaExportComponent({ schema }: Props) {
       >
         {JSON.stringify(schema, null, 2)}
       </SyntaxHighlighter>
-    </ErrorBoundary>
+    </>
   );
 }

@@ -15,7 +15,7 @@ export default {
   fixturesFolder: false,
   e2e: {
     setupNodeEvents(on, config) {},
-    baseUrl: 'http://localhost:8888',
+    baseUrl: 'http://localhost:7200',
     supportFile: false,
   },
 };

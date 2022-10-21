@@ -10,7 +10,6 @@ import {
   Switch,
   Tooltip,
 } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import { TransferItem } from 'antd/lib/transfer';
 import camelCase from 'lodash.camelcase';
 import cloneDeep from 'lodash.clonedeep';
@@ -151,7 +150,7 @@ export default function FieldEditor({
   ];
 
   return (
-    <ErrorBoundary>
+    <>
       {field && (
         <Drawer
           width={800}
@@ -669,6 +668,6 @@ export default function FieldEditor({
           </Form>
         </Drawer>
       )}
-    </ErrorBoundary>
+    </>
   );
 }

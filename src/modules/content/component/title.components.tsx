@@ -1,6 +1,5 @@
 import { StarOutlined } from '@ant-design/icons';
 import { Select, Tag } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import cloneDeep from 'lodash.clonedeep';
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -25,7 +24,7 @@ export default function TitleComponent({ schema }: Props) {
   }, [schema]);
 
   return (
-    <ErrorBoundary>
+    <>
       <div className="flex items-center">
         <div className="shrink">
           <div
@@ -97,6 +96,6 @@ export default function TitleComponent({ schema }: Props) {
           ))}
         </div>
       </div>
-    </ErrorBoundary>
+    </>
   );
 }

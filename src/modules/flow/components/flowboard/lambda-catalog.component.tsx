@@ -1,6 +1,5 @@
 import { PlusSquareOutlined, SearchOutlined } from '@ant-design/icons';
 import { Avatar, Button, Divider, Drawer, Input, List } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import startCase from 'lodash.startcase';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ReactFlowInstance } from 'react-flow-renderer';
@@ -74,7 +73,7 @@ export default function FlowboardLambdaCatalog({
       title="Node Catalog"
       onClose={() => setShowCatalog(false)}
     >
-      <ErrorBoundary>
+      <>
         <div className="px-1">
           <Input
             onChange={e => setSearch(e.target.value)}
@@ -120,7 +119,7 @@ export default function FlowboardLambdaCatalog({
             </List.Item>
           )}
         />
-      </ErrorBoundary>
+      </>
     </Drawer>
   );
 }

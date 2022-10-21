@@ -1,5 +1,4 @@
 import { Divider, List, Switch, Typography } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import cloneDeep from 'lodash.clonedeep';
 import upperFirst from 'lodash.upperfirst';
 import { Dispatch, SetStateAction } from 'react';
@@ -12,7 +11,7 @@ type Props = {
 
 export default function DangerZoneComponent({ schema, setSchema }: Props) {
   return (
-    <ErrorBoundary>
+    <>
       <h2 className="font-header">REST Authentication Protection</h2>
 
       <Typography>
@@ -78,6 +77,6 @@ export default function DangerZoneComponent({ schema, setSchema }: Props) {
           })
         }
       />
-    </ErrorBoundary>
+    </>
   );
 }

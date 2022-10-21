@@ -7,9 +7,8 @@ import {
   Spin,
   Tag,
   TagProps,
-  Typography
+  Typography,
 } from 'antd';
-import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
 import cloneDeep from 'lodash.clonedeep';
 import snakeCase from 'lodash.snakecase';
 import startCase from 'lodash.startcase';
@@ -202,7 +201,7 @@ export default function RelationsComponent({
   }
 
   return (
-    <ErrorBoundary>
+    <>
       <Typography className="mb-8">
         <Typography.Paragraph>
           You can connect tables in three diffent way <strong>has one</strong>,{' '}
@@ -412,6 +411,6 @@ export default function RelationsComponent({
         </Button>
       </div>
       {showEditor}
-    </ErrorBoundary>
+    </>
   );
 }
