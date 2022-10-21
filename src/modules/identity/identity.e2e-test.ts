@@ -1,7 +1,7 @@
+import { IKernel, Kernel } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
-import { decode } from 'jsonwebtoken';
-import { AppModule } from '../../app/app.module';
-import { IKernel, Kernel } from '../../app/kernel';
+import jwt from 'jsonwebtoken';
+import { BackendModule } from '../../app/backend.module';
 import { HttpUpstreamProvider } from '../http/provider/http-upstream.provider';
 import { IJwtPayload } from './interface/jwt-payload.interface';
 
@@ -13,7 +13,7 @@ describe('Identity (e2e)', () => {
 
   beforeAll(async () => {
     app = new Kernel();
-    app.register([AppModule]);
+    app.register([BackendModule]);
 
     await app.boostrap();
     await app.start();
@@ -185,7 +185,7 @@ describe('Identity (e2e)', () => {
         },
       });
 
-      const aid = (decode(signin.json().accessToken) as IJwtPayload).aid;
+      const aid = (jwt.decode(signin.json().accessToken) as IJwtPayload).aid;
       expect(aid).toBeTruthy();
 
       const create = await srv.inject({

@@ -7,10 +7,13 @@ import {
   List,
   message,
   Select,
-  Switch,
+  Switch
 } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
-import { camelCase, cloneDeep, isEqual, upperFirst } from 'lodash';
+import camelCase from 'lodash.camelcase';
+import cloneDeep from 'lodash.clonedeep';
+import isEqual from 'lodash.isequal';
+import upperFirst from 'lodash.upperfirst';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IField, ISchema } from '../../..';
@@ -19,7 +22,7 @@ import { IRelation } from '../../../interface/relation.interface';
 import {
   FieldTool,
   getTakenColumNames,
-  isPrimary,
+  isPrimary
 } from '../../../util/field-tools';
 
 type Props = {

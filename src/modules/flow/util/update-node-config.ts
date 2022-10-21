@@ -1,5 +1,5 @@
 import * as jsonSchemaInst from 'json-schema-instantiator';
-import { merge } from 'lodash';
+import merge from 'lodash.merge';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 
 /**

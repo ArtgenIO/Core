@@ -1,5 +1,5 @@
-import { kebabCase } from 'lodash';
-import { Service } from '../../app/container';
+import { Service } from '@hisorange/kernel';
+import kebabCase from 'lodash.kebabcase';
 import { ITransformer } from './interface/transformer.interface';
 
 @Service({

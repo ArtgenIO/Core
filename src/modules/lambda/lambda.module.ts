@@ -1,4 +1,4 @@
-import { Module } from '../../app/container';
+import { Module } from '@hisorange/kernel';
 import { CompareLambda } from './lambda/if.lambda';
 import { LengthLambda } from './lambda/length.lambda';
 import { ReadLambdaLambda } from './lambda/read-lambda.lambda';

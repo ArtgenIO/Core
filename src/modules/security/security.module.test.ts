@@ -1,5 +1,5 @@
+import { IKernel, Kernel } from '@hisorange/kernel';
 import { assert } from 'console';
-import { IKernel, Kernel } from '../../app/kernel';
 import { TrapGateway } from './gateway/trap.gateway';
 import { SecurityModule } from './security.module';
 

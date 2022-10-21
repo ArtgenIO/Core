@@ -1,12 +1,12 @@
-import { debounce, DebouncedFunc } from 'lodash';
-import { Inject } from '../../app/container';
+import { Inject } from '@hisorange/kernel';
+import debounce from 'lodash.debounce';
 import { Observer, On } from '../event';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { EventService } from './event.service';
 
 @Observer()
 export class EventObserver {
-  protected __update: DebouncedFunc<() => Promise<void>>;
+  protected __update: () => Promise<void>;
 
   constructor(
     @Inject(EventService)

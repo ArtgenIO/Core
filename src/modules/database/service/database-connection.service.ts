@@ -1,8 +1,7 @@
+import { IKernel, ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { Constructor } from '@loopback/context';
 import knex, { Knex } from 'knex';
 import { UnsupportedDialect } from '..';
-import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { IKernel } from '../../../app/kernel';
 import { ISchema } from '../../schema';
 import { BucketKey } from '../../telemetry/interface/bucket-key.enum';
 import { TelemetryService } from '../../telemetry/telemetry.service';
@@ -79,6 +78,7 @@ export class DatabaseConnectionService {
           connection: {
             filename: dsn.substring(7),
           },
+          useNullAsDefault: true,
         });
       case 'postgres':
         return knex({

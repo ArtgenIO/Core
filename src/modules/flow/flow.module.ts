@@ -1,5 +1,4 @@
-import { IModule, Module } from '../../app/container';
-import { moduleRef } from '../../app/container/module-ref';
+import { IModule, Module, moduleRef } from '@hisorange/kernel';
 import { DatabaseModule } from '../database/database.module';
 import { EventModule } from '../event';
 import { IdentityModule } from '../identity/identity.module';

@@ -1,5 +1,6 @@
 import { List, Switch, Typography } from 'antd';
-import { cloneDeep } from 'lodash';
+
+import cloneDeep from 'lodash.clonedeep';
 import { Dispatch, SetStateAction } from 'react';
 import { FieldTag, FieldType, ISchema } from '../..';
 import { RelationType } from '../../interface/relation.interface';

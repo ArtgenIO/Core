@@ -1,7 +1,6 @@
-import { Provider } from '@loopback/context';
+import { Provider, Service } from '@hisorange/kernel';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { Service } from '../../../app/container';
 import { ROOT_DIR } from '../../../app/globals';
 
 @Service()

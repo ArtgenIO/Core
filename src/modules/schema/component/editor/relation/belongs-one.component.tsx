@@ -1,14 +1,13 @@
 import { PlusSquareOutlined, SaveOutlined } from '@ant-design/icons';
 import { Button, Drawer, Form, Input, List, Select, Switch } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
-import {
-  camelCase,
-  cloneDeep,
-  isEqual,
-  snakeCase,
-  startCase,
-  upperFirst,
-} from 'lodash';
+
+import camelCase from 'lodash.camelcase';
+import cloneDeep from 'lodash.clonedeep';
+import isEqual from 'lodash.isequal';
+import snakeCase from 'lodash.snakecase';
+import startCase from 'lodash.startcase';
+import upperFirst from 'lodash.upperfirst';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IField, ISchema } from '../../..';
@@ -17,7 +16,7 @@ import { IRelation } from '../../../interface/relation.interface';
 import {
   FieldTool,
   getTakenColumNames,
-  isPrimary,
+  isPrimary
 } from '../../../util/field-tools';
 import { migrateField } from '../../../util/migrate-field';
 import FieldEditor from '../field-editor.component';

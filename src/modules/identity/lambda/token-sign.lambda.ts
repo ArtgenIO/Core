@@ -1,6 +1,7 @@
-import { sign, SignOptions } from 'jsonwebtoken';
+import { Inject, Service } from '@hisorange/kernel';
+import jwt, { SignOptions } from 'jsonwebtoken';
+
 import { Model } from 'objection';
-import { Inject, Service } from '../../../app/container';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
@@ -64,7 +65,7 @@ export class TokenSignLambda implements ILambda {
     const secret = await this.authService.getJwtSecret();
 
     return {
-      token: sign(payload, secret, {
+      token: jwt.sign(payload, secret, {
         expiresIn: config.expiresIn,
       }),
     };

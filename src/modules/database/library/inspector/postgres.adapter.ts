@@ -1,12 +1,16 @@
-import BaseAdapter from 'knex-schema-inspector/dist/dialects/postgres';
+import { Constructor } from '@loopback/context';
+import Adapter from 'knex-schema-inspector/dist/dialects/postgres';
 import { Column } from 'knex-schema-inspector/dist/types/column';
+import { SchemaInspector } from 'knex-schema-inspector/dist/types/schema-inspector.js';
 import {
   IDatabaseInspectorAdapter as IAdapter,
   IEnumeratorStructure,
-  Unique,
+  Unique
 } from '../../interface/inspector';
 
-export class PostgresAdapter extends BaseAdapter implements IAdapter {
+const Postgres = (Adapter as any).default as Constructor<SchemaInspector>;
+
+export class PostgresAdapter extends Postgres implements IAdapter {
   async isTypeExists(typeName: string): Promise<boolean> {
     const query = this.knex('pg_type').where({ typname: typeName }).count();
     const result = await query;

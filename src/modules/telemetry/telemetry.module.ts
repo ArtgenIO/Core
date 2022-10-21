@@ -1,5 +1,4 @@
-import { IModule, Module } from '../../app/container';
-import { IKernel } from '../../app/kernel';
+import { IKernel, IModule, Module } from '@hisorange/kernel';
 import { TelemetryGateway } from './telemetry.gateway';
 import { TelemetryService } from './telemetry.service';
 

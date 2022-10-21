@@ -1,4 +1,4 @@
-import { Module } from '../../app/container';
+import { Module } from '@hisorange/kernel';
 import { VersionProvider } from './provider/version.provider';
 
 @Module({

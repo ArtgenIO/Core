@@ -1,5 +1,5 @@
+import { Service } from '@hisorange/kernel';
 import { genSaltSync, hashSync } from 'bcrypt';
-import { Service } from '../../app/container';
 import { ITransformer } from './interface/transformer.interface';
 
 @Service({

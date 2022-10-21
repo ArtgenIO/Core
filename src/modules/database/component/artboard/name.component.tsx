@@ -1,6 +1,6 @@
 import { DatabaseOutlined } from '@ant-design/icons';
 import { Input } from 'antd';
-import { startCase } from 'lodash';
+import startCase from 'lodash.startcase';
 
 export default function DatabaseNameComponent({ name }: { name: string }) {
   return (

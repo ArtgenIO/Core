@@ -3,10 +3,10 @@ import {
   DatabaseOutlined,
   FileOutlined,
   HomeOutlined,
-  PartitionOutlined,
+  PartitionOutlined
 } from '@ant-design/icons';
 import { Layout, Menu, Spin } from 'antd';
-import { snakeCase } from 'lodash';
+import snakeCase from 'lodash.snakecase';
 import { ReactNode, Suspense, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import MeButtonComponent from '../../identity/component/me-button.component';

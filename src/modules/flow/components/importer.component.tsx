@@ -3,7 +3,6 @@ import { Button, Input, notification } from 'antd';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 } from 'uuid';
-import { getErrorMessage } from '../../../app/kernel/util/extract-error';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../admin/library/http-client';
@@ -48,7 +47,7 @@ export default function ImportFlowComponent() {
         notification.error({
           key: 'flow-import',
           message: 'Flow validation failed',
-          description: getErrorMessage(error),
+          description: ((error as Error)?.message),
         });
       }
     }

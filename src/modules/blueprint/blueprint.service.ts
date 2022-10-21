@@ -1,6 +1,5 @@
+import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { v4 } from 'uuid';
-import { ILogger, Inject, Logger, Service } from '../../app/container';
-import { getErrorMessage } from '../../app/kernel';
 import { DatabaseConnectionService } from '../database/service/database-connection.service';
 import { RestService } from '../rest/service/rest.service';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
@@ -108,11 +107,11 @@ export class BlueprintService {
             .catch(e =>
               this.logger
                 .warn(
-                  'Could not create [%s][%s] schema',
+                  'Could not create [%s][%s] schema [%s]',
                   blueprint.title,
                   schema.reference,
-                )
-                .warn(getErrorMessage(e)),
+                  e?.message,
+                ),
             );
         } else {
           this.logger.debug(

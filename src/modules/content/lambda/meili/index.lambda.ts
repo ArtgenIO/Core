@@ -1,6 +1,6 @@
+import { IContext, Service } from '@hisorange/kernel';
 import { inject } from '@loopback/context';
 import MeiliSearch from 'meilisearch';
-import { IContext, Service } from '../../../../app/container';
 import { RowLike } from '../../../../app/interface/row-like.interface';
 import { FlowSession } from '../../../flow/library/flow.session';
 import { Lambda } from '../../../lambda/decorator/lambda.decorator';

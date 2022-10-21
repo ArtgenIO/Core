@@ -1,7 +1,7 @@
+import { IKernel, Kernel } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
 import { HttpUpstreamProvider } from '../modules/http/provider/http-upstream.provider';
-import { AppModule } from './app.module';
-import { IKernel, Kernel } from './kernel';
+import { BackendModule } from './backend.module';
 
 describe('Application (e2e)', () => {
   let app: IKernel;
@@ -11,7 +11,7 @@ describe('Application (e2e)', () => {
 
   beforeAll(async () => {
     app = new Kernel();
-    app.register([AppModule]);
+    app.register([BackendModule]);
 
     await app.boostrap();
     await app.start();
@@ -19,17 +19,9 @@ describe('Application (e2e)', () => {
     // Wait until it the HttpServer is ready
   }, 30_000);
 
-  afterAll(async () => await app.stop());
-
-  test('should serve the [admin] page', async () => {
-    const srv = await getServer();
-
-    const response = await srv.inject({
-      url: '/admin/index.html',
-    });
-
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toMatch(/html/);
+  afterAll(async () => {
+    (await getServer()).close();
+    await app.stop();
   });
 
   test('should serve the [404] response', async () => {

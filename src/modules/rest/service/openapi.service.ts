@@ -1,8 +1,8 @@
+import { Inject, Service } from '@hisorange/kernel';
 import { FastifySchema } from 'fastify';
 import { JSONSchema7Definition, JSONSchema7Object } from 'json-schema';
-import { kebabCase } from 'lodash';
+import kebabCase from 'lodash.kebabcase';
 import { OpenAPIV3 } from 'openapi-types';
-import { Inject, Service } from '../../../app/container';
 import { FieldTag, FieldType, ISchema } from '../../schema';
 import { FieldTool, isPrimary } from '../../schema/util/field-tools';
 import { VersionProvider } from '../../upgrade/provider/version.provider';

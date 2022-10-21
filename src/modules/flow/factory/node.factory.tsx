@@ -1,5 +1,5 @@
 import { Avatar } from 'antd';
-import { kebabCase } from 'lodash';
+import kebabCase from 'lodash.kebabcase';
 import { Handle, NodeProps, Position } from 'react-flow-renderer';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import { INode } from '../interface';

@@ -1,5 +1,5 @@
-import { Constructor, Provider } from '@loopback/context';
-import { Service } from '../../../app/container';
+import { Provider, Service } from '@hisorange/kernel';
+import { Constructor } from '@loopback/context';
 import { IDatabaseConnection } from '../interface';
 import { DatabaseConnection } from '../library/database.connection';
 

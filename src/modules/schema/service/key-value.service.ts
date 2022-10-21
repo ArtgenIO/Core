@@ -1,5 +1,5 @@
+import { Inject, Service } from '@hisorange/kernel';
 import { Model } from 'objection';
-import { Inject, Service } from '../../../app/container';
 import { IKeyValueRecord } from '../../content/interface/key-value.interface';
 import { SchemaRef } from '../interface/system-ref.enum';
 import { SchemaService } from './schema.service';

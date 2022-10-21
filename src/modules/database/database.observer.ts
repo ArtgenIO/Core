@@ -1,5 +1,4 @@
-import { ILogger, Inject, Logger } from '../../app/container';
-import { getErrorMessage } from '../../app/kernel';
+import { ILogger, Inject, Logger } from '@hisorange/kernel';
 import { Observer, On } from '../event';
 import { ISchema } from '../schema';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
@@ -25,7 +24,7 @@ export class DatabaseObserver {
     try {
       await this.connections.findOne(schema.database).associate([schema]);
     } catch (error) {
-      this.logger.error(getErrorMessage(error));
+      this.logger.error(((error as Error)?.message));
       console.error(error);
     }
   }
@@ -37,7 +36,7 @@ export class DatabaseObserver {
     try {
       await this.connections.findOne(newSchema.database).associate([newSchema]);
     } catch (error) {
-      this.logger.error(getErrorMessage(error));
+      this.logger.error(((error as Error)?.message));
       console.error(error);
     }
   }
@@ -49,7 +48,7 @@ export class DatabaseObserver {
     try {
       await this.connections.findOne(schema.database).deassociate([schema]);
     } catch (error) {
-      this.logger.error(getErrorMessage(error));
+      this.logger.error(((error as Error)?.message));
       console.error(error);
     }
   }
@@ -66,7 +65,7 @@ export class DatabaseObserver {
 
       this.logger.info('Database [%s] connected', database.ref);
     } catch (error) {
-      this.logger.error(getErrorMessage(error));
+      this.logger.error(((error as Error)?.message));
       console.error(error);
     }
   }
@@ -87,7 +86,7 @@ export class DatabaseObserver {
 
       this.logger.info('Link [%s] closed', database.ref);
     } catch (error) {
-      this.logger.error(getErrorMessage(error));
+      this.logger.error(((error as Error)?.message));
       console.error(error);
     }
   }

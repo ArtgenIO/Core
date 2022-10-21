@@ -1,6 +1,7 @@
-import { Knex } from 'knex';
+import { IKernel, Kernel } from '@hisorange/kernel';
+import { jest } from '@jest/globals';
+import { default as KNEX } from 'knex';
 import { IDatabase } from '..';
-import { IKernel, Kernel } from '../../../app/kernel';
 import { DatabaseModule } from '../database.module';
 import { DatabaseConnection } from './database.connection';
 
@@ -14,7 +15,7 @@ describe(DatabaseConnection.name, () => {
 
   const create = (connection = {}) => {
     return app.create(DatabaseConnection, [
-      connection as Partial<Knex> as any,
+      connection as Partial<ReturnType<typeof KNEX>> as any,
       {
         title: 'test',
         ref: 'test',
@@ -34,8 +35,8 @@ describe(DatabaseConnection.name, () => {
   });
 
   test('Propagate the close call to the connection', async () => {
-    const con: Pick<Knex, 'destroy'> = {
-      destroy: jest.fn(),
+    const con: Pick<ReturnType<typeof KNEX>, 'destroy'> = {
+      destroy: jest.fn() as any,
     };
     const connection = await create(con);
     await connection.close();

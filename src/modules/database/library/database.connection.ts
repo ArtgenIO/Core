@@ -1,16 +1,17 @@
+import { ILogger, Inject, Logger } from '@hisorange/kernel';
 import { Binding } from '@loopback/context';
-import { Knex } from 'knex';
-import { cloneDeep, isEqual } from 'lodash';
+import { default as KNEX } from 'knex';
+import cloneDeep from 'lodash.clonedeep';
+import isEqual from 'lodash.isequal';
 import {
   Model,
   ModelClass,
   Pojo,
   RelationMappings,
   RelationThrough,
-  RelationType as ObjectionRelationType,
+  RelationType as ObjectionRelationType
 } from 'objection';
 import { v4 } from 'uuid';
-import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldTag, FieldType, ISchema } from '../../schema';
 import { RelationType } from '../../schema/interface/relation.interface';
@@ -42,7 +43,7 @@ export class DatabaseConnection implements IDatabaseConnection {
       binding.tagNames.includes('transformer'),
     )
     readonly transformers: ITransformer[],
-    readonly knex: Knex,
+    readonly knex: ReturnType<typeof KNEX>,
     readonly database: IDatabase,
     readonly dialect: Dialect,
   ) {

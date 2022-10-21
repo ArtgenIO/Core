@@ -1,9 +1,12 @@
-import BaseAdapter from 'knex-schema-inspector/dist/dialects/sqlite';
+
+import { Constructor } from '@loopback/context';
+import Adapter from 'knex-schema-inspector/dist/dialects/sqlite';
 import { Column } from 'knex-schema-inspector/dist/types/column';
+import { SchemaInspector } from 'knex-schema-inspector/dist/types/schema-inspector.js';
 import {
-  IDatabaseInspectorAdapter as IAdapter,
+  IDatabaseInspectorAdapter,
   IEnumeratorStructure,
-  Unique,
+  Unique
 } from '../../interface/inspector';
 
 type IndexRecord = {
@@ -15,7 +18,9 @@ type IndexInfoRecord = {
   name: string;
 };
 
-export class SQLiteAdapter extends BaseAdapter implements IAdapter {
+const SQLite = (Adapter as any).default as Constructor<SchemaInspector>;
+
+export class SQLiteAdapter extends SQLite implements IDatabaseInspectorAdapter {
   async enumerators(
     tableName: string,
     columns: Column[],

@@ -1,11 +1,10 @@
+import { IKernel, Kernel } from '@hisorange/kernel';
 import {
   BindingScope,
   createBindingFromClass,
   instantiateClass,
-  isProviderClass,
+  isProviderClass
 } from '@loopback/context';
-import { IKernel } from '../../../app/kernel/interface/kernel.interface';
-import { Kernel } from '../../../app/kernel/kernel';
 import { DatabaseModule } from '../../database/database.module';
 import { HttpUpstreamProvider } from './http-upstream.provider';
 

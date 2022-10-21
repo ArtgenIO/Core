@@ -1,6 +1,7 @@
 import { FileAddOutlined } from '@ant-design/icons';
 import { Button, Divider, Result, Select, Spin, Typography } from 'antd';
-import { cloneDeep, startCase } from 'lodash';
+import cloneDeep from 'lodash.clonedeep';
+import startCase from 'lodash.startcase';
 import { Dispatch, SetStateAction } from 'react';
 import { Link } from 'react-router-dom';
 import { ISchema } from '../..';

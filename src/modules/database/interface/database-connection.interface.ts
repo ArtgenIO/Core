@@ -1,4 +1,6 @@
-import { Knex } from 'knex';
+
+
+import { default as KNEX } from 'knex';
 import { Model, ModelClass } from 'objection';
 import { IDatabase, ITableStructure } from '.';
 import { DatabaseSynchronizer } from '..';
@@ -17,7 +19,7 @@ export interface IDatabaseConnection {
   /**
    * ORM connection
    */
-  readonly knex: Knex;
+  readonly knex: ReturnType<typeof KNEX>;
 
   /**
    * Connection's dialect.

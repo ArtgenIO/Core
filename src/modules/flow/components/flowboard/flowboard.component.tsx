@@ -3,11 +3,12 @@ import {
   BuildOutlined,
   ClusterOutlined,
   CodeOutlined,
-  SwitcherOutlined,
+  SwitcherOutlined
 } from '@ant-design/icons';
 import { Avatar, Layout, Menu, message, Switch } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
-import { cloneDeep, kebabCase } from 'lodash';
+import cloneDeep from 'lodash.clonedeep';
+import kebabCase from 'lodash.kebabcase';
 import { DragEvent, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
   addEdge,
@@ -17,7 +18,7 @@ import ReactFlow, {
   isNode,
   MarkerType,
   NodeTypes,
-  useReactFlow,
+  useReactFlow
 } from 'react-flow-renderer';
 import { useParams } from 'react-router';
 import { useRecoilState } from 'recoil';

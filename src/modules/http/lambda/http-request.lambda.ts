@@ -1,5 +1,5 @@
+import { Service } from '@hisorange/kernel';
 import client, { AxiosError, AxiosRequestConfig } from 'axios';
-import { Service } from '../../../app/container';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';

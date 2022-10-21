@@ -1,7 +1,7 @@
+import { ILogger, Logger, Service } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
 import staticMiddleware from 'fastify-static';
 import { join } from 'path';
-import { ILogger, Logger, Service } from '../../../app/container';
 import { ROOT_DIR } from '../../../app/globals';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
 

@@ -7,29 +7,27 @@ import {
   List,
   message,
   Select,
-  Switch,
+  Switch
 } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
-import {
-  camelCase,
-  cloneDeep,
-  isEqual,
-  snakeCase,
-  startCase,
-  upperFirst,
-} from 'lodash';
+import camelCase from 'lodash.camelcase';
+import cloneDeep from 'lodash.clonedeep';
+import isEqual from 'lodash.isequal';
+import snakeCase from 'lodash.snakecase';
+import startCase from 'lodash.startcase';
+import upperFirst from 'lodash.upperfirst';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { FieldTag, ISchema } from '../../..';
 import { schemasAtom } from '../../../../admin/admin.atoms';
 import {
   IRelation,
-  IRelationBelongsToMany,
+  IRelationBelongsToMany
 } from '../../../interface/relation.interface';
 import {
   FieldTool,
   getTakenColumNames,
-  isPrimary,
+  isPrimary
 } from '../../../util/field-tools';
 import { createEmptySchema } from '../../../util/get-new-schema';
 

@@ -1,5 +1,7 @@
 import { Form, Input, Select, Tooltip } from 'antd';
-import { camelCase, cloneDeep, snakeCase } from 'lodash';
+import camelCase from 'lodash.camelcase';
+import cloneDeep from 'lodash.clonedeep';
+import snakeCase from 'lodash.snakecase';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ISchema } from '../..';

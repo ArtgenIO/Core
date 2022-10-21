@@ -1,3 +1,8 @@
+### Version 0.4.0
+
+- ESM upgrade (backend)
+- Use external simplified packages to reduce complexity
+
 ### Version 0.2.0
 
 - Beta release

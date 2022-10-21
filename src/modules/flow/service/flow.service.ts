@@ -1,7 +1,7 @@
-import { EventEmitter2 } from 'eventemitter2';
+import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
+import EventEmitter2 from 'eventemitter2';
 import { Model } from 'objection';
 import { v4 } from 'uuid';
-import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { SchemaService } from '../../schema/service/schema.service';

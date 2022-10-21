@@ -1,5 +1,5 @@
-import { snakeCase } from 'lodash';
-import { Service } from '../../app/container';
+import { Service } from '@hisorange/kernel';
+import snakeCase from 'lodash.snakecase';
 import { ITransformer } from './interface/transformer.interface';
 
 @Service({

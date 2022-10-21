@@ -1,7 +1,6 @@
-import { Provider } from '@loopback/context';
+import { Inject, Provider, Service } from '@hisorange/kernel';
 import { FastifyReply, FastifyRequest, RouteHandlerMethod } from 'fastify';
 import { Authenticator } from 'fastify-passport';
-import { Inject, Service } from '../../../app/container';
 import { STRATEGY_CONFIG } from '../util/strategy.config';
 
 @Service()

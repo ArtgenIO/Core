@@ -1,6 +1,6 @@
+import { IKernel, Kernel } from '@hisorange/kernel';
+import { jest } from '@jest/globals';
 import { UnsupportedDialect } from '..';
-import { IKernel } from '../../../app/kernel/interface/kernel.interface';
-import { Kernel } from '../../../app/kernel/kernel';
 import { DatabaseModule } from '../database.module';
 import { DatabaseConnection } from '../library/database.connection';
 import { DatabaseConnectionConcrete } from '../provider/connection-concrete.provider';

@@ -10,7 +10,7 @@ Dockerfile
 .git
 .github
 .gitignore
-jest.config.js
+jest.config.json
 node_modules
 postcss.config.js
 .prettierrc.js

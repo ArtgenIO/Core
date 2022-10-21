@@ -1,4 +1,4 @@
-import { kebabCase } from 'lodash';
+import kebabCase from 'lodash.kebabcase';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import { CustomNode } from '../interface/custom-node';
 import { createNode } from './create-node';

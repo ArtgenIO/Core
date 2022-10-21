@@ -1,4 +1,4 @@
-import { Module } from '../../app/container';
+import { Module } from '@hisorange/kernel';
 import { AdminGateway } from './gateway/admin.gateway';
 
 @Module({

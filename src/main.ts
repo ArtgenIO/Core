@@ -1,10 +1,9 @@
+import { IKernel, IModule, Kernel } from '@hisorange/kernel';
 import { Constructor } from '@loopback/context';
 import 'dotenv-defaults/config';
+import esMain from 'es-main';
 import 'reflect-metadata';
 import { AppModule } from './app/app.module';
-import { IModule } from './app/container';
-import { IKernel } from './app/kernel';
-import { Kernel } from './app/kernel/kernel';
 
 export async function main(modules: Constructor<IModule>[]): Promise<IKernel> {
   const kernel = new Kernel();
@@ -46,6 +45,6 @@ export async function main(modules: Constructor<IModule>[]): Promise<IKernel> {
 }
 
 // Direct invoking, run the application.
-if (require.main === module) {
+if (esMain(import.meta)) {
   main([AppModule]);
 }

@@ -1,5 +1,5 @@
+import { IKernel, Kernel } from '@hisorange/kernel';
 import { assert } from 'console';
-import { IKernel, Kernel } from '../../app/kernel';
 import { RestGateway } from './rest.gateway';
 import { RestModule } from './rest.module';
 import { OpenApiService } from './service/openapi.service';

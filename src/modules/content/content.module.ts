@@ -1,5 +1,4 @@
-import { IModule, Module } from '../../app/container';
-import { moduleRef } from '../../app/container/module-ref';
+import { IModule, Module, moduleRef } from '@hisorange/kernel';
 import { DatabaseModule } from '../database/database.module';
 import { SchemaModule } from '../schema/schema.module';
 import { ContentMeiliIndexLambda } from './lambda/meili/index.lambda';

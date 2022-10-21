@@ -1,10 +1,9 @@
+import { IKernel, ILogger, Inject, Logger } from '@hisorange/kernel';
 import { Constructor, MetadataInspector } from '@loopback/context';
-import { debounce } from 'debounce';
-import { EventEmitter2 } from 'eventemitter2';
+import EventEmitter2 from 'eventemitter2';
+import debounce from 'lodash.debounce';
 import { v4 } from 'uuid';
 import { OnParams, ON_META_KEY } from '.';
-import { ILogger, Inject, Logger } from '../../app/container';
-import { IKernel } from '../../app/kernel';
 import { FlowService } from '../flow/service/flow.service';
 import { EventTriggerConfig } from './lambda/event.trigger';
 

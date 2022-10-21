@@ -1,5 +1,5 @@
-import { startCase } from 'lodash';
 import kebabCase from 'lodash.kebabcase';
+import startCase from 'lodash.startcase';
 import { ILambdaMeta } from '../../lambda/interface/meta.interface';
 import { CustomNode } from '../interface/custom-node';
 import { Elements } from '../interface/elements.interface';

@@ -1,6 +1,6 @@
-import { debounce, DebouncedFunc } from 'lodash';
+import { Inject } from '@hisorange/kernel';
+import debounce from 'lodash.debounce';
 import isEqual from 'lodash.isequal';
-import { Inject } from '../../app/container';
 import { IKeyValueRecord } from '../content/interface/key-value.interface';
 import { toStructure } from '../database/library/structure/to-structure';
 import { Observer, On } from '../event';
@@ -10,7 +10,7 @@ import { HttpService } from './service/http.service';
 
 @Observer()
 export class HttpObserver {
-  protected __update: DebouncedFunc<() => Promise<void>>;
+  protected __update: () => Promise<void>;
 
   constructor(
     @Inject(HttpService)

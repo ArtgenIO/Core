@@ -1,8 +1,7 @@
+import { IKernel, ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { Constructor, MetadataInspector } from '@loopback/context';
 import schedule from 'node-schedule';
 import { JobParams, JOB_META_KEY } from '.';
-import { ILogger, Inject, Logger, Service } from '../../app/container';
-import { IKernel } from '../../app/kernel';
 import { FlowService } from '../flow/service/flow.service';
 import { CronTriggerConfig } from './lambda/cron.trigger';
 

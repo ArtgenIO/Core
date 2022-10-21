@@ -1,12 +1,11 @@
+import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import {
   FastifyInstance,
   FastifyReply,
   FastifyRequest,
   RouteHandlerMethod,
-  RouteShorthandOptions,
+  RouteShorthandOptions
 } from 'fastify';
-import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { getErrorMessage } from '../../../app/kernel';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
 import { HttpTriggerConfig } from '../../http/lambda/http-trigger.lambda';
 import { AuthenticationHandlerProvider } from '../../identity/provider/authentication-handler.provider';
@@ -149,7 +148,7 @@ export class LogicHttpGateway implements IHttpGateway {
             } catch (error) {
               reply.statusCode = 400;
 
-              this.logger.warn(getErrorMessage(error));
+              this.logger.warn((error as Error)?.message);
 
               return {
                 statusCode: 400,

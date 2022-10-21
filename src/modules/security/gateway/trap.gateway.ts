@@ -1,5 +1,5 @@
+import { ILogger, Logger, Service } from '@hisorange/kernel';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { ILogger, Logger, Service } from '../../../app/container';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
 
 const WPTrapPaths = ['/wp-login.php', '/wp-admin'];

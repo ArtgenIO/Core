@@ -1,6 +1,6 @@
+import { Inject, Service } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
 import { Authenticator } from 'fastify-passport';
-import { Inject, Service } from '../../../app/container';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
 import { AuthenticationService } from '../service/authentication.service';
 

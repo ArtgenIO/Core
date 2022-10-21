@@ -1,5 +1,5 @@
+import { Service } from '@hisorange/kernel';
 import dayjs from 'dayjs';
-import { Service } from '../../../app/container';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';

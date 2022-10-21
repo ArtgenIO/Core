@@ -1,4 +1,4 @@
-import { IKernel, Kernel } from '../../../app/kernel';
+import { IKernel, Kernel } from '@hisorange/kernel';
 import { DatabaseModule } from '../database.module';
 import { DatabaseService } from './database.service';
 

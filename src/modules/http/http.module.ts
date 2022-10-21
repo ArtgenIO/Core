@@ -1,6 +1,4 @@
-import { FastifyInstance } from 'fastify';
-import { ILogger, IModule, Logger, Module } from '../../app/container';
-import { IKernel } from '../../app/kernel';
+import { IKernel, ILogger, IModule, Logger, Module } from '@hisorange/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
 import { RestModule } from '../rest/rest.module';
 import { TelemetryModule } from '../telemetry/telemetry.module';
@@ -46,13 +44,6 @@ export class HttpModule implements IModule {
   }
 
   async onStop(kernel: IKernel) {
-    const http = await kernel.context.get<FastifyInstance>(
-      'providers.HttpProxyProvider',
-    );
-
-    // Deregister gateways.
-    await (await kernel.get(HttpService)).stopServer();
-
-    await http.close().then(() => this.logger.info('HTTP server stopped'));
+    await (await kernel.get(HttpService)).stopServer().then(() => this.logger.info('HTTP server stopped'));
   }
 }

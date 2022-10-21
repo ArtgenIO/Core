@@ -6,7 +6,7 @@ import {
   EyeOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
-  UpOutlined,
+  UpOutlined
 } from '@ant-design/icons';
 import {
   Avatar,
@@ -15,9 +15,9 @@ import {
   message,
   Popconfirm,
   Tag,
-  Typography,
+  Typography
 } from 'antd';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash.clonedeep';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FieldType, IField, ISchema } from '../..';
 import { GridTools } from '../../../content/util/grid.tools';

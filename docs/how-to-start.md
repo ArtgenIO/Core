@@ -5,7 +5,7 @@
 In development mode use the following command:
 
 ```sh
-yarn start:dev
+yarn dev
 ```
 
 In production mode use the following command:

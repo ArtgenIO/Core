@@ -1,5 +1,4 @@
-import { Module } from '../../app/container';
-import { moduleRef } from '../../app/container/module-ref';
+import { Module, moduleRef } from '@hisorange/kernel';
 import { SchemaModule } from '../schema/schema.module';
 import { UpgradeModule } from '../upgrade/upgrade.module';
 import { RestCreateLambda } from './lambda/rest-create.lambda';

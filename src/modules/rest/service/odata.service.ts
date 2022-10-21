@@ -1,16 +1,17 @@
-import { merge, pick } from 'lodash';
+import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
+import merge from 'lodash.merge';
+import pick from 'lodash.pick';
 import {
   Model,
   ModelClass,
   Operator,
   QueryBuilder,
   ref,
-  RelationExpression,
+  RelationExpression
 } from 'objection';
 import parser from 'odata-parser';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { inspect } from 'util';
-import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldType, ISchema } from '../../schema';
 import { SchemaService } from '../../schema/service/schema.service';
@@ -18,7 +19,7 @@ import {
   fLiteral,
   fLogic,
   fPropery,
-  IODataAST,
+  IODataAST
 } from '../interface/odata-ast.interface';
 
 type QB = QueryBuilder<Model, Model[]>;

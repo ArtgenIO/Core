@@ -1,5 +1,5 @@
-import { cloneDeep } from 'lodash';
-import { IKernel, Kernel } from '../../app/kernel';
+import { IKernel, Kernel } from '@hisorange/kernel';
+import cloneDeep from 'lodash.clonedeep';
 import { FieldType, ISchema } from '../schema';
 import { DatabaseModule } from './database.module';
 import { DatabaseConnectionService } from './service/database-connection.service';
@@ -32,7 +32,7 @@ describe('Database E2E', () => {
     const connections = await kernel.get(DatabaseConnectionService);
     const connection = connections.findOne('main');
     // Load the test schema
-    const subject: ISchema = require(`../../../tests/schemas/${ref}.schema.json`);
+    const subject: ISchema = (await import(`../../../tests/schemas/${ref}.schema.json`)).default;
 
     // Remove artifacts from previous test if any
     await connection.synchornizer.deleteTable(ref);

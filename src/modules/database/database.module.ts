@@ -1,6 +1,11 @@
-import { ILogger, IModule, Logger, Module } from '../../app/container';
-import { moduleRef } from '../../app/container/module-ref';
-import { IKernel } from '../../app/kernel';
+import {
+  IKernel,
+  ILogger,
+  IModule,
+  Logger,
+  Module,
+  moduleRef,
+} from '@hisorange/kernel';
 import { RestModule } from '../rest/rest.module';
 import { RestService } from '../rest/service/rest.service';
 import { ISchema } from '../schema';

@@ -1,4 +1,4 @@
-import { Service } from '../../../app/container';
+import { Service } from '@hisorange/kernel';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../decorator/lambda.decorator';
 import { InputHandleDTO } from '../dto/input-handle.dto';

@@ -1,7 +1,6 @@
-import { Provider } from '@loopback/context';
+import { Provider, Service } from '@hisorange/kernel';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { Service } from '../../../app/container';
 import { SEED_DIR } from '../../../app/globals';
 import { migrateSchema } from '../../schema/util/migrate-schema';
 import { IBlueprint } from '../interface/blueprint.interface';

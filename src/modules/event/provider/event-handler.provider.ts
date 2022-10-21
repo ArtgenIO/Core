@@ -1,6 +1,5 @@
-import { Provider } from '@loopback/context';
-import { EventEmitter2 } from 'eventemitter2';
-import { Service } from '../../../app/container';
+import { Provider, Service } from '@hisorange/kernel';
+import EventEmitter2 from 'eventemitter2';
 
 @Service(EventEmitter2)
 export class EventHandlerProvider implements Provider<EventEmitter2> {

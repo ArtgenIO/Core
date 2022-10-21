@@ -1,4 +1,4 @@
-import { Service } from '../../../app/container';
+import { Service } from '@hisorange/kernel';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
@@ -7,7 +7,7 @@ import { ILambda } from '../../lambda/interface/lambda.interface';
 import { ITriggerConfig } from '../../lambda/interface/trigger-config.interface';
 import {
   JSCHEMA_MAP,
-  JSCHEMA_TRIGGER,
+  JSCHEMA_TRIGGER
 } from '../../lambda/utility/json-schema.helpers';
 
 type IncomingRequest = {

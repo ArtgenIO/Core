@@ -1,6 +1,6 @@
-import { EventEmitter2 } from 'eventemitter2';
+import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
+import EventEmitter2 from 'eventemitter2';
 import { Model, ModelClass } from 'objection';
-import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from '../../blueprint/provider/artgen-blueprint.provider';
 import { IContentModule } from '../../content/interface/content-module.interface';

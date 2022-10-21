@@ -1,4 +1,6 @@
-import { kebabCase, startCase } from 'lodash';
+
+import kebabCase from 'lodash.kebabcase';
+import startCase from 'lodash.startcase';
 import { INode } from '../interface';
 import { CustomNode } from '../interface/custom-node';
 

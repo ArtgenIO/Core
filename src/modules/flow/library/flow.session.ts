@@ -1,16 +1,16 @@
+import { ILogger } from '@hisorange/kernel';
 import Ajv from 'ajv';
-import { EventEmitter2 } from 'eventemitter2';
+import EventEmitter2 from 'eventemitter2';
+import { default as isJSON } from 'is-json';
 import * as jsonSchemaInst from 'json-schema-instantiator';
 import merge from 'lodash.merge';
 import nunjucks, { Environment } from 'nunjucks';
-import { ILogger } from '../../../app/container';
 import { ILambdaRecord } from '../../lambda/interface/record.interface';
 import { ITriggerConfig } from '../../lambda/interface/trigger-config.interface';
 import { ITriggerOutput } from '../../lambda/interface/trigger-output.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { IFlowSessionContext } from '../interface/flow-session-context.interface';
 import { IFlow } from '../interface/flow.interface';
-import isJSON = require('is-json');
 
 export class FlowSession {
   protected startedAt: number;
@@ -436,7 +436,7 @@ export class FlowSession {
 
           // Init a default config for the node
           if (typeof targetInput === 'object') {
-            if (targetHandle.schema && targetHandle.schema != {}) {
+            if (targetHandle.schema) {
               const handleDefaults = jsonSchemaInst.instantiate(
                 targetHandle.schema,
               );

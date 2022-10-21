@@ -1,12 +1,10 @@
-import { Provider } from '@loopback/context';
+import { ILogger, Inject, Logger, Provider, Service } from '@hisorange/kernel';
 import fastify, { FastifyInstance } from 'fastify';
 import FormBodyPlugin from 'fastify-formbody';
 import FastifyHttpErrorsEnhancedPlugin from 'fastify-http-errors-enhanced';
 import FastifySecureSessionPlugin from 'fastify-secure-session';
 import OpenAPIPlugin from 'fastify-swagger';
 import { v4 } from 'uuid';
-import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { getErrorMessage } from '../../../app/kernel';
 import { OpenApiService } from '../../rest/service/openapi.service';
 
 @Service()
@@ -71,7 +69,7 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
         'Request [%s][%s] error [%s]',
         req.method,
         req.url,
-        getErrorMessage(error),
+        (error as Error)?.message,
       );
 
       done();

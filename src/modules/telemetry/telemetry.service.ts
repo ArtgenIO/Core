@@ -1,6 +1,6 @@
+import { ILogger, Logger, Service } from '@hisorange/kernel';
 import { Serie } from '@nivo/line';
 import dayjs from 'dayjs';
-import { ILogger, Logger, Service } from '../../app/container';
 import { BucketKey } from './interface/bucket-key.enum';
 import { ITelemetryResult } from './interface/result.interface';
 import { Bucket } from './library/bucket';

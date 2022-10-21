@@ -1,13 +1,15 @@
 import { FieldTimeOutlined, LockOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
-import { lazy, PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { jwtAtom } from '../../admin/admin.atoms';
 import { getTokenExpiration } from '../util/get-token-expiration';
+import AuthLayoutComponent from './cover.component';
 
 export default function AuthenticationWrapperComponent({
   children,
 }: PropsWithChildren<{}>) {
+
   // State
   const token = useRecoilValue(jwtAtom);
   const resetToken = useResetRecoilState(jwtAtom);
@@ -15,8 +17,6 @@ export default function AuthenticationWrapperComponent({
 
   const [resetTimeout, setResetTimeout] = useState(null);
   const [warningTimeout, setWarningTimeout] = useState(null);
-
-  const Cover = lazy(() => import('./cover.component'));
 
   useEffect(() => {
     if (resetTimeout) {
@@ -71,5 +71,5 @@ export default function AuthenticationWrapperComponent({
     setIsAuthenticated(false);
   }, [token]);
 
-  return <>{isAuthenticated ? children : <Cover />}</>;
+  return <>{isAuthenticated ? children : <AuthLayoutComponent />}</>;
 }

@@ -3,11 +3,10 @@ import { Suspense } from 'react';
 import AuthenticationWrapperComponent from '../../identity/component/wrapper.component';
 import NavSide from './nav-side.component';
 import PageContent from './page-content.component';
-import PageLoading from './page-loading.component';
 
 export default function PageComponent() {
   return (
-    <Suspense fallback={<PageLoading />}>
+    <Suspense fallback={<h1>Loading...</h1>}>
       <AuthenticationWrapperComponent>
         <Layout className="h-screen">
           <NavSide />

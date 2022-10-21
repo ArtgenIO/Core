@@ -1,5 +1,4 @@
-import { IModule, Module } from '../../app/container';
-import { IKernel } from '../../app/kernel';
+import { IKernel, IModule, Module } from '@hisorange/kernel';
 import { BlueprintObserver } from './blueprint.observer';
 import { BlueprintService } from './blueprint.service';
 import { ArtgenBlueprintProvider } from './provider/artgen-blueprint.provider';

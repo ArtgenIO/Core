@@ -1,5 +1,6 @@
-import { snakeCase, startCase } from 'lodash';
 import camelCase from 'lodash.camelcase';
+import snakeCase from 'lodash.snakecase';
+import startCase from 'lodash.startcase';
 import { FieldTag, FieldType, IField, ISchema } from '..';
 import { migrateField } from './migrate-field';
 

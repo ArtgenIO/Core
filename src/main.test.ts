@@ -1,4 +1,5 @@
-import { IModule, Module } from './app/container';
+import { IModule, Module } from '@hisorange/kernel';
+import { jest } from '@jest/globals';
 import { main } from './main';
 
 describe('Main', () => {

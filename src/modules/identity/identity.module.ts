@@ -1,5 +1,4 @@
-import { IModule, Module } from '../../app/container';
-import { moduleRef } from '../../app/container/module-ref';
+import { IModule, Module, moduleRef } from '@hisorange/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
 import { SchemaModule } from '../schema/schema.module';
 import { IdentityGateway } from './gateway/authentication.gateway';

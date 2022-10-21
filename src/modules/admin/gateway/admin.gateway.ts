@@ -1,10 +1,14 @@
+import { ILogger, Logger, Service } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
 import staticMiddleware from 'fastify-static';
 import { readFile } from 'fs/promises';
+import cloneDeep from 'lodash.clonedeep';
+import middie from 'middie';
 import { join } from 'path';
-import { ILogger, Logger, Service } from '../../../app/container';
+import { fileURLToPath } from 'url';
 import { ROOT_DIR } from '../../../app/globals';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
+
 
 @Service({
   tags: 'http:gateway',
@@ -51,17 +55,15 @@ export class AdminGateway implements IHttpGateway {
       );
       this.logger.info('Page [Admin] registered at [GET][/admin]');
     } else {
-      const dir = join(__dirname, '../');
+      try {
+        const dir = join(fileURLToPath(new URL('.', import.meta.url)), '../');
 
       // eslint-disable-next-line
-      const viteConfig = require(join(dir, 'vite.config.js'));
+      const viteConfig = cloneDeep((await import('../vite.config')).default) as any;
       viteConfig.root = join(dir, 'assets');
 
-      // eslint-disable-next-line
-      const vite = require('vite');
+      const vite = await import('vite');
       this.viteServer = await vite.createServer(viteConfig);
-      // eslint-disable-next-line
-      const middie = import('middie');
       const middlewares = this.viteServer.middlewares;
 
       await httpServer.register(middie);
@@ -79,6 +81,10 @@ export class AdminGateway implements IHttpGateway {
       }
 
       this.logger.info('Vite build [Admin] registered at [GET][/admin]');
+      } catch (error) {
+        console.error('Could not register the Vite build', error);
+        throw error;
+      }
     }
   }
 

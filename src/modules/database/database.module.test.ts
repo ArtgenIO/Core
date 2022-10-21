@@ -1,5 +1,5 @@
+import { IKernel, Kernel } from '@hisorange/kernel';
 import { assert } from 'console';
-import { IKernel, Kernel } from '../../app/kernel';
 import { DatabaseModule } from './database.module';
 import { DatabaseConnection } from './library/database.connection';
 import { DatabaseConnectionService } from './service/database-connection.service';

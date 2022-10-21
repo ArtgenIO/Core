@@ -1,5 +1,4 @@
-import { Inject, Service } from '../../../app/container';
-import { getErrorMessage } from '../../../app/kernel';
+import { Inject, Service } from '@hisorange/kernel';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
@@ -78,7 +77,7 @@ export class RestCreateLambda implements ILambda {
     } catch (error) {
       return {
         error: {
-          message: getErrorMessage(error),
+          message: (error as Error)?.message,
           code: 500,
         },
       };

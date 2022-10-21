@@ -1,9 +1,11 @@
-const istanbul = require('rollup-plugin-istanbul');
-const { join } = require('path');
-const { defineConfig } = require('vite');
-const reactJsx = require('vite-react-jsx').default;
+import react from '@vitejs/plugin-react';
+import { join } from 'path';
+import istanbul from 'rollup-plugin-istanbul';
+import { fileURLToPath } from 'url';
+import { UserConfigExport } from 'vite';
 
-const plugins = [reactJsx()];
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const plugins = [react()];
 
 if (process.env.CYPRESS_COVERAGE) {
   plugins.push(
@@ -14,8 +16,7 @@ if (process.env.CYPRESS_COVERAGE) {
   );
 }
 
-// vite.config.js
-module.exports = defineConfig({
+export default {
   css: {
     preprocessorOptions: {
       less: {
@@ -25,7 +26,7 @@ module.exports = defineConfig({
   },
   plugins,
   server: {
-    middlewareMode: 'html',
+    middlewareMode: true,
     hmr: true,
   },
   logLevel: 'info',
@@ -36,4 +37,4 @@ module.exports = defineConfig({
     outDir: join(__dirname, '../../../storage/views/admin'),
     emptyOutDir: true,
   },
-});
+} as UserConfigExport;

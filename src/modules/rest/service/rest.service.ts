@@ -1,15 +1,14 @@
-import { EventEmitter2 } from 'eventemitter2';
+import { ILogger, Inject, Logger } from '@hisorange/kernel';
+import EventEmitter2 from 'eventemitter2';
 import { diff } from 'just-diff';
 import pick from 'lodash.pick';
-import { ILogger, Inject, Logger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { RowLike } from '../../../app/interface/row-like.interface';
-import { getErrorMessage } from '../../../app/kernel';
 import { SchemaService } from '../../schema/service/schema.service';
 import {
   FieldTool,
   isManagedField,
-  isPrimary,
+  isPrimary
 } from '../../schema/util/field-tools';
 import { IFindResponse } from '../interface/find-reponse.interface';
 import { ODataService } from './odata.service';
@@ -62,7 +61,7 @@ export class RestService {
         data: rowResult.map(record => record.$toJson()),
       };
     } catch (error) {
-      this.logger.warn(getErrorMessage(error));
+      this.logger.warn((error as Error)?.message);
       console.error(error);
       throw new Exception('Invalid input'); // 400
     }
@@ -91,7 +90,7 @@ export class RestService {
 
       return newRecord as R;
     } catch (error) {
-      this.logger.warn(getErrorMessage(error));
+      this.logger.warn((error as Error)?.message);
       throw new Exception('Invalid input'); // 400
     }
   }
@@ -206,7 +205,7 @@ export class RestService {
 
       return newValue;
     } catch (error) {
-      this.logger.warn(getErrorMessage(error));
+      this.logger.warn((error as Error)?.message);
       throw new Exception('Invalid input');
     }
   }
@@ -240,7 +239,7 @@ export class RestService {
 
       return object;
     } catch (error) {
-      this.logger.warn(getErrorMessage(error));
+      this.logger.warn((error as Error)?.message);
       throw new Exception('Invalid record');
     }
   }

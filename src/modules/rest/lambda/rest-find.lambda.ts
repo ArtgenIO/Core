@@ -1,6 +1,5 @@
-import { Inject, Service } from '../../../app/container';
+import { Inject, Service } from '@hisorange/kernel';
 import { RowLike } from '../../../app/interface/row-like.interface';
-import { getErrorMessage } from '../../../app/kernel';
 import { IFlow } from '../../flow/interface';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
@@ -188,7 +187,7 @@ export class RestFindLambda implements ILambda {
     } catch (error) {
       return {
         error: {
-          message: getErrorMessage(error),
+          message: (error as Error)?.message,
           code: 500,
         },
       };

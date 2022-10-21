@@ -3,7 +3,6 @@ import { Alert, Button, Divider, Input, notification, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { getErrorMessage } from '../../../../app/kernel/util/extract-error';
 import { databasesAtom, schemasAtom } from '../../../admin/admin.atoms';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
@@ -76,7 +75,7 @@ export default function ImportSchemaComponent() {
         notification.error({
           key: 'schema-import',
           message: 'Schema validation failed',
-          description: getErrorMessage(error),
+          description: (error as Error)?.message,
         });
       }
     }

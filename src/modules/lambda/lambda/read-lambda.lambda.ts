@@ -1,5 +1,5 @@
+import { IContext, Service } from '@hisorange/kernel';
 import { inject } from '@loopback/context';
-import { IContext, Service } from '../../../app/container';
 import { IFlow } from '../../flow/interface';
 import { Lambda } from '../decorator/lambda.decorator';
 import { InputHandleDTO } from '../dto/input-handle.dto';

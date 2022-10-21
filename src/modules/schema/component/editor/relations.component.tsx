@@ -7,10 +7,11 @@ import {
   Spin,
   Tag,
   TagProps,
-  Typography,
+  Typography
 } from 'antd';
 import ErrorBoundary from 'antd/lib/alert/ErrorBoundary';
-import { cloneDeep, snakeCase } from 'lodash';
+import cloneDeep from 'lodash.clonedeep';
+import snakeCase from 'lodash.snakecase';
 import startCase from 'lodash.startcase';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';

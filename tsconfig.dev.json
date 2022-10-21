@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
+    "target": "esnext",
+    "module": "esnext",
     "allowJs": false,
     "checkJs": false,
     "declaration": true,
@@ -10,12 +10,8 @@
     "rootDir": "./src",
     "removeComments": true,
     "importHelpers": true,
-    "lib": ["ES2020", "DOM"],
-    "typeRoots": [
-      "./typings",
-      "node_modules/@types"
-    ],
-
+    "lib": ["esnext", "DOM"],
+    "typeRoots": ["./typings", "node_modules/@types"],
 
     "jsx": "preserve",
 

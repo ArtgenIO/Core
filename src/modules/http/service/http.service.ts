@@ -1,13 +1,12 @@
-import { inject } from '@loopback/context';
-import { FastifyInstance } from 'fastify';
 import {
   IContext,
   ILogger,
   Inject,
   Logger,
-  Service,
-} from '../../../app/container';
-import { getErrorMessage } from '../../../app/kernel';
+  Service
+} from '@hisorange/kernel';
+import { inject } from '@loopback/context';
+import { FastifyInstance } from 'fastify';
 import { BucketKey } from '../../telemetry/interface/bucket-key.enum';
 import { TelemetryService } from '../../telemetry/telemetry.service';
 import { IHttpGateway } from '../interface/http-gateway.interface';
@@ -151,9 +150,17 @@ export class HttpService {
         if (instance?.deregister) {
           await instance
             .deregister()
-            .catch(e => this.logger.warn(getErrorMessage(e)));
+            .catch(e => this.logger.warn((e as Error)?.message));
         }
       }),
     );
+
+    if (this.upstream) {
+      await this.upstream.close();
+    }
+
+    if (this.proxy) {
+      await this.proxy.close();
+    }
   }
 }

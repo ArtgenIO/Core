@@ -1,6 +1,5 @@
+import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { Model, ModelClass } from 'objection';
-import { ILogger, Inject, Logger, Service } from '../../../app/container';
-import { getErrorMessage } from '../../../app/kernel';
 import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from '../../blueprint/provider/artgen-blueprint.provider';
 import { ISchema } from '../../schema';
@@ -62,7 +61,7 @@ export class DatabaseService {
       if (database.ref !== 'main') {
         updates.push(
           this.connectionService.connect(database, associations).catch(e => {
-            this.logger.warn(getErrorMessage(e));
+            this.logger.warn((e?.message));
             console.warn(e);
           }),
         );

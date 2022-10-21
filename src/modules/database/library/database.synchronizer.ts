@@ -1,22 +1,20 @@
+import { ILogger } from '@hisorange/kernel';
 import { diff } from 'just-diff';
 import { Knex } from 'knex';
 import { Column } from 'knex-schema-inspector/dist/types/column';
-import {
-  camelCase,
-  cloneDeep,
-  isEqual,
-  snakeCase,
-  startCase,
-  upperFirst,
-} from 'lodash';
+import camelCase from 'lodash.camelcase';
+import cloneDeep from 'lodash.clonedeep';
+import isEqual from 'lodash.isequal';
+import snakeCase from 'lodash.snakecase';
+import startCase from 'lodash.startcase';
+import upperFirst from 'lodash.upperfirst';
 import hash from 'object-hash';
 import { inspect } from 'util';
-import { ILogger } from '../../../app/container';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldTag, FieldType, IField, ISchema } from '../../schema';
 import {
   IRelation,
-  RelationType,
+  RelationType
 } from '../../schema/interface/relation.interface';
 import { isPrimary } from '../../schema/util/field-tools';
 import { createEmptySchema } from '../../schema/util/get-new-schema';

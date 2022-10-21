@@ -1,5 +1,5 @@
+import { Service } from '@hisorange/kernel';
 import { Resolver } from 'dns/promises';
-import { Service } from '../../../app/container';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';

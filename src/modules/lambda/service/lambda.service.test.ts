@@ -1,9 +1,9 @@
+import { IContext, Service } from '@hisorange/kernel';
 import {
   Context,
   createBindingFromClass,
-  instantiateClass,
+  instantiateClass
 } from '@loopback/context';
-import { IContext, Service } from '../../../app/container';
 import { LambdaService } from './lambda.service';
 
 describe('LambdaService', () => {

@@ -1,6 +1,4 @@
-import { IModule, Module } from '../../app/container';
-import { moduleRef } from '../../app/container/module-ref';
-import { IKernel } from '../../app/kernel';
+import { IKernel, IModule, Module, moduleRef } from '@hisorange/kernel';
 import { FlowModule } from '../flow/flow.module';
 import { EventObserver } from './event.observer';
 import { EventService } from './event.service';

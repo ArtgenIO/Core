@@ -1,5 +1,5 @@
+import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { Reflector } from '@loopback/metadata';
-import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { LAMBDA_DECORATOR_META_KEY } from '../decorator/lambda.decorator';
 import { ILambda } from '../interface/lambda.interface';
 import { ILambdaMeta } from '../interface/meta.interface';

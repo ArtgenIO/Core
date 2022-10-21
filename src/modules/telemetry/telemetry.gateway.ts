@@ -1,5 +1,5 @@
+import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
-import { ILogger, Inject, Logger, Service } from '../../app/container';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
 import { TelemetryService } from './telemetry.service';
 

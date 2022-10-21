@@ -1,8 +1,7 @@
-import { Provider } from '@loopback/context';
+import { ILogger, Logger, Provider, Service } from '@hisorange/kernel';
 import fastify, { FastifyInstance } from 'fastify';
 import CORSPlugin from 'fastify-cors';
 import { v4 } from 'uuid';
-import { ILogger, Logger, Service } from '../../../app/container';
 
 @Service()
 export class HttpProxyProvider implements Provider<FastifyInstance> {

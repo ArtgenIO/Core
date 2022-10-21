@@ -1,5 +1,4 @@
-import { Module } from '../../app/container';
-import { moduleRef } from '../../app/container/module-ref';
+import { Module, moduleRef } from '@hisorange/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
 import { DatabaseModule } from '../database/database.module';
 import { EventModule } from '../event';

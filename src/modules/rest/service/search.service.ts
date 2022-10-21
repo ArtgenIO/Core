@@ -1,6 +1,7 @@
-import { snakeCase } from 'lodash';
+import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
+
+import snakeCase from 'lodash.snakecase';
 import MeiliSearch from 'meilisearch';
-import { ILogger, Inject, Logger, Service } from '../../../app/container';
 import { KeyValueService } from '../../schema/service/key-value.service';
 import { SchemaService } from '../../schema/service/schema.service';
 

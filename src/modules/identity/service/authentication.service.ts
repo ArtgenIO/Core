@@ -1,6 +1,6 @@
+import { ILogger, Inject, Logger } from '@hisorange/kernel';
 import { nanoid } from 'nanoid';
 import { Model } from 'objection';
-import { ILogger, Inject, Logger } from '../../../app/container';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { KeyValueService } from '../../schema/service/key-value.service';
 import { SchemaService } from '../../schema/service/schema.service';
