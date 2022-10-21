@@ -18,12 +18,12 @@ describe('Admin', () => {
     cy.visit(host);
 
     cy.get('.test--auth-cover').should('exist');
-    cy.get('.test--switch-sign-up').click({ force: true });
+    //cy.get('.test--switch-sign-up').click({ force: true });
 
     cy.get('.test--email-address').type(email, {
-      delay: 1,
+      delay: 5,
     });
-    cy.get('.test--password').type(password, { delay: 1 });
+    cy.get('.test--password').type(password, { delay: 5 });
     cy.get('.test--sign-up-btn').click();
 
     // Signed in
@@ -35,14 +35,15 @@ describe('Admin', () => {
     cy.get('.test--me-drawer').should('exist');
     cy.get('.test--sign-out').click();
 
-    cy.get('.test--sign-in-btn').should('exist');
+    cy.get('.test--sign-up-btn').should('exist');
   });
 
   it('should be able to sign in', () => {
     cy.get('.test--auth-cover').should('exist');
+    cy.get('.test--switch-sign-in').click();
 
-    cy.get('.test--email-address').type(email, { delay: 1 });
-    cy.get('.test--password').type(password, { delay: 1 });
+    cy.get('.test--email-address').type(email, { delay: 5 });
+    cy.get('.test--password').type(password, { delay: 5 });
     cy.get('.test--sign-in-btn').click();
 
     // Signed in
@@ -65,7 +66,7 @@ describe('Admin', () => {
     );
   });
 
-  it('should be able to visit the content editor', () => {
+  it.skip('should be able to visit the content editor', () => {
     cy.get('.test--nav-content').should('exist');
 
     cy.get('.test--nav-content').click();
@@ -81,7 +82,7 @@ describe('Admin', () => {
     cy.get('.test--nav-database').should('exist');
   });
 
-  it('should be able to visit the page editor', () => {
+  it.skip('should be able to visit the page editor', () => {
     cy.get('.test--nav-page').should('exist');
   });
 
