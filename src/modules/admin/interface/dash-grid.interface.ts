@@ -26,6 +26,3 @@ export interface IDashGridElement {
   // Static lock
   static?: boolean;
 }
-
-{
-}

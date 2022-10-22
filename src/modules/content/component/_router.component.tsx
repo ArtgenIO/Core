@@ -14,7 +14,7 @@ export default function ContentRouterComponent() {
   const onSchemaSelect = (key: string | null) => {
     if (key) {
       const [db, ref] = key.toString().split('$');
-      const path = generatePath('/admin/content/:db/:ref?page=1', {
+      const path = generatePath('/content/:db/:ref?page=1', {
         db,
         ref,
       });

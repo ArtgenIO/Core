@@ -2,10 +2,10 @@ import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import PageComponent from '../layout/page.component';
 
-export default function Root() {
+export default function RootComponent() {
   return (
     <RecoilRoot>
-      <BrowserRouter>
+      <BrowserRouter basename="/admin">
         <PageComponent />
       </BrowserRouter>
     </RecoilRoot>

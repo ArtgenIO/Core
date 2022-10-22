@@ -1,10 +1,8 @@
 import { Layout } from 'antd';
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { ADMIN_URL } from '../admin.constants';
+import LoadingComponent from '../component/loading/loading.component.jsx';
 import Route404 from '../route/404.route';
-import PageLoading from './page-loading.component';
-import PageWrapper from './page-wrapper.component';
 
 const { Content } = Layout;
 
@@ -32,24 +30,22 @@ export default function PageContent() {
 
   return (
     <Content className="overflow-y-auto overflow-x-hidden h-screen gray-scroll">
-      <PageWrapper>
-        <Suspense fallback={<PageLoading />}>
-          <Routes>
-            <Route path={`${ADMIN_URL}`} element={<Dashboard />} />
-            <Route path={`${ADMIN_URL}/flow/*`} element={<Flow />} />
-            <Route path={`${ADMIN_URL}/database/*`} element={<Database />} />
-            <Route path={`${ADMIN_URL}/content/*`} element={<Contents />} />
-            <Route path={`${ADMIN_URL}/cloud-store/*`} element={<Apps />} />
-            <Route path={`${ADMIN_URL}/page/*`} element={<Page />} />
-            <Route path={`${ADMIN_URL}/form/*`} element={<FormRouter />} />
-            <Route path={`${ADMIN_URL}/analytics/*`} element={<Analytics />} />
-            <Route path={`${ADMIN_URL}/develop/*`} element={<Develop />} />
+      <Suspense fallback={<LoadingComponent />}>
+        <Routes>
+          <Route index element={<Dashboard />} />
+          <Route path="/flow/*" element={<Flow />} />
+          <Route path="/database/*" element={<Database />} />
+          <Route path="/content/*" element={<Contents />} />
+          <Route path="/cloud-store/*" element={<Apps />} />
+          <Route path="/page/*" element={<Page />} />
+          <Route path="/form/*" element={<FormRouter />} />
+          <Route path="/analytics/*" element={<Analytics />} />
+          <Route path="/develop/*" element={<Develop />} />
 
-            {/* Hygen insert routes above */}
-            <Route path="*" element={<Route404 />} />
-          </Routes>
-        </Suspense>
-      </PageWrapper>
+          {/* Hygen insert routes above */}
+          <Route path="*" element={<Route404 />} />
+        </Routes>
+      </Suspense>
     </Content>
   );
 }

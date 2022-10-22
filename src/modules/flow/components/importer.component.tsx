@@ -47,7 +47,7 @@ export default function ImportFlowComponent() {
         notification.error({
           key: 'flow-import',
           message: 'Flow validation failed',
-          description: ((error as Error)?.message),
+          description: (error as Error)?.message,
         });
       }
     }
@@ -62,7 +62,7 @@ export default function ImportFlowComponent() {
 
     client
       .post(toRestSysRoute(SchemaRef.FLOW), newFlow)
-      .then(r => navigate(`/admin/flow/artboard/${newFlow.id}`));
+      .then(r => navigate(`/flow/artboard/${newFlow.id}`));
 
     notification.success({
       key: 'schema-import',

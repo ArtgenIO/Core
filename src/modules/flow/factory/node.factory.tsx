@@ -77,7 +77,7 @@ export class NodeFactory {
             <div className="flex">
               <div className="shrink">
                 <Avatar
-                  src={`/assets/icons/${lambda.icon ?? 'lambda.png'}`}
+                  src={`/admin/public/icons/${lambda.icon ?? 'lambda.png'}`}
                   draggable={false}
                   size={34}
                   shape="square"

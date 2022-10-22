@@ -7,7 +7,7 @@ import { Button, Drawer, message, Popconfirm, Tabs } from 'antd';
 import isEqual from 'lodash.isequal';
 import { Suspense, useEffect, useState } from 'react';
 import { ISchema } from '..';
-import PageLoading from '../../admin/layout/page-loading.component';
+import LoadingComponent from '../../admin/component/loading/loading.component.jsx';
 import SchemaEditorCapabilitiesComponent from './editor/capabilities.component';
 import DangerZoneComponent from './editor/danger-zone.component';
 import SchemaExportComponent from './editor/export.component';
@@ -115,7 +115,7 @@ export default function SchemaEditorComponent({
         }
       }}
     >
-      <Suspense fallback={<PageLoading />}>
+      <Suspense fallback={<LoadingComponent />}>
         <>
           <Tabs
             tabPosition="left"

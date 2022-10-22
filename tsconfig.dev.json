@@ -38,6 +38,6 @@
 
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["./build", "./node_modules"],
-  "include": ["./src"]
+  "exclude": ["./build", "./node_modules", "*.tsx"],
+  "include": ["./src/main.ts"]
 }

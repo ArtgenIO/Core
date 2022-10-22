@@ -4,7 +4,7 @@ import {
   FastifyReply,
   FastifyRequest,
   RouteHandlerMethod,
-  RouteShorthandOptions
+  RouteShorthandOptions,
 } from 'fastify';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
 import { HttpTriggerConfig } from '../../http/lambda/http-trigger.lambda';
@@ -116,7 +116,7 @@ export class LogicHttpGateway implements IHttpGateway {
                   id: request.id,
                   ip: request.ip,
                   ips: request.ips,
-                  cookie: request.cookies,
+                  cookie: (request as any)?.cookies,
                   method: request.method,
                   hostname: request.hostname,
                   protocol: request.protocol,

@@ -1,7 +1,6 @@
 import { Menu } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
-import { ADMIN_URL } from '../../../admin/admin.constants';
 import Icon from '../../../admin/component/icon.component';
 import MenuBlock from '../../../admin/component/menu-block.component';
 
@@ -23,7 +22,7 @@ const elements: IMenuItem[] = [
 
 export default function ManagerMenuComponent() {
   const location = useLocation();
-  const base = `${ADMIN_URL}/flow`;
+  const base = `/flow`;
   const [selected, setSelected] = useState<string[]>([]);
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import {
   DatabaseOutlined,
   FileOutlined,
   HomeOutlined,
-  PartitionOutlined
+  PartitionOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Spin } from 'antd';
 import snakeCase from 'lodash.snakecase';
@@ -11,7 +11,6 @@ import { ReactNode, Suspense, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import MeButtonComponent from '../../identity/component/me-button.component';
 import NewsComponent from '../../upgrade/component/news.component';
-import { ADMIN_URL } from '../admin.constants';
 import './nav-side.component.less';
 
 const { Sider } = Layout;
@@ -26,33 +25,33 @@ type IMenuItem = {
 const menuItems: IMenuItem[] = [
   {
     icon: <HomeOutlined />,
-    path: ADMIN_URL,
+    path: '',
     title: 'Dashboard',
     className: 'test--nav-dashboard',
   },
   {
     icon: <FileOutlined />,
-    path: ADMIN_URL + '/content',
+    path: '/content',
     title: 'Content',
     className: 'test--nav-content',
   },
   {
     icon: <PartitionOutlined />,
-    path: ADMIN_URL + '/flow',
+    path: '/flow',
     title: 'Flow',
     className: 'test--nav-flow',
   },
 
   {
     icon: <DatabaseOutlined />,
-    path: ADMIN_URL + '/database',
+    path: '/database',
     title: 'Databases',
     className: 'test--nav-database',
   },
 
   {
     icon: <CloudOutlined />,
-    path: ADMIN_URL + '/cloud-store',
+    path: '/cloud-store',
     title: 'Cloud Store',
     className: 'test--nav-store',
   },
@@ -89,7 +88,7 @@ const NavSide = () => {
         collapsedWidth={54}
       >
         <div className="brand-block">
-          <Link to={ADMIN_URL}>
+          <Link to="/">
             <div className="brand-logo"></div>
           </Link>
         </div>

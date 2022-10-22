@@ -11,7 +11,7 @@ export default function FlowRouterComponent() {
       <Route path="artboard/:id" element={<FlowWrapper />}></Route>
       <Route path="list" element={<FlowListComponent />}></Route>
       <Route path="import" element={<ImportFlowComponent />}></Route>
-      <Route path="/" element={<Navigate to={`/admin/flow/list`} />}></Route>
+      <Route path="/" element={<Navigate to="/flow/list" />}></Route>
     </Routes>
   );
 }

@@ -76,7 +76,7 @@ export default function FlowListComponent() {
           }}
           actions={
             <>
-              <Link to={'/admin/flow/import'}>
+              <Link to={'/flow/import'}>
                 <Button type="ghost" icon={<UploadOutlined />} key="import">
                   Import Flow
                 </Button>
@@ -103,7 +103,7 @@ export default function FlowListComponent() {
             renderItem={flow => (
               <List.Item
                 key={flow.id}
-                onClick={() => navigate(`/admin/flow/artboard/${flow.id}`)}
+                onClick={() => navigate(`/flow/artboard/${flow.id}`)}
               >
                 <List.Item.Meta
                   avatar={

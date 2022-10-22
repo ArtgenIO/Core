@@ -31,10 +31,12 @@ export default {
   },
   logLevel: 'info',
   root: join(__dirname, 'assets'),
-  publicDir: 'assets',
+  publicDir: 'public',
   base: '/admin/',
+
   build: {
     outDir: join(__dirname, '../../../storage/views/admin'),
     emptyOutDir: true,
+    assetsDir: '_a',
   },
 } as UserConfigExport;

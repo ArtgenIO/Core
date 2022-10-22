@@ -88,7 +88,7 @@ export default function DatabaseExplorerComponent() {
             if (selected.length) {
               const [ref, sch] = selected[0].toString().split('$');
               const path = generatePath(
-                `/admin/database/artboard/:ref?schema=${sch}`,
+                `/database/artboard/:ref?schema=${sch}`,
                 {
                   ref,
                 },

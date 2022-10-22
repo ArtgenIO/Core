@@ -35,7 +35,7 @@ export default function PlaceholderComponent() {
       ref = SchemaRef.MODULE;
     }
 
-    navigate(generatePath('/admin/content/:db/:ref?page=1', { db, ref }));
+    navigate(generatePath('/content/:db/:ref?page=1', { db, ref }));
   });
 
   return (

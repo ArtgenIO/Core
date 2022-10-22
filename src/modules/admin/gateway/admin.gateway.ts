@@ -6,9 +6,9 @@ import cloneDeep from 'lodash.clonedeep';
 import middie from 'middie';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
-import { ROOT_DIR } from '../../../app/globals';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
 
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 @Service({
   tags: 'http:gateway',
@@ -23,43 +23,53 @@ export class AdminGateway implements IHttpGateway {
 
   async register(httpServer: FastifyInstance): Promise<void> {
     if (process.env.NODE_ENV === 'production') {
-      // Static files
-      const STATIC_DIR = join(ROOT_DIR, 'storage/views/admin/assets/');
-      const INDEX_BUFFER = await readFile(join(STATIC_DIR, '../index.html'));
-
-      // Serve the assets
-      await httpServer.register(staticMiddleware, {
-        root: STATIC_DIR,
-        prefix: '/admin/assets/',
-        decorateReply: false,
-      });
-      this.logger.info('Static directory [/admin] registered');
-
-      await httpServer.register(
-        (instance, options, done) => {
-          instance.setNotFoundHandler((req, reply) => {
-            this.logger.debug('Serving the index on 404 of [%s]', req.url);
-
-            reply.statusCode = 200;
-            reply.headers({
-              'content-type': 'text/html',
-            });
-            reply.send(INDEX_BUFFER);
-          });
-
-          done();
-        },
-        {
-          prefix: '/admin',
-        },
-      );
-      this.logger.info('Page [Admin] registered at [GET][/admin]');
+      await this.registerLiveStaticServer(httpServer);
     } else {
-      try {
-        const dir = join(fileURLToPath(new URL('.', import.meta.url)), '../');
+      await this.registerViteDevServer(httpServer);
+    }
+  }
+
+  protected async registerLiveStaticServer(httpServer: FastifyInstance) {
+    // Static files
+    const baseDirectory = join(__dirname, '../../../../storage/views/admin/');
+    const indexBuffer = await readFile(join(baseDirectory, 'index.html'));
+
+    await httpServer.register(
+      async (instance, options, done) => {
+        // Serve the assets
+        await instance.register(staticMiddleware, {
+          root: baseDirectory,
+          prefix: '/',
+          decorateReply: false,
+          logLevel: 'error',
+        });
+        this.logger.info('Static directory [/admin] registered');
+
+        instance.setNotFoundHandler((req, reply) => {
+          this.logger.debug('Serving the index on 404 of [%s]', req.url);
+
+          reply.statusCode = 200;
+          reply.headers({
+            'content-type': 'text/html',
+          });
+          reply.send(indexBuffer);
+        });
+      },
+      {
+        prefix: '/admin',
+      },
+    );
+    this.logger.info('Page [Admin] registered at [GET][/admin]');
+  }
+
+  protected async registerViteDevServer(httpServer: FastifyInstance) {
+    try {
+      const dir = join(__dirname, '../');
 
       // eslint-disable-next-line
-      const viteConfig = cloneDeep((await import('../vite.config')).default) as any;
+      const viteConfig = cloneDeep(
+        (await import('../vite.config')).default,
+      ) as any;
       viteConfig.root = join(dir, 'assets');
 
       const vite = await import('vite');
@@ -81,10 +91,9 @@ export class AdminGateway implements IHttpGateway {
       }
 
       this.logger.info('Vite build [Admin] registered at [GET][/admin]');
-      } catch (error) {
-        console.error('Could not register the Vite build', error);
-        throw error;
-      }
+    } catch (error) {
+      console.error('Could not register the Vite build', error);
+      throw error;
     }
   }
 
