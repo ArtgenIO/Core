@@ -307,20 +307,20 @@ jobs:
       url: ${{ steps.release.outputs.url }}
 
 
-  # The demo is the latest released version
-  deploy-demo:
-    name: Deploy demo to Heroku
-    runs-on: ubuntu-latest
-    needs:
-      - common-tests
-    if: ${{ success() }}
+  # # The demo is the latest released version
+  # deploy-demo:
+  #   name: Deploy demo to Heroku
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - common-tests
+  #   if: ${{ success() }}
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-      - uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+  #     - uses: akhileshns/heroku-deploy@v3.12.12
+  #       with:
+  #         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+  #         heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+  #         heroku_email: ${{ secrets.HEROKU_EMAIL }}
