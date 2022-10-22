@@ -42,7 +42,7 @@ describe('Admin', () => {
     cy.get('.test--me-button').should('exist');
   });
 
-  it('should be able to rename the dashboard', () => {
+  it.skip('should be able to rename the dashboard', () => {
     const randomName = nanoid(8);
 
     cy.get('.test--dashboard-title').should('exist').clear({ interval: 100 });
