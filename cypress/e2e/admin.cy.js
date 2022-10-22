@@ -8,46 +8,38 @@ describe('Admin', () => {
   const email = nanoid(12).replace(/_/, '').toLowerCase() + '@artgen.test';
   const password = nanoid(12);
 
-  it('should see the authentication cover', () => {
-    cy.visit(host);
-
-    cy.get('.test--auth-cover').should('exist');
-  });
-
   it('should be able to sign up', () => {
-    cy.visit(host);
+    cy.visit(`${host}/sign-up`);
 
     cy.get('.test--auth-cover').should('exist');
-    //cy.get('.test--switch-sign-up').click({ force: true });
-
     cy.get('.test--email-address').type(email, {
-      delay: 5,
+      delay: 3,
     });
-    cy.get('.test--password').type(password, { delay: 5 });
+    cy.get('.test--password').type(password, { delay: 3 });
     cy.get('.test--sign-up-btn').click();
 
     // Signed in
-    cy.get('.test-me-button').should('exist');
+    cy.get('.test--me-button').should('exist');
   });
 
   it('should be able to sign off', () => {
-    cy.get('.test-me-button').click();
+    cy.get('.test--me-button').click();
     cy.get('.test--me-drawer').should('exist');
     cy.get('.test--sign-out').click();
 
-    cy.get('.test--sign-up-btn').should('exist');
+    cy.get('.test--auth-cover').should('exist');
   });
 
   it('should be able to sign in', () => {
-    cy.get('.test--auth-cover').should('exist');
-    cy.get('.test--switch-sign-in').click();
+    cy.visit(`${host}/sign-in`);
 
+    cy.get('.test--auth-cover').should('exist');
     cy.get('.test--email-address').type(email, { delay: 5 });
     cy.get('.test--password').type(password, { delay: 5 });
     cy.get('.test--sign-in-btn').click();
 
     // Signed in
-    cy.get('.test-me-button').should('exist');
+    cy.get('.test--me-button').should('exist');
   });
 
   it('should be able to rename the dashboard', () => {

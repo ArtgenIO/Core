@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import { lazy, Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import LoadingComponent from '../component/loading/loading.component.jsx';
 import Route404 from '../route/404.route';
 
@@ -42,7 +42,9 @@ export default function PageContent() {
           <Route path="/analytics/*" element={<Analytics />} />
           <Route path="/develop/*" element={<Develop />} />
 
-          {/* Hygen insert routes above */}
+          <Route path="/sign-in" element={<Navigate to="/" />} />
+          <Route path="/sign-up" element={<Navigate to="/" />} />
+
           <Route path="*" element={<Route404 />} />
         </Routes>
       </Suspense>

@@ -4,16 +4,15 @@ import { PropsWithChildren, useEffect, useState } from 'react';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { jwtAtom } from '../../admin/admin.atoms';
 import { getTokenExpiration } from '../util/get-token-expiration';
-import AuthLayoutComponent from './cover.component';
+import AuthenticationRouterComponent from './_router.component';
 
 export default function AuthenticationWrapperComponent({
   children,
 }: PropsWithChildren<{}>) {
-
   // State
   const token = useRecoilValue(jwtAtom);
   const resetToken = useResetRecoilState(jwtAtom);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   const [resetTimeout, setResetTimeout] = useState(null);
   const [warningTimeout, setWarningTimeout] = useState(null);
@@ -56,7 +55,7 @@ export default function AuthenticationWrapperComponent({
       }
     } else {
       notification.warn({
-        message: 'Authentication is Required!',
+        message: 'Authentication Required!',
         icon: <LockOutlined className="text-red-400" />,
         description:
           'Please verify Your identity, to access the requested page.',
@@ -71,5 +70,9 @@ export default function AuthenticationWrapperComponent({
     setIsAuthenticated(false);
   }, [token]);
 
-  return <>{isAuthenticated ? children : <AuthLayoutComponent />}</>;
+  if (isAuthenticated === null) {
+    return <h1>Loading...</h1>;
+  }
+
+  return <>{isAuthenticated ? children : <AuthenticationRouterComponent />}</>;
 }

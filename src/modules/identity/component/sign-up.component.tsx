@@ -1,7 +1,7 @@
 import { MehOutlined, UnlockOutlined } from '@ant-design/icons';
 import { Button, Divider, Form, Input, notification } from 'antd';
 import axios from 'axios';
-import { Dispatch, SetStateAction } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { jwtAtom } from '../../admin/admin.atoms';
 
@@ -14,12 +14,9 @@ type Response = {
   accessToken: string;
 };
 
-type Props = {
-  setShowSignUp: Dispatch<SetStateAction<boolean>>;
-};
-
-export default function SignUpComponent({ setShowSignUp }: Props) {
+export default function SignUpComponent() {
   const setJwt = useSetRecoilState(jwtAtom);
+  const navigateTo = useNavigate();
 
   const doSignUp = (values: Credentials) => {
     axios
@@ -104,7 +101,7 @@ export default function SignUpComponent({ setShowSignUp }: Props) {
         <div className="mb-5 text-right">
           Already have an account?&nbsp;
           <a
-            onClick={() => setShowSignUp(false)}
+            onClick={() => navigateTo('/sign-in')}
             className="test--switch-sign-in"
           >
             Sign In

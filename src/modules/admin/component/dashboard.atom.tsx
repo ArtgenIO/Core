@@ -17,13 +17,16 @@ export const lastViewedDashAtom = atom<string>({
 
 export const dashboardsAtom = atom<IDashboard[]>({
   key: 'dashboards',
-  default: [],
+  default: undefined,
   effects_UNSTABLE: [
     ({ onSet }) => {
       const client = useHttpClientSimple();
 
       onSet((newDashboards, oldDashboards) => {
-        if (!(oldDashboards instanceof DefaultValue)) {
+        if (
+          !(oldDashboards instanceof DefaultValue) &&
+          oldDashboards !== undefined
+        ) {
           const path = toRestSysRoute(SchemaRef.DASHBOARD);
 
           newDashboards.forEach(newDashboard => {

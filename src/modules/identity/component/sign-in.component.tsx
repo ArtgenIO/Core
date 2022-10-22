@@ -1,7 +1,7 @@
 import { MehOutlined, UnlockOutlined } from '@ant-design/icons';
 import { Button, Divider, Form, Input, notification, Tooltip } from 'antd';
 import axios from 'axios';
-import { Dispatch, SetStateAction } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { jwtAtom } from '../../admin/admin.atoms';
 
@@ -14,12 +14,9 @@ type Response = {
   accessToken: string;
 };
 
-type Props = {
-  setShowSignUp: Dispatch<SetStateAction<boolean>>;
-};
-
-export default function SignInComponent({ setShowSignUp }: Props) {
+export default function SignInComponent() {
   const setJwt = useSetRecoilState(jwtAtom);
+  const navigateTo = useNavigate();
 
   const doSignIn = (values: Credentials) => {
     axios
@@ -106,7 +103,7 @@ export default function SignInComponent({ setShowSignUp }: Props) {
           <Tooltip title="Not yet implemented">
             <a
               className="test--switch-sign-up"
-              onClick={() => setShowSignUp(true)}
+              onClick={() => navigateTo('/sign-up')}
             >
               Sign Up
             </a>

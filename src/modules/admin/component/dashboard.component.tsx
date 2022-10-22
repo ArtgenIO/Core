@@ -174,16 +174,14 @@ export default function DashboardPage() {
                 onChange={selectedId => {
                   setActive(selectedId);
                 }}
-              >
-                {dashboards.map(dash => (
-                  <Tabs.TabPane
-                    id={dash.id}
-                    key={dash.id}
-                    tab={dash.name}
-                    closable={dashboards.length > 1}
-                  ></Tabs.TabPane>
-                ))}
-              </Tabs>
+                items={dashboards.map(dash => ({
+                  id: dash.id,
+                  key: dash.id,
+                  tab: dash.name,
+                  label: dash.name,
+                  closable: dashboards.length > 1,
+                }))}
+              />
             </div>
           }
         />

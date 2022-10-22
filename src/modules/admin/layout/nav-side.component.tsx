@@ -8,7 +8,7 @@ import {
 import { Layout, Menu, Spin } from 'antd';
 import snakeCase from 'lodash.snakecase';
 import { ReactNode, Suspense, useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import MeButtonComponent from '../../identity/component/me-button.component';
 import NewsComponent from '../../upgrade/component/news.component';
 import './nav-side.component.less';
@@ -63,6 +63,7 @@ const matcher = menuItems
 
 const NavSide = () => {
   const location = useLocation();
+  const navigateTo = useNavigate();
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
@@ -93,17 +94,20 @@ const NavSide = () => {
           </Link>
         </div>
 
-        {selected ? (
-          <Menu className="menu" defaultSelectedKeys={selected} mode="inline">
-            {menuItems.map(menu => (
-              <Menu.Item key={`k-${snakeCase(menu.title)}`} icon={menu.icon}>
-                <Link to={menu.path} className={menu.className}>
-                  {menu.title}
-                </Link>
-              </Menu.Item>
-            ))}
-          </Menu>
-        ) : undefined}
+        {selected && (
+          <Menu
+            className="menu"
+            defaultSelectedKeys={selected}
+            mode="inline"
+            items={menuItems.map((m, idx) => ({
+              key: `k-${snakeCase(m.title)}`,
+              icon: m.icon,
+              title: m.title,
+              onClick: () => navigateTo(m.path),
+              className: m.className,
+            }))}
+          />
+        )}
 
         <Suspense fallback={<Spin></Spin>}>
           <NewsComponent />

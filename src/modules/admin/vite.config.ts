@@ -3,6 +3,7 @@ import { join } from 'path';
 import istanbul from 'rollup-plugin-istanbul';
 import { fileURLToPath } from 'url';
 import { UserConfigExport } from 'vite';
+import postcss from '../../../postcss.config';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const plugins = [react()];
@@ -23,6 +24,7 @@ export default {
         javascriptEnabled: true,
       },
     },
+    postcss,
   },
   plugins,
   server: {
@@ -38,5 +40,15 @@ export default {
     outDir: join(__dirname, '../../../storage/views/admin'),
     emptyOutDir: true,
     assetsDir: '_a',
+    minify: true,
+  },
+
+  resolve: {
+    alias: [
+      {
+        find: /antd\/lib\/(.+)(?<!less)$/,
+        replacement: 'antd/es/$1', // Fix for  https://github.com/rjsf-team/react-jsonschema-form/issues/2962
+      },
+    ],
   },
 } as UserConfigExport;
