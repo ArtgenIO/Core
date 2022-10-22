@@ -45,13 +45,9 @@ describe('Admin', () => {
   it('should be able to rename the dashboard', () => {
     const randomName = nanoid(8);
 
-    cy.get('.test--dashboard-title')
-      .should('exist')
-      .clear({ interval: 30 })
-      .type(randomName, { delay: 3 })
-      .blur();
+    cy.get('.test--dashboard-title').should('exist').clear({ interval: 100 });
+    cy.get('.test--dashboard-title').type(randomName, { delay: 3 }).blur();
 
-    cy.get('.test--dashboard-title').should('contain.value', randomName);
     cy.get('.test--dashboard-tabs div.ant-tabs-tab-btn').should(
       'have.text',
       randomName,
