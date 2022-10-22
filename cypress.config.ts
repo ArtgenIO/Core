@@ -15,7 +15,7 @@ export default {
   fixturesFolder: false,
   e2e: {
     setupNodeEvents(on, config) {
-      require('@cypress/code-coverage/task')(on, config);
+      // require('@cypress/code-coverage/task')(on, config);
       // include any other plugin code...
 
       // It's IMPORTANT to return the config object
@@ -23,6 +23,6 @@ export default {
       return config;
     },
     baseUrl: 'http://localhost:7200',
-    supportFile: false,
+    // supportFile: true,
   },
 };
