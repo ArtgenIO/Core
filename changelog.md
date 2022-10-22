@@ -2,6 +2,7 @@
 
 - ESM upgrade (backend)
 - Use external simplified packages to reduce complexity
+- Temporary removal of code coverage
 
 ### Version 0.2.0
 
