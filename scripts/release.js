@@ -1,10 +1,10 @@
-const { Select } = require('enquirer');
-const { readFileSync, writeFileSync } = require('fs');
-const { join } = require('path');
-const { parse, stringify } = require('semver-utils');
-const { execSync } = require('child_process');
+import { execSync } from 'child_process';
+import enquirer from 'enquirer';
+import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+import { parse, stringify } from 'semver-utils';
 
-const prompt = new Select({
+const prompt = new enquirer.Select({
   name: 'semver',
   message: 'Choose a version change level (semver):',
   choices: ['patch', 'minor', 'major'],
@@ -13,8 +13,8 @@ const prompt = new Select({
 prompt
   .run()
   .then(async answer => {
-    const vfile = join(__dirname, '../version');
-    const pfile = join(__dirname, '../package.json');
+    const vfile = join(process.cwd(), 'version');
+    const pfile = join(process.cwd(), 'package.json');
     const current = readFileSync(vfile).toString();
     console.log('Current version:', current);
 
@@ -35,10 +35,10 @@ prompt
     const bumped = stringify(semver);
     console.log('New version:', bumped);
 
-    const package = require(pfile);
-    package.version = bumped;
+    const pkg = JSON.parse(readFileSync(pfile));
+    pkg.version = bumped;
 
-    writeFileSync(pfile, JSON.stringify(package, null, 2));
+    writeFileSync(pfile, JSON.stringify(pkg, null, 2));
     writeFileSync(vfile, bumped);
 
     console.log('Version updated');
@@ -46,7 +46,7 @@ prompt
     execSync(
       `git add version package.json && git commit -m "Release ${bumped}"`,
       {
-        cwd: join(__dirname, '../'),
+        cwd: process.cwd(),
       },
     );
 
