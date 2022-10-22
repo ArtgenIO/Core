@@ -47,8 +47,8 @@ describe('Admin', () => {
 
     cy.get('.test--dashboard-title')
       .should('exist')
-      .clear()
-      .type(randomName, { delay: 1 })
+      .clear({ interval: 30 })
+      .type(randomName, { delay: 3 })
       .blur();
 
     cy.get('.test--dashboard-title').should('contain.value', randomName);
