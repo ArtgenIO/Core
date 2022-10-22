@@ -1,11 +1,12 @@
-![Artgen Social Banner](https://user-images.githubusercontent.com/3441017/140712817-6de39d70-74ab-43d2-924f-b02776953c27.png)
+![Artgen Social Banner](https://user-images.githubusercontent.com/3441017/197366384-d41c96d9-3f12-4f55-aae7-817144890b6a.png)
 
 [![CD](https://github.com/artgenio/core/actions/workflows/cd.yml/badge.svg?branch=main)](https://github.com/artgenio/core/actions/workflows/cd.yml)
-[![Docker Pulls](https://img.shields.io/docker/pulls/artgenio/core)](https://hub.docker.com/r/artgenio/core)
-[![NPM](https://img.shields.io/npm/dt/@artgenio/core?label=NPM)](https://www.npmjs.com/package/@artgenio/core)
-[![Docker Image Version](https://img.shields.io/docker/v/artgenio/core)](https://hub.docker.com/r/artgenio/core)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/artgenio/core)](https://github.com/ArtgenIO/Core/commits/main)
-[![Coverage Status](https://coveralls.io/repos/github/ArtgenIO/Core/badge.svg?branch=main)](https://coveralls.io/github/ArtgenIO/Core?branch=main)
+[![NPM](https://img.shields.io/npm/dt/@artgenio/core?label=NPM+Pulls)](https://www.npmjs.com/package/@artgenio/core)
+[![Docker Pulls](https://img.shields.io/docker/pulls/artgenio/core?label=Docker+Pulls)](https://hub.docker.com/r/artgenio/core)
+[![Docker Image Version](https://img.shields.io/docker/v/artgenio/core?label=Docker+Latest)](https://hub.docker.com/r/artgenio/core)
+[![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/artgenio/core?label=Image%20Size)](https://hub.docker.com/r/artgenio/core)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/artgenio/core?label=Last+Commit)](https://github.com/ArtgenIO/Core/commits/main)
+[![Cypress.io](https://img.shields.io/badge/Tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 ![License](https://img.shields.io/github/license/artgenio/core?label=License)
 
 ### Get Started!
