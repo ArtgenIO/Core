@@ -6,7 +6,6 @@
 [![Docker Image Version](https://img.shields.io/docker/v/artgenio/core?label=Docker+Latest)](https://hub.docker.com/r/artgenio/core)
 [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/artgenio/core?label=Image%20Size)](https://hub.docker.com/r/artgenio/core)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/artgenio/core?label=Last+Commit)](https://github.com/ArtgenIO/Core/commits/main)
-[![Cypress.io](https://img.shields.io/badge/Tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 ![License](https://img.shields.io/github/license/artgenio/core?label=License)
 
 ### Get Started!
