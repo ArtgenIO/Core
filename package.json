@@ -124,8 +124,8 @@
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
     "@cypress/code-coverage": "^3.9.12",
-    "@nivo/core": "^0.74.0",
-    "@nivo/line": "^0.74.0",
+    "@nivo/core": "^0.80.0",
+    "@nivo/line": "^0.80.0",
     "@rjsf/antd": "^3.2.0",
     "@rjsf/core": "^3.2.0",
     "@types/bcrypt": "^5.0.0",
