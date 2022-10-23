@@ -58,6 +58,8 @@ export default function TitleComponent({ schema }: Props) {
             size="large"
             placeholder="$Root"
             onSelect={(selected: string) => {
+              selected = selected === '$NULL' ? null : selected;
+
               if (selected !== assignedModuleId) {
                 setAssignedModuleId(selected);
 
@@ -80,7 +82,7 @@ export default function TitleComponent({ schema }: Props) {
                 {m.name}
               </Select.Option>
             ))}
-            <Select.Option key={null} value={null}>
+            <Select.Option key={'$NULL'} value={'$NULL'}>
               <span className="text-midnight-500">$Root</span>
             </Select.Option>
           </Select>

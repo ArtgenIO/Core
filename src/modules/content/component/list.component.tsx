@@ -7,7 +7,7 @@ import { lastViewedAtom, schemasAtom } from '../../admin/admin.atoms';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { ISchema } from '../../schema';
-import TableComponent from './grid.component';
+import GridComponent from './grid.component';
 import TitleComponent from './title.components';
 
 type RouteParams = {
@@ -77,7 +77,7 @@ export default function ContentListComponent() {
         }
       >
         {schema ? (
-          <TableComponent
+          <GridComponent
             schema={schema}
             triggerShowCreate={triggerShowCreate}
             setTriggerShowCreate={setTriggerShowCreate}

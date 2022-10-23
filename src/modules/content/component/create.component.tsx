@@ -13,30 +13,30 @@ import { toRestRoute } from '../util/schema-url';
 
 type Props = {
   schema: ISchema;
-  onClose: () => void;
+  onClose: (hasChanged: boolean) => void;
 };
 
 export default function ContentCreateComponent({ schema, onClose }: Props) {
-  const httpClient = useHttpClientSimple();
+  const client = useHttpClientSimple();
   const schemas = useRecoilValue(schemasAtom);
-  const [formSchema, setFormSchema] = useState({});
+  const [formJsonSchema, setFormJsonSchema] = useState({});
   const [UISchema, setUISchema] = useState<any>({});
 
   useEffect(() => {
-    setFormSchema(schemaToJsonSchema(schema, CrudAction.CREATE, true));
+    setFormJsonSchema(schemaToJsonSchema(schema, CrudAction.CREATE, true));
     setUISchema(generateUIConfig(schema, schemas));
 
     return () => {
-      setFormSchema({});
+      setFormJsonSchema({});
     };
   }, [schema]);
 
   const doCreate = async (form: { formData: RowLike }) => {
     try {
-      await httpClient.post<RowLike>(toRestRoute(schema), form.formData);
+      await client.post<RowLike>(toRestRoute(schema), form.formData);
       message.success(`New record created!`);
 
-      onClose();
+      onClose(true);
     } catch (error) {
       message.error(`Error while creating the record!`);
       console.error(error);
@@ -48,10 +48,10 @@ export default function ContentCreateComponent({ schema, onClose }: Props) {
       width="40%"
       visible={true}
       title={`Create New ${schema.title}`}
-      onClose={onClose}
+      onClose={() => onClose(false)}
     >
-      <Form schema={formSchema} onSubmit={doCreate} uiSchema={UISchema}>
-        <Button type="primary" htmlType="submit">
+      <Form schema={formJsonSchema} onSubmit={doCreate} uiSchema={UISchema}>
+        <Button className="success" block htmlType="submit">
           Create
         </Button>
       </Form>

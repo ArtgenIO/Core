@@ -16,7 +16,7 @@ import { toRestRecordRoute } from '../util/schema-url';
 type Props = {
   schema: ISchema;
   content: RowLike;
-  onClose: () => void;
+  onClose: (hasChanged: boolean) => void;
 };
 
 export default function ContentUpdateComponent({
@@ -71,7 +71,7 @@ export default function ContentUpdateComponent({
 
       message.success(`Record has been updated!`);
       // Go back to the read index
-      onClose();
+      onClose(true);
     } catch (error) {
       message.error(`An error occured while we tried to update the record`);
     }
@@ -82,7 +82,7 @@ export default function ContentUpdateComponent({
       width="40%"
       visible={true}
       title={`Edit ${schema.title}`}
-      onClose={onClose}
+      onClose={() => onClose(false)}
     >
       <Form
         schema={formSchema}
@@ -91,7 +91,7 @@ export default function ContentUpdateComponent({
         uiSchema={uiSchema}
         className="mx-2"
       >
-        <Button type="primary" htmlType="submit">
+        <Button className="success" block htmlType="submit">
           Save Changes
         </Button>
       </Form>

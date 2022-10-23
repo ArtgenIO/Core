@@ -56,7 +56,7 @@ type Props = {
   setTriggerShowCreate?: Dispatch<SetStateAction<boolean>>;
 };
 
-export default function TableComponent({
+export default function GridComponent({
   schema,
   triggerShowCreate,
   setTriggerShowCreate,
@@ -273,26 +273,53 @@ export default function TableComponent({
                     }
                   }}
                   onDeselect={() => setRefreshInterval(null)}
-                >
-                  <Menu.Item key="5">
-                    Every <b>5</b> seconds
-                  </Menu.Item>
-                  <Menu.Item key="10">
-                    Every <b>10</b> seconds
-                  </Menu.Item>
-                  <Menu.Item key="30">
-                    Every <b>30</b> seconds
-                  </Menu.Item>
-                  <Menu.Item key="60">
-                    Every <b>1</b> minute
-                  </Menu.Item>
-                  <Menu.Item key="300">
-                    Every <b>5</b> minute
-                  </Menu.Item>
-                  <Menu.Item key="600">
-                    Every <b>10</b> minute
-                  </Menu.Item>
-                </Menu>
+                  items={[
+                    {
+                      key: '5',
+                      label: (
+                        <>
+                          Every <b>5</b> seconds
+                        </>
+                      ),
+                    },
+                    {
+                      key: '10',
+                      label: (
+                        <>
+                          Every <b>10</b> seconds
+                        </>
+                      ),
+                    },
+                    {
+                      key: '30',
+                      label: (
+                        <>
+                          Every <b>30</b> seconds
+                        </>
+                      ),
+                    },
+                    {
+                      key: '60',
+                      label: <>Every minute</>,
+                    },
+                    {
+                      key: '300',
+                      label: (
+                        <>
+                          Every <b>5</b> minutes
+                        </>
+                      ),
+                    },
+                    {
+                      key: '600',
+                      label: (
+                        <>
+                          Every <b>10</b> minutes
+                        </>
+                      ),
+                    },
+                  ]}
+                />
               }
               icon={<DownOutlined />}
               loading={loading}
@@ -320,14 +347,18 @@ export default function TableComponent({
           <Button.Group>
             <Button
               icon={<DownloadOutlined />}
-              onClick={() => setShowCreate(true)}
+              onClick={() => {
+                message.warning('To be implemented');
+              }}
             >
               Export
             </Button>
 
             <Button
               icon={<UploadOutlined />}
-              onClick={() => setShowCreate(true)}
+              onClick={() => {
+                message.warning('To be implemented');
+              }}
             >
               Import
             </Button>
@@ -661,12 +692,15 @@ export default function TableComponent({
         {showCreate && (
           <ContentCreateComponent
             schema={schema}
-            onClose={() => {
+            onClose={(hasChanged: boolean) => {
               setShowCreate(false);
               if (setTriggerShowCreate) {
                 setTriggerShowCreate(false);
               }
-              doRefetch(Date.now());
+
+              if (hasChanged) {
+                doRefetch(Date.now());
+              }
             }}
           />
         )}
@@ -675,9 +709,12 @@ export default function TableComponent({
           <ContentUpdateComponent
             content={showEdit}
             schema={schema}
-            onClose={() => {
+            onClose={(hasChanged: boolean) => {
               setShowEdit(null);
-              doRefetch(Date.now());
+
+              if (hasChanged) {
+                doRefetch(Date.now());
+              }
             }}
           />
         )}
