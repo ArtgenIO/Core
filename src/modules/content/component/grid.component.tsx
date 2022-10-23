@@ -62,8 +62,8 @@ export default function GridComponent({
   setTriggerShowCreate,
 }: Props) {
   // Global state
-  const httpClient = useHttpClientSimple();
-  const [browserParams, setBrowserParams] = useSearchParams();
+  const client = useHttpClientSimple();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [schemas, setSchemas] = useRecoilState(schemasAtom);
 
   const [apiUrl, setApiUrl] = useState(null);
@@ -82,11 +82,11 @@ export default function GridComponent({
   // Grid content state
   const [rows, setRows] = useState<RowLike[]>([]);
   const [sorters, setSorters] = useState<[string, 'asc' | 'desc'][]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [refetch, doRefetch] = useState<number>(() => Date.now());
   const [fields, setFields] = useState<IField[]>([]);
   const [selected, setSelected] = useState<RowLike[]>([]);
-  const [selectedKey, setSelectedKey] = useState<React.Key[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [filter, setFilter] = useState<string>(null);
 
   // Auto refresh
@@ -103,10 +103,10 @@ export default function GridComponent({
   }, [triggerShowCreate]);
 
   useEffect(() => {
-    if (browserParams.has('page')) {
-      setPageCurr(parseInt(browserParams.get('page'), 10));
+    if (searchParams.has('page')) {
+      setPageCurr(parseInt(searchParams.get('page'), 10));
     }
-  }, [browserParams]);
+  }, [searchParams]);
 
   useEffect(() => {
     if (refreshTimer) {
@@ -128,24 +128,17 @@ export default function GridComponent({
 
   // Reset states
   useEffect(() => {
+    setFields(cloneDeep(schema).fields.sort(GridTools.sortFields));
     setFilter(null);
     setShowFilter(false);
     setSorters([]);
     setSelected([]);
+    setRows([]);
 
     setFieldWidth(schema.fields.map(f => [f.reference, 280]));
-
-    return () => {
-      setFilter(null);
-      setShowFilter(false);
-      setSorters([]);
-      setSelected([]);
-    };
   }, [schema]);
 
   useEffect(() => {
-    const _fields = cloneDeep(schema).fields;
-
     let apiUrl = toRestRoute(schema, qb => {
       // Pagination limit
       qb.top(pageSize);
@@ -154,14 +147,14 @@ export default function GridComponent({
         qb.skip(pageCurr * pageSize - pageSize);
 
         // Sync with the pagination param
-        browserParams.set('page', pageCurr.toString());
+        searchParams.set('page', pageCurr.toString());
       }
 
       if (sorters) {
         const orderBy = sorters
           // Remove the hidden fields from sorting
           .filter(
-            s => !_fields.find(FieldTool.fReference(s[0])).meta.grid.hidden,
+            s => !fields.find(FieldTool.fReference(s[0])).meta.grid.hidden,
           )
           .map(s => s.join(' '))
           .join(', ');
@@ -172,7 +165,7 @@ export default function GridComponent({
       }
 
       qb.select(
-        _fields
+        fields
           .filter(f => FieldTool.isPrimary(f) || !f.meta.grid.hidden)
           .map(f => {
             let fieldRef = f.reference;
@@ -185,8 +178,6 @@ export default function GridComponent({
               // Query the replacement with the field value too.
               if (relation) {
                 fieldRef = `${fieldRef},${relation.name}/${f.meta.grid.replace}`;
-              } else {
-                console.error('Missing relation?!', f);
               }
             }
 
@@ -202,21 +193,19 @@ export default function GridComponent({
       apiUrl += `&${filter.substring(1)}`;
     }
 
-    setBrowserParams(browserParams);
-
-    setFields(_fields.sort(GridTools.sortFields));
+    setSearchParams(searchParams);
     setApiUrl(apiUrl + `&--artgen-no-cache=${refetch}`);
-  }, [pageCurr, pageSize, sorters, schema, refetch, filter]);
+  }, [pageCurr, pageSize, sorters, fields, refetch, filter]);
 
   useEffect(() => {
     if (apiUrl) {
-      setLoading(true);
+      setIsLoading(true);
 
       const pks = schema.fields
         .filter(FieldTool.isPrimary)
         .map(f => f.reference);
 
-      httpClient
+      client
         .get<IFindResponse>(apiUrl)
         .then(reply => {
           setRows(
@@ -232,15 +221,15 @@ export default function GridComponent({
           message.error('Invalid request!');
         })
         .finally(() => {
-          setLoading(false);
+          setIsLoading(false);
         });
     }
   }, [apiUrl]);
 
   const doUpdate = record => {
-    setLoading(true);
+    setIsLoading(true);
 
-    httpClient
+    client
       .patch<RowLike>(toRestRecordRoute(schema, record), record)
       .then(() => {
         doRefetch(Date.now());
@@ -250,7 +239,7 @@ export default function GridComponent({
 
   return (
     <>
-      <div className="flex my-2 bg-midnight-600 rounded-sm">
+      <div className="flex my-2 bg-midnight-700 rounded-sm">
         <div className="shrink">
           <Button.Group>
             <Button
@@ -322,8 +311,8 @@ export default function GridComponent({
                 />
               }
               icon={<DownOutlined />}
-              loading={loading}
-              disabled={loading}
+              loading={isLoading}
+              disabled={isLoading}
               onClick={() => doRefetch(Date.now())}
             >
               {refreshInterval ? (
@@ -331,21 +320,19 @@ export default function GridComponent({
               ) : undefined}
               Refresh
             </Dropdown.Button>
+            <Button
+              icon={<DatabaseOutlined />}
+              onClick={() => setEditSchema(schema)}
+            >
+              Schemantics
+            </Button>
           </Button.Group>
-        </div>
-
-        <div className="shink ml-1">
-          <Button
-            icon={<DatabaseOutlined />}
-            onClick={() => setEditSchema(schema)}
-          >
-            Schemantics
-          </Button>
         </div>
 
         <div className="grow ml-1 text-right">
           <Button.Group>
             <Button
+              disabled
               icon={<DownloadOutlined />}
               onClick={() => {
                 message.warning('To be implemented');
@@ -355,6 +342,7 @@ export default function GridComponent({
             </Button>
 
             <Button
+              disabled
               icon={<UploadOutlined />}
               onClick={() => {
                 message.warning('To be implemented');
@@ -396,12 +384,12 @@ export default function GridComponent({
               icon={<QuestionCircleOutlined />}
               onConfirm={() => {
                 // Lock the interactions
-                setLoading(true);
+                setIsLoading(true);
 
                 // Concurrent delete
                 Promise.all(
                   selected.map(r =>
-                    httpClient.delete(toRestRecordRoute(schema, r)),
+                    client.delete(toRestRecordRoute(schema, r)),
                   ),
                 ).then(() => {
                   notification.warn({
@@ -411,7 +399,7 @@ export default function GridComponent({
 
                   doRefetch(Date.now());
                   setSelected([]);
-                  setSelectedKey([]);
+                  setSelectedRowKeys([]);
                 });
               }}
             >
@@ -437,7 +425,7 @@ export default function GridComponent({
           rowKey="__ag_rowkey"
           dataSource={rows}
           pagination={false}
-          loading={loading}
+          loading={isLoading}
           onRow={(record, idx) => {
             return {
               onDoubleClick: () => setShowEdit(record),
@@ -446,10 +434,10 @@ export default function GridComponent({
           rowSelection={{
             type: 'checkbox',
             fixed: 'left',
-            selectedRowKeys: selectedKey,
+            selectedRowKeys: selectedRowKeys,
             onChange: (keys, selectedRows) => {
               setSelected(selectedRows);
-              setSelectedKey(keys);
+              setSelectedRowKeys(keys);
             },
             selections: [
               Table.SELECTION_ALL,
@@ -489,7 +477,8 @@ export default function GridComponent({
           }}
           bordered
         >
-          {fields
+          {cloneDeep(schema)
+            .fields.sort(GridTools.sortFields)
             .filter(f => !f.meta.grid.hidden)
             .map((field, idx) => {
               let dataIndex: string | string[] = field.reference;
@@ -509,8 +498,6 @@ export default function GridComponent({
                         r.reference === relation.target,
                     )
                     .fields.find(r => r.reference == field.meta.grid.replace);
-                } else {
-                  console.error('Missing relation x2?!', field);
                 }
               }
 
@@ -540,7 +527,10 @@ export default function GridComponent({
                 align = 'center';
               }
 
-              const width = fieldWidth.find(r => r[0] === field.reference)[1];
+              const _fieldWidth = fieldWidth.find(
+                r => r[0] === field.reference,
+              );
+              const width = _fieldWidth ? _fieldWidth[1] : 120;
 
               return (
                 <Column
@@ -748,7 +738,7 @@ export default function GridComponent({
         )}
       </div>
 
-      <div className="mt-4 w-full bg-midnight-600 py-1 px-4 rounded-md text-right">
+      <div className="mt-4 w-full bg-midnight-700 py-1 px-4 rounded-md text-right">
         <Pagination
           total={total}
           defaultCurrent={pageCurr}

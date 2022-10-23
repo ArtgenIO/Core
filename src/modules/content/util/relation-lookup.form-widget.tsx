@@ -12,8 +12,6 @@ export const createCustomRelationLookupFormWidget = (
   remoteSchema: ISchema,
 ) => {
   return props => {
-    console.log('Calling with props', relationName, props);
-
     const httpClient = useHttpClientSimple();
     const [options, setOptions] = useState<{ label: string; value: string }[]>(
       [],
@@ -62,8 +60,6 @@ export const createCustomRelationLookupFormWidget = (
           setOptions(newOptions);
         });
     };
-
-    console.log('Set auto complete to ---->', props.value);
 
     return (
       <Select

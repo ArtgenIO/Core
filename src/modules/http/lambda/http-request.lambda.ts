@@ -129,8 +129,6 @@ export class HttpRequestLambda implements ILambda {
         timeout: config.timeout,
       };
 
-      console.log(request);
-
       const response = await client.request(request);
 
       return {

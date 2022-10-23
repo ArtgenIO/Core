@@ -188,8 +188,6 @@ export default function FlowBoardNodeConfig({
 
                         return newElements;
                       });
-
-                      console.log('node config changed');
                     }}
                   />
                 </Descriptions.Item>
@@ -232,8 +230,6 @@ export default function FlowBoardNodeConfig({
 
                   return newElements;
                 });
-
-                console.log('node config changed');
               }}
             >
               <></>

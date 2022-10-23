@@ -129,14 +129,10 @@ export default function FlowBoardComponent() {
   const onDragOver = event => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
-
-    console.log('Drag over');
   };
 
   const onDrop = (event: DragEvent) => {
     const bounds = wrapper.current.getBoundingClientRect();
-
-    console.log('Drop over');
 
     if (event.dataTransfer.getData('application/reactflow')) {
       event.preventDefault();
@@ -323,9 +319,6 @@ export default function FlowBoardComponent() {
                 } else {
                   setFocusedElementId(null);
                 }
-              }}
-              onChange={() => {
-                console.log('Changed');
               }}
               nodeTypes={customNodes}
               defaultZoom={1.5}

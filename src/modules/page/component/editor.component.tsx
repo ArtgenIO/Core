@@ -34,7 +34,6 @@ export default function PageEditorComponent() {
     if (editor) {
       editor.StorageManager.add('artgen-storage', {
         load(keys, onDone, onErr) {
-          console.log('Loading page', keys);
           const defaultObject = {};
 
           for (const key of keys) {
@@ -54,8 +53,6 @@ export default function PageEditorComponent() {
             .catch(err => onErr(err));
         },
         store(content, onDone, onErr) {
-          console.log('Storing page', content);
-
           setPage(oldState => {
             const newState = cloneDeep(oldState);
             newState.content = content;
@@ -73,9 +70,7 @@ export default function PageEditorComponent() {
       });
 
       editor.load();
-      editor.on('update', ar => {
-        console.log('update', ar);
-      });
+      editor.on('update', ar => {});
 
       document.getElementById('page-editor').style.height = '100vh';
     }
