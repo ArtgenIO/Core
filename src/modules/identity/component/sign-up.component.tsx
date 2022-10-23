@@ -23,6 +23,7 @@ export default function SignUpComponent() {
       .post<Response>('/api/identity/signup', values)
       .then(response => {
         notification.success({
+          key: 'authentication',
           icon: <UnlockOutlined className="text-green-400" />,
           message: 'Sign Up Successful!',
           description: 'Welcome, Artisan!, have a wondeful day <3',
@@ -33,6 +34,7 @@ export default function SignUpComponent() {
       })
       .catch(() => {
         notification.error({
+          key: 'authentication',
           icon: <MehOutlined className="text-red-400" />,
           message: 'Sign Up Failed!',
           description: 'Please check your credentials',

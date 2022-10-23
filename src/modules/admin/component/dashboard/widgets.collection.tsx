@@ -1,20 +1,20 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { lazy } from 'react';
-import { IDashGridElement } from '../interface/dash-grid.interface';
+import { IDashGridElement } from '../../interface/dash-grid.interface';
 
 const Widgets = {
   'telemetry.http-requests': lazy(
-    () => import('../../telemetry/component/http-requests.widget'),
+    () => import('../../../telemetry/component/http-requests.widget'),
   ),
   'telemetry.db-query': lazy(
-    () => import('../../telemetry/component/db-query.widget'),
+    () => import('../../../telemetry/component/db-query.widget'),
   ),
   'telemetry.uptime': lazy(
-    () => import('../../telemetry/component/uptime.widget'),
+    () => import('../../../telemetry/component/uptime.widget'),
   ),
   'flow.executions': lazy(
-    () => import('../../flow/components/widget/execution.widget'),
+    () => import('../../../flow/components/widget/execution.widget'),
   ),
 };
 

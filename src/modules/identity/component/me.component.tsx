@@ -1,4 +1,4 @@
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Divider, Drawer, notification } from 'antd';
 import md5 from 'md5';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
@@ -15,7 +15,7 @@ export default function MeComponent({ onClose }: Props) {
   return (
     <Drawer
       width={350}
-      visible
+      open
       title="Profile"
       closable
       onClose={() => onClose()}
@@ -26,19 +26,23 @@ export default function MeComponent({ onClose }: Props) {
           size={280}
           icon={<UserOutlined />}
           src={`https://www.gravatar.com/avatar/${md5(
-            profile.email,
+            profile?.email,
           )}?d=identicon&s=280`}
+          shape="square"
         />
       </div>
+      <Divider />
+      <p className="text-center">{profile?.email}</p>
       <Divider />
       <Button
         block
         key="profile"
-        icon={<LogoutOutlined />}
+        icon={<LockOutlined />}
         onClick={() => {
           resetJwt();
 
           notification.success({
+            key: 'authentication',
             message: 'Bye bye! Come back soon <3',
             placement: 'bottomRight',
           });

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { schemasAtom } from '../../admin/admin.atoms.jsx';
-import { useHttpClientSimple } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/simple.http-client';
 import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { ISchema } from '../../schema';
 import { FieldTool } from '../../schema/util/field-tools';

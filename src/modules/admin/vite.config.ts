@@ -32,7 +32,7 @@ export default {
     hmr: true,
   },
   logLevel: 'info',
-  root: join(__dirname, 'assets'),
+  root: join(__dirname, 'view'),
   publicDir: 'public',
   base: '/admin/',
 

@@ -70,7 +70,7 @@ export class AdminGateway implements IHttpGateway {
       const viteConfig = cloneDeep(
         (await import('../vite.config')).default,
       ) as any;
-      viteConfig.root = join(dir, 'assets');
+      viteConfig.root = join(dir, 'view');
 
       const vite = await import('vite');
       this.viteServer = await vite.createServer(viteConfig);

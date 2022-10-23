@@ -82,39 +82,33 @@ const NavSide = () => {
   }, [location]);
 
   return (
-    <>
-      <Sider
-        collapsed
-        className="nav-side depth-1 relative"
-        collapsedWidth={54}
-      >
-        <div className="brand-block">
-          <Link to="/">
-            <div className="brand-logo"></div>
-          </Link>
-        </div>
+    <Sider collapsed className="nav-side depth-1 relative" collapsedWidth={54}>
+      <div className="brand-block">
+        <Link to="/">
+          <div className="brand-logo"></div>
+        </Link>
+      </div>
 
-        {selected && (
-          <Menu
-            className="menu"
-            defaultSelectedKeys={selected}
-            mode="inline"
-            items={menuItems.map((m, idx) => ({
-              key: `k-${snakeCase(m.title)}`,
-              icon: m.icon,
-              title: m.title,
-              onClick: () => navigateTo(m.path),
-              className: m.className,
-            }))}
-          />
-        )}
+      {selected && (
+        <Menu
+          className="menu"
+          defaultSelectedKeys={selected}
+          mode="inline"
+          items={menuItems.map((m, idx) => ({
+            key: `k-${snakeCase(m.title)}`,
+            icon: m.icon,
+            title: m.title,
+            onClick: () => navigateTo(m.path),
+            className: m.className,
+          }))}
+        />
+      )}
 
-        <Suspense fallback={<Spin></Spin>}>
-          <NewsComponent />
-          <MeButtonComponent />
-        </Suspense>
-      </Sider>
-    </>
+      <Suspense fallback={<Spin></Spin>}>
+        <NewsComponent />
+        <MeButtonComponent />
+      </Suspense>
+    </Sider>
   );
 };
 

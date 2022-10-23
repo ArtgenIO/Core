@@ -22,8 +22,8 @@ import {
 } from 'antd';
 import Meta from 'antd/lib/card/Meta';
 import { useState } from 'react';
-import { useHttpClientSimple } from '../../admin/library/http-client';
-import { useHttpClient } from '../../admin/library/use-http-client';
+import { useHttpClient } from '../../admin/library/hook.http-client';
+import { useHttpClientSimple } from '../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';

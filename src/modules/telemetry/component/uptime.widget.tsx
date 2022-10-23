@@ -1,6 +1,6 @@
 import { Statistic } from 'antd';
 import { useEffect, useState } from 'react';
-import { useHttpClient } from '../../admin/library/use-http-client';
+import { useHttpClient } from '../../admin/library/hook.http-client';
 import { ITelemetryResult } from '../interface/result.interface';
 
 export default function UptimeWidget() {

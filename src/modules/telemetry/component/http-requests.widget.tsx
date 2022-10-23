@@ -1,6 +1,6 @@
 import { ResponsiveLine } from '@nivo/line';
 import { useEffect, useState } from 'react';
-import { useHttpClient } from '../../admin/library/use-http-client';
+import { useHttpClient } from '../../admin/library/hook.http-client';
 import { BucketKey } from '../interface/bucket-key.enum';
 import { ITelemetryResult } from '../interface/result.interface';
 

@@ -1,7 +1,7 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
 import { ReactFlowInstance } from 'react-flow-renderer';
-import { useHttpClientSimple } from '../../../admin/library/http-client';
+import { useHttpClientSimple } from '../../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 import { IFlow } from '../../interface/flow.interface';

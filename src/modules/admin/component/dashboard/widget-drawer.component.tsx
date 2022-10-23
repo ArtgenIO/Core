@@ -1,6 +1,6 @@
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { Button, Drawer, List } from 'antd';
-import { IDashGridElement } from '../interface/dash-grid.interface';
+import { IDashGridElement } from '../../interface/dash-grid.interface';
 
 type Props = {
   onClose: () => void;

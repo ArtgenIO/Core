@@ -105,7 +105,7 @@ export default function FlowboardLambdaCatalog({
               <List.Item.Meta
                 avatar={
                   <Avatar
-                    src={`/assets/icons/${lambda.icon ?? 'lambda.png'}`}
+                    src={`/admin/public/icons/${lambda.icon ?? 'lambda.png'}`}
                     className="rounded-lg w-12 h-12 p-1.5 bg-midnight-800"
                   />
                 }

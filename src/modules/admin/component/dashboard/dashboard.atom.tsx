@@ -1,11 +1,11 @@
 import { diff } from 'just-diff';
 import { atom, DefaultValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
-import { toRestSysRoute } from '../../content/util/schema-url';
-import { IFindResponse } from '../../rest/interface/find-reponse.interface';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
-import { IDashboard } from '../interface/dashboard.interface';
-import { useHttpClientSimple } from '../library/http-client';
+import { toRestSysRoute } from '../../../content/util/schema-url';
+import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
+import { SchemaRef } from '../../../schema/interface/system-ref.enum';
+import { IDashboard } from '../../interface/dashboard.interface';
+import { useHttpClientSimple } from '../../library/simple.http-client';
 
 const { persistAtom } = recoilPersist();
 

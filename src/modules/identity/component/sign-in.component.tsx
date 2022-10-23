@@ -23,6 +23,7 @@ export default function SignInComponent() {
       .post<Response>('/api/authentication/jwt/sign-in', values)
       .then(response => {
         notification.success({
+          key: 'authentication',
           icon: <UnlockOutlined className="text-green-400" />,
           message: 'Authentication Successful!',
           description: 'Welcome, Artisan!, have a wondeful day <3',
@@ -33,6 +34,7 @@ export default function SignInComponent() {
       })
       .catch(() => {
         notification.error({
+          key: 'authentication',
           icon: <MehOutlined className="text-red-400" />,
           message: 'Authentication Failed!',
           description: 'Please check your credentials',

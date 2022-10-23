@@ -37,7 +37,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { pageSizeAtom, schemasAtom } from '../../admin/admin.atoms';
-import { useHttpClientSimple } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/simple.http-client';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { FieldTag, FieldType, IField, ISchema } from '../../schema';
 import SchemaEditorComponent from '../../schema/component/editor.component';

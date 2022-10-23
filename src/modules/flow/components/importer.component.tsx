@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { v4 } from 'uuid';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
-import { useHttpClientSimple } from '../../admin/library/http-client';
+import { useHttpClientSimple } from '../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { IFlow } from '../interface';

@@ -5,7 +5,7 @@ import startCase from 'lodash.startcase';
 import { Dispatch, SetStateAction } from 'react';
 import { Link } from 'react-router-dom';
 import { ISchema } from '../..';
-import { useHttpClient } from '../../../admin/library/use-http-client';
+import { useHttpClient } from '../../../admin/library/hook.http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
 import { IDatabase } from '../../../database/interface';
 import { IFindResponse } from '../../../rest/interface/find-reponse.interface';

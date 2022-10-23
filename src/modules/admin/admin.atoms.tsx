@@ -11,7 +11,7 @@ import { ISchema } from '../schema';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { fSchema } from '../schema/util/filter-schema';
 import { migrateSchema } from '../schema/util/migrate-schema';
-import { useHttpClientSimple } from './library/http-client';
+import { useHttpClientSimple } from './library/simple.http-client';
 
 const { persistAtom } = recoilPersist();
 
@@ -85,31 +85,29 @@ export const schemasAtom = atom<ISchema[]>({
   ],
 });
 
-export const profileAtom = atom<Omit<IAccount, 'password'>>({
+export const profileAtom = atom<Omit<IAccount, 'password'> | null>({
   key: 'profile',
   default: null,
   effects_UNSTABLE: [
-    ({ onSet }) => {
-      onSet((newState, oldState) => {
-        //
-      });
-    },
-
     ({ setSelf }) => {
-      const jwt = decodeJWT(useRecoilValue(jwtAtom));
+      const jwtString = useRecoilValue(jwtAtom);
 
-      setSelf(
-        useHttpClientSimple()
-          .get(
-            toRestSysRoute(SchemaRef.ACCOUNT, q =>
-              q
-                .select('id,email')
-                .top(1)
-                .filter(f => f.filterExpression('id', 'eq', jwt.aid)),
-            ),
-          )
-          .then(r => r.data.data[0]),
-      );
+      if (jwtString) {
+        const jwt = decodeJWT(jwtString);
+
+        setSelf(
+          useHttpClientSimple()
+            .get(
+              toRestSysRoute(SchemaRef.ACCOUNT, q =>
+                q
+                  .select('id,email')
+                  .top(1)
+                  .filter(f => f.filterExpression('id', 'eq', jwt.aid)),
+              ),
+            )
+            .then(r => r.data.data[0]),
+        );
+      }
     },
   ],
 });
