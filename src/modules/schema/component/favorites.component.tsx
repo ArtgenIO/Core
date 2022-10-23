@@ -1,36 +1,34 @@
-import { StarOutlined } from '@ant-design/icons';
+import { StarFilled } from '@ant-design/icons';
 import { Menu } from 'antd';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { schemasAtom } from '../../admin/admin.atoms';
 import MenuBlock from '../../admin/component/menu-block.component';
 
 export default function FavoriteSchemasComponent() {
+  const navigate = useNavigate();
   const schemas = useRecoilValue(schemasAtom);
 
-  if (
-    !schemas ||
-    !schemas.length ||
-    !schemas.some(s => !!s?.meta?.isFavorite)
-  ) {
+  // Favorites are hidden until at least one is added
+  if (!schemas?.some(s => s?.meta?.isFavorite)) {
     return <></>;
   }
 
   return (
     <MenuBlock title="Favorite Content" style={{ borderTop: 0 }}>
-      <Menu className="compact" selectable={false}>
-        {schemas
+      <Menu
+        className="compact"
+        selectable={false}
+        items={schemas
           .filter(s => !!s?.meta?.isFavorite)
-          .map(schema => (
-            <Menu.Item key={schema.reference} icon={<StarOutlined />}>
-              <Link
-                to={`/admin/content/${schema.database}/${schema.reference}`}
-              >
-                {schema.title}
-              </Link>
-            </Menu.Item>
-          ))}
-      </Menu>
+          .map(s => ({
+            key: s.reference,
+            icon: <StarFilled />,
+            title: s.title,
+            label: s.title,
+            onClick: () => navigate(`/content/${s.database}/${s.reference}`),
+          }))}
+      />
     </MenuBlock>
   );
 }
