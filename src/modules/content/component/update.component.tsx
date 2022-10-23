@@ -2,12 +2,14 @@ import Form from '@rjsf/antd';
 import { Button, Drawer, message } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
+import { schemasAtom } from '../../admin/admin.atoms.jsx';
 import { useHttpClientSimple } from '../../admin/library/http-client';
 import { CrudAction } from '../../rest/interface/crud-action.enum';
 import { ISchema } from '../../schema';
 import { FieldTool } from '../../schema/util/field-tools';
-import { getUiWidget } from '../util/get-ui-schema';
+import { generateUIConfig } from '../util/generate-ui-config.jsx';
 import { schemaToJsonSchema } from '../util/schema-to-jsonschema';
 import { toRestRecordRoute } from '../util/schema-url';
 
@@ -23,14 +25,15 @@ export default function ContentUpdateComponent({
   onClose,
 }: Props) {
   const httpClient = useHttpClientSimple();
+  const schemas = useRecoilValue(schemasAtom);
   const [formSchema, setFormSchema] = useState({});
-  const [uiSchema, setUiSchema] = useState<any>({});
   const [formData, setFormData] = useState(null);
+  const [uiSchema, setUiSchema] = useState<any>({});
 
   useEffect(() => {
     if (schema) {
       const formSchema = schemaToJsonSchema(schema, CrudAction.UPDATE, true);
-      const uiSchema = getUiWidget(schema);
+      const uiSchema = generateUIConfig(schema, schemas);
 
       setFormSchema(formSchema);
       setUiSchema(uiSchema);

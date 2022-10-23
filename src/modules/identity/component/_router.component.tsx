@@ -9,7 +9,6 @@ export default function AuthenticationRouterComponent() {
       <Routes>
         <Route path="/sign-in" element={<SignInComponent />} />
         <Route path="/sign-up" element={<SignUpComponent />} />
-        {/* Hygen insert routes above */}
         <Route path="*" element={<Navigate to="/sign-in" />} />
       </Routes>
     </section>
