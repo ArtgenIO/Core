@@ -2,7 +2,6 @@ import { Layout, Spin } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import { Suspense } from 'react';
 import { generatePath, Route, Routes, useNavigate } from 'react-router';
-import MenuBlock from '../../admin/component/menu-block.component';
 import FavoriteSchemasComponent from '../../schema/component/favorites.component';
 import SchemaTreeComponent from '../../schema/component/tree.component';
 import ContentListComponent from './list.component';
@@ -31,7 +30,6 @@ export default function ContentRouterComponent() {
         <Suspense fallback={<Spin />}>
           <FavoriteSchemasComponent />
           <SchemaTreeComponent onSelect={onSchemaSelect} />
-          <MenuBlock title="Content Transactions"></MenuBlock>
         </Suspense>
       </Sider>
 

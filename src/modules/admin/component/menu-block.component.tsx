@@ -14,7 +14,7 @@ export default function MenuBlock({
   className,
 }: Props) {
   return (
-    <div className={'menu-block ' + className}>
+    <div className={'menu-block ' + (className ?? '')}>
       <header style={style}>{title}</header>
       <section>{children}</section>
     </div>

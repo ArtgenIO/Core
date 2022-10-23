@@ -17,7 +17,7 @@ export default function FavoriteSchemasComponent() {
   }
 
   return (
-    <MenuBlock title="Favorite Content">
+    <MenuBlock title="Favorite Content" style={{ borderTop: 0 }}>
       <Menu className="compact" selectable={false}>
         {schemas
           .filter(s => !!s?.meta?.isFavorite)

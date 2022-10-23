@@ -103,7 +103,7 @@ export default function SchemaTreeComponent({ onSelect }: Props) {
 
   return (
     <>
-      <MenuBlock title="Explorer" className="-mb-1 test--content-tree">
+      <MenuBlock title="Content Explorer" className="-mb-1 test--content-tree">
         <div className="px-2 py-2">
           <Input
             placeholder="Quick Filter"
