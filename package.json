@@ -109,7 +109,7 @@
     "odata-parser": "^1.4.1",
     "odata-query-builder": "^0.0.7",
     "p-timeout": "^4.0.0",
-    "passport": "^0.5.0",
+    "passport": "^0.6.0",
     "passport-http": "^0.3.0",
     "passport-jwt": "^4.0.0",
     "passport-unique-token": "^3.0.0",
