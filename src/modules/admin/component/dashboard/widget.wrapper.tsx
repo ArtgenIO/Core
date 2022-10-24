@@ -1,5 +1,5 @@
-import { DeleteOutlined } from '@ant-design/icons';
-import { Button, Popconfirm } from 'antd';
+import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
+import { Button, message, Popconfirm } from 'antd';
 import { lazy } from 'react';
 import { IDashGridElement } from '../../interface/dash-grid.interface';
 
@@ -34,20 +34,27 @@ export default function WidgetWrapperComponent({
       <div className="widget-header">
         <div className="flex">
           <div className="grow">{widget.header}</div>
-          <div className="shrink pr-2">
-            <Popconfirm
-              title="Are you sure you want to delete this widget?"
-              onConfirm={() => onDeleteWidget()}
-              placement="bottom"
-              showArrow
-              okButtonProps={{ danger: true }}
-            >
+          <div className="shrink pr-2 pt-0.5">
+            <Button.Group size="small">
               <Button
-                icon={<DeleteOutlined />}
-                className="hover:text-red-500 hover:border-red-500"
-                size="small"
+                icon={<SettingOutlined />}
+                onClick={() => message.info('Not implemented')}
+                className="hover:text-info-500 hover:border-info-500"
               />
-            </Popconfirm>
+
+              <Popconfirm
+                title="Are you sure you want to delete this widget?"
+                onConfirm={() => onDeleteWidget()}
+                placement="bottom"
+                showArrow
+                okButtonProps={{ danger: true }}
+              >
+                <Button
+                  icon={<DeleteOutlined />}
+                  className="hover:text-error-500 hover:border-error-500"
+                />
+              </Popconfirm>
+            </Button.Group>
           </div>
         </div>
       </div>

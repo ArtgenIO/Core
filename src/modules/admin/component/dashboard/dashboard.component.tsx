@@ -116,6 +116,8 @@ export default function DashboardPage() {
                 type="editable-card"
                 className="test--dashboard-tabs"
                 size="small"
+                tabBarGutter={1}
+                destroyInactiveTabPane
                 tabBarExtraContent={{
                   right: (
                     <Button
