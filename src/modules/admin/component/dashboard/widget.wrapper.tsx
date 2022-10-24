@@ -5,25 +5,31 @@ import {
   SwapOutlined,
 } from '@ant-design/icons';
 import { Button, Input, message, Popconfirm } from 'antd';
+import cloneDeep from 'lodash.clonedeep';
 import { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { v4 } from 'uuid';
 import { IDashGridElement } from '../../interface/dash-grid.interface';
+import { dashboardsAtom } from './dashboard.atom.jsx';
 import { WidgetMap } from './widget.map';
 
 type Props = {
-  id: string;
-  widget: IDashGridElement['widget'];
+  dashboardId: string;
+  gridElement: IDashGridElement;
   onDelete: () => void;
   onChange: (widget: IDashGridElement['widget']) => void;
 };
 
 export default function WidgetWrapperComponent({
-  id,
-  widget,
+  dashboardId,
+  gridElement,
   onDelete,
   onChange,
 }: Props) {
-  const WidgetRef = WidgetMap.get(widget.id);
+  const WidgetRef = WidgetMap.get(gridElement.widget.id);
   const [openConfig, setOpenConfig] = useState(false);
+  const [header, setHeader] = useState(gridElement.widget.header);
+  const setDasboards = useSetRecoilState(dashboardsAtom);
 
   return (
     <div className="widget-box" style={{ borderWidth: '1px' }}>
@@ -31,15 +37,18 @@ export default function WidgetWrapperComponent({
         <div className="flex">
           <div className="grow">
             <Input
-              value={widget.header}
+              value={header}
               className="text-center text-lg p-0 text-white"
               bordered={false}
-              onChange={e =>
+              onChange={e => setHeader(e.target.value)}
+              onBlur={e => {
                 onChange({
-                  ...widget,
+                  ...gridElement.widget,
                   header: e.target.value.toString(),
-                })
-              }
+                });
+
+                message.success('Widget header updated');
+              }}
             />
           </div>
           <div className="shrink pr-2 pt-0.5">
@@ -52,7 +61,29 @@ export default function WidgetWrapperComponent({
 
               <Button
                 icon={<CopyOutlined />}
-                onClick={() => message.info('Not implemented')}
+                title="Duplicate"
+                onClick={() => {
+                  setDasboards(oldState => {
+                    const newState = cloneDeep(oldState);
+                    const refDashboard = newState.find(
+                      d => d.id === dashboardId,
+                    );
+
+                    if (refDashboard) {
+                      const dupeGridElement = cloneDeep(gridElement);
+                      dupeGridElement.i = v4();
+                      dupeGridElement.widget.header = `${dupeGridElement.widget.header} (copy)`;
+                      dupeGridElement.y = dupeGridElement.y + 1;
+
+                      refDashboard.widgets.push(dupeGridElement);
+                      message.success(
+                        `Widget [${gridElement.widget.header}] duplicated`,
+                      );
+                    }
+
+                    return newState;
+                  });
+                }}
                 className="hover:text-info-500 hover:border-info-500"
               />
 
@@ -82,9 +113,9 @@ export default function WidgetWrapperComponent({
 
       <div className="bg-midnight-700" style={{ height: 'calc(100% - 44px)' }}>
         <WidgetRef.element
-          id={id}
-          header={widget.header}
-          config={widget?.config || {}}
+          id={gridElement.i}
+          header={gridElement.widget.header}
+          config={gridElement.widget?.config || {}}
           openConfig={openConfig}
           setOpenConfig={setOpenConfig}
         />

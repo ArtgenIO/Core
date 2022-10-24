@@ -198,17 +198,17 @@ export default function DashboardPage() {
           rowHeight={60}
           onLayoutChange={onLayoutChange}
         >
-          {widgets.map(el => (
-            <div key={el.i}>
+          {widgets.map(gridElement => (
+            <div key={gridElement.i}>
               <WidgetWrapperComponent
-                id={el.i}
-                widget={el.widget}
+                dashboardId={active}
+                gridElement={gridElement}
                 onDelete={() => {
                   setDashboards(oldState => {
                     const newState = cloneDeep(oldState);
                     const activeRef = newState.find(dash => dash.id === active);
                     activeRef.widgets = activeRef.widgets.filter(
-                      w => w.i !== el.i,
+                      w => w.i !== gridElement.i,
                     );
 
                     return newState;
@@ -219,7 +219,7 @@ export default function DashboardPage() {
                     const newState = cloneDeep(oldState);
                     const refDashboard = newState.find(d => d.id === active);
                     const refWidget = refDashboard.widgets.find(
-                      w => w.i == el.i,
+                      w => w.i == gridElement.i,
                     );
 
                     refWidget.widget = newWidgetData;
