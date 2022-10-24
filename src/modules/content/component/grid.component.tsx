@@ -33,7 +33,7 @@ import dayjs from 'dayjs';
 import cloneDeep from 'lodash.clonedeep';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { ResizableBox } from 'react-resizable';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { pageSizeAtom, schemasAtom } from '../../admin/admin.atoms';
@@ -63,6 +63,7 @@ export default function GridComponent({
 }: Props) {
   // Global state
   const client = useHttpClientSimple();
+  const navigateTo = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [schemas, setSchemas] = useRecoilState(schemasAtom);
 
@@ -193,8 +194,8 @@ export default function GridComponent({
       apiUrl += `&${filter.substring(1)}`;
     }
 
-    setSearchParams(searchParams);
     setApiUrl(apiUrl + `&--artgen-no-cache=${refetch}`);
+    setSearchParams(searchParams);
   }, [pageCurr, pageSize, sorters, fields, refetch, filter]);
 
   useEffect(() => {
@@ -249,88 +250,6 @@ export default function GridComponent({
               Filter
             </Button>
 
-            <Dropdown.Button
-              overlay={
-                <Menu
-                  selectable
-                  selectedKeys={[
-                    refreshInterval ? refreshInterval.toString() : undefined,
-                  ]}
-                  onSelect={selection => {
-                    if (selection.key) {
-                      setRefreshInterval(parseInt(selection.key, 10));
-                    }
-                  }}
-                  onDeselect={() => setRefreshInterval(null)}
-                  items={[
-                    {
-                      key: '5',
-                      label: (
-                        <>
-                          Every <b>5</b> seconds
-                        </>
-                      ),
-                    },
-                    {
-                      key: '10',
-                      label: (
-                        <>
-                          Every <b>10</b> seconds
-                        </>
-                      ),
-                    },
-                    {
-                      key: '30',
-                      label: (
-                        <>
-                          Every <b>30</b> seconds
-                        </>
-                      ),
-                    },
-                    {
-                      key: '60',
-                      label: <>Every minute</>,
-                    },
-                    {
-                      key: '300',
-                      label: (
-                        <>
-                          Every <b>5</b> minutes
-                        </>
-                      ),
-                    },
-                    {
-                      key: '600',
-                      label: (
-                        <>
-                          Every <b>10</b> minutes
-                        </>
-                      ),
-                    },
-                  ]}
-                />
-              }
-              icon={<DownOutlined />}
-              loading={isLoading}
-              disabled={isLoading}
-              onClick={() => doRefetch(Date.now())}
-            >
-              {refreshInterval ? (
-                <ClockCircleOutlined className="text-green-500" />
-              ) : undefined}
-              Refresh
-            </Dropdown.Button>
-            <Button
-              icon={<DatabaseOutlined />}
-              onClick={() => setEditSchema(schema)}
-            >
-              Schemantics
-            </Button>
-          </Button.Group>
-        </div>
-
-        <div className="grow ml-1 text-right">
-          <Button.Group>
             <Button
               disabled
               icon={<DownloadOutlined />}
@@ -411,6 +330,84 @@ export default function GridComponent({
                 Delete {selected.length ? `x${selected.length}` : ''}
               </Button>
             </Popconfirm>
+
+            <Dropdown.Button
+              overlay={
+                <Menu
+                  selectable
+                  selectedKeys={[
+                    refreshInterval ? refreshInterval.toString() : undefined,
+                  ]}
+                  onSelect={selection => {
+                    if (selection.key) {
+                      setRefreshInterval(parseInt(selection.key, 10));
+                    }
+                  }}
+                  onDeselect={() => setRefreshInterval(null)}
+                  items={[
+                    {
+                      key: '5',
+                      label: (
+                        <>
+                          Every <b>5</b> seconds
+                        </>
+                      ),
+                    },
+                    {
+                      key: '10',
+                      label: (
+                        <>
+                          Every <b>10</b> seconds
+                        </>
+                      ),
+                    },
+                    {
+                      key: '30',
+                      label: (
+                        <>
+                          Every <b>30</b> seconds
+                        </>
+                      ),
+                    },
+                    {
+                      key: '60',
+                      label: <>Every minute</>,
+                    },
+                    {
+                      key: '300',
+                      label: (
+                        <>
+                          Every <b>5</b> minutes
+                        </>
+                      ),
+                    },
+                    {
+                      key: '600',
+                      label: (
+                        <>
+                          Every <b>10</b> minutes
+                        </>
+                      ),
+                    },
+                  ]}
+                />
+              }
+              icon={<DownOutlined />}
+              loading={isLoading}
+              disabled={isLoading}
+              onClick={() => doRefetch(Date.now())}
+            >
+              {refreshInterval ? (
+                <ClockCircleOutlined className="text-green-500" />
+              ) : undefined}
+              Refresh
+            </Dropdown.Button>
+            <Button
+              icon={<DatabaseOutlined />}
+              onClick={() => setEditSchema(schema)}
+            >
+              Blueprint
+            </Button>
           </Button.Group>
         </div>
       </div>

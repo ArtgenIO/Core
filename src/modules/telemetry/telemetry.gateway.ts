@@ -23,6 +23,19 @@ export class TelemetryGateway implements IHttpGateway {
     };
 
     httpServer.get('/api/telemetry', handler);
+
+    httpServer.get(
+      '/api/telemetry/serie/:id',
+      async (
+        req: FastifyRequest<{ Params: { id: string } }>,
+        reply: FastifyReply,
+      ) => {
+        return this.service
+          .getReadings()
+          .readings.find(s => s.id === req.params.id);
+      },
+    );
+
     this.logger.info('Telemetry API endpoint registered');
   }
 }

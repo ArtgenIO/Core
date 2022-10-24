@@ -1,9 +1,9 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import { lazy } from 'react';
 import { IDashGridElement } from '../../interface/dash-grid.interface';
 
-const Widgets = {
+const WidgetMap = {
   'telemetry.http-requests': lazy(
     () => import('../../../telemetry/component/http-requests.widget'),
   ),
@@ -23,27 +23,31 @@ type Props = {
   onDeleteWidget: () => void;
 };
 
-export default function RenderWidgetComponent({
+export default function WidgetWrapperComponent({
   widget,
   onDeleteWidget,
 }: Props) {
-  const Widget = Widgets[widget.id];
+  const Widget = WidgetMap[widget.id];
 
   return (
-    <div
-      className="h-full border-midnight-600 border-solid rounded-md"
-      style={{ borderWidth: '1px' }}
-    >
-      <div className="bg-midnight-800 rounded-t-md font-header text-lg leading-8 text-midnight-50 h-8">
+    <div className="widget-box" style={{ borderWidth: '1px' }}>
+      <div className="widget-header">
         <div className="flex">
           <div className="grow">{widget.header}</div>
           <div className="shrink pr-2">
-            <Button
-              icon={<DeleteOutlined />}
-              onClick={() => onDeleteWidget()}
-              className="hover:text-red-500 hover:border-red-500"
-              size="small"
-            />
+            <Popconfirm
+              title="Are you sure you want to delete this widget?"
+              onConfirm={() => onDeleteWidget()}
+              placement="bottom"
+              showArrow
+              okButtonProps={{ danger: true }}
+            >
+              <Button
+                icon={<DeleteOutlined />}
+                className="hover:text-red-500 hover:border-red-500"
+                size="small"
+              />
+            </Popconfirm>
           </div>
         </div>
       </div>

@@ -52,7 +52,7 @@ const widgets: Omit<IDashGridElement, 'i' | 'x' | 'y'>[] = [
 
 export default function WidgetDrawerComponent({ onClose, onAdd }: Props) {
   return (
-    <Drawer width={420} visible title="Widgets" onClose={onClose}>
+    <Drawer width="40%" open title="Widgets" onClose={onClose}>
       <List
         size="small"
         bordered

@@ -1,16 +1,16 @@
-import { ResponsiveLine } from '@nivo/line';
-import { useEffect, useState } from 'react';
+import { Serie } from '@nivo/line';
+import { useEffect } from 'react';
+import LoadingComponent from '../../admin/component/loading/loading.component.jsx';
+import { generateLineChart } from '../../admin/library/generate-line-chart.jsx';
 import { useHttpClient } from '../../admin/library/hook.http-client';
-import { BucketKey } from '../interface/bucket-key.enum';
-import { ITelemetryResult } from '../interface/result.interface';
 
 export default function SystemLoadMonitorWidget() {
-  const [{ data: response, loading, error }, refetch] =
-    useHttpClient<ITelemetryResult>('/api/telemetry', {
+  const [{ data, loading: isLoading }, refetch] = useHttpClient<Serie>(
+    '/api/telemetry/serie/http.request',
+    {
       useCache: true,
-    });
-
-  const [chartData, setChartData] = useState([]);
+    },
+  );
 
   useEffect(() => {
     const refresh = setInterval(() => refetch(), 60_000);
@@ -20,58 +20,13 @@ export default function SystemLoadMonitorWidget() {
     };
   }, []);
 
-  useEffect(() => {
-    if (response) {
-      setChartData(
-        response.readings.filter(r => r.id === BucketKey.HTTP_REQUEST),
-      );
-    }
-  }, [response]);
-
-  return (
-    <ResponsiveLine
-      theme={{
-        background: '#263238',
-        textColor: '#cfd2d9',
-        grid: {
-          line: {
-            stroke: '#474952',
-          },
-        },
-      }}
-      colors={['#fafa6e']}
-      data={chartData}
-      margin={{ top: 16, right: 16, bottom: 32, left: 64 }}
-      xScale={{ type: 'point' }}
-      yScale={{
-        type: 'linear',
-        min: 'auto',
-        max: 'auto',
-        stacked: true,
-        reverse: false,
-      }}
-      axisTop={null}
-      axisRight={null}
-      axisBottom={{
-        tickSize: 5,
-        tickPadding: 6,
-        tickRotation: 0,
-        legendPosition: 'middle',
-      }}
-      axisLeft={{
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: 0,
-        legend: 'HTTP Requests',
-        legendOffset: -52,
-        legendPosition: 'middle',
-      }}
-      pointSize={10}
-      pointColor={{ theme: 'background' }}
-      pointBorderWidth={2}
-      pointBorderColor={{ from: 'serieColor' }}
-      pointLabelYOffset={-12}
-      useMesh={true}
-    />
+  return isLoading && !data ? (
+    <LoadingComponent />
+  ) : (
+    generateLineChart({
+      label: 'HTTP Requests',
+      serie: data,
+      color: '#fafa6e',
+    })
   );
 }

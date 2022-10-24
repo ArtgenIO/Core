@@ -16,7 +16,7 @@ import PageWithHeader from '../../layout/page-with-header.component';
 import { dashboardsAtom, lastViewedDashAtom } from './dashboard.atom';
 import './dashboard.component.less';
 import WidgetDrawerComponent from './widget-drawer.component';
-import RenderWidgetComponent from './widgets.collection';
+import WidgetWrapperComponent from './widget.wrapper';
 
 export default function DashboardPage() {
   const [dashboards, setDashboards] = useRecoilState(dashboardsAtom);
@@ -198,7 +198,7 @@ export default function DashboardPage() {
         >
           {widgets.map(el => (
             <div key={el.i}>
-              <RenderWidgetComponent
+              <WidgetWrapperComponent
                 widget={el.widget}
                 onDeleteWidget={() => {
                   setDashboards(oldState => {

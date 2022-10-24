@@ -59,7 +59,7 @@ export default function SchemaEditorComponent({
       width={1080}
       title={
         <div className="flex w-full">
-          <div className="grow">Schema » {schema.title}</div>
+          <div className="grow">Blueprint » {schema.title}</div>
           <div className="shrink">
             <div className="-mt-1">
               {isChanged ? (
