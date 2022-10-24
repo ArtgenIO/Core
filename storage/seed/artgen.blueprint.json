@@ -2336,60 +2336,96 @@
     ],
     "Dashboard": [
       {
-        "id": "4e4fdbcb-37cb-4d62-9cec-25321f1db614",
-        "name": "Beta Dashboard",
+        "id": "9d22786a-010d-4a57-beda-35f6de62d4be",
+        "name": "Telemetry Board",
+        "order": 102,
         "widgets": [
           {
-            "w": 11,
-            "h": 4,
-            "x": 0,
+            "h": 3,
+            "i": "75c1cbb1-76d6-4d6d-a8d7-96324fba165d",
+            "w": 3,
+            "x": 8,
             "y": 0,
-            "i": "4b093994-4dc0-4a91-a95f-3b127ea9b338",
-            "moved": false,
-            "static": false,
+            "minH": 2,
+            "minW": 3,
             "widget": {
-              "id": "telemetry.http-requests",
-              "header": "Telemetry - HTTP Proxy Server"
+              "id": "note",
+              "config": {
+                "content": "This widget's content can be configured.\nFor example, you can leave notes here!\n\n<3"
+              },
+              "header": "Just A NOTE"
             }
           },
           {
-            "w": 7,
             "h": 4,
+            "i": "3b5346da-f040-4501-990a-821b966f53cb",
+            "w": 8,
+            "x": 0,
+            "y": 0,
+            "minH": 2,
+            "minW": 4,
+            "widget": {
+              "id": "telemetry.serie",
+              "config": {
+                "color": "#ff6000",
+                "serie": "http.request",
+                "legend": "Requests",
+                "refresh": 10
+              },
+              "header": "HTTP REQUESTS"
+            }
+          },
+          {
+            "h": 4,
+            "i": "fd63a1a1-d125-4012-b3e9-a3fac3fd8186",
+            "w": 7,
+            "x": 0,
+            "y": 4,
+            "minH": 2,
+            "minW": 4,
+            "widget": {
+              "id": "telemetry.serie",
+              "config": {
+                "color": "#fe1169",
+                "serie": "flow.execution",
+                "legend": "Executions",
+                "refresh": 10
+              },
+              "header": "Flow Executions"
+            }
+          },
+          {
+            "h": 4,
+            "i": "c00b7a65-25d4-4a1e-8765-622311e45205",
+            "w": 7,
             "x": 7,
             "y": 4,
-            "i": "10afc64c-b03e-4fb8-a0d6-c282695c723e",
-            "moved": false,
-            "static": false,
+            "minH": 2,
+            "minW": 4,
             "widget": {
-              "id": "telemetry.db-query",
-              "header": "Telemetry - Database Queries"
+              "id": "telemetry.serie",
+              "config": {
+                "color": "#ccff00",
+                "serie": "db.query",
+                "legend": "Database Queries",
+                "refresh": 10
+              },
+              "header": "DATABASE QUERIES"
             }
           },
           {
-            "w": 3,
             "h": 3,
+            "i": "c8aa24c6-bee6-4255-9437-9792846b0cc7",
+            "w": 3,
             "x": 11,
             "y": 0,
-            "i": "28fe7e94-1b29-4135-95ed-efd519f2d893",
-            "moved": false,
-            "static": false,
+            "minH": 3,
+            "minW": 3,
             "widget": {
               "id": "telemetry.uptime",
-              "header": "Telemetry - Uptime"
+              "config": {},
+              "header": " Uptime"
             }
-          },
-          {
-            "w": 7,
-            "h": 4,
-            "minW": 4,
-            "minH": 2,
-            "widget": {
-              "id": "flow.executions",
-              "header": "Flow - Executions"
-            },
-            "x": 0,
-            "y": 4,
-            "i": "53644247-ac9f-4cfc-b17a-96e531a4f821"
           }
         ]
       }

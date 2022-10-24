@@ -1,12 +1,17 @@
 import { ResponsiveLine, Serie } from '@nivo/line';
+import { Empty } from 'antd';
 
 type Line = {
   label: string;
-  serie: Serie;
+  serie: Serie | null;
   color: string;
 };
 
 export const generateLineChart = (line: Line) => {
+  if (!line.serie) {
+    return <Empty description="Not Configured" className="py-4" />;
+  }
+
   return (
     <ResponsiveLine
       theme={{

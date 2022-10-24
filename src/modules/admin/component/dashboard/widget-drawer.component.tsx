@@ -1,54 +1,28 @@
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { Button, Drawer, List } from 'antd';
 import { IDashGridElement } from '../../interface/dash-grid.interface';
+import { WidgetMap } from './widget.map.js';
 
 type Props = {
   onClose: () => void;
   onAdd: (widget: Omit<IDashGridElement, 'i' | 'x' | 'y'>) => void;
 };
 
-const widgets: Omit<IDashGridElement, 'i' | 'x' | 'y'>[] = [
-  {
-    w: 8,
-    h: 4,
-    minW: 4,
-    minH: 2,
+const widgets: Omit<IDashGridElement, 'i' | 'x' | 'y'>[] = [];
+
+WidgetMap.forEach((widget, id) => {
+  widgets.push({
+    w: widget.defaults.dimensions.w,
+    h: widget.defaults.dimensions.h,
+    minW: widget.defaults.dimensions.minW,
+    minH: widget.defaults.dimensions.minH,
     widget: {
-      id: 'telemetry.http-requests',
-      header: 'Telemetry - HTTP Proxy Request',
+      id,
+      header: widget.defaults.header,
+      config: widget.defaults?.config ?? {},
     },
-  },
-  {
-    w: 8,
-    h: 4,
-    minW: 4,
-    minH: 2,
-    widget: {
-      id: 'telemetry.db-query',
-      header: 'Telemetry - Database Queries',
-    },
-  },
-  {
-    w: 3,
-    h: 3,
-    minW: 3,
-    minH: 3,
-    widget: {
-      id: 'telemetry.uptime',
-      header: 'Telemetry - Uptime',
-    },
-  },
-  {
-    w: 7,
-    h: 4,
-    minW: 4,
-    minH: 2,
-    widget: {
-      id: 'flow.executions',
-      header: 'Flow - Executions',
-    },
-  },
-];
+  });
+});
 
 export default function WidgetDrawerComponent({ onClose, onAdd }: Props) {
   return (

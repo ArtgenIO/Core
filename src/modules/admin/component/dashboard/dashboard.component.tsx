@@ -23,9 +23,9 @@ export default function DashboardPage() {
   const [active, setActive] = useRecoilState(lastViewedDashAtom);
 
   // Selected dashboard
-  const [showSider, setShowSider] = useState(false);
-  const [widgets, setWidgets] = useState([]);
-  const [name, setName] = useState('Dashboards');
+  const [openWidgetCollection, setOpenWidgetCollection] = useState(false);
+  const [widgets, setWidgets] = useState<IDashGridElement[]>([]);
+  const [dashboardName, setDashboardName] = useState('Dashboards');
 
   useEffect(() => {
     if (dashboards.length) {
@@ -37,11 +37,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (active) {
-      const d = dashboards.find(d => d.id === active);
+      const dashboard = dashboards.find(d => d.id === active);
 
-      if (d) {
-        setName(d.name);
-        setWidgets(d.widgets);
+      if (dashboard) {
+        setDashboardName(dashboard.name);
+        setWidgets(dashboard.widgets);
       } else {
         if (dashboards.length) {
           setActive(dashboards[0].id);
@@ -50,14 +50,13 @@ export default function DashboardPage() {
     }
   }, [active, dashboards]);
 
-  const onLayoutChange = (currentGridState: IDashGridElement[], allLayouts) => {
+  const onLayoutChange = (currentGridState: IDashGridElement[]) => {
     if (currentGridState) {
       setDashboards(oldState => {
         const newState = cloneDeep(oldState);
+        const activeDashboard = newState.find(d => d.id === active);
 
-        const activeRef = newState.find(d => d.id === active);
-
-        activeRef.widgets.forEach(widget => {
+        activeDashboard.widgets.forEach(widget => {
           const el = currentGridState.find(e => e.i === widget.i);
           widget.w = el.w;
           widget.h = el.h;
@@ -76,16 +75,16 @@ export default function DashboardPage() {
         <PageHeader
           title={
             <Input
-              value={name}
+              value={dashboardName}
               bordered={false}
               size="large"
               className="text-4xl leading-3 my-0 p-0 test--dashboard-title"
-              onChange={e => setName(e.target.value)}
+              onChange={e => setDashboardName(e.target.value)}
               onBlur={e =>
                 setDashboards(oldState => {
                   const newState = cloneDeep(oldState);
-                  const selected = newState.find(dash => dash.id === active);
-                  selected.name = e.target.value;
+                  const activeDashboard = newState.find(d => d.id === active);
+                  activeDashboard.name = e.target.value;
 
                   return newState;
                 })
@@ -110,81 +109,82 @@ export default function DashboardPage() {
             </>
           }
           footer={
-            <div style={{ borderBottom: '1px solid #37393f' }}>
-              <Tabs
-                activeKey={active}
-                type="editable-card"
-                className="test--dashboard-tabs"
-                size="small"
-                tabBarGutter={1}
-                destroyInactiveTabPane
-                tabBarExtraContent={{
-                  right: (
-                    <Button
-                      size="large"
-                      className="ml-1 border-b-0"
-                      icon={<AppstoreAddOutlined />}
-                      onClick={() => setShowSider(true)}
-                    >
-                      Add Widgets
-                    </Button>
-                  ),
-                }}
-                onEdit={(e, action) => {
-                  if (action === 'add') {
-                    const newId = v4();
+            <Tabs
+              activeKey={active}
+              type="editable-card"
+              className="test--dashboard-tabs"
+              size="small"
+              style={{
+                borderBottom: '1px solid #37393f',
+              }}
+              tabBarGutter={1}
+              destroyInactiveTabPane
+              tabBarExtraContent={{
+                right: (
+                  <Button
+                    size="large"
+                    className="ml-1 border-b-0"
+                    icon={<AppstoreAddOutlined />}
+                    onClick={() => setOpenWidgetCollection(true)}
+                  >
+                    Add Widgets
+                  </Button>
+                ),
+              }}
+              onEdit={(e, action) => {
+                if (action === 'add') {
+                  const newId = v4();
 
+                  setDashboards(oldState => {
+                    const newState = cloneDeep(oldState);
+                    let highestOrder = 0;
+
+                    oldState.forEach(dash => {
+                      if (dash.order > highestOrder) {
+                        highestOrder = dash.order + 1;
+                      }
+                    });
+
+                    const newDash = {
+                      id: newId,
+                      name: `New Dashboard ${oldState.length + 1}`,
+                      order: highestOrder + 1,
+                      widgets: [],
+                    };
+
+                    newState.push(newDash);
+
+                    return newState;
+                  });
+
+                  setTimeout(() => setActive(newId), 50);
+                } else {
+                  if (dashboards.length === 1) {
+                    notification.error({
+                      message: 'You have to have at least one dashboard!',
+                    });
+                  } else {
                     setDashboards(oldState => {
-                      const newState = cloneDeep(oldState);
-                      let highestOrder = 0;
-
-                      oldState.forEach(dash => {
-                        if (dash.order > highestOrder) {
-                          highestOrder = dash.order + 1;
-                        }
-                      });
-
-                      const newDash = {
-                        id: newId,
-                        name: `New Dashboard ${oldState.length + 1}`,
-                        order: highestOrder + 1,
-                        widgets: [],
-                      };
-
-                      newState.push(newDash);
+                      const newState = cloneDeep(oldState).filter(
+                        dash => dash.id !== e,
+                      );
 
                       return newState;
                     });
-
-                    setTimeout(() => setActive(newId), 50);
-                  } else {
-                    if (dashboards.length === 1) {
-                      notification.error({
-                        message: 'You have to have at least one dashboard!',
-                      });
-                    } else {
-                      setDashboards(oldState => {
-                        const newState = cloneDeep(oldState).filter(
-                          dash => dash.id !== e,
-                        );
-
-                        return newState;
-                      });
-                    }
                   }
-                }}
-                onChange={selectedId => {
-                  setActive(selectedId);
-                }}
-                items={dashboards.map(dash => ({
-                  id: dash.id,
-                  key: dash.id,
-                  tab: dash.name,
-                  label: dash.name,
-                  closable: dashboards.length > 1,
-                }))}
-              />
-            </div>
+                }
+              }}
+              onChange={selectedId => {
+                setActive(selectedId);
+              }}
+              items={dashboards.map(dash => ({
+                id: dash.id,
+                key: dash.id,
+                tab: dash.name,
+                label: dash.name,
+                closable: dashboards.length > 1,
+              }))}
+            />
           }
         />
       }
@@ -201,8 +201,9 @@ export default function DashboardPage() {
           {widgets.map(el => (
             <div key={el.i}>
               <WidgetWrapperComponent
+                id={el.i}
                 widget={el.widget}
-                onDeleteWidget={() => {
+                onDelete={() => {
                   setDashboards(oldState => {
                     const newState = cloneDeep(oldState);
                     const activeRef = newState.find(dash => dash.id === active);
@@ -213,23 +214,37 @@ export default function DashboardPage() {
                     return newState;
                   });
                 }}
+                onChange={newWidgetData => {
+                  setDashboards(oldState => {
+                    const newState = cloneDeep(oldState);
+                    const refDashboard = newState.find(d => d.id === active);
+                    const refWidget = refDashboard.widgets.find(
+                      w => w.i == el.i,
+                    );
+
+                    refWidget.widget = newWidgetData;
+
+                    return newState;
+                  });
+                }}
               />
             </div>
           ))}
         </GridLayout>
       )}
-      {showSider && (
+      {openWidgetCollection && (
         <WidgetDrawerComponent
-          onClose={() => setShowSider(false)}
+          onClose={() => setOpenWidgetCollection(false)}
           onAdd={(widget: IDashGridElement) => {
             setDashboards(oldState => {
               const newState = cloneDeep(oldState);
-              const activeRef = newState.find(dash => dash.id === active);
-              activeRef.widgets.push(
+              const activeDashboard = newState.find(dash => dash.id === active);
+
+              activeDashboard.widgets.push(
                 Object.assign(cloneDeep(widget), {
                   x: 0,
                   y: 0,
-                  i: v4(),
+                  i: v4(), // Dashboard ID
                 } as Pick<IDashGridElement, 'x' | 'y' | 'i'>),
               );
 
