@@ -8,7 +8,7 @@ import { SchemaService } from '../../schema/service/schema.service';
 import {
   FieldTool,
   isManagedField,
-  isPrimary
+  isPrimary,
 } from '../../schema/util/field-tools';
 import { IFindResponse } from '../interface/find-reponse.interface';
 import { ODataService } from './odata.service';
@@ -77,7 +77,6 @@ export class RestService {
   ): Promise<R> {
     // Load the model
     const model = this.schema.getModel(database, reference);
-    const schema = this.schema.getSchema(database, reference);
     const event = `crud.${database}.${reference}.created`;
 
     try {
