@@ -1,10 +1,10 @@
 import { Service } from '@hisorange/kernel';
-import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { ITriggerConfig } from '../../lambda/interface/trigger-config.interface';
 import { JSCHEMA_TRIGGER } from '../../lambda/utility/json-schema.helpers';
+import { FlowSession } from '../library/flow.session';
 
 export type EventTriggerConfig = {
   eventName: string;

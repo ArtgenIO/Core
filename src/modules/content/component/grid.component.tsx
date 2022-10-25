@@ -634,8 +634,9 @@ export default function GridComponent({
                           checkedChildren="✓"
                           unCheckedChildren={oVal === null ? '∅' : '!'}
                           onChange={newValue => {
-                            record[field.reference] = newValue;
-                            doUpdate(record);
+                            // Removed until it's fixed,it will delete the fields not queried with the row.
+                            // record[field.reference] = newValue;
+                            // doUpdate(record);
                           }}
                         />
                       );

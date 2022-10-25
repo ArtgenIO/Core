@@ -12,7 +12,7 @@ export const useHttpClient = <Resp = any, Body = any, Err = any>(
   const resetJwt = useResetRecoilState(jwtAtom);
   const client = axios.create({
     headers: {
-      'content-type': 'application/json',
+      'Content-Type': 'application/json',
     },
   });
 

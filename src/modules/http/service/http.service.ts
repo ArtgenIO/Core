@@ -1,10 +1,4 @@
-import {
-  IContext,
-  ILogger,
-  Inject,
-  Logger,
-  Service
-} from '@hisorange/kernel';
+import { IContext, ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { inject } from '@loopback/context';
 import { FastifyInstance } from 'fastify';
 import { BucketKey } from '../../telemetry/interface/bucket-key.enum';
@@ -49,7 +43,7 @@ export class HttpService {
 
     this.proxy.addHook('onRequest', (request, reply, done) => {
       if (this.upstream) {
-        if (!request.url.match(/@fs/)) {
+        if (!request.url.match(/@fs|\/admin/)) {
           this.logger.debug(
             'Proxy [%s][%s][%s]',
             request.method,

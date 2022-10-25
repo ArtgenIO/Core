@@ -664,14 +664,16 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@hisorange/kernel@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@hisorange/kernel/-/kernel-1.1.2.tgz#90f29f077c9fd82ba377a9ce5a76b7be17138e34"
-  integrity sha512-TTuGyw8UDNYI7sf2wldWR9kaJLjX5cvVUBqTTgexedSk2yLtYOqgrH6za9/cay6aliGgYVcSJ42kNvoLy/HQtw==
+"@hisorange/kernel@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@hisorange/kernel/-/kernel-1.2.0.tgz#4f0307b351124f19a43132fbf2e922ff4a0ded4a"
+  integrity sha512-dLoVrmaAbgbW/5zOI1RKYwpW28W4xogbtRy+SDP78Y+BBlzqWW4ekfVdkLbHsfPBYtg2LJPVZfa8LwHQXg7++w==
   dependencies:
     "@loopback/context" "^5.0.3"
     "@loopback/metadata" "^5.0.3"
     dependency-graph "^0.11.0"
+    eventemitter2 "^6.4.9"
+    lodash.debounce "^4.0.8"
     node-schedule "^2.1.0"
     p-timeout "^6.0.0"
     pino "^8.6.1"

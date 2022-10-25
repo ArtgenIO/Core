@@ -1,6 +1,5 @@
-import { ILogger, Inject, Logger } from '@hisorange/kernel';
+import { ILogger, Inject, Logger, Observer, On } from '@hisorange/kernel';
 import { IKeyValueRecord } from '../content/interface/key-value.interface';
-import { Observer, On } from '../event';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { KeyValueService } from './service/key-value.service';
 

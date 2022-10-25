@@ -1,10 +1,10 @@
 import { Inject, Service } from '@hisorange/kernel';
 import EventEmitter2 from 'eventemitter2';
-import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
+import { FlowSession } from '../library/flow.session';
 
 type Config = {
   name: string;
@@ -57,7 +57,7 @@ type Config = {
 export class EmitEventLambda implements ILambda {
   constructor(
     @Inject(EventEmitter2)
-    readonly bus: EventEmitter2,
+    readonly eventBus: EventEmitter2,
   ) {}
 
   async invoke(session: FlowSession) {
@@ -65,7 +65,7 @@ export class EmitEventLambda implements ILambda {
     const config = session.getConfig() as Config;
 
     try {
-      const result = this.bus.emit(config.name, ...input);
+      const result = this.eventBus.emit(config.name, ...input);
 
       return {
         result,
@@ -73,7 +73,7 @@ export class EmitEventLambda implements ILambda {
     } catch (error) {
       return {
         error: {
-          message: ((error as Error)?.message),
+          message: (error as Error)?.message,
           code: 500,
         },
       };

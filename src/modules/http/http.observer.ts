@@ -1,9 +1,8 @@
-import { Inject } from '@hisorange/kernel';
+import { Inject, Observer, On } from '@hisorange/kernel';
 import debounce from 'lodash.debounce';
 import isEqual from 'lodash.isequal';
 import { IKeyValueRecord } from '../content/interface/key-value.interface';
 import { toStructure } from '../database/library/structure/to-structure';
-import { Observer, On } from '../event';
 import { ISchema } from '../schema';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { HttpService } from './service/http.service';

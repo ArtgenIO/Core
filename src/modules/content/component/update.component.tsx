@@ -80,7 +80,7 @@ export default function ContentUpdateComponent({
   return (
     <Drawer
       width="40%"
-      visible={true}
+      open={true}
       title={`Edit ${schema.title}`}
       onClose={() => onClose(false)}
     >

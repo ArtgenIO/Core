@@ -9,7 +9,7 @@ export const useHttpClientSimple = () => {
 
   const httpClient = axios.create({
     headers: {
-      'content-type': 'application/json',
+      'Content-Type': 'application/json',
     },
   });
 

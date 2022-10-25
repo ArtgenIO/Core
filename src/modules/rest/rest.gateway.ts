@@ -1,9 +1,16 @@
-import { IKernel, ILogger, Inject, Kernel, Logger, Service } from '@hisorange/kernel';
+import {
+  IKernel,
+  ILogger,
+  Inject,
+  Kernel,
+  Logger,
+  Service,
+} from '@hisorange/kernel';
 import {
   FastifyInstance,
   FastifyReply,
   FastifyRequest,
-  RouteHandlerMethod
+  RouteHandlerMethod,
 } from 'fastify';
 import NoCachePlugin from 'fastify-disablecache';
 import kebabCase from 'lodash.kebabcase';
@@ -487,6 +494,8 @@ export class RestGateway implements IHttpGateway {
               statusCode: 404,
             };
           } catch (error) {
+            this.logger.error(error);
+
             reply.statusCode = 400;
 
             return {

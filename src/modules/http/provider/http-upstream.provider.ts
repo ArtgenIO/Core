@@ -18,9 +18,7 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
 
   async value(): Promise<FastifyInstance> {
     const server = fastify({
-      logger: {
-        level: 'warn',
-      },
+      logger: this.logger.child({ scope: 'http.upstream' }),
       disableRequestLogging: true,
       genReqId: v4 as () => string,
       trustProxy: true,
@@ -51,7 +49,7 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
     });
     this.logger.debug('Plugin [Swagger] registered');
 
-    await server.register(FastifyHttpErrorsEnhancedPlugin);
+    if (0) await server.register(FastifyHttpErrorsEnhancedPlugin);
 
     // Not used, just here because a library makes a call on it even tho not using it.
     await server.register(FastifySecureSessionPlugin, {

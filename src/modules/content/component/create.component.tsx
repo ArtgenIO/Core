@@ -46,7 +46,7 @@ export default function ContentCreateComponent({ schema, onClose }: Props) {
   return (
     <Drawer
       width="40%"
-      visible={true}
+      open={true}
       title={`Create New ${schema.title}`}
       onClose={() => onClose(false)}
     >

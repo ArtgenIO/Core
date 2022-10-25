@@ -1,5 +1,4 @@
-import { ILogger, Inject, Logger } from '@hisorange/kernel';
-import { Observer, On } from '../event';
+import { ILogger, Inject, Logger, Observer, On } from '@hisorange/kernel';
 import { RestService } from '../rest/service/rest.service';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IBlueprint } from './interface/blueprint.interface';

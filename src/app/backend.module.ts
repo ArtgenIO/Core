@@ -1,8 +1,7 @@
-import { Module, SchedulerModule } from '@hisorange/kernel';
+import { EventModule, Module, SchedulerModule } from '@hisorange/kernel';
 import { BlueprintModule } from '../modules/blueprint/blueprint.module';
 import { ContentModule } from '../modules/content/content.module';
 import { DatabaseModule } from '../modules/database/database.module';
-import { EventModule } from '../modules/event';
 import { FlowModule } from '../modules/flow/flow.module';
 import { FormModule } from '../modules/form/form.module';
 import { HttpModule } from '../modules/http/http.module';
