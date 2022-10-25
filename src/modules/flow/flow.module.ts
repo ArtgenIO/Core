@@ -7,6 +7,8 @@ import { RestModule } from '../rest/rest.module';
 import { TelemetryModule } from '../telemetry/telemetry.module';
 import { FlowObserver } from './flow.observer';
 import { LogicHttpGateway } from './gateway/http.gateway';
+import { CronTriggerLambda } from './lambda/cron.trigger.js';
+import { FlowSchedulerService } from './service/flow-scheduler.service.js';
 import { FlowService } from './service/flow.service';
 
 @Module({
@@ -17,6 +19,12 @@ import { FlowService } from './service/flow.service';
     TelemetryModule,
   ],
   dependsOn: [IdentityModule, moduleRef(() => DatabaseModule)],
-  providers: [FlowService, LogicHttpGateway, FlowObserver],
+  providers: [
+    FlowService,
+    LogicHttpGateway,
+    FlowObserver,
+    FlowSchedulerService,
+    CronTriggerLambda,
+  ],
 })
 export class FlowModule implements IModule {}

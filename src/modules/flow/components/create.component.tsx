@@ -40,7 +40,7 @@ export default function CreateFlowComponent({ onClose }: Props) {
             captureContext: false,
             isActive: false,
           }).then(id => {
-            redirect(`/admin/flow/artboard/${id}`);
+            redirect(`/flow/artboard/${id}`);
             onClose();
             message.success('Flow ready!');
           });
