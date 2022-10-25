@@ -49,7 +49,7 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
     });
     this.logger.debug('Plugin [Swagger] registered');
 
-    if (0) await server.register(FastifyHttpErrorsEnhancedPlugin);
+    if (1) await server.register(FastifyHttpErrorsEnhancedPlugin);
 
     // Not used, just here because a library makes a call on it even tho not using it.
     await server.register(FastifySecureSessionPlugin, {

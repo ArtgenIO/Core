@@ -1,4 +1,10 @@
-import { IModule, Inject, Module, moduleRef } from '@hisorange/kernel';
+import {
+  EventModule,
+  IModule,
+  Inject,
+  Module,
+  moduleRef,
+} from '@hisorange/kernel';
 import { DatabaseModule } from '../database/database.module';
 import { IdentityModule } from '../identity/identity.module';
 import { LambdaModule } from '../lambda/lambda.module';
@@ -6,11 +12,11 @@ import { RestModule } from '../rest/rest.module';
 import { TelemetryModule } from '../telemetry/telemetry.module';
 import { FlowObserver } from './flow.observer';
 import { LogicHttpGateway } from './gateway/http.gateway';
-import { CronTriggerLambda } from './lambda/cron.trigger.js';
-import { EmitEventLambda } from './lambda/emit.lambda.js';
-import { EventTrigger } from './lambda/event.trigger.js';
-import { FlowEventService } from './service/flow-event.service.js';
-import { FlowSchedulerService } from './service/flow-scheduler.service.js';
+import { CronTriggerLambda } from './lambda/cron.trigger';
+import { EmitEventLambda } from './lambda/emit.lambda';
+import { EventTrigger } from './lambda/event.trigger';
+import { FlowEventService } from './service/flow-event.service';
+import { FlowSchedulerService } from './service/flow-scheduler.service';
 import { FlowService } from './service/flow.service';
 
 @Module({
@@ -19,7 +25,7 @@ import { FlowService } from './service/flow.service';
     moduleRef(() => RestModule),
     TelemetryModule,
   ],
-  dependsOn: [IdentityModule, moduleRef(() => DatabaseModule)],
+  dependsOn: [IdentityModule, moduleRef(() => DatabaseModule), EventModule],
   providers: [
     CronTriggerLambda,
     EmitEventLambda,

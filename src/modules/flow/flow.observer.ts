@@ -3,8 +3,8 @@ import { RestService } from '../rest/service/rest.service';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IFlow, IFlowSessionContext } from './interface';
 import { ICapturedContext } from './interface/captured-context.interface';
-import { FlowEventService } from './service/flow-event.service.js';
-import { FlowSchedulerService } from './service/flow-scheduler.service.js';
+import { FlowEventService } from './service/flow-event.service';
+import { FlowSchedulerService } from './service/flow-scheduler.service';
 
 @Observer()
 export class FlowObserver {
