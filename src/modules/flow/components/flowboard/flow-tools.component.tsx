@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { message } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
-import { Edge, ReactFlowInstance, useReactFlow } from 'react-flow-renderer';
+import { Edge, ReactFlowInstance, useReactFlow } from 'reactflow';
 import { IFlow } from '../../interface';
 import { Elements } from '../../interface/elements.interface';
 import FlowboardSave from './save.component';

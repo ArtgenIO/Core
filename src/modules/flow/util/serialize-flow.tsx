@@ -1,4 +1,4 @@
-import { isEdge, isNode } from 'react-flow-renderer';
+import { isEdge, isNode } from 'reactflow';
 import { IFlow } from '../interface';
 import { Elements } from '../interface/elements.interface';
 import { serializeEdge } from './serialize-edge';

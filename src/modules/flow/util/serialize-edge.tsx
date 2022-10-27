@@ -1,4 +1,4 @@
-import { Edge } from 'react-flow-renderer';
+import { Edge } from 'reactflow';
 import { IEdge } from '../interface';
 
 export const serializeEdge = (element: Edge): IEdge => {

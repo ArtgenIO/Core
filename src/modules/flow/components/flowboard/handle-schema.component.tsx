@@ -27,7 +27,7 @@ export default function HandleSchemaComponent({ onClose, handle }: Props) {
     <Drawer
       width="40%"
       title={<>Handle » {handle.id}</>}
-      visible
+      open
       closable
       maskClosable
       footer={null}

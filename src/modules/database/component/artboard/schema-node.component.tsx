@@ -1,4 +1,4 @@
-import { Handle, NodeProps, Position } from 'react-flow-renderer';
+import { Handle, NodeProps, Position } from 'reactflow';
 import Icon from '../../../admin/component/icon.component';
 import { FieldTag, IField, ISchema } from '../../../schema';
 import { FieldTool } from '../../../schema/util/field-tools';

@@ -7,7 +7,7 @@ import {
   List,
   message,
   Select,
-  Switch
+  Switch,
 } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
 import camelCase from 'lodash.camelcase';
@@ -22,7 +22,7 @@ import { IRelation } from '../../../interface/relation.interface';
 import {
   FieldTool,
   getTakenColumNames,
-  isPrimary
+  isPrimary,
 } from '../../../util/field-tools';
 
 type Props = {
@@ -57,7 +57,7 @@ export default function RelationHasOne({
     relation && (
       <Drawer
         width={640}
-        visible
+        open
         onClose={() => onClose(relation)}
         title={
           <div className="flex w-full">

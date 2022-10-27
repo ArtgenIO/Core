@@ -1,6 +1,6 @@
 import { Menu } from 'antd';
 import { useEffect, useState } from 'react';
-import { Link, matchPath, useLocation } from 'react-router-dom';
+import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import Icon from '../../../admin/component/icon.component';
 import MenuBlock from '../../../admin/component/menu-block.component';
 
@@ -22,6 +22,7 @@ const elements: IMenuItem[] = [
 
 export default function ManagerMenuComponent() {
   const location = useLocation();
+  const navigate = useNavigate();
   const base = `/flow`;
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -40,13 +41,17 @@ export default function ManagerMenuComponent() {
 
   return (
     <MenuBlock title="Flow Manager">
-      <Menu className="compact" selectedKeys={selected}>
-        {elements.map(e => (
-          <Menu.Item key={e.key} icon={<Icon id={e.icon} />}>
-            <Link to={e.path}>{e.title}</Link>
-          </Menu.Item>
-        ))}
-      </Menu>
+      <Menu
+        className="compact"
+        selectedKeys={selected}
+        items={elements.map(e => ({
+          key: e.key,
+          icon: <Icon id={e.icon} />,
+          title: e.title,
+          label: e.title,
+          onClick: () => navigate(`${base}/${e.path}`),
+        }))}
+      />
     </MenuBlock>
   );
 }

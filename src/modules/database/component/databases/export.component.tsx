@@ -53,7 +53,7 @@ export default function DatabaseExportComponent({ onClose, database }: Props) {
   return (
     <Drawer
       width="50%"
-      visible={true}
+      open={true}
       title="Export Database Schemantic"
       onClose={onClose}
     >

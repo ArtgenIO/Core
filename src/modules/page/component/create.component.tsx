@@ -20,12 +20,7 @@ export default function CreatePageComponent({ onClose }: Props) {
   const [path, setPath] = useState(`/p/${v4()}`);
 
   return (
-    <Drawer
-      width="40%"
-      visible={true}
-      title={`Create New Page`}
-      onClose={onClose}
-    >
+    <Drawer width="40%" open title="Create New Page" onClose={onClose}>
       <Form
         layout="vertical"
         size="large"

@@ -36,12 +36,7 @@ export default function DatabaseConnectComponent({
   };
 
   return (
-    <Drawer
-      width="33%"
-      visible={true}
-      title="Connect Database"
-      onClose={onClose}
-    >
+    <Drawer width="33%" open title="Connect Database" onClose={onClose}>
       <Form
         layout="vertical"
         name="database"

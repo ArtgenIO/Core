@@ -23,12 +23,7 @@ export default function CreateFlowComponent({ onClose }: Props) {
   };
 
   return (
-    <Drawer
-      width="33%"
-      visible={true}
-      title={`Create New Flow`}
-      onClose={onClose}
-    >
+    <Drawer width="33%" open title={`Create New Flow`} onClose={onClose}>
       <Form
         name="flow"
         initialValues={{ remember: true }}

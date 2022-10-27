@@ -1,4 +1,4 @@
-import { Edge, MarkerType } from 'react-flow-renderer';
+import { Edge, MarkerType } from 'reactflow';
 import { IEdge } from '../interface';
 
 export const unserializeEdge = (serialized: IEdge): Edge => {

@@ -32,7 +32,7 @@ export default function InstallBlueprint({ onClose }: Props) {
   return (
     <Drawer
       width={800}
-      visible
+      open
       title="Install Offline Blueprint"
       onClose={() => {
         if (onClose) {

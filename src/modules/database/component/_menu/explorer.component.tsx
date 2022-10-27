@@ -59,6 +59,7 @@ export default function DatabaseExplorerComponent() {
           icon: <DatabaseOutlined />,
           isLeaf: false,
           selectable: true,
+          checkable: false,
         })),
       );
     }

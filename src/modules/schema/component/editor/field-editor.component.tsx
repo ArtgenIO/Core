@@ -154,7 +154,7 @@ export default function FieldEditor({
       {field && (
         <Drawer
           width={800}
-          visible
+          open
           onClose={() => onClose(field)}
           title={
             <div className="flex w-full">

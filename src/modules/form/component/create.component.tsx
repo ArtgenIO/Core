@@ -26,7 +26,7 @@ export default function CreateFormComponent({ onClose }: Props) {
   ];
 
   return (
-    <Drawer visible onClose={onClose} width="40vw" maskClosable>
+    <Drawer open onClose={onClose} width="40vw" maskClosable>
       <ReactFormBuilder saveUrl="path/to/POST/built/form.json" />
     </Drawer>
   );

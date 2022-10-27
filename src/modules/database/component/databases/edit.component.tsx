@@ -41,7 +41,7 @@ export default function DatabaseEditComponent({
   };
 
   return (
-    <Drawer width={450} visible={true} title="Edit Database" onClose={onClose}>
+    <Drawer width={450} open={true} title="Edit Database" onClose={onClose}>
       <Form
         layout="vertical"
         name="database"

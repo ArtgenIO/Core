@@ -1,13 +1,13 @@
 import cloneDeep from 'lodash.clonedeep';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import ReactFlow, {
   Background,
   BackgroundVariant,
   isEdge,
   isNode,
   useReactFlow,
-} from 'react-flow-renderer';
-import { useParams, useSearchParams } from 'react-router-dom';
+} from 'reactflow';
 import { useRecoilState } from 'recoil';
 import { schemasAtom } from '../../../admin/admin.atoms';
 import { Elements } from '../../../flow/interface/elements.interface';
@@ -29,7 +29,6 @@ export default function DatabaseArtboardComponent() {
   const [search, setSearch] = useSearchParams();
 
   // Artboard state
-  const flowWrapper = useRef(null);
   const flowInstance = useReactFlow<{ schema: ISchema }>();
   const [elements, setElements] = useState<Elements>([]);
   const [showEditor, setShowEditor] = useState<ISchema>(null);
@@ -116,72 +115,78 @@ export default function DatabaseArtboardComponent() {
     () => ({
       schema: createSchemaNode(schemas, s => setShowEditor(s)),
     }),
-    [],
+    [schemas],
   );
 
   return (
     <>
       <div className="h-screen bg-midnight-800">
-        <div className="w-full h-full" ref={flowWrapper}>
-          <ReactFlow
-            defaultNodes={elements.filter(isNode)}
-            defaultEdges={elements.filter(isEdge)}
-            nodeTypes={nodeTypesMemo as any}
-            defaultZoom={1.2}
-            onSelectionChange={selections => {
-              if (selections?.nodes?.length) {
-                if (isNode(selections[0])) {
-                  setSelectedNode(selections[0].data.schema);
-                }
-              } else {
-                setSelectedNode(null);
-              }
-            }}
-          >
-            <Background
-              variant={BackgroundVariant.Lines}
-              gap={24}
-              size={0.5}
-              color="#37393f"
-            />
-            <DatabaseNameComponent name={ref} />
-            {showEditor ? (
-              <SchemaEditorComponent
-                schema={showEditor}
-                doRemove={doRemove}
-                onClose={newSchema => {
-                  if (newSchema) {
-                    setSchemas(currentState => {
-                      const newState = cloneDeep(currentState);
-                      const idx = newState.findIndex(fSchema(newSchema));
-
-                      // Replace with the newSchema state
-                      if (idx !== -1) {
-                        newState.splice(idx, 1, newSchema);
-                      }
-                      // Add new schema
-                      else {
-                        newState.push(newSchema);
-                      }
-
-                      return newState;
-                    });
+        <div className="w-full h-full">
+          {elements.length && (
+            <ReactFlow
+              defaultNodes={elements.filter(isNode)}
+              defaultEdges={elements.filter(isEdge)}
+              nodeTypes={nodeTypesMemo as any}
+              defaultViewport={{
+                x: 0,
+                y: 0,
+                zoom: 1.5,
+              }}
+              onSelectionChange={selections => {
+                if (selections?.nodes?.length) {
+                  if (isNode(selections[0])) {
+                    setSelectedNode(selections[0].data.schema);
                   }
-
-                  setShowEditor(null);
-                }}
+                } else {
+                  setSelectedNode(null);
+                }
+              }}
+            >
+              <Background
+                variant={BackgroundVariant.Lines}
+                gap={24}
+                size={0.5}
+                color="#37393f"
               />
-            ) : undefined}
+              <DatabaseNameComponent name={ref} />
+              {showEditor ? (
+                <SchemaEditorComponent
+                  schema={showEditor}
+                  doRemove={doRemove}
+                  onClose={newSchema => {
+                    if (newSchema) {
+                      setSchemas(currentState => {
+                        const newState = cloneDeep(currentState);
+                        const idx = newState.findIndex(fSchema(newSchema));
 
-            <DatabaseToolsComponent
-              doNew={doNew}
-              selectedNode={selectedNode}
-              doRemove={doRemove}
-              setOpenedNode={setShowEditor}
-              setElements={setElements}
-              layoutOrganizer={layoutOrganizer}
-            />
-          </ReactFlow>
+                        // Replace with the newSchema state
+                        if (idx !== -1) {
+                          newState.splice(idx, 1, newSchema);
+                        }
+                        // Add new schema
+                        else {
+                          newState.push(newSchema);
+                        }
+
+                        return newState;
+                      });
+                    }
+
+                    setShowEditor(null);
+                  }}
+                />
+              ) : undefined}
+
+              <DatabaseToolsComponent
+                doNew={doNew}
+                selectedNode={selectedNode}
+                doRemove={doRemove}
+                setOpenedNode={setShowEditor}
+                setElements={setElements}
+                layoutOrganizer={layoutOrganizer}
+              />
+            </ReactFlow>
+          )}
         </div>
       </div>
     </>

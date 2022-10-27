@@ -23,7 +23,7 @@ export default function BlueprintEditorComponent({ blueprint, onSave }: Props) {
   return (
     <Drawer
       width={900}
-      visible
+      open
       title="Blueprint Editor"
       onClose={() => {
         onSave(blueprint);

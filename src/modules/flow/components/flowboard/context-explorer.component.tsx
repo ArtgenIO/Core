@@ -38,7 +38,7 @@ export default function FlowContextExplorerComponent({
 
   return (
     <Drawer
-      visible
+      open
       width="50vw"
       onClose={onClose}
       maskClosable

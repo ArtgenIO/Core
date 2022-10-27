@@ -31,7 +31,7 @@ export default function FlowBoardSerializer({ flow, onClose }: Props) {
   };
 
   return (
-    <Drawer visible onClose={onClose} width="40vw" maskClosable>
+    <Drawer open onClose={onClose} width="40vw" maskClosable>
       <Button.Group className="w-full">
         <Button block type="primary" ghost onClick={doDownload}>
           Download as JSON

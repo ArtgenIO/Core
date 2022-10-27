@@ -11,8 +11,8 @@ export default function DatabaseRouterComponent() {
   return (
     <Layout hasSider>
       <Sider width={220} className="h-screen depth-2 overflow-auto gray-scroll">
-        <DatabaseExplorerComponent />
         <ManagerMenuComponent />
+        <DatabaseExplorerComponent />
       </Sider>
 
       <Layout>

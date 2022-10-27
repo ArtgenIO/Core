@@ -101,7 +101,7 @@ export default function SchemaEditorComponent({
           </div>
         </div>
       }
-      visible
+      open
       closable
       maskClosable
       footer={null}

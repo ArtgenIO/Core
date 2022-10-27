@@ -19,7 +19,7 @@ import {
 import Avatar from 'antd/lib/avatar/avatar';
 import { useForm } from 'antd/lib/form/Form';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Edge, isNode, MarkerType, Node } from 'react-flow-renderer';
+import { Edge, isNode, MarkerType, Node } from 'reactflow';
 import { useRecoilValue } from 'recoil';
 import { ILambdaHandle } from '../../../lambda/interface/handle.interface';
 import { lambdaMetasAtom } from '../../atom/artboard.atoms';
@@ -122,7 +122,7 @@ export default function ArtboardEdgeConfigComponent({
           </div>
         </div>
       }
-      visible
+      open
       closable
       maskClosable
       width="50%"

@@ -2,7 +2,7 @@ import { PlusSquareOutlined, SearchOutlined } from '@ant-design/icons';
 import { Avatar, Button, Divider, Drawer, Input, List } from 'antd';
 import startCase from 'lodash.startcase';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { ReactFlowInstance } from 'react-flow-renderer';
+import { ReactFlowInstance } from 'reactflow';
 import { useRecoilValue } from 'recoil';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
 import { lambdaMetasAtom } from '../../atom/artboard.atoms';
@@ -67,7 +67,7 @@ export default function FlowboardLambdaCatalog({
   return (
     <Drawer
       width="30vw"
-      visible={showCatalog}
+      open={showCatalog}
       mask={false}
       className="h-screen gray-scroll"
       title="Node Catalog"

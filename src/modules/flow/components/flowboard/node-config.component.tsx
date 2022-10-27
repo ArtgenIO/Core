@@ -20,7 +20,7 @@ import {
 } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Edge, Node } from 'react-flow-renderer';
+import { Edge, Node } from 'reactflow';
 import { useRecoilValue } from 'recoil';
 import { ILambdaHandle } from '../../../lambda/interface/handle.interface';
 import { ILambdaMeta } from '../../../lambda/interface/meta.interface';
@@ -151,7 +151,7 @@ export default function FlowBoardNodeConfig({
           </div>
         </div>
       }
-      visible
+      open
       closable
       maskClosable
       footer={null}

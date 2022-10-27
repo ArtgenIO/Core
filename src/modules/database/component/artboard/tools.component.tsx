@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import { Popconfirm } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
-import { useReactFlow } from 'react-flow-renderer';
+import { useReactFlow } from 'reactflow';
 import { Elements } from '../../../flow/interface/elements.interface';
 import { ISchema } from '../../../schema';
 

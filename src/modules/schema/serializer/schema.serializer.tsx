@@ -1,5 +1,5 @@
 import cloneDeep from 'lodash.clonedeep';
-import { Edge, isNode, Node } from 'react-flow-renderer';
+import { Edge, isNode, Node } from 'reactflow';
 import { Elements } from '../../flow/interface/elements.interface';
 import { ISchema } from '../interface';
 

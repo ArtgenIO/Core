@@ -10,6 +10,7 @@ import Sider from 'antd/lib/layout/Sider';
 import cloneDeep from 'lodash.clonedeep';
 import kebabCase from 'lodash.kebabcase';
 import { DragEvent, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router';
 import ReactFlow, {
   addEdge,
   Background,
@@ -19,8 +20,7 @@ import ReactFlow, {
   MarkerType,
   NodeTypes,
   useReactFlow,
-} from 'react-flow-renderer';
-import { useParams } from 'react-router';
+} from 'reactflow';
 import { useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import MenuBlock from '../../../admin/component/menu-block.component';
@@ -196,13 +196,13 @@ export default function FlowBoardComponent() {
   return (
     <Layout hasSider>
       <Sider width={260} className="h-screen depth-2 overflow-auto gray-scroll">
-        <MenuBlock title="Flow">
+        <MenuBlock title="Flow" style={{ borderTop: 0 }}>
           <div className="text-center py-2">
             <Avatar
               src={
-                <ClusterOutlined className="text-9xl text-midnight-100 text-center mt-8" />
+                <ClusterOutlined className="text-9xl text-midnight-100 text-center mt-9" />
               }
-              size={220}
+              size={200}
               className="bg-midnight-800 rounded-3xl"
               shape="square"
             />
@@ -321,7 +321,7 @@ export default function FlowBoardComponent() {
                 }
               }}
               nodeTypes={customNodes}
-              defaultZoom={1.5}
+              defaultViewport={{ zoom: 1.5, x: 0, y: 0 }}
               edgeTypes={
                 {
                   'artgen-edge': SmartEdgeFactory({

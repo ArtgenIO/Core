@@ -16,7 +16,7 @@ import { IRelation } from '../../../interface/relation.interface';
 import {
   FieldTool,
   getTakenColumNames,
-  isPrimary
+  isPrimary,
 } from '../../../util/field-tools';
 import { migrateField } from '../../../util/migrate-field';
 import FieldEditor from '../field-editor.component';
@@ -91,7 +91,7 @@ export default function RelationBelongsToOne({
     relation && (
       <Drawer
         width={640}
-        visible
+        open
         onClose={() => onClose(relation)}
         title={
           <div className="flex w-full">

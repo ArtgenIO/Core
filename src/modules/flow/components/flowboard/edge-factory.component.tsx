@@ -1,10 +1,6 @@
 import { SettingOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import {
-  getEdgeCenter,
-  getMarkerEnd,
-  getSmoothStepPath,
-} from 'react-flow-renderer';
+import { getMarkerEnd, getSmoothStepPath } from 'reactflow';
 
 type Props = {
   onClick: (id: string) => void;
@@ -25,7 +21,7 @@ export const SmartEdgeFactory =
     arrowHeadType,
     markerEndId,
   }) => {
-    const edgePath = getSmoothStepPath({
+    const [edgePath, edgeCenterX, edgeCenterY] = getSmoothStepPath({
       sourceX,
       sourceY,
       sourcePosition,
@@ -34,12 +30,6 @@ export const SmartEdgeFactory =
       targetPosition,
     });
     const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
-    const [edgeCenterX, edgeCenterY] = getEdgeCenter({
-      sourceX,
-      sourceY,
-      targetX,
-      targetY,
-    });
 
     const classes = [
       'smart-edge',
