@@ -12,12 +12,12 @@ import {
   FastifyRequest,
   RouteHandlerMethod,
 } from 'fastify';
-import NoCachePlugin from 'fastify-disablecache';
+import { BadRequestError, NotFoundError } from 'http-errors-enhanced';
 import kebabCase from 'lodash.kebabcase';
 import { RowLike } from '../../app/interface/row-like.interface';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
 import { AuthenticationHandlerProvider } from '../identity/provider/authentication-handler.provider';
-import { FieldTag } from '../schema';
+import { FieldTag, ISchema } from '../schema';
 import { SchemaService } from '../schema/service/schema.service';
 import { CrudAction } from './interface/crud-action.enum';
 import { OpenApiService } from './service/openapi.service';
@@ -25,11 +25,14 @@ import { RestService } from './service/rest.service';
 import { SearchService } from './service/search.service';
 
 type TenantRequest = FastifyRequest<{ Params: { tenantId: string } }>;
+type TenantBody = RowLike & { tenantId: string };
 
 @Service({
   tags: 'http:gateway',
 })
 export class RestGateway implements IHttpGateway {
+  protected authHandler: RouteHandlerMethod | null = null;
+
   constructor(
     @Logger()
     readonly logger: ILogger,
@@ -46,21 +49,37 @@ export class RestGateway implements IHttpGateway {
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
-    await httpServer.register(NoCachePlugin);
-    await this.registerAdminApi(httpServer);
-    await this.registerTenantApi(httpServer);
-  }
-
-  async registerTenantApi(httpServer: FastifyInstance): Promise<void> {
-    // Filter only the tenant schemas
-    const schemas = (await this.schema.fetchAll()).filter(s =>
-      s.fields.some(f => f.tags.includes(FieldTag.TENANT)),
-    );
-
-    const authPrehandler = await this.kernel.get<RouteHandlerMethod>(
+    this.authHandler = await this.kernel.get<RouteHandlerMethod>(
       AuthenticationHandlerProvider,
     );
-    const hasSearch = await this.search.isAvailable();
+
+    const [hasSearch, allSchema] = await Promise.all([
+      this.search.isAvailable(),
+      await this.schema.fetchAll(),
+    ]);
+
+    await httpServer.register(
+      async instance => {
+        await Promise.all([
+          this.registerAdminApi(instance, hasSearch, allSchema),
+          this.registerTenantApi(instance, hasSearch, allSchema),
+        ]);
+      },
+      {
+        prefix: '/api',
+      },
+    );
+  }
+
+  async registerTenantApi(
+    server: FastifyInstance,
+    hasSearch: boolean,
+    allSchema: ISchema[],
+  ): Promise<void> {
+    // Filter only the tenant schemas
+    const schemas = allSchema.filter(s =>
+      s.fields.some(f => f.tags.includes(FieldTag.TENANT)),
+    );
 
     for (const schema of schemas) {
       this.logger.info(
@@ -69,15 +88,18 @@ export class RestGateway implements IHttpGateway {
       );
 
       // Create action (TENANT)
-      httpServer.post(
-        this.openApi.getResourceURL(schema, 'rest', true),
+      server.post(
+        this.openApi.getResourceURL(schema, 'rest', {
+          isTenant: true,
+        }),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.CREATE, true),
-          preHandler: schema.access.create !== 'public' ? authPrehandler : null,
+          preHandler:
+            schema.access.create !== 'public' ? this.authHandler : null,
         },
         async (req: TenantRequest, reply: FastifyReply): Promise<unknown> => {
           try {
-            const body = req.body as any;
+            const body = req.body as TenantBody;
             body.tenantId = req.params.tenantId; // Attach tenant ID
 
             const record = await this.rest.create(
@@ -93,25 +115,22 @@ export class RestGateway implements IHttpGateway {
 
             return JSON.stringify(record);
           } catch (error) {
-            reply.statusCode = 400;
-
-            return {
-              statusCode: 400,
-              error: 'Bad Request',
-            };
+            throw new BadRequestError();
           }
         },
       );
 
       // Read action (TENANT)
-      httpServer.get(
-        this.openApi.getRecordURL(schema, true),
+      server.get(
+        this.openApi.getRecordURL(schema, {
+          isTenant: true,
+        }),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.READ, true),
-          preHandler: schema.access.read !== 'public' ? authPrehandler : null,
+          preHandler: schema.access.read !== 'public' ? this.authHandler : null,
         },
         async (
-          request: FastifyRequest<{ Params: Record<string, string> }>,
+          request: FastifyRequest<{ Params: RowLike }>,
           reply: FastifyReply,
         ): Promise<unknown> => {
           const record = await this.rest.read(
@@ -120,29 +139,25 @@ export class RestGateway implements IHttpGateway {
             request.params,
           );
 
-          if (record) {
-            delete record['tenantId'];
-
-            reply.header('content-type', 'application/json');
-            return JSON.stringify(record);
+          if (!record) {
+            throw new NotFoundError();
           }
 
-          // Handle the 404 error
-          reply.statusCode = 404;
+          reply.header('content-type', 'application/json');
+          delete record['tenantId'];
 
-          return {
-            error: 'Not Found',
-            statusCode: 404,
-          };
+          return JSON.stringify(record);
         },
       );
 
       // Find action (TENANT)
-      httpServer.get(
-        this.openApi.getResourceURL(schema, 'rest', true),
+      server.get(
+        this.openApi.getResourceURL(schema, 'rest', {
+          isTenant: true,
+        }),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.FIND, true),
-          preHandler: schema.access.read !== 'public' ? authPrehandler : null,
+          preHandler: schema.access.read !== 'public' ? this.authHandler : null,
         },
         async (
           request: FastifyRequest<{
@@ -193,16 +208,19 @@ export class RestGateway implements IHttpGateway {
       );
 
       // Update (TENANT)
-      httpServer.patch(
-        this.openApi.getRecordURL(schema, true),
+      server.patch(
+        this.openApi.getRecordURL(schema, {
+          isTenant: true,
+        }),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.UPDATE, true),
-          preHandler: schema.access.update !== 'public' ? authPrehandler : null,
+          preHandler:
+            schema.access.update !== 'public' ? this.authHandler : null,
         },
         async (
           req: FastifyRequest<{
-            Body: object;
-            Params: Record<string, string>;
+            Body: RowLike;
+            Params: RowLike;
           }>,
           reply: FastifyReply,
         ): Promise<unknown> => {
@@ -220,30 +238,22 @@ export class RestGateway implements IHttpGateway {
               return JSON.stringify(record);
             }
 
-            // Handle the 404 error
-            reply.statusCode = 404;
-
-            return {
-              error: 'Not Found',
-              statusCode: 404,
-            };
+            throw new NotFoundError();
           } catch (error) {
-            reply.statusCode = 400;
-
-            return {
-              statusCode: 400,
-              error: 'Bad Request',
-            };
+            throw new BadRequestError();
           }
         },
       );
 
       // Delete (TENANT)
-      httpServer.delete(
-        this.openApi.getRecordURL(schema, true),
+      server.delete(
+        this.openApi.getRecordURL(schema, {
+          isTenant: true,
+        }),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.DELETE, true),
-          preHandler: schema.access.delete !== 'public' ? authPrehandler : null,
+          preHandler:
+            schema.access.delete !== 'public' ? this.authHandler : null,
         },
         async (
           req: FastifyRequest<{ Params: Record<string, string> }>,
@@ -266,35 +276,26 @@ export class RestGateway implements IHttpGateway {
               return JSON.stringify(record);
             }
 
-            // Handle the 404 error
-            reply.statusCode = 404;
-
-            return {
-              error: 'Not Found',
-              statusCode: 404,
-            };
+            throw new NotFoundError();
           } catch (error) {
-            reply.statusCode = 400;
-
-            return {
-              statusCode: 400,
-              error: 'Bad Request',
-            };
+            throw new BadRequestError();
           }
         },
       );
 
       if (hasSearch) {
         // Search query
-        httpServer.get(
-          this.openApi.getResourceURL(schema, 'search', true) + '/:term',
+        server.get(
+          this.openApi.getResourceURL(schema, 'search', {
+            isTenant: true,
+          }) + '/:term',
           {
             //schema: this.openApi.toFastifySchema(schema, CrudAction.CREATE),
             schema: {
               tags: ['Search', 'Tenant'],
             },
             preHandler:
-              schema.access.create !== 'public' ? authPrehandler : null,
+              schema.access.create !== 'public' ? this.authHandler : null,
           },
           async (
             req: FastifyRequest<{ Params: { term: string } }>,
@@ -312,26 +313,23 @@ export class RestGateway implements IHttpGateway {
 
               return JSON.stringify(response);
             } catch (error) {
-              reply.statusCode = 400;
-
-              return {
-                statusCode: 400,
-                error: 'Bad Request',
-              };
+              throw new BadRequestError();
             }
           },
         );
 
         // Search reindex
-        httpServer.patch(
-          this.openApi.getResourceURL(schema, 'search', true),
+        server.patch(
+          this.openApi.getResourceURL(schema, 'search', {
+            isTenant: true,
+          }),
           {
             //schema: this.openApi.toFastifySchema(schema, CrudAction.CREATE),
             schema: {
               tags: ['Search', 'Tenant'],
             },
             preHandler:
-              schema.access.create !== 'public' ? authPrehandler : null,
+              schema.access.create !== 'public' ? this.authHandler : null,
           },
           async (
             req: FastifyRequest<{ Params: { term: string } }>,
@@ -348,12 +346,7 @@ export class RestGateway implements IHttpGateway {
 
               return JSON.stringify(response);
             } catch (error) {
-              reply.statusCode = 400;
-
-              return {
-                statusCode: 400,
-                error: 'Bad Request',
-              };
+              throw new BadRequestError();
             }
           },
         );
@@ -367,20 +360,19 @@ export class RestGateway implements IHttpGateway {
     }
   }
 
-  async registerAdminApi(httpServer: FastifyInstance): Promise<void> {
-    const schemas = await this.schema.fetchAll();
-    const authPrehandler = await this.kernel.get<RouteHandlerMethod>(
-      AuthenticationHandlerProvider,
-    );
-    const hasSearch = await this.search.isAvailable();
-
-    for (const schema of schemas) {
+  async registerAdminApi(
+    server: FastifyInstance,
+    hasSearch: boolean,
+    allSchema: ISchema[],
+  ): Promise<void> {
+    for (const schema of allSchema) {
       // Create action
-      httpServer.post(
+      server.post(
         this.openApi.getResourceURL(schema),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.CREATE),
-          preHandler: schema.access.create !== 'public' ? authPrehandler : null,
+          preHandler:
+            schema.access.create !== 'public' ? this.authHandler : null,
         },
         async (req: FastifyRequest, reply: FastifyReply): Promise<unknown> => {
           try {
@@ -395,22 +387,17 @@ export class RestGateway implements IHttpGateway {
 
             return JSON.stringify(response);
           } catch (error) {
-            reply.statusCode = 400;
-
-            return {
-              statusCode: 400,
-              error: 'Bad Request',
-            };
+            throw new BadRequestError();
           }
         },
       );
 
       // Read action
-      httpServer.get(
+      server.get(
         this.openApi.getRecordURL(schema),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.READ),
-          preHandler: schema.access.read !== 'public' ? authPrehandler : null,
+          preHandler: schema.access.read !== 'public' ? this.authHandler : null,
         },
         async (
           request: FastifyRequest<{ Params: Record<string, string> }>,
@@ -427,22 +414,16 @@ export class RestGateway implements IHttpGateway {
             return JSON.stringify(record);
           }
 
-          // Handle the 404 error
-          reply.statusCode = 404;
-
-          return {
-            error: 'Not Found',
-            statusCode: 404,
-          };
+          throw new NotFoundError();
         },
       );
 
       // Find action
-      httpServer.get(
+      server.get(
         this.openApi.getResourceURL(schema),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.FIND),
-          preHandler: schema.access.read !== 'public' ? authPrehandler : null,
+          preHandler: schema.access.read !== 'public' ? this.authHandler : null,
         },
         async (
           request: FastifyRequest,
@@ -460,11 +441,12 @@ export class RestGateway implements IHttpGateway {
       );
 
       // Update
-      httpServer.patch(
+      server.patch(
         this.openApi.getRecordURL(schema),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.UPDATE),
-          preHandler: schema.access.update !== 'public' ? authPrehandler : null,
+          preHandler:
+            schema.access.update !== 'public' ? this.authHandler : null,
         },
         async (
           req: FastifyRequest<{
@@ -486,32 +468,20 @@ export class RestGateway implements IHttpGateway {
               return JSON.stringify(record);
             }
 
-            // Handle the 404 error
-            reply.statusCode = 404;
-
-            return {
-              error: 'Not Found',
-              statusCode: 404,
-            };
+            throw new NotFoundError();
           } catch (error) {
-            this.logger.error(error);
-
-            reply.statusCode = 400;
-
-            return {
-              statusCode: 400,
-              error: 'Bad Request',
-            };
+            throw new BadRequestError();
           }
         },
       );
 
       // Delete
-      httpServer.delete(
+      server.delete(
         this.openApi.getRecordURL(schema),
         {
           schema: this.openApi.toFastifySchema(schema, CrudAction.DELETE),
-          preHandler: schema.access.delete !== 'public' ? authPrehandler : null,
+          preHandler:
+            schema.access.delete !== 'public' ? this.authHandler : null,
         },
         async (
           req: FastifyRequest<{ Params: Record<string, string> }>,
@@ -529,27 +499,16 @@ export class RestGateway implements IHttpGateway {
               return JSON.stringify(record);
             }
 
-            // Handle the 404 error
-            reply.statusCode = 404;
-
-            return {
-              error: 'Not Found',
-              statusCode: 404,
-            };
+            throw new NotFoundError();
           } catch (error) {
-            reply.statusCode = 400;
-
-            return {
-              statusCode: 400,
-              error: 'Bad Request',
-            };
+            throw new BadRequestError();
           }
         },
       );
 
       if (hasSearch) {
         // Search query
-        httpServer.get(
+        server.get(
           this.openApi.getResourceURL(schema, 'search') + '/:term',
           {
             //schema: this.openApi.toFastifySchema(schema, CrudAction.CREATE),
@@ -557,7 +516,7 @@ export class RestGateway implements IHttpGateway {
               tags: ['Search'],
             },
             preHandler:
-              schema.access.create !== 'public' ? authPrehandler : null,
+              schema.access.create !== 'public' ? this.authHandler : null,
           },
           async (
             req: FastifyRequest<{ Params: { term: string } }>,
@@ -575,18 +534,13 @@ export class RestGateway implements IHttpGateway {
 
               return JSON.stringify(response);
             } catch (error) {
-              reply.statusCode = 400;
-
-              return {
-                statusCode: 400,
-                error: 'Bad Request',
-              };
+              throw new BadRequestError();
             }
           },
         );
 
         // Search reindex
-        httpServer.patch(
+        server.patch(
           this.openApi.getResourceURL(schema, 'search'),
           {
             //schema: this.openApi.toFastifySchema(schema, CrudAction.CREATE),
@@ -594,7 +548,7 @@ export class RestGateway implements IHttpGateway {
               tags: ['Search'],
             },
             preHandler:
-              schema.access.create !== 'public' ? authPrehandler : null,
+              schema.access.create !== 'public' ? this.authHandler : null,
           },
           async (
             req: FastifyRequest<{ Params: { term: string } }>,
@@ -611,12 +565,7 @@ export class RestGateway implements IHttpGateway {
 
               return JSON.stringify(response);
             } catch (error) {
-              reply.statusCode = 400;
-
-              return {
-                statusCode: 400,
-                error: 'Bad Request',
-              };
+              throw new BadRequestError();
             }
           },
         );

@@ -60,19 +60,30 @@ export class OpenApiService {
   getResourceURL(
     schema: ISchema,
     cause: string = 'rest',
-    isTenant: boolean = false,
+    options: {
+      isTenant: boolean;
+    } = {
+      isTenant: false,
+    },
   ): string {
-    return `/api/${cause}${isTenant ? '/:tenantId' : ''}/${kebabCase(
+    return `/${cause}${options.isTenant ? '/:tenantId' : ''}/${kebabCase(
       schema.database,
     )}/${kebabCase(schema.reference)}`;
   }
 
-  getRecordURL(schema: ISchema, isTenant: boolean = false) {
+  getRecordURL(
+    schema: ISchema,
+    options: {
+      isTenant: boolean;
+    } = {
+      isTenant: false,
+    },
+  ) {
     const primaryKeys = schema.fields.filter(isPrimary);
     const record =
       '/:' + primaryKeys.map(f => kebabCase(f.reference)).join('/:');
 
-    return this.getResourceURL(schema, 'rest', isTenant) + record;
+    return this.getResourceURL(schema, 'rest', options) + record;
   }
 
   toFastifySchema(

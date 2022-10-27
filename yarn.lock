@@ -2059,16 +2059,6 @@ ajv@^6.11.0, ajv@^6.12.3, ajv@^6.12.6, ajv@^6.7.0:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ajv@^7.0.2:
-  version "7.2.4"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-7.2.4.tgz#8e239d4d56cf884bccca8cca362f508446dc160f"
-  integrity sha512-nBeQgg/ZZA3u3SYxyaDvpvDtgZ/EZPF547ARgZBrG9Bhu1vKDwAIjtIf+sDtJUKa2zOcEbmRLBRSyMraS/Oy1A==
-  dependencies:
-    fast-deep-equal "^3.1.1"
-    json-schema-traverse "^1.0.0"
-    require-from-string "^2.0.2"
-    uri-js "^4.2.2"
-
 ajv@^8.1.0, ajv@^8.6.2, ajv@^8.6.3:
   version "8.11.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.11.0.tgz#977e91dd96ca669f54a11e23e378e33b884a565f"
@@ -4050,14 +4040,14 @@ fastify-formbody@^5.1.0:
     fastify-formbody-deprecated "npm:fastify-formbody@5.2.0"
     process-warning "^1.0.0"
 
-fastify-http-errors-enhanced@2.9.1:
-  version "2.9.1"
-  resolved "https://registry.yarnpkg.com/fastify-http-errors-enhanced/-/fastify-http-errors-enhanced-2.9.1.tgz#a37729167d4d75c34c2476812b9bd428174aac01"
-  integrity sha512-kARNL/EY1y7jcLyKk70odBawofWfHltakZwxnpk8vYf8x1X92TR5w+1BMYixhgazo5akAqUy67UodHCL01APzQ==
+fastify-http-errors-enhanced@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/fastify-http-errors-enhanced/-/fastify-http-errors-enhanced-3.0.0.tgz#bd9d1233e8934edb6ec0bbae05968d4100552e1b"
+  integrity sha512-p5Cr9RRuxcjBAqQTlZPzATOQAYtu9ch5I9gOHxhYi1YAL0m4V/PYB4h1+avLIwFCy10Dpfs6MVU9Qr/7cGrdbw==
   dependencies:
-    ajv "^7.0.2"
+    ajv "^8.6.2"
     fastify-plugin "^3.0.0"
-    http-errors-enhanced "^0.7.0"
+    http-errors-enhanced "^1.0.0"
 
 fastify-passport@^0.4.3:
   version "0.4.3"
@@ -4703,10 +4693,10 @@ http-cache-semantics@^4.1.0:
   resolved "https://registry.yarnpkg.com/http-cache-semantics/-/http-cache-semantics-4.1.0.tgz#49e91c5cbf36c9b94bcfcd71c23d5249ec74e390"
   integrity sha512-carPklcUh7ROWRK7Cv27RPtdhYhUsela/ue5/jKzjegVvXDqM2ILE9Q2BGn9JZJh1g87cp56su/FgQSzcWS8cQ==
 
-http-errors-enhanced@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/http-errors-enhanced/-/http-errors-enhanced-0.7.0.tgz#8251863718ae057bf9539e8d21aa670b6ea6a76b"
-  integrity sha512-SYVGmRIcKBurS7oDTPDnoYxBnEa8CPR0UZBAU6P0QsBPQY6XjIGoCK5iFxLkg1jeo+dkiq4MxqMJbBEoXcczBg==
+http-errors-enhanced@^1.0.0, http-errors-enhanced@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/http-errors-enhanced/-/http-errors-enhanced-1.0.12.tgz#e7970ce2111d7f5b215e687ddaa0eabc20bc4c35"
+  integrity sha512-7lpJN6WW5uVJZ/2xf9cLuOTH5a+bF6ZsXsbxgdsTEX46mRFh0uZB7k9ab4VBWzYK023GOzlTb/rNqCSrJch92g==
 
 http-errors@1.8.1:
   version "1.8.1"

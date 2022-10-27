@@ -1,5 +1,6 @@
 import { IKernel, Kernel } from '@hisorange/kernel';
 import { assert } from 'console';
+import { IdentityModule } from '../identity/identity.module';
 import { RestGateway } from './rest.gateway';
 import { RestModule } from './rest.module';
 import { OpenApiService } from './service/openapi.service';
@@ -11,7 +12,7 @@ describe(RestModule.name, () => {
   beforeAll(() => {
     kernel = new Kernel();
 
-    assert(kernel.register([RestModule]));
+    assert(kernel.register([RestModule, IdentityModule]));
   });
 
   test('should register the service', async () => {

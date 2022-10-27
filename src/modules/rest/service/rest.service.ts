@@ -100,7 +100,7 @@ export class RestService {
   async read(
     database: string,
     reference: string,
-    filterKeys: object,
+    filterKeys: RowLike,
   ): Promise<RowLike | null> {
     // Load the model
     const model = this.schema.getModel(database, reference);

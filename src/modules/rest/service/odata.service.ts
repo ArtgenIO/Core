@@ -7,11 +7,10 @@ import {
   Operator,
   QueryBuilder,
   ref,
-  RelationExpression
+  RelationExpression,
 } from 'objection';
 import parser from 'odata-parser';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
-import { inspect } from 'util';
 import { Exception } from '../../../app/exceptions/exception';
 import { FieldType, ISchema } from '../../schema';
 import { SchemaService } from '../../schema/service/schema.service';
@@ -19,12 +18,11 @@ import {
   fLiteral,
   fLogic,
   fPropery,
-  IODataAST
+  IODataAST,
 } from '../interface/odata-ast.interface';
 
 type QB = QueryBuilder<Model, Model[]>;
 type AST = IODataAST;
-type RC = RelationExpression<Model>;
 
 @Service()
 export class ODataService {
@@ -410,8 +408,8 @@ export class ODataService {
     }
 
     if (ast?.$filter) {
-      if (1)
-        this.logger.debug('Filter [%s]', inspect(ast.$filter, false, 8, false));
+      // if (1)
+      //   this.logger.debug('Filter [%s]', inspect(ast.$filter, false, 8, false));
       this.applyConditions(schema, qb, ast.$filter);
 
       // Collect relations to filter for them
