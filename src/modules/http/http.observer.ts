@@ -1,7 +1,7 @@
 import { Inject, Observer, On } from '@hisorange/kernel';
 import debounce from 'lodash.debounce';
 import isEqual from 'lodash.isequal';
-import { IKeyValueRecord } from '../content/interface/key-value.interface';
+import { IKeyValueRecord } from '../database/interface/key-value.interface';
 import { toStructure } from '../database/library/structure/to-structure';
 import { ISchema } from '../schema';
 import { SchemaRef } from '../schema/interface/system-ref.enum';

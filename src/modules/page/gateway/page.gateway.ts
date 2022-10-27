@@ -4,8 +4,8 @@ import TemplateEngine from 'nunjucks';
 import { join } from 'path';
 import pov from 'point-of-view';
 import { ROOT_DIR } from '../../../app/globals';
+import { KeyValueService } from '../../database/service/key-value.service';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
-import { KeyValueService } from '../../schema/service/key-value.service';
 import { PageService } from '../service/page.service';
 
 @Service({

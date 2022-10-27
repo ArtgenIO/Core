@@ -4,7 +4,7 @@ import { diff } from 'just-diff';
 import pick from 'lodash.pick';
 import { Exception } from '../../../app/exceptions/exception';
 import { RowLike } from '../../../app/interface/row-like.interface';
-import { SchemaService } from '../../schema/service/schema.service';
+import { SchemaService } from '../../database/service/schema.service';
 import {
   FieldTool,
   isManagedField,

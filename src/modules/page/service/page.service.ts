@@ -1,7 +1,7 @@
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { Model } from 'objection';
+import { SchemaService } from '../../database/service/schema.service';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';
-import { SchemaService } from '../../schema/service/schema.service';
 import { IPage } from '../interface/page.interface';
 
 type PageModel = IPage & Model;

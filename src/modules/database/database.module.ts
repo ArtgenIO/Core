@@ -1,4 +1,5 @@
 import {
+  EventModule,
   IKernel,
   ILogger,
   IModule,
@@ -6,30 +7,37 @@ import {
   Module,
   moduleRef,
 } from '@hisorange/kernel';
+import { BlueprintModule } from '../blueprint/blueprint.module';
 import { RestModule } from '../rest/rest.module';
 import { RestService } from '../rest/service/rest.service';
 import { ISchema } from '../schema';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
-import { SchemaModule } from '../schema/schema.module';
 import { TelemetryModule } from '../telemetry/telemetry.module';
 import { TransformerModule } from '../transformer/transformer.module';
 import { DatabaseObserver } from './database.observer';
+import { ContentMeiliIndexLambda } from './lambda/meili/index.lambda';
 import { DatabaseConnectionConcrete } from './provider/connection-concrete.provider';
 import { DatabaseConnectionService } from './service/database-connection.service';
 import { DatabaseService } from './service/database.service';
+import { KeyValueService } from './service/key-value.service';
+import { SchemaService } from './service/schema.service';
 
 @Module({
   imports: [
-    moduleRef(() => SchemaModule),
+    BlueprintModule,
     moduleRef(() => RestModule),
     TransformerModule,
     TelemetryModule,
   ],
+  dependsOn: [EventModule],
   providers: [
     DatabaseConnectionConcrete,
     DatabaseConnectionService,
     DatabaseObserver,
     DatabaseService,
+    KeyValueService,
+    SchemaService,
+    ContentMeiliIndexLambda,
   ],
 })
 export class DatabaseModule implements IModule {

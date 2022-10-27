@@ -15,10 +15,10 @@ import {
 import { BadRequestError, NotFoundError } from 'http-errors-enhanced';
 import kebabCase from 'lodash.kebabcase';
 import { RowLike } from '../../app/interface/row-like.interface';
+import { SchemaService } from '../database/service/schema.service';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
 import { AuthenticationHandlerProvider } from '../identity/provider/authentication-handler.provider';
 import { FieldTag, ISchema } from '../schema';
-import { SchemaService } from '../schema/service/schema.service';
 import { CrudAction } from './interface/crud-action.enum';
 import { OpenApiService } from './service/openapi.service';
 import { RestService } from './service/rest.service';

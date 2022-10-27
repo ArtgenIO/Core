@@ -1,9 +1,9 @@
 import { diff } from 'just-diff';
 import { atom, DefaultValue, useRecoilValue } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
-import { IContentModule } from '../content/interface/content-module.interface';
 import { toRestSysRoute } from '../content/util/schema-url';
 import { IDatabase } from '../database';
+import { IContentModule } from '../database/interface/content-module.interface';
 import { IAccount } from '../identity/interface/account.interface';
 import { decodeJWT } from '../identity/util/get-token-expiration';
 import { IFindResponse } from '../rest/interface/find-reponse.interface';

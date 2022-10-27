@@ -1,9 +1,9 @@
 import { ILogger, Inject, Logger } from '@hisorange/kernel';
 import { nanoid } from 'nanoid';
 import { Model } from 'objection';
+import { KeyValueService } from '../../database/service/key-value.service';
+import { SchemaService } from '../../database/service/schema.service';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';
-import { KeyValueService } from '../../schema/service/key-value.service';
-import { SchemaService } from '../../schema/service/schema.service';
 import { IAccessKey } from '../interface/access-key.interface';
 import { IAccount } from '../interface/account.interface';
 

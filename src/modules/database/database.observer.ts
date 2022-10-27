@@ -2,7 +2,9 @@ import { ILogger, Inject, Logger, Observer, On } from '@hisorange/kernel';
 import { ISchema } from '../schema';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IDatabase } from './interface';
+import { IKeyValueRecord } from './interface/key-value.interface';
 import { DatabaseConnectionService } from './service/database-connection.service';
+import { KeyValueService } from './service/key-value.service';
 
 @Observer()
 export class DatabaseObserver {
@@ -11,7 +13,17 @@ export class DatabaseObserver {
     readonly logger: ILogger,
     @Inject(DatabaseConnectionService)
     readonly connections: DatabaseConnectionService,
+    @Inject(KeyValueService)
+    readonly service: KeyValueService,
   ) {}
+
+  @On(`crud.main.${SchemaRef.KV}.*`)
+  async clearCache(kv: IKeyValueRecord) {
+    if (this.service.cache.has(kv.key)) {
+      this.service.cache.delete(kv.key);
+      this.logger.info('KeyValue [%s] cache cleared', kv.key);
+    }
+  }
 
   @On(`crud.main.${SchemaRef.SCHEMA}.created`)
   async handleSchemaCreate(schema: ISchema) {

@@ -2,13 +2,13 @@ import { Inject, Service } from '@hisorange/kernel';
 import jwt, { SignOptions } from 'jsonwebtoken';
 
 import { Model } from 'objection';
+import { SchemaService } from '../../database/service/schema.service';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';
-import { SchemaService } from '../../schema/service/schema.service';
 import { IAccount } from '../interface/account.interface';
 import { IJwtPayload } from '../interface/jwt-payload.interface';
 import { AuthenticationService } from '../service/authentication.service';

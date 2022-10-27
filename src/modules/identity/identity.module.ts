@@ -1,6 +1,5 @@
 import { IModule, Module, moduleRef } from '@hisorange/kernel';
-import { BlueprintModule } from '../blueprint/blueprint.module';
-import { SchemaModule } from '../schema/schema.module';
+import { DatabaseModule } from '../database/database.module';
 import { IdentityGateway } from './gateway/authentication.gateway';
 import { HashCompareLambda } from './lambda/hash-compare.lambda';
 import { HashCreateLambda } from './lambda/hash-create.lambda';
@@ -19,6 +18,6 @@ import { AuthenticationService } from './service/authentication.service';
     IdentityGateway,
     TokenSignLambda,
   ],
-  dependsOn: [moduleRef(() => SchemaModule), moduleRef(() => BlueprintModule)],
+  dependsOn: [moduleRef(() => DatabaseModule)],
 })
 export class IdentityModule implements IModule {}

@@ -3,10 +3,10 @@ import EventEmitter2 from 'eventemitter2';
 import { Model, ModelClass } from 'objection';
 import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from '../../blueprint/provider/artgen-blueprint.provider';
-import { IContentModule } from '../../content/interface/content-module.interface';
-import { DatabaseConnectionService } from '../../database/service/database-connection.service';
-import { ISchema } from '../interface/schema.interface';
-import { SchemaRef } from '../interface/system-ref.enum';
+import { ISchema } from '../../schema/interface/schema.interface';
+import { SchemaRef } from '../../schema/interface/system-ref.enum';
+import { IContentModule } from '../interface/content-module.interface';
+import { DatabaseConnectionService } from './database-connection.service';
 
 type SchemaModel = ISchema & Model;
 type ModuleModel = IContentModule & Model;

@@ -1,6 +1,5 @@
 import { EventModule, Module, SchedulerModule } from '@hisorange/kernel';
 import { BlueprintModule } from '../modules/blueprint/blueprint.module';
-import { ContentModule } from '../modules/content/content.module';
 import { DatabaseModule } from '../modules/database/database.module';
 import { FlowModule } from '../modules/flow/flow.module';
 import { FormModule } from '../modules/form/form.module';
@@ -9,7 +8,6 @@ import { IdentityModule } from '../modules/identity/identity.module';
 import { LambdaModule } from '../modules/lambda/lambda.module';
 import { PageModule } from '../modules/page/page.module';
 import { RestModule } from '../modules/rest/rest.module';
-import { SchemaModule } from '../modules/schema/schema.module';
 import { SecurityModule } from '../modules/security/security.module';
 import { TelemetryModule } from '../modules/telemetry/telemetry.module';
 import { TransformerModule } from '../modules/transformer/transformer.module';
@@ -19,7 +17,6 @@ import { LogLambda } from './logger/log.lambda';
 @Module({
   imports: [
     BlueprintModule,
-    ContentModule,
     DatabaseModule,
     EventModule,
     FlowModule,
@@ -30,7 +27,6 @@ import { LogLambda } from './logger/log.lambda';
     PageModule,
     RestModule,
     SchedulerModule,
-    SchemaModule,
     SecurityModule,
     TelemetryModule,
     TransformerModule,

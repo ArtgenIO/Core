@@ -1,10 +1,17 @@
-import { IKernel, ILogger, Inject, Kernel, Logger, Service } from '@hisorange/kernel';
+import {
+  IKernel,
+  ILogger,
+  Inject,
+  Kernel,
+  Logger,
+  Service,
+} from '@hisorange/kernel';
 import fastProxy from 'fast-proxy';
 import { FastifyInstance } from 'fastify';
 import { Model } from 'objection';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
+import { SchemaService } from '../../database/service/schema.service';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';
-import { SchemaService } from '../../schema/service/schema.service';
 import { IHttpGateway } from '../interface/http-gateway.interface';
 import { IReverseProxy } from '../interface/reverse-proxy.interface';
 

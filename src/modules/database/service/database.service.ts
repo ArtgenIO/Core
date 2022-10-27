@@ -4,10 +4,10 @@ import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from '../../blueprint/provider/artgen-blueprint.provider';
 import { ISchema } from '../../schema';
 import { SchemaRef } from '../../schema/interface/system-ref.enum';
-import { SchemaService } from '../../schema/service/schema.service';
 import { IDatabaseConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
 import { DatabaseConnectionService } from './database-connection.service';
+import { SchemaService } from './schema.service';
 
 type DatabaseModel = IDatabase & Model;
 
@@ -61,7 +61,7 @@ export class DatabaseService {
       if (database.ref !== 'main') {
         updates.push(
           this.connectionService.connect(database, associations).catch(e => {
-            this.logger.warn((e?.message));
+            this.logger.warn(e?.message);
             console.warn(e);
           }),
         );

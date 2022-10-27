@@ -1,9 +1,9 @@
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { v4 } from 'uuid';
 import { DatabaseConnectionService } from '../database/service/database-connection.service';
+import { KeyValueService } from '../database/service/key-value.service';
 import { RestService } from '../rest/service/rest.service';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
-import { KeyValueService } from '../schema/service/key-value.service';
 import { IBlueprint } from './interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from './provider/artgen-blueprint.provider';
 
@@ -105,13 +105,12 @@ export class BlueprintService {
               ),
             )
             .catch(e =>
-              this.logger
-                .warn(
-                  'Could not create [%s][%s] schema [%s]',
-                  blueprint.title,
-                  schema.reference,
-                  e?.message,
-                ),
+              this.logger.warn(
+                'Could not create [%s][%s] schema [%s]',
+                blueprint.title,
+                schema.reference,
+                e?.message,
+              ),
             );
         } else {
           this.logger.debug(

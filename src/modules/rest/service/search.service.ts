@@ -2,8 +2,8 @@ import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 
 import snakeCase from 'lodash.snakecase';
 import MeiliSearch from 'meilisearch';
-import { KeyValueService } from '../../schema/service/key-value.service';
-import { SchemaService } from '../../schema/service/schema.service';
+import { KeyValueService } from '../../database/service/key-value.service';
+import { SchemaService } from '../../database/service/schema.service';
 
 const HOST_REF = 'meili.host';
 const API_REF = 'meili.key';

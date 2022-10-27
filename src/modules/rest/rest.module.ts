@@ -1,5 +1,4 @@
-import { Module, moduleRef } from '@hisorange/kernel';
-import { SchemaModule } from '../schema/schema.module';
+import { Module } from '@hisorange/kernel';
 import { UpgradeModule } from '../upgrade/upgrade.module';
 import { RestCreateLambda } from './lambda/rest-create.lambda';
 import { RestFindLambda } from './lambda/rest-find.lambda';
@@ -10,7 +9,7 @@ import { RestService } from './service/rest.service';
 import { SearchService } from './service/search.service';
 
 @Module({
-  imports: [moduleRef(() => SchemaModule), UpgradeModule],
+  imports: [UpgradeModule],
   providers: [
     RestService,
     OpenApiService,

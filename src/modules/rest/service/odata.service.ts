@@ -12,8 +12,8 @@ import {
 import parser from 'odata-parser';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { Exception } from '../../../app/exceptions/exception';
+import { SchemaService } from '../../database/service/schema.service';
 import { FieldType, ISchema } from '../../schema';
-import { SchemaService } from '../../schema/service/schema.service';
 import {
   fLiteral,
   fLogic,

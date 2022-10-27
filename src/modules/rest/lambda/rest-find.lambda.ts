@@ -1,12 +1,12 @@
 import { Inject, Service } from '@hisorange/kernel';
 import { RowLike } from '../../../app/interface/row-like.interface';
+import { SchemaService } from '../../database/service/schema.service';
 import { IFlow } from '../../flow/interface';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import { SchemaService } from '../../schema/service/schema.service';
 
 type Config = {
   database: string;
