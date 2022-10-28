@@ -18,14 +18,5 @@ export class IdentityGateway implements IHttpGateway {
   async register(upstream: FastifyInstance): Promise<void> {
     await upstream.register(this.authenticator.initialize());
     await upstream.register(this.authenticator.secureSession());
-
-    upstream.get('/api/identity/status', async (req, rep) => {
-      return {
-        canSignUp:
-          process.env.NODE_ENV !== 'production' ||
-          process.env.ARTGEN_DEMO == '1' ||
-          (await this.service.isSignUpAvailable()),
-      };
-    });
   }
 }

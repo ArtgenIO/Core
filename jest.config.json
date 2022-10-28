@@ -12,24 +12,5 @@
   "bail": true,
   "testTimeout": 5000,
   "collectCoverage": false,
-  "coverageReporters": [
-    "json",
-    "text"
-  ],
-  "coverageDirectory": "./.nyc_output",
-  "collectCoverageFrom": [
-    "./src/**/*.ts",
-    "!./src/**/index.ts",
-    "!./src/main.ts",
-    "!./src/modules/admin/**/*.ts"
-  ],
-  "coverageThreshold": {
-    "global": {
-      "statements": 1,
-      "functions": 1,
-      "lines": 1,
-      "branches": 1
-    }
-  },
   "globalSetup": "./tests/global.setup.js"
 }

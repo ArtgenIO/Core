@@ -1,21 +1,11 @@
 import react from '@vitejs/plugin-react';
 import { join } from 'path';
-import istanbul from 'rollup-plugin-istanbul';
 import { fileURLToPath } from 'url';
 import { UserConfigExport } from 'vite';
 import postcss from '../../../postcss.config';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const plugins = [react()];
-
-if (process.env.CYPRESS_COVERAGE) {
-  plugins.push(
-    istanbul({
-      include: ['src/**/*.tsx'],
-      extension: ['.tsx'],
-    }),
-  );
-}
 
 export default {
   css: {

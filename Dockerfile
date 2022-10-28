@@ -17,7 +17,6 @@ FROM node:16-alpine AS production
 WORKDIR /srv
 
 COPY --from=builder /temp/.env.defaults .env.defaults
-COPY --from=builder /temp/bin bin
 COPY --from=builder /temp/build build
 COPY --from=builder /temp/docs docs
 COPY --from=builder /temp/license license

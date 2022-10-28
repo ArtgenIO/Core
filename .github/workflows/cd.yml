@@ -188,12 +188,6 @@ jobs:
         env:
           ARTGEN_DATABASE_DSN: "sqlite::memory:"
 
-      # - name: Collect coverage
-      #   uses: coverallsapp/github-action@master
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-
-
   release-npm:
     name: GPR / NPM release
     runs-on: ubuntu-latest

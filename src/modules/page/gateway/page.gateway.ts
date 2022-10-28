@@ -44,7 +44,7 @@ export class PageGateway implements IHttpGateway {
           : `:${process.env.ARTGEN_HTTP_PORT}`),
     );
 
-    if (host && process.env.ARTGEN_DEMO != '1') {
+    if (host) {
       constraints.host = host;
     }
 
