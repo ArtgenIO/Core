@@ -22,7 +22,8 @@ import { FlowService } from './service/flow.service';
 @Module({
   imports: [
     moduleRef(() => LambdaModule),
-    moduleRef(() => RestModule),
+    DatabaseModule,
+    RestModule,
     TelemetryModule,
   ],
   dependsOn: [

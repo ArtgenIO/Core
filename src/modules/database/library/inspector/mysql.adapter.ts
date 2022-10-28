@@ -1,12 +1,11 @@
-
 import { Constructor } from '@loopback/context';
 import Adapter from 'knex-schema-inspector/dist/dialects/mysql';
 import { Column } from 'knex-schema-inspector/dist/types/column';
-import { SchemaInspector } from 'knex-schema-inspector/dist/types/schema-inspector.js';
+import { SchemaInspector } from 'knex-schema-inspector/dist/types/schema-inspector';
 import {
   IDatabaseInspectorAdapter as IAdapter,
   IEnumeratorStructure as Enum,
-  Unique
+  Unique,
 } from '../../interface/inspector';
 
 const MySQL = (Adapter as any).default as Constructor<SchemaInspector>;

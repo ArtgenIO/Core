@@ -1,8 +1,8 @@
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { v4 } from 'uuid';
+import { CrudService } from '../database/service/crud.service';
 import { DatabaseConnectionService } from '../database/service/database-connection.service';
 import { KeyValueService } from '../database/service/key-value.service';
-import { RestService } from '../rest/service/rest.service';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IBlueprint } from './interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from './provider/artgen-blueprint.provider';
@@ -12,8 +12,8 @@ export class BlueprintService {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(RestService)
-    readonly rest: RestService,
+    @Inject(CrudService)
+    readonly crud: CrudService,
     @Inject(ArtgenBlueprintProvider)
     readonly artgenBlueprint: IBlueprint,
     @Inject(DatabaseConnectionService)
@@ -30,7 +30,7 @@ export class BlueprintService {
 
     this.logger.info('License key generated');
 
-    const exists = await this.rest.read('main', SchemaRef.BLUEPRINT, {
+    const exists = await this.crud.read('main', SchemaRef.BLUEPRINT, {
       id: this.artgenBlueprint.id,
     });
 
@@ -68,12 +68,12 @@ export class BlueprintService {
           const rows = blueprint.content[schemaRef];
 
           for (const row of rows) {
-            const isExists = await this.rest.read(database, schemaRef, row);
+            const isExists = await this.crud.read(database, schemaRef, row);
 
             if (!isExists) {
-              await this.rest.create(database, schemaRef, row);
+              await this.crud.create(database, schemaRef, row);
             } else {
-              await this.rest.update(database, schemaRef, row, row);
+              await this.crud.update(database, schemaRef, row, row);
             }
           }
         }
@@ -90,12 +90,12 @@ export class BlueprintService {
       for (const schema of blueprint.schemas) {
         schema.database = database;
 
-        const isExists = await this.rest.read('main', SchemaRef.SCHEMA, schema);
+        const isExists = await this.crud.read('main', SchemaRef.SCHEMA, schema);
 
         if (!isExists) {
           installedSchemas.add(schema.reference);
 
-          await this.rest
+          await this.crud
             .create('main', SchemaRef.SCHEMA, schema)
             .then(() =>
               this.logger.info(
@@ -143,10 +143,10 @@ export class BlueprintService {
         );
 
         for (const row of rows) {
-          const isExists = await this.rest.read(database, schemaRef, row);
+          const isExists = await this.crud.read(database, schemaRef, row);
 
           if (!isExists) {
-            await this.rest.create(database, schemaRef, row);
+            await this.crud.create(database, schemaRef, row);
           } else {
             //await this.rest.update(database, schemaRef, row, row);
           }
@@ -154,14 +154,14 @@ export class BlueprintService {
       }
     }
 
-    const isBlueprintExists = await this.rest.read(
+    const isBlueprintExists = await this.crud.read(
       'main',
       SchemaRef.BLUEPRINT,
       blueprint,
     );
 
     if (!isBlueprintExists) {
-      await this.rest.create('main', SchemaRef.BLUEPRINT, blueprint);
+      await this.crud.create('main', SchemaRef.BLUEPRINT, blueprint);
 
       this.logger.info('Blueprint [%s] installed', blueprint.title);
     } else {

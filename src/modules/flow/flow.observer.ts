@@ -1,5 +1,5 @@
 import { ILogger, Inject, Logger, Observer, On } from '@hisorange/kernel';
-import { RestService } from '../rest/service/rest.service';
+import { CrudService } from '../database/service/crud.service';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IFlow, IFlowSessionContext } from './interface';
 import { ICapturedContext } from './interface/captured-context.interface';
@@ -14,8 +14,8 @@ export class FlowObserver {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(RestService)
-    readonly rest: RestService,
+    @Inject(CrudService)
+    readonly crud: CrudService,
     @Inject(FlowSchedulerService)
     readonly flowSchedulerService: FlowSchedulerService,
     @Inject(FlowEventService)
@@ -39,7 +39,7 @@ export class FlowObserver {
         context,
       };
 
-      await this.rest.create('main', SchemaRef.FLOW_EXEC, capturedContext);
+      await this.crud.create('main', SchemaRef.FLOW_EXEC, capturedContext);
 
       this.logger.info('Flow [%s] session [%s] stored', flow.id, sessionId);
     }

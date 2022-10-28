@@ -1,4 +1,4 @@
-import { RowLike } from '../../../app/interface/row-like.interface.js';
+import { RowLike } from '../../../app/interface/row-like.interface';
 
 export interface IDashGridElement {
   // ID

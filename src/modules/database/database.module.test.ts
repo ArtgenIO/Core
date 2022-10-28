@@ -1,5 +1,6 @@
 import { IKernel, Kernel } from '@hisorange/kernel';
 import { assert } from 'console';
+import { RestModule } from '../rest/rest.module';
 import { DatabaseModule } from './database.module';
 import { DatabaseConnection } from './library/database.connection';
 import { DatabaseConnectionService } from './service/database-connection.service';
@@ -10,7 +11,7 @@ describe(DatabaseModule.name, () => {
   beforeAll(() => {
     kernel = new Kernel();
 
-    assert(kernel.register([DatabaseModule]));
+    assert(kernel.register([DatabaseModule, RestModule]));
   });
 
   test('should create the main connection', async () => {

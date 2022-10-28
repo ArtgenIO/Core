@@ -4,19 +4,19 @@ import { diff } from 'just-diff';
 import pick from 'lodash.pick';
 import { Exception } from '../../../app/exceptions/exception';
 import { RowLike } from '../../../app/interface/row-like.interface';
-import { SchemaService } from '../../database/service/schema.service';
+import { IFindResponse } from '../../rest/interface/find-reponse.interface';
+import { ODataService } from '../../rest/service/odata.service';
 import {
   FieldTool,
   isManagedField,
   isPrimary,
 } from '../../schema/util/field-tools';
-import { IFindResponse } from '../interface/find-reponse.interface';
-import { ODataService } from './odata.service';
+import { SchemaService } from './schema.service';
 
 /**
  * Provides CRUD functions with odata filtering and query compositions.
  */
-export class RestService {
+export class CrudService {
   constructor(
     @Logger()
     readonly logger: ILogger,

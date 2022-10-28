@@ -1,5 +1,6 @@
 import { IKernel, ILogger, IModule, Logger, Module } from '@hisorange/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
+import { DatabaseModule } from '../database/database.module';
 import { RestModule } from '../rest/rest.module';
 import { TelemetryModule } from '../telemetry/telemetry.module';
 import { ReverseProxyGateway } from './gateway/reverse-proxy.gateway';
@@ -13,7 +14,7 @@ import { HttpUpstreamProvider } from './provider/http-upstream.provider';
 import { HttpService } from './service/http.service';
 
 @Module({
-  dependsOn: [BlueprintModule, RestModule],
+  dependsOn: [BlueprintModule, DatabaseModule, RestModule],
   imports: [TelemetryModule],
   providers: [
     HttpObserver,

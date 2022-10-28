@@ -6,6 +6,7 @@ import {
   isProviderClass,
 } from '@loopback/context';
 import { DatabaseModule } from '../../database/database.module';
+import { HttpModule } from '../http.module';
 import { HttpUpstreamProvider } from './http-upstream.provider';
 
 describe(HttpUpstreamProvider.name, () => {
@@ -13,7 +14,7 @@ describe(HttpUpstreamProvider.name, () => {
 
   beforeEach(() => {
     app = new Kernel();
-    app.register([DatabaseModule]);
+    app.register([DatabaseModule, HttpModule]);
   });
 
   test('should be defined as a provider', () => {

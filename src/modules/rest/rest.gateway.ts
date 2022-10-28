@@ -15,13 +15,13 @@ import {
 import { BadRequestError, NotFoundError } from 'http-errors-enhanced';
 import kebabCase from 'lodash.kebabcase';
 import { RowLike } from '../../app/interface/row-like.interface';
+import { CrudService } from '../database/service/crud.service';
 import { SchemaService } from '../database/service/schema.service';
 import { IHttpGateway } from '../http/interface/http-gateway.interface';
 import { AuthenticationHandlerProvider } from '../identity/provider/authentication-handler.provider';
 import { FieldTag, ISchema } from '../schema';
 import { CrudAction } from './interface/crud-action.enum';
 import { OpenApiService } from './service/openapi.service';
-import { RestService } from './service/rest.service';
 import { SearchService } from './service/search.service';
 
 type TenantRequest = FastifyRequest<{ Params: { tenantId: string } }>;
@@ -36,8 +36,8 @@ export class RestGateway implements IHttpGateway {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(RestService)
-    readonly rest: RestService,
+    @Inject(CrudService)
+    readonly crud: CrudService,
     @Inject(OpenApiService)
     readonly openApi: OpenApiService,
     @Inject(SchemaService)
@@ -102,7 +102,7 @@ export class RestGateway implements IHttpGateway {
             const body = req.body as TenantBody;
             body.tenantId = req.params.tenantId; // Attach tenant ID
 
-            const record = await this.rest.create(
+            const record = await this.crud.create(
               schema.database,
               schema.reference,
               body,
@@ -133,7 +133,7 @@ export class RestGateway implements IHttpGateway {
           request: FastifyRequest<{ Params: RowLike }>,
           reply: FastifyReply,
         ): Promise<unknown> => {
-          const record = await this.rest.read(
+          const record = await this.crud.read(
             schema.database,
             schema.reference,
             request.params,
@@ -192,7 +192,7 @@ export class RestGateway implements IHttpGateway {
             query['$filter'] = `tenantId eq '${request.params.tenantId}'`;
           }
 
-          const records = await this.rest.find(
+          const records = await this.crud.find(
             schema.database,
             schema.reference,
             query,
@@ -225,7 +225,7 @@ export class RestGateway implements IHttpGateway {
           reply: FastifyReply,
         ): Promise<unknown> => {
           try {
-            const record = await this.rest.update(
+            const record = await this.crud.update(
               schema.database,
               schema.reference,
               req.params,
@@ -264,7 +264,7 @@ export class RestGateway implements IHttpGateway {
             delete params['tenant']; // Remove tenant params
             params['tenantId'] = req.params.tenant; // Add as tenantId ref
 
-            const record = await this.rest.delete(
+            const record = await this.crud.delete(
               schema.database,
               schema.reference,
               req.params,
@@ -376,7 +376,7 @@ export class RestGateway implements IHttpGateway {
         },
         async (req: FastifyRequest, reply: FastifyReply): Promise<unknown> => {
           try {
-            const response = await this.rest.create(
+            const response = await this.crud.create(
               schema.database,
               schema.reference,
               req.body as any,
@@ -403,7 +403,7 @@ export class RestGateway implements IHttpGateway {
           request: FastifyRequest<{ Params: Record<string, string> }>,
           reply: FastifyReply,
         ): Promise<unknown> => {
-          const record = await this.rest.read(
+          const record = await this.crud.read(
             schema.database,
             schema.reference,
             request.params,
@@ -429,7 +429,7 @@ export class RestGateway implements IHttpGateway {
           request: FastifyRequest,
           reply: FastifyReply,
         ): Promise<string> => {
-          const records = await this.rest.find(
+          const records = await this.crud.find(
             schema.database,
             schema.reference,
             request.query as RowLike,
@@ -456,7 +456,7 @@ export class RestGateway implements IHttpGateway {
           reply: FastifyReply,
         ): Promise<unknown> => {
           try {
-            const record = await this.rest.update(
+            const record = await this.crud.update(
               schema.database,
               schema.reference,
               req.params,
@@ -488,7 +488,7 @@ export class RestGateway implements IHttpGateway {
           reply: FastifyReply,
         ): Promise<unknown> => {
           try {
-            const record = await this.rest.delete(
+            const record = await this.crud.delete(
               schema.database,
               schema.reference,
               req.params,

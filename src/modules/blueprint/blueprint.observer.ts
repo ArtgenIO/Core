@@ -1,5 +1,5 @@
 import { ILogger, Inject, Logger, Observer, On } from '@hisorange/kernel';
-import { RestService } from '../rest/service/rest.service';
+import { CrudService } from '../database/service/crud.service';
 import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IBlueprint } from './interface/blueprint.interface';
 
@@ -8,8 +8,8 @@ export class BlueprintObserver {
   constructor(
     @Logger()
     readonly logger: ILogger,
-    @Inject(RestService)
-    readonly rest: RestService,
+    @Inject(CrudService)
+    readonly crud: CrudService,
   ) {}
 
   @On(`crud.main.${SchemaRef.BLUEPRINT}.deleted`)
@@ -17,7 +17,7 @@ export class BlueprintObserver {
     this.logger.warn('Blueprint deletion detected!');
 
     for (const schema of bp.schemas) {
-      await this.rest
+      await this.crud
         .delete('main', SchemaRef.SCHEMA, {
           database: schema.database,
           reference: schema.reference,

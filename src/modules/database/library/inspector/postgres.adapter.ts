@@ -1,11 +1,11 @@
 import { Constructor } from '@loopback/context';
 import Adapter from 'knex-schema-inspector/dist/dialects/postgres';
 import { Column } from 'knex-schema-inspector/dist/types/column';
-import { SchemaInspector } from 'knex-schema-inspector/dist/types/schema-inspector.js';
+import { SchemaInspector } from 'knex-schema-inspector/dist/types/schema-inspector';
 import {
   IDatabaseInspectorAdapter as IAdapter,
   IEnumeratorStructure,
-  Unique
+  Unique,
 } from '../../interface/inspector';
 
 const Postgres = (Adapter as any).default as Constructor<SchemaInspector>;

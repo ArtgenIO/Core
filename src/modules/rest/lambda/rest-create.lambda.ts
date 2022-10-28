@@ -1,10 +1,10 @@
 import { Inject, Service } from '@hisorange/kernel';
+import { CrudService } from '../../database/service/crud.service';
 import { FlowSession } from '../../flow/library/flow.session';
 import { Lambda } from '../../lambda/decorator/lambda.decorator';
 import { InputHandleDTO } from '../../lambda/dto/input-handle.dto';
 import { OutputHandleDTO } from '../../lambda/dto/output-handle.dto';
 import { ILambda } from '../../lambda/interface/lambda.interface';
-import { RestService } from '../service/rest.service';
 
 type Config = {
   database: string;
@@ -56,8 +56,8 @@ type Config = {
 })
 export class RestCreateLambda implements ILambda {
   constructor(
-    @Inject(RestService)
-    readonly service: RestService,
+    @Inject(CrudService)
+    readonly crud: CrudService,
   ) {}
 
   async invoke(session: FlowSession) {
@@ -65,7 +65,7 @@ export class RestCreateLambda implements ILambda {
     const config = session.getConfig() as Config;
 
     try {
-      const result = await this.service.create(
+      const result = await this.crud.create(
         config.database,
         config.schema,
         input,
