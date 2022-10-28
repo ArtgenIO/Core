@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { useHttpClientSimple } from '../../admin/library/simple.http-client';
+import { ISchema } from '../../database/types/schema.interface';
+import { FieldTool } from '../../database/utils/field-tools';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
-import { ISchema } from '../../schema/interface/schema.interface';
-import { FieldTool } from '../../schema/util/field-tools';
 import { toRestRoute } from './schema-url';
 
 export const createCustomRelationLookupFormWidget = (

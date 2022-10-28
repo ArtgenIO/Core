@@ -1,9 +1,10 @@
 import { IKernel, Kernel } from '@hisorange/kernel';
 import cloneDeep from 'lodash.clonedeep';
 import { RestModule } from '../rest/rest.module';
-import { FieldType, ISchema } from '../schema';
 import { DatabaseModule } from './database.module';
 import { DatabaseConnectionService } from './service/database-connection.service';
+import { FieldType } from './types/field-type.enum';
+import { ISchema } from './types/schema.interface';
 
 describe('Database E2E', () => {
   let kernel: IKernel;

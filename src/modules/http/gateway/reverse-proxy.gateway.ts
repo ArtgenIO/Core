@@ -11,7 +11,7 @@ import { FastifyInstance } from 'fastify';
 import { Model } from 'objection';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { SchemaService } from '../../database/service/schema.service';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
+import { SchemaRef } from '../../database/types/system-ref.enum';
 import { IHttpGateway } from '../interface/http-gateway.interface';
 import { IReverseProxy } from '../interface/reverse-proxy.interface';
 

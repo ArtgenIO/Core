@@ -2,8 +2,8 @@ import { Button, Drawer, Form, Input, message, notification } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
 import { useHttpClientSimple } from '../../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
-import { SchemaRef } from '../../../schema/interface/system-ref.enum';
 import { IDatabase } from '../../interface';
+import { SchemaRef } from '../../types/system-ref.enum';
 
 type Props = {
   onClose: () => void;

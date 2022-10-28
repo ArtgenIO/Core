@@ -2,8 +2,8 @@ import { Layout, Spin } from 'antd';
 import Sider from 'antd/lib/layout/Sider';
 import { Suspense } from 'react';
 import { generatePath, Route, Routes, useNavigate } from 'react-router';
-import FavoriteSchemasComponent from '../../schema/component/favorites.component';
-import SchemaTreeComponent from '../../schema/component/tree.component';
+import FavoriteSchemasComponent from '../../database/component/schema/favorites.component';
+import SchemaTreeComponent from '../../database/component/schema/tree.component';
 import ContentListComponent from './list.component';
 import PlaceholderComponent from './placeholder.component';
 

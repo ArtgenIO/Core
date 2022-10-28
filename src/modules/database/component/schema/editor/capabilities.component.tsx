@@ -2,9 +2,11 @@ import { List, Switch, Typography } from 'antd';
 
 import cloneDeep from 'lodash.clonedeep';
 import { Dispatch, SetStateAction } from 'react';
-import { FieldTag, FieldType, ISchema } from '../..';
-import { RelationType } from '../../interface/relation.interface';
-import { migrateField } from '../../util/migrate-field';
+import { FieldTag } from '../../../types/field-tags.enum';
+import { FieldType } from '../../../types/field-type.enum';
+import { RelationType } from '../../../types/relation.interface';
+import { ISchema } from '../../../types/schema.interface';
+import { migrateField } from '../../../utils/migrate-field';
 
 export default function SchemaEditorCapabilitiesComponent({
   schema,

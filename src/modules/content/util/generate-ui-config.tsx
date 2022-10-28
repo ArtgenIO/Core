@@ -1,6 +1,6 @@
-import { RelationType } from '../../schema/interface/relation.interface';
-import { ISchema } from '../../schema/interface/schema.interface';
-import { FieldTool } from '../../schema/util/field-tools';
+import { RelationType } from '../../database/types/relation.interface';
+import { ISchema } from '../../database/types/schema.interface';
+import { FieldTool } from '../../database/utils/field-tools';
 import { createCustomRelationLookupFormWidget } from './relation-lookup.form-widget.jsx';
 
 export const generateUIConfig = (schema: ISchema, schemas: ISchema[]) => {

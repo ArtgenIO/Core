@@ -4,12 +4,12 @@ import cloneDeep from 'lodash.clonedeep';
 import startCase from 'lodash.startcase';
 import { Dispatch, SetStateAction } from 'react';
 import { Link } from 'react-router-dom';
-import { ISchema } from '../..';
-import { useHttpClient } from '../../../admin/library/hook.http-client';
-import { toRestSysRoute } from '../../../content/util/schema-url';
-import { IDatabase } from '../../../database/interface';
-import { IFindResponse } from '../../../rest/interface/find-reponse.interface';
-import { SchemaRef } from '../../interface/system-ref.enum';
+import { useHttpClient } from '../../../../admin/library/hook.http-client';
+import { toRestSysRoute } from '../../../../content/util/schema-url';
+import { IFindResponse } from '../../../../rest/interface/find-reponse.interface';
+import { IDatabase } from '../../../interface';
+import { ISchema } from '../../../types/schema.interface';
+import { SchemaRef } from '../../../types/system-ref.enum';
 
 export default function SelectDatabaseComponent({
   schema,

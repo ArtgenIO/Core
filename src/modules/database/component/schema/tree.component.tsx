@@ -3,9 +3,9 @@ import { Divider, Empty, Input, Tree, TreeDataNode } from 'antd';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useRecoilValue } from 'recoil';
-import { modulesAtom, schemasAtom } from '../../admin/admin.atoms';
-import MenuBlock from '../../admin/component/menu-block.component';
-import { ISchema } from '../../schema';
+import { modulesAtom, schemasAtom } from '../../../admin/admin.atoms';
+import MenuBlock from '../../../admin/component/menu-block.component';
+import { ISchema } from '../../types/schema.interface';
 
 const applyQuickFilter = (filterValue: string) => (schema: ISchema) => {
   if (!filterValue) {

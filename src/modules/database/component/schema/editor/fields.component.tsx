@@ -6,7 +6,7 @@ import {
   EyeOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
-  UpOutlined
+  UpOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
@@ -15,15 +15,17 @@ import {
   message,
   Popconfirm,
   Tag,
-  Typography
+  Typography,
 } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { FieldType, IField, ISchema } from '../..';
-import { GridTools } from '../../../content/util/grid.tools';
-import { FieldTag } from '../../interface';
-import { FieldTool } from '../../util/field-tools';
-import { migrateField } from '../../util/migrate-field';
+import { GridTools } from '../../../../content/util/grid.tools';
+import { FieldTag } from '../../../types/field-tags.enum';
+import { FieldType } from '../../../types/field-type.enum';
+import { IField } from '../../../types/field.interface';
+import { ISchema } from '../../../types/schema.interface';
+import { FieldTool } from '../../../utils/field-tools';
+import { migrateField } from '../../../utils/migrate-field';
 import FieldEditor from './field-editor.component';
 
 type Props = {

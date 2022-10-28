@@ -1,6 +1,6 @@
 import { ILogger, Inject, Logger, Observer, On } from '@hisorange/kernel';
 import { CrudService } from '../database/service/crud.service';
-import { SchemaRef } from '../schema/interface/system-ref.enum';
+import { SchemaRef } from '../database/types/system-ref.enum';
 import { IBlueprint } from './interface/blueprint.interface';
 
 @Observer()

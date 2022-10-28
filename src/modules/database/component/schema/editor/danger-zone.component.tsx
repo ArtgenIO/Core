@@ -2,7 +2,7 @@ import { Divider, List, Switch, Typography } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import upperFirst from 'lodash.upperfirst';
 import { Dispatch, SetStateAction } from 'react';
-import { ISchema } from '../../interface';
+import { ISchema } from '../../../types/schema.interface';
 
 type Props = {
   schema: Partial<ISchema>;

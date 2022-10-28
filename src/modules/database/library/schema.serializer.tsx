@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash.clonedeep';
 import { Edge, isNode, Node } from 'reactflow';
 import { Elements } from '../../flow/interface/elements.interface';
-import { ISchema } from '../interface';
+import { ISchema } from '../types/schema.interface';
 
 /**
  * Responsible to serialize between schema list state and node/edge elements state.

@@ -14,15 +14,16 @@ import snakeCase from 'lodash.snakecase';
 import startCase from 'lodash.startcase';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { FieldTag, ISchema } from '../..';
-import { schemasAtom } from '../../../admin/admin.atoms';
-import { IRelation, RelationType } from '../../interface/relation.interface';
-import { isPrimary } from '../../util/field-tools';
-import { migrateField } from '../../util/migrate-field';
-import RelationBelongsToOne from './relation/belongs-one.component';
-import RelationBelongsToMany from './relation/belongs-to-many.component';
-import RelationHasMany from './relation/has-many.component';
-import RelationHasOne from './relation/has-one.component';
+import { schemasAtom } from '../../../../admin/admin.atoms';
+import { FieldTag } from '../../../types/field-tags.enum';
+import { IRelation, RelationType } from '../../../types/relation.interface';
+import { ISchema } from '../../../types/schema.interface';
+import { isPrimary } from '../../../utils/field-tools';
+import { migrateField } from '../../../utils/migrate-field';
+import RelationBelongsToOne from './belongs-one.component';
+import RelationBelongsToMany from './belongs-to-many.component';
+import RelationHasMany from './has-many.component';
+import RelationHasOne from './has-one.component';
 
 type Props = {
   schema: ISchema;

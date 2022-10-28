@@ -1,7 +1,8 @@
 import objectHash from 'object-hash';
 import { ITableStructure } from '../..';
-import { FieldType, ISchema } from '../../../schema';
-import { RelationType } from '../../../schema/interface/relation.interface';
+import { FieldType } from '../../types/field-type.enum';
+import { RelationType } from '../../types/relation.interface';
+import { ISchema } from '../../types/schema.interface';
 
 export const toStructure = (schema: ISchema): ITableStructure => {
   const sortByName = (a: { name: string }, b: { name: string }) =>

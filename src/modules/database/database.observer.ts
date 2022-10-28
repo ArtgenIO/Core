@@ -1,10 +1,10 @@
 import { ILogger, Inject, Logger, Observer, On } from '@hisorange/kernel';
-import { ISchema } from '../schema';
-import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { IDatabase } from './interface';
 import { IKeyValueRecord } from './interface/key-value.interface';
 import { DatabaseConnectionService } from './service/database-connection.service';
 import { KeyValueService } from './service/key-value.service';
+import { ISchema } from './types/schema.interface';
+import { SchemaRef } from './types/system-ref.enum';
 
 @Observer()
 export class DatabaseObserver {

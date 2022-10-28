@@ -2,10 +2,10 @@ import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { Model, ModelClass } from 'objection';
 import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from '../../blueprint/provider/artgen-blueprint.provider';
-import { ISchema } from '../../schema';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { IDatabaseConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
+import { ISchema } from '../types/schema.interface';
+import { SchemaRef } from '../types/system-ref.enum';
 import { DatabaseConnectionService } from './database-connection.service';
 import { SchemaService } from './schema.service';
 

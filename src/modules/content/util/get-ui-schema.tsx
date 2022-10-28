@@ -1,5 +1,5 @@
-import { ISchema } from '../../schema/interface/schema.interface';
-import { FieldTool } from '../../schema/util/field-tools';
+import { ISchema } from '../../database/types/schema.interface';
+import { FieldTool } from '../../database/utils/field-tools';
 
 export const getUiWidget = (schema: ISchema) => {
   const uiSchema = {};

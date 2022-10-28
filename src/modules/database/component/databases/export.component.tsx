@@ -5,8 +5,8 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import { useRecoilValue } from 'recoil';
 import { schemasAtom } from '../../../admin/admin.atoms';
-import { ISchema } from '../../../schema';
 import { IDatabase } from '../../interface';
+import { ISchema } from '../../types/schema.interface';
 
 type Props = {
   onClose: () => void;

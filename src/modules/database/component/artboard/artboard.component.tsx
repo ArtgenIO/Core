@@ -11,12 +11,12 @@ import ReactFlow, {
 import { useRecoilState } from 'recoil';
 import { schemasAtom } from '../../../admin/admin.atoms';
 import { Elements } from '../../../flow/interface/elements.interface';
-import { ISchema } from '../../../schema';
-import SchemaEditorComponent from '../../../schema/component/editor.component';
-import { SchemaSerializer } from '../../../schema/serializer/schema.serializer';
-import { fSchema } from '../../../schema/util/filter-schema';
-import { createEmptySchema } from '../../../schema/util/get-new-schema';
-import { createLayouOrganizer } from '../../../schema/util/layout-organizer';
+import { SchemaSerializer } from '../../library/schema.serializer';
+import { ISchema } from '../../types/schema.interface';
+import { fSchema } from '../../utils/filter-schema';
+import { createEmptySchema } from '../../utils/get-new-schema';
+import { createLayouOrganizer } from '../../utils/layout-organizer';
+import SchemaEditorComponent from '../schema/editor.component';
 import DatabaseNameComponent from './name.component';
 import { createSchemaNode } from './schema-node.component';
 import './schemaboard.component.less';

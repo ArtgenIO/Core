@@ -6,7 +6,7 @@ import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
+import { SchemaRef } from '../../database/types/system-ref.enum';
 import InstallBlueprint from './install.component';
 import ListCloudApps from './list-apps.component';
 import BlueprintEditorComponent from './_editor.component';

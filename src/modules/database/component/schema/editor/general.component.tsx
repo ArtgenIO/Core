@@ -4,8 +4,8 @@ import cloneDeep from 'lodash.clonedeep';
 import snakeCase from 'lodash.snakecase';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ISchema } from '../..';
-import { modulesAtom } from '../../../admin/admin.atoms';
+import { modulesAtom } from '../../../../admin/admin.atoms';
+import { ISchema } from '../../../types/schema.interface';
 
 type InputLinkedProps = {
   isLinked: boolean;

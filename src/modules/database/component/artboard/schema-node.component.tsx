@@ -1,7 +1,9 @@
 import { Handle, NodeProps, Position } from 'reactflow';
 import Icon from '../../../admin/component/icon.component';
-import { FieldTag, IField, ISchema } from '../../../schema';
-import { FieldTool } from '../../../schema/util/field-tools';
+import { FieldTag } from '../../types/field-tags.enum';
+import { IField } from '../../types/field.interface';
+import { ISchema } from '../../types/schema.interface';
+import { FieldTool } from '../../utils/field-tools';
 
 const isRelationSource = (s: ISchema, f: IField): boolean => {
   return s.relations.some(

@@ -6,7 +6,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { lastViewedAtom, schemasAtom } from '../../admin/admin.atoms';
 import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
-import { ISchema } from '../../schema';
+import { ISchema } from '../../database/types/schema.interface';
 import GridComponent from './grid.component';
 import TitleComponent from './title.components';
 

@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useHttpClientSimple } from '../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
+import { SchemaRef } from '../../database/types/system-ref.enum';
 import { IPage } from '../interface/page.interface';
 import './editor.component.less';
 

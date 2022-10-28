@@ -1,5 +1,5 @@
 import { RowLike } from '../../../app/interface/row-like.interface';
-import { ISchema } from '../../schema';
+import { ISchema } from '../../database/types/schema.interface';
 
 export interface IBlueprint {
   /**

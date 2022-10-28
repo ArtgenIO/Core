@@ -1,5 +1,5 @@
 import { Model, ModelClass } from 'objection';
-import { ISchema } from '../../schema';
+import { ISchema } from '../types/schema.interface';
 import { ITableStructure } from './table-structure.interface';
 
 export interface IConnectionAssociation<T extends Model = Model> {

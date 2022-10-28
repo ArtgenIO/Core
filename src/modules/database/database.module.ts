@@ -7,8 +7,6 @@ import {
   Module,
 } from '@hisorange/kernel';
 import { BlueprintModule } from '../blueprint/blueprint.module';
-import { ISchema } from '../schema';
-import { SchemaRef } from '../schema/interface/system-ref.enum';
 import { TelemetryModule } from '../telemetry/telemetry.module';
 import { TransformerModule } from '../transformer/transformer.module';
 import { DatabaseObserver } from './database.observer';
@@ -19,6 +17,8 @@ import { DatabaseConnectionService } from './service/database-connection.service
 import { DatabaseService } from './service/database.service';
 import { KeyValueService } from './service/key-value.service';
 import { SchemaService } from './service/schema.service';
+import { ISchema } from './types/schema.interface';
+import { SchemaRef } from './types/system-ref.enum';
 
 @Module({
   imports: [BlueprintModule, TransformerModule, TelemetryModule],

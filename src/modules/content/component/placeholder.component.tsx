@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { lastViewedAtom, schemasAtom } from '../../admin/admin.atoms';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
+import { SchemaRef } from '../../database/types/system-ref.enum';
 
 export default function PlaceholderComponent() {
   const schemas = useRecoilValue(schemasAtom);

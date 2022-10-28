@@ -1,4 +1,4 @@
-import { IField } from '../interface/field.interface';
+import { IField } from '../types/field.interface';
 
 export const migrateField = (field: IField, idx: number = 1): IField => {
   if (!field.meta) {

@@ -14,7 +14,7 @@ import 'react-awesome-query-builder/lib/css/styles.css';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 import { schemasAtom } from '../../admin/admin.atoms';
-import { ISchema } from '../../schema';
+import { ISchema } from '../../database/types/schema.interface';
 import { toFieldFilter } from '../util/to-field-filter';
 import { toODataFilter } from '../util/to-odata-filter';
 import './grid-filter.component.less';

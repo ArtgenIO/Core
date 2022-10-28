@@ -4,8 +4,8 @@ import cloneDeep from 'lodash.clonedeep';
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { modulesAtom, schemasAtom } from '../../admin/admin.atoms';
-import { ISchema } from '../../schema';
-import { fSchema } from '../../schema/util/filter-schema';
+import { ISchema } from '../../database/types/schema.interface';
+import { fSchema } from '../../database/utils/filter-schema';
 import './title.component.less';
 
 type Props = {

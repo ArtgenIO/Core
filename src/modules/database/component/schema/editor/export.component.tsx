@@ -2,7 +2,7 @@ import { Button, Divider, message } from 'antd';
 import { saveAs } from 'file-saver';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
-import { ISchema } from '../../interface';
+import { ISchema } from '../../../types/schema.interface.js';
 
 type Props = {
   schema: Partial<ISchema>;

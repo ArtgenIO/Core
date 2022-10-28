@@ -2,7 +2,7 @@ import { Provider, Service } from '@hisorange/kernel';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { SEED_DIR } from '../../../app/globals';
-import { migrateSchema } from '../../schema/util/migrate-schema';
+import { migrateSchema } from '../../database/utils/migrate-schema';
 import { IBlueprint } from '../interface/blueprint.interface';
 
 @Service()

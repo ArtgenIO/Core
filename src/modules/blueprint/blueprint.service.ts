@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { CrudService } from '../database/service/crud.service';
 import { DatabaseConnectionService } from '../database/service/database-connection.service';
 import { KeyValueService } from '../database/service/key-value.service';
-import { SchemaRef } from '../schema/interface/system-ref.enum';
+import { SchemaRef } from '../database/types/system-ref.enum';
 import { IBlueprint } from './interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from './provider/artgen-blueprint.provider';
 

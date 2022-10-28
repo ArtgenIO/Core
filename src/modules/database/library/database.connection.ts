@@ -9,18 +9,20 @@ import {
   Pojo,
   RelationMappings,
   RelationThrough,
-  RelationType as ObjectionRelationType
+  RelationType as ObjectionRelationType,
 } from 'objection';
 import { v4 } from 'uuid';
 import { Exception } from '../../../app/exceptions/exception';
-import { FieldTag, FieldType, ISchema } from '../../schema';
-import { RelationType } from '../../schema/interface/relation.interface';
-import { FieldTool } from '../../schema/util/field-tools';
 import { ITransform } from '../../transformer/interface/transform.interface';
 import { ITransformer } from '../../transformer/interface/transformer.interface';
 import { IDatabase, IDatabaseConnection, ITableStructure } from '../interface';
 import { IConnectionAssociation } from '../interface/connection-association.interface';
 import { Dialect } from '../interface/dialect.type';
+import { FieldTag } from '../types/field-tags.enum';
+import { FieldType } from '../types/field-type.enum';
+import { RelationType } from '../types/relation.interface';
+import { ISchema } from '../types/schema.interface';
+import { FieldTool } from '../utils/field-tools';
 import { DatabaseSynchronizer } from './database.synchronizer';
 import { toStructure } from './structure/to-structure';
 

@@ -23,8 +23,8 @@ import PageHeader from '../../admin/layout/page-header.component';
 import PageWithHeader from '../../admin/layout/page-with-header.component';
 import { useHttpClientSimple } from '../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
+import { SchemaRef } from '../../database/types/system-ref.enum';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { IFlow } from '../interface/flow.interface';
 import CreateFlowComponent from './create.component';
 

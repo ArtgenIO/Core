@@ -2,8 +2,8 @@ import { StarFilled } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { schemasAtom } from '../../admin/admin.atoms';
-import MenuBlock from '../../admin/component/menu-block.component';
+import { schemasAtom } from '../../../admin/admin.atoms';
+import MenuBlock from '../../../admin/component/menu-block.component';
 
 export default function FavoriteSchemasComponent() {
   const navigate = useNavigate();

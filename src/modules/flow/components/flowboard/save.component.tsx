@@ -3,7 +3,7 @@ import { notification } from 'antd';
 import { ReactFlowInstance } from 'reactflow';
 import { useHttpClientSimple } from '../../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../../content/util/schema-url';
-import { SchemaRef } from '../../../schema/interface/system-ref.enum';
+import { SchemaRef } from '../../../database/types/system-ref.enum';
 import { IFlow } from '../../interface/flow.interface';
 import { serializeFlow } from '../../util/serialize-flow';
 

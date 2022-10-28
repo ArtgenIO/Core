@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import { Model } from 'objection';
 import { KeyValueService } from '../../database/service/key-value.service';
 import { SchemaService } from '../../database/service/schema.service';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
+import { SchemaRef } from '../../database/types/system-ref.enum';
 import { IAccessKey } from '../interface/access-key.interface';
 import { IAccount } from '../interface/account.interface';
 

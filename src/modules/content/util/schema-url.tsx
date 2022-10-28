@@ -1,9 +1,9 @@
 import kebabCase from 'lodash.kebabcase';
 import { QueryBuilder } from 'odata-query-builder';
 import { RowLike } from '../../../app/interface/row-like.interface';
-import { ISchema } from '../../schema';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
-import { FieldTool } from '../../schema/util/field-tools';
+import { ISchema } from '../../database/types/schema.interface';
+import { SchemaRef } from '../../database/types/system-ref.enum';
+import { FieldTool } from '../../database/utils/field-tools';
 
 const routeRestFilterOne = (schema: Partial<ISchema>, record: RowLike) => {
   return schema.fields

@@ -1,7 +1,10 @@
 import camelCase from 'lodash.camelcase';
 import snakeCase from 'lodash.snakecase';
 import startCase from 'lodash.startcase';
-import { FieldTag, FieldType, IField, ISchema } from '..';
+import { FieldTag } from '../types/field-tags.enum';
+import { FieldType } from '../types/field-type.enum';
+import { IField } from '../types/field.interface';
+import { ISchema } from '../types/schema.interface';
 import { migrateField } from './migrate-field';
 
 const createNew = (name: string) =>

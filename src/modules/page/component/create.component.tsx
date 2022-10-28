@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { v4 } from 'uuid';
 import { useHttpClientSimple } from '../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
+import { SchemaRef } from '../../database/types/system-ref.enum';
 import { IPage } from '../interface/page.interface';
 
 type Props = {

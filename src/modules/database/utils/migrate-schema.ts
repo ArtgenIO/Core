@@ -1,5 +1,5 @@
 import { DeepPartial } from '../../../app/interface/deep-partial.interface';
-import { ISchema } from '../interface/schema.interface';
+import { ISchema } from '../types/schema.interface';
 import { migrateField } from './migrate-field';
 
 export const migrateSchema = (schema: DeepPartial<ISchema>): ISchema => {

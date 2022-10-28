@@ -5,8 +5,9 @@ import {
   SelectFieldSettings,
   ValueSource,
 } from 'react-awesome-query-builder';
-import { FieldType, IField } from '../../schema';
-import { FieldTool } from '../../schema/util/field-tools';
+import { FieldType } from '../../database/types/field-type.enum';
+import { IField } from '../../database/types/field.interface';
+import { FieldTool } from '../../database/utils/field-tools';
 
 type IOperator =
   | 'equal'

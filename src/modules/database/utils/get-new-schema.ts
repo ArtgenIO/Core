@@ -1,4 +1,6 @@
-import { FieldTag, FieldType, ISchema } from '..';
+import { FieldTag } from '../types/field-tags.enum';
+import { FieldType } from '../types/field-type.enum';
+import { ISchema } from '../types/schema.interface';
 import { migrateSchema } from './migrate-schema';
 
 export const createEmptySchema = (database: string): ISchema =>

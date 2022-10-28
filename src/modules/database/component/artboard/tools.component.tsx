@@ -13,7 +13,7 @@ import { Popconfirm } from 'antd';
 import { Dispatch, SetStateAction } from 'react';
 import { useReactFlow } from 'reactflow';
 import { Elements } from '../../../flow/interface/elements.interface';
-import { ISchema } from '../../../schema';
+import { ISchema } from '../../types/schema.interface';
 
 export default function DatabaseToolsComponent({
   layoutOrganizer,

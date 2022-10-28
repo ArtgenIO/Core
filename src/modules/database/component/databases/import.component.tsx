@@ -6,7 +6,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { databasesAtom, schemasAtom } from '../../../admin/admin.atoms';
 import PageHeader from '../../../admin/layout/page-header.component';
 import PageWithHeader from '../../../admin/layout/page-with-header.component';
-import { ISchema } from '../../../schema';
+import { ISchema } from '../../types/schema.interface';
 
 export default function ImportSchemaComponent() {
   const databases = useRecoilValue(databasesAtom);
@@ -91,7 +91,7 @@ export default function ImportSchemaComponent() {
       `/admin/database/artboard/:ref?schema=${newSchema.reference}`,
       {
         ref: database,
-      },
+      } as any,
     );
 
     setTimeout(() => navigate(path), 50);

@@ -3,8 +3,10 @@ import { FastifySchema } from 'fastify';
 import { JSONSchema7Definition, JSONSchema7Object } from 'json-schema';
 import kebabCase from 'lodash.kebabcase';
 import { OpenAPIV3 } from 'openapi-types';
-import { FieldTag, FieldType, ISchema } from '../../schema';
-import { FieldTool, isPrimary } from '../../schema/util/field-tools';
+import { FieldTag } from '../../database/types/field-tags.enum';
+import { FieldType } from '../../database/types/field-type.enum';
+import { ISchema } from '../../database/types/schema.interface';
+import { FieldTool, isPrimary } from '../../database/utils/field-tools';
 import { VersionProvider } from '../../upgrade/provider/version.provider';
 import { CrudAction } from '../interface/crud-action.enum';
 

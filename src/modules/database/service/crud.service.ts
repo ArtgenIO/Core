@@ -6,11 +6,7 @@ import { Exception } from '../../../app/exceptions/exception';
 import { RowLike } from '../../../app/interface/row-like.interface';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
 import { ODataService } from '../../rest/service/odata.service';
-import {
-  FieldTool,
-  isManagedField,
-  isPrimary,
-} from '../../schema/util/field-tools';
+import { FieldTool, isManagedField, isPrimary } from '../utils/field-tools';
 import { SchemaService } from './schema.service';
 
 /**

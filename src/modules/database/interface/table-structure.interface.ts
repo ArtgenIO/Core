@@ -1,5 +1,6 @@
-import { IField, ISchema } from '../../schema';
-import { IRelation } from '../../schema/interface/relation.interface';
+import { IField } from '../types/field.interface';
+import { IRelation } from '../types/relation.interface';
+import { ISchema } from '../types/schema.interface';
 
 export type IColumnSchema = Pick<IField, 'columnName' | 'type' | 'args'>;
 

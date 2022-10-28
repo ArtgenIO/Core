@@ -1,10 +1,8 @@
-
-
 import { default as KNEX } from 'knex';
 import { Model, ModelClass } from 'objection';
 import { IDatabase, ITableStructure } from '.';
 import { DatabaseSynchronizer } from '..';
-import { ISchema } from '../../schema';
+import { ISchema } from '../types/schema.interface';
 import { IConnectionAssociation } from './connection-association.interface';
 import { Dialect } from './dialect.type';
 

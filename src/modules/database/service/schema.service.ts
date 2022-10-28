@@ -3,9 +3,9 @@ import EventEmitter2 from 'eventemitter2';
 import { Model, ModelClass } from 'objection';
 import { IBlueprint } from '../../blueprint/interface/blueprint.interface';
 import { ArtgenBlueprintProvider } from '../../blueprint/provider/artgen-blueprint.provider';
-import { ISchema } from '../../schema/interface/schema.interface';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { IContentModule } from '../interface/content-module.interface';
+import { ISchema } from '../types/schema.interface';
+import { SchemaRef } from '../types/system-ref.enum';
 import { DatabaseConnectionService } from './database-connection.service';
 
 type SchemaModel = ISchema & Model;

@@ -2,12 +2,12 @@ import { IKernel, ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { Constructor } from '@loopback/context';
 import knex, { Knex } from 'knex';
 import { UnsupportedDialect } from '..';
-import { ISchema } from '../../schema';
 import { BucketKey } from '../../telemetry/interface/bucket-key.enum';
 import { TelemetryService } from '../../telemetry/telemetry.service';
 import { Dialect, IDatabaseConnection } from '../interface';
 import { IDatabase } from '../interface/database.interface';
 import { DatabaseConnectionConcrete } from '../provider/connection-concrete.provider';
+import { ISchema } from '../types/schema.interface';
 
 @Service()
 export class DatabaseConnectionService {

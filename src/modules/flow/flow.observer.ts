@@ -1,6 +1,6 @@
 import { ILogger, Inject, Logger, Observer, On } from '@hisorange/kernel';
 import { CrudService } from '../database/service/crud.service';
-import { SchemaRef } from '../schema/interface/system-ref.enum';
+import { SchemaRef } from '../database/types/system-ref.enum';
 import { IFlow, IFlowSessionContext } from './interface';
 import { ICapturedContext } from './interface/captured-context.interface';
 import { FlowEventService } from './service/flow-event.service';

@@ -12,7 +12,7 @@ import { useRecoilValue } from 'recoil';
 import { databasesAtom } from '../../admin/admin.atoms';
 import { useHttpClientSimple } from '../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
+import { SchemaRef } from '../../database/types/system-ref.enum';
 import { IBlueprint } from '../interface/blueprint.interface';
 
 type FormData = {

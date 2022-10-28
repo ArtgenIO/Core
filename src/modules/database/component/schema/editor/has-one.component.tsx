@@ -10,21 +10,21 @@ import {
   Switch,
 } from 'antd';
 import FormItem from 'antd/lib/form/FormItem';
-import { pluralize } from 'inflection';
 import camelCase from 'lodash.camelcase';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import upperFirst from 'lodash.upperfirst';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IField, ISchema } from '../../..';
 import { schemasAtom } from '../../../../admin/admin.atoms';
-import { IRelation } from '../../../interface/relation.interface';
+import { IField } from '../../../types/field.interface';
+import { IRelation } from '../../../types/relation.interface';
+import { ISchema } from '../../../types/schema.interface';
 import {
   FieldTool,
   getTakenColumNames,
   isPrimary,
-} from '../../../util/field-tools';
+} from '../../../utils/field-tools';
 
 type Props = {
   immutableSchema: ISchema;
@@ -32,7 +32,7 @@ type Props = {
   onClose: (relation: IRelation) => void;
 };
 
-export default function RelationHasMany({
+export default function RelationHasOne({
   immutableSchema,
   immutableRelation,
   onClose,
@@ -62,7 +62,7 @@ export default function RelationHasMany({
         onClose={() => onClose(relation)}
         title={
           <div className="flex w-full">
-            <div className="grow">Has Many » {relation.name}</div>
+            <div className="grow">Has One » {relation.name}</div>
             <div className="shrink">
               {isChanged && (
                 <div className="-mt-1">
@@ -90,7 +90,7 @@ export default function RelationHasMany({
                 setRelation(oldState => {
                   const newState = cloneDeep(oldState);
                   const usedNames = getTakenColumNames(immutableSchema);
-                  let newName = pluralize(camelCase(newTarget));
+                  let newName = camelCase(newTarget);
 
                   if (usedNames.includes(newName)) {
                     newName = `of${upperFirst(newName)}`;

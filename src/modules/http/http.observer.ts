@@ -3,8 +3,8 @@ import debounce from 'lodash.debounce';
 import isEqual from 'lodash.isequal';
 import { IKeyValueRecord } from '../database/interface/key-value.interface';
 import { toStructure } from '../database/library/structure/to-structure';
-import { ISchema } from '../schema';
-import { SchemaRef } from '../schema/interface/system-ref.enum';
+import { ISchema } from '../database/types/schema.interface';
+import { SchemaRef } from '../database/types/system-ref.enum';
 import { HttpService } from './service/http.service';
 
 @Observer()

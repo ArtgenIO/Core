@@ -11,14 +11,14 @@ import upperFirst from 'lodash.upperfirst';
 import hash from 'object-hash';
 import { inspect } from 'util';
 import { Exception } from '../../../app/exceptions/exception';
-import { FieldTag, FieldType, IField, ISchema } from '../../schema';
-import {
-  IRelation,
-  RelationType
-} from '../../schema/interface/relation.interface';
-import { isPrimary } from '../../schema/util/field-tools';
-import { createEmptySchema } from '../../schema/util/get-new-schema';
 import { IDatabaseConnection, IEnumeratorStructure } from '../interface';
+import { FieldTag } from '../types/field-tags.enum';
+import { FieldType } from '../types/field-type.enum';
+import { IField } from '../types/field.interface';
+import { IRelation, RelationType } from '../types/relation.interface';
+import { ISchema } from '../types/schema.interface';
+import { isPrimary } from '../utils/field-tools';
+import { createEmptySchema } from '../utils/get-new-schema';
 import { DatabaseInspector } from './database.inspector';
 import { toStructure } from './structure/to-structure';
 

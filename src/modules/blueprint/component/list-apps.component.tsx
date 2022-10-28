@@ -25,8 +25,8 @@ import { useState } from 'react';
 import { useHttpClient } from '../../admin/library/hook.http-client';
 import { useHttpClientSimple } from '../../admin/library/simple.http-client';
 import { toRestSysRoute } from '../../content/util/schema-url';
+import { SchemaRef } from '../../database/types/system-ref.enum';
 import { IFindResponse } from '../../rest/interface/find-reponse.interface';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { IBlueprint } from '../interface/blueprint.interface';
 import BlueprintEditorComponent from './_editor.component';
 

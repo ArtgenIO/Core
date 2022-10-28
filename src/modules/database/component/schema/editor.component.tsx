@@ -6,8 +6,8 @@ import {
 import { Button, Drawer, message, Popconfirm, Tabs } from 'antd';
 import isEqual from 'lodash.isequal';
 import { Suspense, useEffect, useState } from 'react';
-import { ISchema } from '..';
-import LoadingComponent from '../../admin/component/loading/loading.component.jsx';
+import LoadingComponent from '../../../admin/component/loading/loading.component.js';
+import { ISchema } from '../../types/schema.interface.js';
 import SchemaEditorCapabilitiesComponent from './editor/capabilities.component';
 import DangerZoneComponent from './editor/danger-zone.component';
 import SchemaExportComponent from './editor/export.component';

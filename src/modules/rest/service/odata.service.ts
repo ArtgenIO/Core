@@ -13,7 +13,8 @@ import parser from 'odata-parser';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { Exception } from '../../../app/exceptions/exception';
 import { SchemaService } from '../../database/service/schema.service';
-import { FieldType, ISchema } from '../../schema';
+import { FieldType } from '../../database/types/field-type.enum';
+import { ISchema } from '../../database/types/schema.interface';
 import {
   fLiteral,
   fLogic,

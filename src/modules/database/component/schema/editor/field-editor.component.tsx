@@ -16,9 +16,12 @@ import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { FieldTag, FieldType, IField, ISchema } from '../..';
-import { schemasAtom } from '../../../admin/admin.atoms';
-import { FieldTool } from '../../util/field-tools';
+import { schemasAtom } from '../../../../admin/admin.atoms';
+import { FieldTag } from '../../../types/field-tags.enum';
+import { FieldType } from '../../../types/field-type.enum';
+import { IField } from '../../../types/field.interface';
+import { ISchema } from '../../../types/schema.interface';
+import { FieldTool } from '../../../utils/field-tools';
 
 type InputLinkedProps = {
   isLinked: boolean;

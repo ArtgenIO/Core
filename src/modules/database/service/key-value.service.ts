@@ -1,7 +1,7 @@
 import { Inject, Service } from '@hisorange/kernel';
 import { Model } from 'objection';
-import { SchemaRef } from '../../schema/interface/system-ref.enum';
 import { IKeyValueRecord } from '../interface/key-value.interface';
+import { SchemaRef } from '../types/system-ref.enum';
 import { SchemaService } from './schema.service';
 
 type KVModel = IKeyValueRecord<any> & Model;

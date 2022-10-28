@@ -4,13 +4,13 @@ import { recoilPersist } from 'recoil-persist';
 import { toRestSysRoute } from '../content/util/schema-url';
 import { IDatabase } from '../database';
 import { IContentModule } from '../database/interface/content-module.interface';
+import { ISchema } from '../database/types/schema.interface';
+import { SchemaRef } from '../database/types/system-ref.enum';
+import { fSchema } from '../database/utils/filter-schema';
+import { migrateSchema } from '../database/utils/migrate-schema';
 import { IAccount } from '../identity/interface/account.interface';
 import { decodeJWT } from '../identity/util/get-token-expiration';
 import { IFindResponse } from '../rest/interface/find-reponse.interface';
-import { ISchema } from '../schema';
-import { SchemaRef } from '../schema/interface/system-ref.enum';
-import { fSchema } from '../schema/util/filter-schema';
-import { migrateSchema } from '../schema/util/migrate-schema';
 import { useHttpClientSimple } from './library/simple.http-client';
 
 const { persistAtom } = recoilPersist();
