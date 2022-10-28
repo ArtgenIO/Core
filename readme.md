@@ -1,4 +1,4 @@
-![Artgen Social Banner](https://user-images.githubusercontent.com/3441017/197366384-d41c96d9-3f12-4f55-aae7-817144890b6a.png)
+[![Artgen Social Banner](https://user-images.githubusercontent.com/3441017/198712763-c42c3004-05a3-4a7e-b0ae-4e66d6b65638.png)](https://artgen.io)
 
 [![CD](https://github.com/artgenio/core/actions/workflows/cd.yml/badge.svg?branch=main)](https://github.com/artgenio/core/actions/workflows/cd.yml)
 [![NPM](https://img.shields.io/npm/dt/@artgenio/core?label=NPM+Pulls)](https://www.npmjs.com/package/@artgenio/core)
