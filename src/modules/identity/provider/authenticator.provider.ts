@@ -1,5 +1,5 @@
+import { Authenticator } from '@fastify/passport';
 import { ILogger, Inject, Logger, Provider, Service } from '@hisorange/kernel';
-import { Authenticator } from 'fastify-passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { UniqueTokenStrategy } from 'passport-unique-token';
 import isUUID from 'validator/lib/isUUID';

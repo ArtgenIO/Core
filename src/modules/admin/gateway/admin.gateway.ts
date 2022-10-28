@@ -1,6 +1,6 @@
+import staticMiddleware from '@fastify/static';
 import { ILogger, Logger, Service } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
-import staticMiddleware from 'fastify-static';
 import { readFile } from 'fs/promises';
 import cloneDeep from 'lodash.clonedeep';
 import middie from 'middie';

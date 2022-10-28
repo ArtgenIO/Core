@@ -1,4 +1,11 @@
-import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
+import {
+  IKernel,
+  ILogger,
+  Inject,
+  Kernel,
+  Logger,
+  Service,
+} from '@hisorange/kernel';
 import {
   FastifyInstance,
   FastifyReply,
@@ -16,6 +23,8 @@ import { FlowService } from '../service/flow.service';
   tags: 'http:gateway',
 })
 export class LogicHttpGateway implements IHttpGateway {
+  protected authHandler: RouteHandlerMethod | null = null;
+
   constructor(
     @Logger()
     readonly logger: ILogger,
@@ -23,12 +32,14 @@ export class LogicHttpGateway implements IHttpGateway {
     readonly flowSvc: FlowService,
     @Inject(LambdaService)
     readonly node: LambdaService,
-    @Inject(AuthenticationHandlerProvider)
-    readonly authHandler: RouteHandlerMethod,
+    @Inject(Kernel)
+    readonly kernel: IKernel,
   ) {}
 
   async register(httpServer: FastifyInstance): Promise<void> {
-    const preHandler = this.authHandler;
+    this.authHandler = await this.kernel.get<RouteHandlerMethod>(
+      AuthenticationHandlerProvider,
+    );
 
     for (const flow of (await this.flowSvc.findAll()).filter(f => f.isActive)) {
       const triggers = flow.nodes.filter(t => t.type === 'trigger.http');
@@ -98,7 +109,7 @@ export class LogicHttpGateway implements IHttpGateway {
             params: paramSchema,
             security: swaggerSecurity,
           },
-          preHandler: isProtected ? preHandler : null,
+          preHandler: isProtected ? this.authHandler : undefined,
         };
 
         httpServer[method](

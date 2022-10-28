@@ -11,7 +11,7 @@ import { LambdaModule } from '../lambda/lambda.module';
 import { RestModule } from '../rest/rest.module';
 import { TelemetryModule } from '../telemetry/telemetry.module';
 import { FlowObserver } from './flow.observer';
-import { LogicHttpGateway } from './gateway/http.gateway';
+import { LogicHttpGateway } from './gateway/logic.gateway';
 import { CronTriggerLambda } from './lambda/cron.trigger';
 import { EmitEventLambda } from './lambda/emit.lambda';
 import { EventTrigger } from './lambda/event.trigger';
@@ -25,7 +25,11 @@ import { FlowService } from './service/flow.service';
     moduleRef(() => RestModule),
     TelemetryModule,
   ],
-  dependsOn: [IdentityModule, moduleRef(() => DatabaseModule), EventModule],
+  dependsOn: [
+    moduleRef(() => IdentityModule),
+    moduleRef(() => DatabaseModule),
+    EventModule,
+  ],
   providers: [
     CronTriggerLambda,
     EmitEventLambda,

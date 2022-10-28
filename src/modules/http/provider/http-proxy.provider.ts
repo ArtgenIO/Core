@@ -1,7 +1,7 @@
+import CORSPlugin from '@fastify/cors';
+import FormBodyPlugin from '@fastify/formbody';
 import { ILogger, Logger, Provider, Service } from '@hisorange/kernel';
 import fastify, { FastifyInstance } from 'fastify';
-import CORSPlugin from 'fastify-cors';
-import FormBodyPlugin from 'fastify-formbody';
 import { v4 } from 'uuid';
 
 @Service()
@@ -28,13 +28,13 @@ export class HttpProxyProvider implements Provider<FastifyInstance> {
         customOptions: {
           useDefaults: false,
           coerceTypes: true,
-          nullable: true,
+          // nullable: true,
         },
       },
     });
     this.logger.debug('Initialized');
 
-    await proxy.register(CORSPlugin);
+    if (0) await proxy.register(CORSPlugin);
     await proxy.register(FormBodyPlugin);
     this.logger.debug('Plugin [CORS] registered');
 

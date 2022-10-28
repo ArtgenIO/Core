@@ -1,9 +1,10 @@
+import FormBodyPlugin from '@fastify/formbody';
+import FastifySecureSessionPlugin from '@fastify/secure-session';
+import fastifySwaggerApi from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 import { ILogger, Inject, Logger, Provider, Service } from '@hisorange/kernel';
 import fastify, { FastifyInstance } from 'fastify';
-import FormBodyPlugin from 'fastify-formbody';
 import FastifyHttpErrorsEnhancedPlugin from 'fastify-http-errors-enhanced';
-import FastifySecureSessionPlugin from 'fastify-secure-session';
-import OpenAPIPlugin from 'fastify-swagger';
 import { v4 } from 'uuid';
 import { OpenApiService } from '../../rest/service/openapi.service';
 
@@ -33,10 +34,14 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
     await server.register(FormBodyPlugin);
     this.logger.debug('Plugin [FormBody] registered');
 
-    await server.register(OpenAPIPlugin, {
-      routePrefix: '/api/docs',
-      mode: 'dynamic',
+    await server.register(fastifySwaggerApi, {
       openapi: this.openApiSvc.getDocument(),
+      mode: 'dynamic',
+      hideUntagged: false,
+    });
+
+    await server.register(fastifySwaggerUi, {
+      routePrefix: '/swagger',
       uiConfig: {
         displayRequestDuration: true,
         docExpansion: 'none',
@@ -44,8 +49,6 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
           theme: 'monokai',
         },
       },
-      hideUntagged: false,
-      exposeRoute: true,
     });
     this.logger.debug('Plugin [Swagger] registered');
 

@@ -44,6 +44,8 @@ export class HttpModule implements IModule {
   }
 
   async onStop(kernel: IKernel) {
-    await (await kernel.get(HttpService)).stopServer().then(() => this.logger.info('HTTP server stopped'));
+    await (await kernel.get(HttpService))
+      .stopServer()
+      .then(() => this.logger.info('HTTP server stopped'));
   }
 }

@@ -3,7 +3,7 @@ import {
   BindingScope,
   createBindingFromClass,
   instantiateClass,
-  isProviderClass
+  isProviderClass,
 } from '@loopback/context';
 import { DatabaseModule } from '../../database/database.module';
 import { HttpUpstreamProvider } from './http-upstream.provider';
@@ -47,7 +47,7 @@ describe(HttpUpstreamProvider.name, () => {
 
     const response = await server.inject({
       method: 'GET',
-      url: '/api/docs/static/index.html',
+      url: '/swagger/static/index.html',
     });
 
     expect(response.statusCode).toBe(200);

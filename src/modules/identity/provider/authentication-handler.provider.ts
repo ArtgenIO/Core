@@ -1,6 +1,6 @@
+import { Authenticator } from '@fastify/passport';
 import { Inject, Provider, Service } from '@hisorange/kernel';
 import { FastifyReply, FastifyRequest, RouteHandlerMethod } from 'fastify';
-import { Authenticator } from 'fastify-passport';
 import { STRATEGY_CONFIG } from '../util/strategy.config';
 
 @Service()

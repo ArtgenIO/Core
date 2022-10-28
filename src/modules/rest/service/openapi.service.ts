@@ -18,7 +18,7 @@ export class OpenApiService {
   getDocument(): Partial<OpenAPIV3.Document> {
     return {
       info: {
-        title: 'Artgen Core - API',
+        title: 'Artgen CMS',
         description: 'Http Upstream Server Documentation',
         version: this.localVersion,
       },

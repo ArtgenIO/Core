@@ -1,8 +1,8 @@
+import pov from '@fastify/view';
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import TemplateEngine from 'nunjucks';
 import { join } from 'path';
-import pov from 'point-of-view';
 import { ROOT_DIR } from '../../../app/globals';
 import { KeyValueService } from '../../database/service/key-value.service';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';

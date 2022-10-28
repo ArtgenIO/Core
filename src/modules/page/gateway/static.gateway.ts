@@ -1,6 +1,6 @@
+import staticMiddleware from '@fastify/static';
 import { ILogger, Logger, Service } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
-import staticMiddleware from 'fastify-static';
 import { join } from 'path';
 import { ROOT_DIR } from '../../../app/globals';
 import { IHttpGateway } from '../../http/interface/http-gateway.interface';
@@ -16,7 +16,7 @@ export class StaticGateway implements IHttpGateway {
 
   async register(httpServer: FastifyInstance): Promise<void> {
     httpServer.register(staticMiddleware, {
-      root: join(ROOT_DIR, 'view'),
+      root: join(ROOT_DIR, 'storage/views'),
       prefix: '/view/',
     });
     this.logger.info('Static directory [/view] registered');

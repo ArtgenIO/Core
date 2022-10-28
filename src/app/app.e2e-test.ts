@@ -43,7 +43,7 @@ describe('Application (e2e)', () => {
     const srv = await getServer();
 
     const response = await srv.inject({
-      url: '/api/docs',
+      url: '/swagger',
     });
 
     expect(response.statusCode).toBe(302);
@@ -53,7 +53,7 @@ describe('Application (e2e)', () => {
     const srv = await getServer();
 
     const response = await srv.inject({
-      url: '/api/docs/static/index.html',
+      url: '/swagger/static/index.html',
     });
 
     expect(response.statusCode).toBe(200);
