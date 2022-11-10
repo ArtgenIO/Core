@@ -1,6 +1,4 @@
-
 import EventEmitter2 from 'eventemitter2';
-import pino from 'pino';
 import { ILambda } from '../../lambda/interface/lambda.interface';
 import { LambdaService } from '../../lambda/service/lambda.service';
 import { IFlowSessionContext } from '../interface';
@@ -8,7 +6,7 @@ import { IFlow } from '../interface/flow.interface';
 import { FlowSession } from './flow.session';
 
 const createLambdaService = (lambdas: ILambda[]) => {
-  return new LambdaService(pino(), lambdas);
+  return new LambdaService({} as any, lambdas);
 };
 
 describe(FlowSession.name, () => {
@@ -24,7 +22,7 @@ describe(FlowSession.name, () => {
     const lambda = createLambdaService([]);
     const sessionId = 'testid';
     const session = new FlowSession(
-      pino(),
+      {} as any,
       lambda,
       new EventEmitter2(),
       testWf,

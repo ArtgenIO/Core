@@ -12,5 +12,9 @@
   "bail": true,
   "testTimeout": 5000,
   "collectCoverage": false,
-  "globalSetup": "./tests/global.setup.js"
+  "globalSetup": "./tests/global.setup.js",
+  "moduleNameMapper": {
+    "#ansi-styles": "ansi-styles/index.js",
+    "#supports-color": "supports-color/index.js"
+  }
 }

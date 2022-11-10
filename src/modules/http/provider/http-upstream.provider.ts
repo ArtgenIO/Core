@@ -19,7 +19,7 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
 
   async value(): Promise<FastifyInstance> {
     const server = fastify({
-      logger: this.logger.child({ scope: 'http.upstream' }),
+      // logger: this.logger.child({ scope: 'http.upstream' }),
       disableRequestLogging: true,
       genReqId: v4 as () => string,
       trustProxy: true,
