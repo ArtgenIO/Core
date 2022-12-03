@@ -1,5 +1,4 @@
 import { IKernel, Kernel } from '@hisorange/kernel';
-import { assert } from 'console';
 import { RestModule } from '../rest/rest.module';
 import { DatabaseModule } from './database.module';
 import { DatabaseConnection } from './library/database.connection';
@@ -10,14 +9,12 @@ describe(DatabaseModule.name, () => {
 
   beforeAll(() => {
     kernel = new Kernel();
-
-    assert(kernel.register([DatabaseModule, RestModule]));
+    kernel.register([DatabaseModule, RestModule]);
   });
 
   test('should create the main connection', async () => {
     // Kernel can start
-    const result = await kernel.boostrap();
-    expect(result).toBe(true);
+    await kernel.boostrap();
 
     // Creates one connection
     const connections = await kernel.get(DatabaseConnectionService);
@@ -46,7 +43,6 @@ describe(DatabaseModule.name, () => {
   // Still something is off with ts-node stops, can't finish the shutdown sequence
   // but only when running in dev mode
   test('should destroy the main connection', async () => {
-    const result = await kernel.stop();
-    expect(result).toBe(true);
+    await kernel.stop();
   });
 });

@@ -750,10 +750,10 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@hisorange/kernel@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@hisorange/kernel/-/kernel-1.3.0.tgz#2ed2257734eff12b84553a007ce448109c65cd2e"
-  integrity sha512-KXGbSFwB82yKIKZmhcJyxaxTHkFhGzei8Xt9gFZ5Ey995Tp8avffFCo2/8g6Lyokfk4yD6usiJyu51w0f0nAqQ==
+"@hisorange/kernel@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@hisorange/kernel/-/kernel-1.4.0.tgz#51ec142e7597df61bdf5697fa64f8a35f97c0b00"
+  integrity sha512-YjF+Lp0oUeiuxWT8+Q2hAzdVc0FlC5iwlLNePFCEM2qkHv9UDUK80QP1dkpGJeMkeGkp/Ohwree0QwaEv9G2dQ==
   dependencies:
     "@loopback/context" "^5.0.3"
     "@loopback/metadata" "^5.0.3"
