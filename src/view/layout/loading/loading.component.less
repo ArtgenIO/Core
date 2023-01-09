@@ -1,0 +1,20 @@
+.loading-cmp {
+  @apply h-full w-full flex items-center bg-midnight-800;
+
+  min-width: 190px;
+  min-height: 190px;
+
+  > div {
+    @apply w-full h-full bg-no-repeat bg-center bg-contain flex items-center;
+
+    background-image: url('../../../../public/img/puff.svg');
+    min-height: 190px;
+    max-height: 380px;
+
+    > div {
+      @apply w-full h-2/5 bg-no-repeat bg-center bg-contain text-center text-transparent;
+
+      background-image: url('../../../../public/img/logo/stroke.svg');
+    }
+  }
+}

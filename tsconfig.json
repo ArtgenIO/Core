@@ -2,10 +2,7 @@
   "extends": "./tsconfig.dev.json",
   "compilerOptions": {
     "rootDir": ".",
-    "typeRoots": [
-      "./typings",
-      "node_modules/@types"
-    ],
+    "typeRoots": ["./typings", "node_modules/@types"]
   },
-  "include": ["./src", "./tests", "typings/grapesjs.d.ts"]
+  "include": ["./src", "./tests", "typings/grapesjs.d.ts", "vite.config.ts"]
 }

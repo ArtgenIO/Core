@@ -1,0 +1,7 @@
+import { atom } from 'recoil';
+import { ILambdaMeta } from '../../types/meta.interface';
+
+export const lambdaMetasAtom = atom<ILambdaMeta[]>({
+  key: 'lambdaMetas',
+  default: [],
+});

@@ -1,3 +1,7 @@
+### Version 0.7.0
+
+- Major simplification of the codebase
+
 ### Version 0.4.0
 
 - ESM upgrade (backend)
