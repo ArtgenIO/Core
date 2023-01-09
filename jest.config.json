@@ -2,7 +2,8 @@
   "preset": "ts-jest/presets/default-esm",
   "testEnvironment": "node",
   "roots": [
-    "./src"
+    "./src",
+    "./tests"
   ],
   "testMatch": [
     "**/*.(test|spec|e2e-test).ts"
