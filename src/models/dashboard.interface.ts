@@ -1,4 +1,4 @@
-import { IDashGridElement } from '../types/dash-grid.interface';
+import { IDashGridElement } from '../api/types/dash-grid.interface';
 
 export interface IDashboard {
   id: string;

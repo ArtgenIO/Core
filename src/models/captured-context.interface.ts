@@ -1,4 +1,4 @@
-import { IFlowSessionContext } from '../types/flow-session-context.interface';
+import { IFlowSessionContext } from '../api/types/flow-session-context.interface';
 
 export interface ICapturedContext {
   id: string;

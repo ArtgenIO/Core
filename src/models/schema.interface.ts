@@ -1,5 +1,5 @@
-import { IField } from '../types/field.interface';
-import { IRelation } from '../types/relation.interface';
+import { IField } from '../api/types/field.interface';
+import { IRelation } from '../api/types/relation.interface';
 
 export interface ISchema {
   moduleId?: string;

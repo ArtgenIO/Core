@@ -1,16 +1,16 @@
 import { IKernel, Kernel } from '@hisorange/kernel';
 import cloneDeep from 'lodash.clonedeep';
-import { Application } from '../../src/application';
+import { APIModule } from '../../src/api/api.module';
+import { DatabaseConnectionService } from '../../src/api/services/database-connection.service';
+import { FieldType } from '../../src/api/types/field-type.enum';
 import { ISchema } from '../../src/models/schema.interface';
-import { DatabaseConnectionService } from '../../src/services/database-connection.service';
-import { FieldType } from '../../src/types/field-type.enum';
 
 describe('Database E2E', () => {
   let kernel: IKernel;
 
   beforeAll(async () => {
     kernel = new Kernel();
-    kernel.register([Application]);
+    kernel.register([APIModule]);
 
     await kernel.boostrap();
   });

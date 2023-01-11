@@ -35,7 +35,7 @@
   "scripts": {
     "build:docker": "docker build . --target=production -t artgenio/core:dev",
     "build:api": "tsc -p tsconfig.prod.json",
-    "build:ui": "vite build",
+    "build:ui": "vite build --config src/pages/admin/vite.config.ts",
     "build:test": "CYPRESS_COVERAGE=1 yarn build",
     "build": "yarn build:api && yarn build:ui",
     "dev": "nodemon -I --exec node --experimental-specifier-resolution=node --loader ts-node/esm --no-warnings ./src/main.ts",
@@ -150,7 +150,7 @@
     "@types/react-dom": "^18.0.0",
     "@types/uuid": "^8.3.1",
     "@types/validator": "^13.6.5",
-    "@vitejs/plugin-react": "^2.1.0",
+    "@vitejs/plugin-react": "^3.0.0",
     "antd": "^4.16.13",
     "autoprefixer": "^10.4.12",
     "axios-hooks": "^4.0.0",

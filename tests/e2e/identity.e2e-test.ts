@@ -1,9 +1,9 @@
 import { IKernel, Kernel } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
 import jwt from 'jsonwebtoken';
-import { Application } from '../../src/application';
-import { HttpUpstreamProvider } from '../../src/providers/http-upstream.provider';
-import { IJwtPayload } from '../../src/types/jwt-payload.interface';
+import { APIModule } from '../../src/api/api.module';
+import { HttpUpstreamProvider } from '../../src/api/providers/http-upstream.provider';
+import { IJwtPayload } from '../../src/api/types/jwt-payload.interface';
 
 describe('Identity (e2e)', () => {
   let app: IKernel;
@@ -13,7 +13,7 @@ describe('Identity (e2e)', () => {
 
   beforeAll(async () => {
     app = new Kernel();
-    app.register([Application]);
+    app.register([APIModule]);
 
     await app.boostrap();
     await app.start();

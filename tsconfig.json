@@ -4,5 +4,11 @@
     "rootDir": ".",
     "typeRoots": ["./typings", "node_modules/@types"]
   },
-  "include": ["./src", "./tests", "typings/grapesjs.d.ts", "vite.config.ts"]
+  "include": [
+    "./src",
+    "./tests",
+    "typings/grapesjs.d.ts",
+    "src/pages/admin/vite.config.ts",
+    "src/pages/admin/atoms"
+  ]
 }
