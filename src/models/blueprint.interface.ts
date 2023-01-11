@@ -1,4 +1,4 @@
-import { RowLike } from '../types/row-like.interface';
+import { RowLike } from '../api/types/row-like.interface';
 import { ISchema } from './schema.interface';
 
 export interface IBlueprint {
