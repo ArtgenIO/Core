@@ -35,9 +35,10 @@
   "scripts": {
     "build:docker": "docker build . --target=production -t artgenio/core:dev",
     "build:api": "tsc -p tsconfig.prod.json",
-    "build:ui": "vite build --config src/pages/admin/vite.config.ts",
+    "build:admin": "vite build --config src/pages/admin/vite.config.ts",
+    "build:welcome": "vite build --config src/pages/welcome/vite.config.ts",
     "build:test": "CYPRESS_COVERAGE=1 yarn build",
-    "build": "yarn build:api && yarn build:ui",
+    "build": "yarn build:api && yarn build:admin",
     "dev": "nodemon -I --exec node --experimental-specifier-resolution=node --loader ts-node/esm --no-warnings ./src/main.ts",
     "start": "NODE_ENV=production node --experimental-specifier-resolution=node build/main.js",
     "test": "yarn test:api && yarn build && yarn test:ui",

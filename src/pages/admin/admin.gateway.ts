@@ -3,7 +3,6 @@ import { ILogger, Logger, Service } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
 import { readFile } from 'fs/promises';
 import cloneDeep from 'lodash.clonedeep';
-import middie from 'middie';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { IHttpGateway } from '../../api/types/http-gateway.interface';
@@ -22,20 +21,20 @@ export class AdminGateway implements IHttpGateway {
     readonly logger: ILogger,
   ) {}
 
-  async register(httpServer: FastifyInstance): Promise<void> {
+  async register(upstream: FastifyInstance): Promise<void> {
     if (process.env.NODE_ENV === 'production') {
-      await this.registerLiveStaticServer(httpServer);
+      await this.registerLiveStaticServer(upstream);
     } else {
-      await this.registerViteDevServer(httpServer);
+      await this.registerViteDevServer(upstream);
     }
   }
 
-  protected async registerLiveStaticServer(httpServer: FastifyInstance) {
+  protected async registerLiveStaticServer(upstream: FastifyInstance) {
     // Static files
     const baseDirectory = join(ROOT_DIR, 'storage/pages/admin/');
     const indexBuffer = await readFile(join(baseDirectory, 'index.html'));
 
-    await httpServer.register(
+    await upstream.register(
       async (instance, options, done) => {
         // Serve the assets
         await instance.register(staticMiddleware, {
@@ -63,7 +62,7 @@ export class AdminGateway implements IHttpGateway {
     this.logger.info('Page [Admin] registered at [GET][/admin]');
   }
 
-  protected async registerViteDevServer(httpServer: FastifyInstance) {
+  protected async registerViteDevServer(upstream: FastifyInstance) {
     try {
       // eslint-disable-next-line
       const viteConfig = cloneDeep((await import('./vite.config')).default);
@@ -73,8 +72,7 @@ export class AdminGateway implements IHttpGateway {
       this.viteServer = await vite.createServer(viteConfig);
       const middlewares = this.viteServer.middlewares;
 
-      await httpServer.register(middie);
-      httpServer.use('/admin', middlewares);
+      upstream.use('/admin', middlewares);
 
       this.logger.info('Vite build [Admin] registered at [GET][/admin]');
     } catch (error) {

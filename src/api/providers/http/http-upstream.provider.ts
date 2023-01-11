@@ -5,6 +5,7 @@ import fastifySwaggerUi from '@fastify/swagger-ui';
 import { ILogger, Inject, Logger, Provider, Service } from '@hisorange/kernel';
 import fastify, { FastifyInstance } from 'fastify';
 import FastifyHttpErrorsEnhancedPlugin from 'fastify-http-errors-enhanced';
+import middie from 'middie';
 import { v4 } from 'uuid';
 import { OpenApiService } from '../../services/openapi.service';
 
@@ -77,6 +78,8 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
 
       done();
     });
+
+    await server.register(middie);
 
     return server;
   }
