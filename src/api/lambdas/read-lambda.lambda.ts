@@ -1,8 +1,8 @@
 import { IContext, Service } from '@hisorange/kernel';
 import { inject } from '@loopback/context';
 import { Lambda } from '../decorators/lambda.decorator';
-import { InputHandleDTO } from '../dtos/input-handle.dto';
-import { OutputHandleDTO } from '../dtos/output-handle.dto';
+import { LambdaInputHandleDTO } from '../dtos/lambda/input-handle.dto';
+import { LambdaOutputHandleDTO } from '../dtos/lambda/output-handle.dto';
 import { LambdaService } from '../services/lambda.service';
 import { ILambda } from '../types/lambda.interface';
 
@@ -14,8 +14,8 @@ import { ILambda } from '../types/lambda.interface';
   icon: 'system.png',
   description: 'List of registered lambdas',
   handles: [
-    new InputHandleDTO('query', {}),
-    new OutputHandleDTO('result', {
+    new LambdaInputHandleDTO('query', {}),
+    new LambdaOutputHandleDTO('result', {
       type: 'array',
     }),
   ],

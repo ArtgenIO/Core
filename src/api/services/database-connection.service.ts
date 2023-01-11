@@ -4,7 +4,7 @@ import knex, { Knex } from 'knex';
 import { IDatabase } from '../../models/database.interface';
 import { ISchema } from '../../models/schema.interface';
 import { UnsupportedDialect } from '../exceptions/unsupported-dialect.exception';
-import { DatabaseConnectionConcrete } from '../providers/connection-concrete.provider';
+import { DatabaseConnectionConcrete } from '../providers/database/connection-concrete.provider';
 import { BucketKey } from '../types/bucket-key.enum';
 import { IDatabaseConnection } from '../types/database-connection.interface';
 import { Dialect } from '../types/dialect.type';

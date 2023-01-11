@@ -2,7 +2,7 @@ import { default as KNEX } from 'knex';
 import { Model, ModelClass } from 'objection';
 import { IDatabase } from '../../models/database.interface';
 import { ISchema } from '../../models/schema.interface';
-import { DatabaseSynchronizer } from '../library/database.synchronizer';
+import { DatabaseSynchronizer } from '../database/synchronizer';
 import { IConnectionAssociation } from './connection-association.interface';
 import { Dialect } from './dialect.type';
 import { ITableStructure } from './table-structure.interface';

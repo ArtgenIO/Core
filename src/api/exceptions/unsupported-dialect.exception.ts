@@ -1,6 +1,6 @@
-import { Exception } from './exception';
+import { BaseException } from './base.exception';
 
-export class UnsupportedDialect extends Exception {
+export class UnsupportedDialect extends BaseException {
   constructor(dialect: string) {
     super(`Unsupported dialect [${dialect}]`);
   }

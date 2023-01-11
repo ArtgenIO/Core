@@ -1,7 +1,7 @@
 import { IContext, ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { inject } from '@loopback/context';
 import { FastifyInstance } from 'fastify';
-import { HttpUpstreamProvider } from '../providers/http-upstream.provider';
+import { HttpUpstreamProvider } from '../providers/http/http-upstream.provider';
 import { BucketKey } from '../types/bucket-key.enum';
 import { IHttpGateway } from '../types/http-gateway.interface';
 import { TelemetryService } from './telemetry.service';

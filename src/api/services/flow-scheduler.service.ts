@@ -1,6 +1,6 @@
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import schedule from 'node-schedule';
-import { CronTriggerConfig } from '../lambdas/cron.trigger';
+import { CronTriggerConfig } from '../lambdas/cron/trigger.lambda';
 import { FlowService } from './flow.service';
 
 @Service()

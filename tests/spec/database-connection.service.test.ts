@@ -1,9 +1,9 @@
 import { IKernel, Kernel } from '@hisorange/kernel';
 import { jest } from '@jest/globals';
 import { APIModule } from '../../src/api/api.module';
+import { DatabaseConnection } from '../../src/api/database/connection';
 import { UnsupportedDialect } from '../../src/api/exceptions/unsupported-dialect.exception';
-import { DatabaseConnection } from '../../src/api/library/database.connection';
-import { DatabaseConnectionConcrete } from '../../src/api/providers/connection-concrete.provider';
+import { DatabaseConnectionConcrete } from '../../src/api/providers/database/connection-concrete.provider';
 import { DatabaseConnectionService } from '../../src/api/services/database-connection.service';
 
 describe(DatabaseConnectionService.name, () => {

@@ -2,7 +2,7 @@ import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import EventEmitter2 from 'eventemitter2';
 import { diff } from 'just-diff';
 import pick from 'lodash.pick';
-import { Exception } from '../exceptions/exception';
+import { BaseException } from '../exceptions/base.exception';
 import { FieldTool, isManagedField, isPrimary } from '../library/field-tools';
 import { IFindResponse } from '../types/find-reponse.interface';
 import { RowLike } from '../types/row-like.interface';
@@ -60,7 +60,7 @@ export class CrudService {
     } catch (error) {
       this.logger.warn((error as Error)?.message);
       console.error(error);
-      throw new Exception('Invalid input'); // 400
+      throw new BaseException('Invalid input'); // 400
     }
   }
 
@@ -87,7 +87,7 @@ export class CrudService {
       return newRecord as R;
     } catch (error) {
       this.logger.warn((error as Error)?.message);
-      throw new Exception('Invalid input'); // 400
+      throw new BaseException('Invalid input'); // 400
     }
   }
 
@@ -154,7 +154,7 @@ export class CrudService {
     const ids = Object.values(pick(idValues, pks));
 
     if (pks.length !== ids.length) {
-      throw new Exception('Invalid identifiers');
+      throw new BaseException('Invalid identifiers');
     }
 
     // Fetch the record
@@ -202,7 +202,7 @@ export class CrudService {
       return newValue;
     } catch (error) {
       this.logger.warn((error as Error)?.message);
-      throw new Exception('Invalid input');
+      throw new BaseException('Invalid input');
     }
   }
 
@@ -236,7 +236,7 @@ export class CrudService {
       return object;
     } catch (error) {
       this.logger.warn((error as Error)?.message);
-      throw new Exception('Invalid record');
+      throw new BaseException('Invalid record');
     }
   }
 }

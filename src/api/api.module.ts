@@ -8,13 +8,12 @@ import {
   SchedulerModule,
 } from '@hisorange/kernel';
 import { ISchema } from '../models/schema.interface';
-import { ArtgenBlueprintProvider } from './providers/artgen-blueprint.provider';
-import { AuthenticationHandlerProvider } from './providers/authentication-handler.provider';
-import { AuthenticatorProvider } from './providers/authenticator.provider';
-import { DatabaseConnectionConcrete } from './providers/connection-concrete.provider';
+import { DatabaseConnectionConcrete } from './providers/database/connection-concrete.provider';
 import { GatewayProviders } from './providers/gateway.providers';
-import { HttpProxyProvider } from './providers/http-proxy.provider';
-import { HttpUpstreamProvider } from './providers/http-upstream.provider';
+import { HttpProxyProvider } from './providers/http/http-proxy.provider';
+import { HttpUpstreamProvider } from './providers/http/http-upstream.provider';
+import { AuthenticationHandlerProvider } from './providers/identity/authentication-handler.provider';
+import { AuthenticatorProvider } from './providers/identity/authenticator.provider';
 import { LambdaProviders } from './providers/lambda.providers';
 import { ObserverProviders } from './providers/observer.providers';
 import { ServiceProviders } from './providers/service.providers';
@@ -40,7 +39,6 @@ import { SchemaRef } from './types/system-ref.enum';
     ...ServiceProviders,
     ...TransformeProviders,
 
-    ArtgenBlueprintProvider,
     AuthenticationHandlerProvider,
     AuthenticatorProvider,
     DatabaseConnectionConcrete,

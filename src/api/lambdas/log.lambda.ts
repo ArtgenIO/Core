@@ -1,6 +1,6 @@
 import { Service } from '@hisorange/kernel';
 import { Lambda } from '../decorators/lambda.decorator';
-import { InputHandleDTO } from '../dtos/input-handle.dto';
+import { LambdaInputHandleDTO } from '../dtos/lambda/input-handle.dto';
 import { FlowSession } from '../library/flow.session';
 import { ILambda } from '../types/lambda.interface';
 
@@ -11,7 +11,7 @@ import { ILambda } from '../types/lambda.interface';
   type: 'log',
   icon: 'log.svg',
   description: 'Write message into STDOut',
-  handles: [new InputHandleDTO('message')],
+  handles: [new LambdaInputHandleDTO('message')],
   config: {
     type: 'object',
     properties: {

@@ -1,9 +1,8 @@
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import EventEmitter2 from 'eventemitter2';
 import { Model, ModelClass } from 'objection';
-import { IBlueprint } from '../../models/blueprint.interface';
 import { ISchema } from '../../models/schema.interface';
-import { ArtgenBlueprintProvider } from '../providers/artgen-blueprint.provider';
+import { SystemBlueprint } from '../blueprints/system.blueprint';
 import { IContentModule } from '../types/content-module.interface';
 import { SchemaRef } from '../types/system-ref.enum';
 import { DatabaseConnectionService } from './database-connection.service';
@@ -20,8 +19,6 @@ export class SchemaService {
     readonly connections: DatabaseConnectionService,
     @Inject(EventEmitter2)
     readonly event: EventEmitter2,
-    @Inject(ArtgenBlueprintProvider)
-    readonly artgenBlueprint: IBlueprint,
   ) {}
 
   /**
@@ -29,7 +26,7 @@ export class SchemaService {
    */
   protected async upsertSystemModule(): Promise<void> {
     const model = this.getSysModel<ModuleModel>(SchemaRef.MODULE);
-    const record = this.artgenBlueprint.content
+    const record = SystemBlueprint.content
       .Module[0] as unknown as IContentModule;
 
     const isExists = await model.query().findById(record.id);

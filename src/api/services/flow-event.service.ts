@@ -1,7 +1,7 @@
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import EventEmitter2 from 'eventemitter2';
 import { v4 } from 'uuid';
-import { EventTriggerConfig } from '../lambdas/event.trigger';
+import { EventTriggerConfig } from '../lambdas/event/on.trigger';
 import { FlowService } from './flow.service';
 
 @Service()

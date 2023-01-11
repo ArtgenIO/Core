@@ -15,7 +15,7 @@ import { IHttpGateway } from '../types/http-gateway.interface';
 import { IReverseProxy } from '../types/reverse-proxy.interface';
 import { SchemaRef } from '../types/system-ref.enum';
 
-type RPModel = IReverseProxy & Model;
+type ReverseProxyModel = IReverseProxy & Model;
 
 @Service({
   tags: 'http:gateway',
@@ -31,7 +31,9 @@ export class ReverseProxyGateway implements IHttpGateway {
   ) {}
 
   async register(upstream: FastifyInstance): Promise<void> {
-    const model = this.schema.getSysModel<RPModel>(SchemaRef.REV_PROXY);
+    const model = this.schema.getSysModel<ReverseProxyModel>(
+      SchemaRef.REV_PROXY,
+    );
     const destinations = await model.query();
 
     for (const r of destinations) {

@@ -1,9 +1,8 @@
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
 import { Model, ModelClass } from 'objection';
-import { IBlueprint } from '../../models/blueprint.interface';
 import { IDatabase } from '../../models/database.interface';
 import { ISchema } from '../../models/schema.interface';
-import { ArtgenBlueprintProvider } from '../providers/artgen-blueprint.provider';
+import { SystemBlueprint } from '../blueprints/system.blueprint';
 import { IDatabaseConnection } from '../types/database-connection.interface';
 import { SchemaRef } from '../types/system-ref.enum';
 import { DatabaseConnectionService } from './database-connection.service';
@@ -20,8 +19,6 @@ export class DatabaseService {
     readonly schemaService: SchemaService,
     @Inject(DatabaseConnectionService)
     readonly connectionService: DatabaseConnectionService,
-    @Inject(ArtgenBlueprintProvider)
-    readonly artgenBlueprint: IBlueprint,
   ) {}
 
   /**
@@ -137,6 +134,6 @@ export class DatabaseService {
    * Accessor to acquire the system's schemas from the packaged system blueprint.
    */
   protected getSystemSchemas(): ISchema[] {
-    return this.artgenBlueprint.schemas;
+    return SystemBlueprint.schemas;
   }
 }

@@ -1,5 +1,5 @@
-import { IdentityGateway } from '../controllers/authentication.gateway';
-import { FlowHttpGateway } from '../controllers/flow.gateway';
+import { FlowGateway } from '../controllers/flow.gateway';
+import { IdentityGateway } from '../controllers/identity.gateway';
 import { PageGateway } from '../controllers/page.gateway';
 import { RestGateway } from '../controllers/rest.gateway';
 import { ReverseProxyGateway } from '../controllers/reverse-proxy.gateway';
@@ -15,5 +15,5 @@ export const GatewayProviders = [
   TelemetryGateway,
   IdentityGateway,
   ReverseProxyGateway,
-  FlowHttpGateway,
+  FlowGateway,
 ];

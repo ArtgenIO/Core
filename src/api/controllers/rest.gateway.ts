@@ -15,7 +15,7 @@ import {
 import { BadRequestError, NotFoundError } from 'http-errors-enhanced';
 import kebabCase from 'lodash.kebabcase';
 import { ISchema } from '../../models/schema.interface';
-import { AuthenticationHandlerProvider } from '../providers/authentication-handler.provider';
+import { AuthenticationHandlerProvider } from '../providers/identity/authentication-handler.provider';
 import { CrudService } from '../services/crud.service';
 import { OpenApiService } from '../services/openapi.service';
 import { SchemaService } from '../services/schema.service';
@@ -49,7 +49,7 @@ export class RestGateway implements IHttpGateway {
     readonly kernel: IKernel,
   ) {}
 
-  async register(httpServer: FastifyInstance): Promise<void> {
+  async register(upstream: FastifyInstance): Promise<void> {
     this.authHandler = await this.kernel.get<RouteHandlerMethod>(
       AuthenticationHandlerProvider,
     );
@@ -59,7 +59,7 @@ export class RestGateway implements IHttpGateway {
       await this.schema.fetchAll(),
     ]);
 
-    await httpServer.register(
+    await upstream.register(
       async instance => {
         await Promise.all([
           this.registerAdminApi(instance, hasSearch, allSchema),
@@ -83,11 +83,6 @@ export class RestGateway implements IHttpGateway {
     );
 
     for (const schema of schemas) {
-      this.logger.info(
-        'Registering tenant routes for [%s] schema',
-        schema.reference,
-      );
-
       // Create action (TENANT)
       server.post(
         this.openApi.getResourceURL(schema, 'rest', {
@@ -364,9 +359,9 @@ export class RestGateway implements IHttpGateway {
   async registerAdminApi(
     server: FastifyInstance,
     hasSearch: boolean,
-    allSchema: ISchema[],
+    schemas: ISchema[],
   ): Promise<void> {
-    for (const schema of allSchema) {
+    for (const schema of schemas) {
       // Create action
       server.post(
         this.openApi.getResourceURL(schema),

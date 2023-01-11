@@ -1,7 +1,7 @@
 import { IKernel, Kernel } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
 import { APIModule } from '../../src/api/api.module';
-import { HttpUpstreamProvider } from '../../src/api/providers/http-upstream.provider';
+import { HttpUpstreamProvider } from '../../src/api/providers/http/http-upstream.provider';
 
 describe('Application (e2e)', () => {
   let app: IKernel;

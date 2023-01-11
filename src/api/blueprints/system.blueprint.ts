@@ -5,7 +5,7 @@ import { RelationType } from '../types/relation.interface';
 
 export const SystemBlueprint: IBlueprint = {
   id: 'c01c3f2d-84f5-4531-8bdc-938a982a8830',
-  title: 'Artgen Core',
+  title: 'Artgen - System',
   version: '0.3.0',
   cover: 'https://via.placeholder.com/400x250/b5b9c2/0a0d10/?text=Artgen',
   description:

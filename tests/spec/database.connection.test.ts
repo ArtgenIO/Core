@@ -2,7 +2,7 @@ import { IKernel, Kernel } from '@hisorange/kernel';
 import { jest } from '@jest/globals';
 import { default as KNEX } from 'knex';
 import { APIModule } from '../../src/api/api.module';
-import { DatabaseConnection } from '../../src/api/library/database.connection';
+import { DatabaseConnection } from '../../src/api/database/connection';
 import { IDatabase } from '../../src/models/database.interface';
 
 describe(DatabaseConnection.name, () => {

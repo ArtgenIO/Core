@@ -12,7 +12,7 @@ import {
 import parser from 'odata-parser';
 import { ParsedUrlQueryInput, stringify } from 'querystring';
 import { ISchema } from '../../models/schema.interface';
-import { Exception } from '../exceptions/exception';
+import { BaseException } from '../exceptions/base.exception';
 import { FieldType } from '../types/field-type.enum';
 import {
   fLiteral,
@@ -53,7 +53,7 @@ export class ODataService {
         return '>=';
     }
 
-    throw new Exception(`Unknown [${op}] operator`);
+    throw new BaseException(`Unknown [${op}] operator`);
   }
 
   protected getRelationFromColumn(property: fPropery): string | null {
@@ -151,7 +151,7 @@ export class ODataService {
 
               return qb;
             } else {
-              throw new Exception('Unhandled primitive filter');
+              throw new BaseException('Unhandled primitive filter');
             }
           }
 
@@ -196,7 +196,7 @@ export class ODataService {
           if (typeof right.value === 'boolean') {
             comparator = right.value ? 'where' : 'whereNot';
           } else {
-            throw new Exception('Unhandled right value comparison');
+            throw new BaseException('Unhandled right value comparison');
           }
 
           qb[comparator](fLeft => {
@@ -259,14 +259,16 @@ export class ODataService {
             break;
 
           default:
-            throw new Exception(
+            throw new BaseException(
               `Unsupported function call [${($filter as any).func}]`,
             );
         }
 
         break;
       default:
-        throw new Exception(`Unsupported operator [${($filter as any).type}]`);
+        throw new BaseException(
+          `Unsupported operator [${($filter as any).type}]`,
+        );
     }
 
     return qb;
@@ -296,7 +298,7 @@ export class ODataService {
         else if (item == '*') {
           fieldNames.forEach(f => fieldSelection.add(f));
         } else {
-          throw new Exception(`Unknown selection [${item}]`);
+          throw new BaseException(`Unknown selection [${item}]`);
         }
       }
       // Load from relation
@@ -312,7 +314,7 @@ export class ODataService {
 
           trimmedEager.get(relation).push(item.substring(relation.length + 1));
         } else {
-          throw new Exception(`Unknown relation [${item}][${relation}]`);
+          throw new BaseException(`Unknown relation [${item}][${relation}]`);
         }
       }
     }

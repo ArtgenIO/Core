@@ -26,9 +26,9 @@ export class TrapGateway implements IHttpGateway {
     };
 
     WPTrapPaths.forEach(path => httpServer.get(path, handler));
-    this.logger.info('Traps for [WordPress] registered');
+    this.logger.debug('Traps for [WordPress] registered');
 
     OCTrapPaths.forEach(path => httpServer.get(path, handler));
-    this.logger.info('Traps for [OpenCart] registered');
+    this.logger.debug('Traps for [OpenCart] registered');
   }
 }

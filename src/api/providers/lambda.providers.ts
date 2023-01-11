@@ -1,37 +1,37 @@
-import { CronTriggerLambda } from '../lambdas/cron.trigger';
-import { DnsQueryLambda } from '../lambdas/dns-query.lambda';
-import { EmitEventLambda } from '../lambdas/emit.lambda';
-import { EventTrigger } from '../lambdas/event.trigger';
-import { HashCompareLambda } from '../lambdas/hash-compare.lambda';
-import { HashCreateLambda } from '../lambdas/hash-create.lambda';
-import { HttpRequestLambda } from '../lambdas/http-request.lambda';
-import { HttpTerminateLambda } from '../lambdas/http-terminate.lambda';
-import { HttpTriggerLambda } from '../lambdas/http-trigger.lambda';
-import { CompareLambda } from '../lambdas/if.lambda';
-import { ContentMeiliIndexLambda } from '../lambdas/index.lambda';
-import { LengthLambda } from '../lambdas/length.lambda';
+import { CronTriggerLambda } from '../lambdas/cron/trigger.lambda';
+import { BCryptCompareLambda } from '../lambdas/crypt/bcrypt/compare.lambda';
+import { BCryptHashLambda } from '../lambdas/crypt/bcrypt/hash.lambda';
+import { JWTSignLambda } from '../lambdas/crypt/jwt/sign.lambda';
+import { DNSQueryLambda } from '../lambdas/dns/query.lambda';
+import { EmitEventLambda } from '../lambdas/event/emit.lambda';
+import { OnEventTrigger } from '../lambdas/event/on.trigger';
+import { HttpRequestLambda } from '../lambdas/http/request.lambda';
+import { HttpTerminateLambda } from '../lambdas/http/terminate.lambda';
+import { HttpTriggerLambda } from '../lambdas/http/trigger.lambda';
 import { LogLambda } from '../lambdas/log.lambda';
+import { LogicCompareLambda } from '../lambdas/logic/compare.lambda';
+import { LogicLengthLambda } from '../lambdas/logic/length.lambda';
 import { ReadLambdaLambda } from '../lambdas/read-lambda.lambda';
-import { RestCreateLambda } from '../lambdas/rest-create.lambda';
-import { RestFindLambda } from '../lambdas/rest-find.lambda';
-import { TokenSignLambda } from '../lambdas/token-sign.lambda';
+import { ContentMeiliIndexLambda } from '../lambdas/rest/index.lambda';
+import { RestCreateLambda } from '../lambdas/rest/rest-create.lambda';
+import { RestFindLambda } from '../lambdas/rest/rest-find.lambda';
 
 export const LambdaProviders = [
   LogLambda,
   RestCreateLambda,
-  TokenSignLambda,
+  JWTSignLambda,
   RestFindLambda,
-  HashCompareLambda,
-  HashCreateLambda,
+  BCryptCompareLambda,
+  BCryptHashLambda,
   HttpTriggerLambda,
   HttpRequestLambda,
   HttpTerminateLambda,
-  DnsQueryLambda,
+  DNSQueryLambda,
   CronTriggerLambda,
   EmitEventLambda,
   ReadLambdaLambda,
-  LengthLambda,
-  CompareLambda,
+  LogicLengthLambda,
+  LogicCompareLambda,
   ContentMeiliIndexLambda,
-  EventTrigger,
+  OnEventTrigger,
 ];

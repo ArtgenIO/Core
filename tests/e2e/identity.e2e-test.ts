@@ -2,7 +2,7 @@ import { IKernel, Kernel } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
 import jwt from 'jsonwebtoken';
 import { APIModule } from '../../src/api/api.module';
-import { HttpUpstreamProvider } from '../../src/api/providers/http-upstream.provider';
+import { HttpUpstreamProvider } from '../../src/api/providers/http/http-upstream.provider';
 import { IJwtPayload } from '../../src/api/types/jwt-payload.interface';
 
 describe('Identity (e2e)', () => {

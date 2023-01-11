@@ -16,13 +16,13 @@ export class PageGateway implements IHttpGateway {
     @Logger()
     readonly logger: ILogger,
     @Inject(PageService)
-    readonly service: PageService,
+    readonly pageService: PageService,
     @Inject(KeyValueService)
     readonly kv: KeyValueService,
   ) {}
 
-  async register(httpServer: FastifyInstance): Promise<void> {
-    await httpServer.register(pov, {
+  async register(upstream: FastifyInstance): Promise<void> {
+    await upstream.register(pov, {
       engine: {
         nunjucks: TemplateEngine,
       },
@@ -31,9 +31,9 @@ export class PageGateway implements IHttpGateway {
         PID: process.pid,
       },
     });
-    this.logger.info('Plugin [PoV] registered');
+    this.logger.debug('Plugin [PoV] registered');
 
-    const routes = await this.service.loadRoutes();
+    const routes = await this.pageService.loadRoutes();
     const constraints: { host?: string } = {};
 
     const host = await this.kv.get(
@@ -48,19 +48,13 @@ export class PageGateway implements IHttpGateway {
       constraints.host = host;
     }
 
-    this.logger.info('Admin redirection at [GET][%s][/] -> [/admin]', host);
-
-    httpServer.get('/', { constraints }, (req, rep) => {
-      rep.redirect('/admin');
-    });
-
     for (const page of routes) {
-      httpServer.get(
+      upstream.get(
         '/' + page.path.replace(/^\//, ''),
         { constraints },
         async (req: FastifyRequest, res: FastifyReply): Promise<string> => {
           res.header('content-type', 'text/html');
-          return this.service.getHtml(page.id);
+          return this.pageService.getHtml(page.id);
         },
       );
       this.logger.info(

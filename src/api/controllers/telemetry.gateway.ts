@@ -1,4 +1,4 @@
-import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
+import { Inject, Service } from '@hisorange/kernel';
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { TelemetryService } from '../services/telemetry.service';
 import { IHttpGateway } from '../types/http-gateway.interface';
@@ -8,8 +8,6 @@ import { IHttpGateway } from '../types/http-gateway.interface';
 })
 export class TelemetryGateway implements IHttpGateway {
   constructor(
-    @Logger()
-    readonly logger: ILogger,
     @Inject(TelemetryService)
     readonly service: TelemetryService,
   ) {}
@@ -35,7 +33,5 @@ export class TelemetryGateway implements IHttpGateway {
           .readings.find(s => s.id === req.params.id);
       },
     );
-
-    this.logger.info('Telemetry API endpoint registered');
   }
 }

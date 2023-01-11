@@ -14,11 +14,11 @@ export class StaticGateway implements IHttpGateway {
     readonly logger: ILogger,
   ) {}
 
-  async register(httpServer: FastifyInstance): Promise<void> {
-    httpServer.register(staticMiddleware, {
-      root: join(ROOT_DIR, 'storage/views'),
-      prefix: '/view/',
+  async register(upstream: FastifyInstance): Promise<void> {
+    upstream.register(staticMiddleware, {
+      root: join(ROOT_DIR, 'storage/pages'),
+      prefix: '/pages/',
     });
-    this.logger.info('Static directory [/view] registered');
+    this.logger.info('Static directory [/pages] registered');
   }
 }

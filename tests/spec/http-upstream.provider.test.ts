@@ -6,7 +6,7 @@ import {
   isProviderClass,
 } from '@loopback/context';
 import { APIModule } from '../../src/api/api.module';
-import { HttpUpstreamProvider } from '../../src/api/providers/http-upstream.provider';
+import { HttpUpstreamProvider } from '../../src/api/providers/http/http-upstream.provider';
 
 describe(HttpUpstreamProvider.name, () => {
   let app: IKernel;

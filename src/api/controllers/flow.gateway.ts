@@ -13,25 +13,22 @@ import {
   RouteHandlerMethod,
   RouteShorthandOptions,
 } from 'fastify';
-import { HttpTriggerConfig } from '../lambdas/http-trigger.lambda';
-import { AuthenticationHandlerProvider } from '../providers/authentication-handler.provider';
+import { HttpTriggerConfig } from '../lambdas/http/trigger.lambda';
+import { AuthenticationHandlerProvider } from '../providers/identity/authentication-handler.provider';
 import { FlowService } from '../services/flow.service';
-import { LambdaService } from '../services/lambda.service';
 import { IHttpGateway } from '../types/http-gateway.interface';
 
 @Service({
   tags: 'http:gateway',
 })
-export class FlowHttpGateway implements IHttpGateway {
+export class FlowGateway implements IHttpGateway {
   protected authHandler: RouteHandlerMethod | null = null;
 
   constructor(
     @Logger()
     readonly logger: ILogger,
     @Inject(FlowService)
-    readonly flowSvc: FlowService,
-    @Inject(LambdaService)
-    readonly node: LambdaService,
+    readonly flowService: FlowService,
     @Inject(Kernel)
     readonly kernel: IKernel,
   ) {}
@@ -41,7 +38,9 @@ export class FlowHttpGateway implements IHttpGateway {
       AuthenticationHandlerProvider,
     );
 
-    for (const flow of (await this.flowSvc.findAll()).filter(f => f.isActive)) {
+    const flows = await this.flowService.findAll();
+
+    for (const flow of flows.filter(f => f.isActive)) {
       const triggers = flow.nodes.filter(t => t.type === 'trigger.http');
 
       for (const trigger of triggers) {
@@ -117,7 +116,7 @@ export class FlowHttpGateway implements IHttpGateway {
           options,
           async (request: FastifyRequest, reply: FastifyReply) => {
             const startAt = Date.now();
-            const session = await this.flowSvc.createSession(
+            const session = await this.flowService.createSession(
               flow.id,
               request.id,
             );
