@@ -100,7 +100,7 @@ export default function ListCloudApps() {
                             blueprint.id
                           }`,
                         )
-                        .then(() => message.warn('Blueprint deleted'))
+                        .then(() => message.warning('Blueprint deleted'))
                         .then(() => refetch())
                     }
                   >
@@ -149,7 +149,7 @@ export default function ListCloudApps() {
       )}
 
       <Modal
-        visible={!!showSourceFor}
+        open={!!showSourceFor}
         centered
         width="50%"
         title={

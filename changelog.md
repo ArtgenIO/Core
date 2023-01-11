@@ -4,6 +4,7 @@
 - Split UI and API for MPA projects
 - Enhance the HTTP capabilities with built in controllers
 - Fix missing service decorators
+- Upgrade to the latest version of all dependencies
 
 ### Version 0.4.0
 

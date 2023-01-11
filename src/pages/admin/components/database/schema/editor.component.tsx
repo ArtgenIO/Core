@@ -107,7 +107,7 @@ export default function SchemaEditorComponent({
       footer={null}
       onClose={() => {
         if (schema.reference === '__new_schema') {
-          message.warn('Please first change the name and reference');
+          message.warning('Please first change the name and reference');
         } else if (isChanged) {
           onClose(schema);
         } else {

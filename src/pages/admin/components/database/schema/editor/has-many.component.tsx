@@ -191,7 +191,9 @@ export default function RelationHasMany({
                   const newState = cloneDeep(oldState);
 
                   if (usedNames.includes(e.target.value)) {
-                    message.warn(`Name [${e.target.value}] is already in use!`);
+                    message.warning(
+                      `Name [${e.target.value}] is already in use!`,
+                    );
                   } else {
                     newState.name = e.target.value;
                   }

@@ -58,7 +58,7 @@ export default function ArtboardEdgeConfigComponent({
 
     setSelectedEdgeId(null);
 
-    message.warn('Edge has been deleted');
+    message.warning('Edge has been deleted');
   };
 
   // Local state

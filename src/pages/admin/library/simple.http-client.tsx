@@ -28,7 +28,7 @@ export const useHttpClientSimple = () => {
     error => {
       if (error?.response?.status === 401) {
         resetJwt();
-        message.warn('Authentication token expired...');
+        message.warning('Authentication token expired...');
       }
 
       return Promise.reject(error);

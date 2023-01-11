@@ -37,7 +37,7 @@ export default function AuthenticationWrapperComponent({
         if (expires > 30_000) {
           setWarningTimeout(
             setTimeout(() => {
-              notification.warn({
+              notification.warning({
                 key: 'authentication',
                 message: 'Authentication Expires Soon!',
                 icon: <FieldTimeOutlined className="text-yellow-500" />,
@@ -55,7 +55,7 @@ export default function AuthenticationWrapperComponent({
         return;
       }
     } else {
-      notification.warn({
+      notification.warning({
         key: 'authentication',
         message: 'Authentication Required!',
         icon: <LockOutlined className="text-red-400" />,

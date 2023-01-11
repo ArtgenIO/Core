@@ -1,5 +1,5 @@
+import { JsonItem } from '@react-awesome-query-builder/core';
 import FilterBuilder from 'odata-query-builder';
-import { JsonItem } from 'react-awesome-query-builder';
 import { IODataOperator } from '../../../api/types/odata-op.interface';
 
 export const toODataFilter = (

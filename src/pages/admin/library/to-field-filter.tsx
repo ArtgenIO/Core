@@ -4,7 +4,7 @@ import {
   FieldSettings,
   SelectFieldSettings,
   ValueSource,
-} from 'react-awesome-query-builder';
+} from '@react-awesome-query-builder/core';
 import { FieldTool } from '../../../api/library/field-tools';
 import { FieldType } from '../../../api/types/field-type.enum';
 import { IField } from '../../../api/types/field.interface';

@@ -1,5 +1,4 @@
-import { QueryBuilder } from 'odata-query-builder';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { AntdConfig } from '@react-awesome-query-builder/antd';
 import {
   Builder,
   BuilderProps,
@@ -7,10 +6,11 @@ import {
   ImmutableTree,
   Query,
   Utils,
-} from 'react-awesome-query-builder';
-import AntdConfig from 'react-awesome-query-builder/lib/config/antd';
-import 'react-awesome-query-builder/lib/css/compact_styles.css';
-import 'react-awesome-query-builder/lib/css/styles.css';
+} from '@react-awesome-query-builder/ui';
+import '@react-awesome-query-builder/ui/css/compact_styles.css';
+import '@react-awesome-query-builder/ui/css/styles.css';
+import { QueryBuilder } from 'odata-query-builder';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 import { ISchema } from '../../../../models/schema.interface';
@@ -43,7 +43,7 @@ export default function GridFilterComponent({ schema, setFilter }: Props) {
       fields: {},
     };
 
-    config.settings.renderSize = 'small';
+    //config.settings.renderSize = 'small';
 
     schema.fields.forEach(f => {
       const fieldConfig = toFieldFilter(f);
@@ -122,7 +122,7 @@ export default function GridFilterComponent({ schema, setFilter }: Props) {
           const qb = new QueryBuilder();
 
           qb.filter(fb => {
-            toODataFilter(fb, Utils.getTree(tree));
+            toODataFilter(fb, Utils.getTree(tree) as any);
             return fb;
           });
 

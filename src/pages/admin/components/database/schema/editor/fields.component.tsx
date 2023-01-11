@@ -176,7 +176,7 @@ export default function SchemaEditorFieldsComponent({
 
                     setSchema(schema => {
                       if (!schema.fields.filter(FieldTool.isPrimary).length) {
-                        message.warn(
+                        message.warning(
                           'You need to have at least primary key field',
                         );
 

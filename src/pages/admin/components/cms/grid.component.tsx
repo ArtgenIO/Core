@@ -314,7 +314,7 @@ export default function GridComponent({
                     client.delete(toRestRecordRoute(schema, r)),
                   ),
                 ).then(() => {
-                  notification.warn({
+                  notification.warning({
                     message: `Success, deleted [${selected.length}] record!`,
                     duration: 3,
                   });

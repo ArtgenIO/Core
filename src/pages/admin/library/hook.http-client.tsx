@@ -31,7 +31,7 @@ export const useHttpClient = <Resp = any, Body = any, Err = any>(
     error => {
       if (error?.response?.status === 401) {
         resetJwt();
-        message.warn('Authentication token expired...');
+        message.warning('Authentication token expired...');
       }
 
       return Promise.reject(error);

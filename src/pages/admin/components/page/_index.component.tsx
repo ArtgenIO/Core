@@ -85,7 +85,7 @@ export default function PageIndexComponent() {
                   onConfirm={() =>
                     client
                       .delete(`${toRestSysRoute(SchemaRef.PAGE)}/${page.id}`)
-                      .then(() => message.warn('Page deleted'))
+                      .then(() => message.warning('Page deleted'))
                       .then(() => refetch())
                   }
                 >

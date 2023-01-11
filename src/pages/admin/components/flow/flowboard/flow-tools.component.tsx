@@ -53,7 +53,7 @@ export default function FlowboardTools({
       });
     });
 
-    message.warn('Node has been removed');
+    message.warning('Node has been removed');
 
     setSelectedNodeId(null);
   };

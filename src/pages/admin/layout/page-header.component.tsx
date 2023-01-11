@@ -1,4 +1,5 @@
-import { AvatarProps, PageHeader as PH } from 'antd';
+import { PageHeader as BaseComponent } from '@ant-design/pro-layout';
+import { AvatarProps } from 'antd';
 import { ReactNode } from 'react';
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
 
 export default function PageHeader(props: Props) {
   return (
-    <PH
+    <BaseComponent
       title={props.title}
       subTitle={props.subTitle}
       extra={props.actions}
@@ -27,6 +28,6 @@ export default function PageHeader(props: Props) {
           : undefined
       }
       className="mb-0"
-    ></PH>
+    ></BaseComponent>
   );
 }
