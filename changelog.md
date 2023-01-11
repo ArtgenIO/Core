@@ -1,6 +1,9 @@
 ### Version 0.7.0
 
 - Major simplification of the codebase
+- Split UI and API for MPA projects
+- Enhance the HTTP capabilities with built in controllers
+- Fix missing service decorators
 
 ### Version 0.4.0
 

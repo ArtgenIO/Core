@@ -11,7 +11,6 @@ import { HttpTriggerLambda } from '../lambdas/http/trigger.lambda';
 import { LogLambda } from '../lambdas/log.lambda';
 import { LogicCompareLambda } from '../lambdas/logic/compare.lambda';
 import { LogicLengthLambda } from '../lambdas/logic/length.lambda';
-import { ReadLambdaLambda } from '../lambdas/read-lambda.lambda';
 import { ContentMeiliIndexLambda } from '../lambdas/rest/index.lambda';
 import { RestCreateLambda } from '../lambdas/rest/rest-create.lambda';
 import { RestFindLambda } from '../lambdas/rest/rest-find.lambda';
@@ -29,7 +28,6 @@ export const LambdaProviders = [
   DNSQueryLambda,
   CronTriggerLambda,
   EmitEventLambda,
-  ReadLambdaLambda,
   LogicLengthLambda,
   LogicCompareLambda,
   ContentMeiliIndexLambda,

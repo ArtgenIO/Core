@@ -153,7 +153,7 @@ export default function FlowBoardComponent() {
   useEffect(() => {
     (async () => {
       const [lambdaReply, flowReply] = await Promise.all([
-        client.get<ILambdaMeta[]>('/api/lambda'),
+        client.get<ILambdaMeta[]>('/api/system/lambda'),
         client.get<IFlow>(`${toRestSysRoute(SchemaRef.FLOW)}/${flowId}`),
       ]);
 

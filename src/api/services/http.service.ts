@@ -1,7 +1,23 @@
-import { IContext, ILogger, Inject, Logger, Service } from '@hisorange/kernel';
-import { inject } from '@loopback/context';
-import { FastifyInstance } from 'fastify';
+import {
+  IContext,
+  IKernel,
+  ILogger,
+  Inject,
+  Kernel,
+  Logger,
+  Service,
+} from '@hisorange/kernel';
+import { inject, MetadataInspector } from '@loopback/context';
+import {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+  RouteHandlerMethod,
+} from 'fastify';
+import { join } from 'path';
+import { IRouteMeta, ROUTE_META_KEY } from '../decorators/router.decorator';
 import { HttpUpstreamProvider } from '../providers/http/http-upstream.provider';
+import { AuthenticationHandlerProvider } from '../providers/identity/authentication-handler.provider';
 import { BucketKey } from '../types/bucket-key.enum';
 import { IHttpGateway } from '../types/http-gateway.interface';
 import { TelemetryService } from './telemetry.service';
@@ -13,6 +29,8 @@ export class HttpService {
   protected upstreamId: number = 0;
   protected bootstrapped = false;
 
+  protected authHandler: RouteHandlerMethod | null = null;
+
   constructor(
     @Logger()
     protected logger: ILogger,
@@ -22,6 +40,8 @@ export class HttpService {
     readonly ctx: IContext,
     @Inject(TelemetryService)
     readonly telemetry: TelemetryService,
+    @Inject(Kernel)
+    readonly kernel: IKernel,
   ) {}
 
   protected getDefaultPort(): number {
@@ -98,13 +118,14 @@ export class HttpService {
 
     this.logger.info('Upstream [%s] starting', id);
 
-    await Promise.all(
-      this.ctx
+    await Promise.all([
+      ...this.ctx
         .findByTag('http:gateway')
         .map(async gateway =>
           (await this.ctx.get<IHttpGateway>(gateway.key)).register(upstream),
         ),
-    );
+      this.registerControllers(id, upstream),
+    ]);
 
     upstream.addHook('onClose', () => {
       this.logger.info('Downstream [%s] closed', id);
@@ -156,5 +177,81 @@ export class HttpService {
     if (this.proxy) {
       await this.proxy.close();
     }
+  }
+
+  protected async registerControllers(id: number, upstream: FastifyInstance) {
+    this.authHandler = await this.kernel.get<RouteHandlerMethod>(
+      AuthenticationHandlerProvider,
+    );
+
+    console.log('LOading controllers');
+
+    return Promise.all(
+      this.ctx.findByTag('http:controller').map(async binding => {
+        const ctrlInstance = await this.ctx.get<Object>(binding.key);
+        const ctrlName = ctrlInstance.constructor.name;
+        const ctrlMeta = binding.tagMap['meta'];
+
+        this.logger.debug(
+          'Upstream [%s] loading controller [%s]',
+          id,
+          ctrlName,
+        );
+
+        const methodMeta = MetadataInspector.getAllMethodMetadata<IRouteMeta>(
+          ROUTE_META_KEY,
+          ctrlInstance,
+        );
+
+        for (const method in methodMeta) {
+          if (Object.prototype.hasOwnProperty.call(methodMeta, method)) {
+            let handler = ctrlInstance[method].bind(ctrlInstance) as (
+              req: FastifyRequest,
+              rep: FastifyReply,
+            ) => {};
+            const meta = methodMeta[method];
+            const url = join(
+              '/',
+              ctrlMeta.prefix
+                ? Array.isArray(ctrlMeta.prefix)
+                  ? ctrlMeta.prefix.join('/')
+                  : ctrlMeta.prefix
+                : '',
+              meta.path ?? '',
+            ).replace(/[\/]+$/, '');
+
+            const preHandlers = [];
+
+            if (meta.protected) {
+              preHandlers.push(this.authHandler);
+            }
+
+            const tags: string[] = [];
+
+            if (ctrlMeta.tags) {
+              tags.push(...ctrlMeta.tags);
+            }
+
+            upstream.route({
+              method: meta.method!,
+              url,
+              handler,
+              preHandler: preHandlers,
+              schema: {
+                tags,
+              },
+            });
+
+            this.logger.debug(
+              'Route handler [%s.%s] registered [%s %s]',
+              ctrlName,
+              method,
+              meta.method,
+              url,
+            );
+          }
+        }
+      }),
+    );
   }
 }

@@ -1,5 +1,6 @@
 import { FlowGateway } from '../controllers/flow.gateway';
 import { IdentityGateway } from '../controllers/identity.gateway';
+import { LambdaController } from '../controllers/lambda.controller';
 import { PageGateway } from '../controllers/page.gateway';
 import { RestGateway } from '../controllers/rest.gateway';
 import { ReverseProxyGateway } from '../controllers/reverse-proxy.gateway';
@@ -16,4 +17,6 @@ export const GatewayProviders = [
   IdentityGateway,
   ReverseProxyGateway,
   FlowGateway,
+
+  LambdaController,
 ];

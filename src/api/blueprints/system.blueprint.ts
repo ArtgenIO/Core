@@ -1806,63 +1806,6 @@ export const SystemBlueprint: IBlueprint = {
     ],
     Flow: [
       {
-        id: '2ecfd7bd-d051-46d4-9e8e-a1229dd1857f',
-        moduleId: null,
-        name: 'Lambda List',
-        nodes: [
-          {
-            id: 'lambda.read.1',
-            type: 'lambda.read',
-            config: {},
-            title: 'Lambda Read',
-            position: [831.3333333333334, 208.66666666666669],
-          },
-          {
-            id: 'terminate.http.1',
-            type: 'terminate.http',
-            config: {
-              transform: '{{ $input.response | toJson }}',
-              statusCode: '200',
-            },
-            title: 'HTTP Ok',
-            position: [832, 331],
-          },
-          {
-            id: 'trigger.http.1',
-            type: 'trigger.http',
-            config: {
-              path: '/api/lambda',
-              method: 'GET',
-              statusCode: '200',
-              authentication: 'protected',
-              responseFormat: 'application/json',
-              response: "{{ $nodes['lambda.read.1'].output.result | toJson }}",
-              waitForLastNode: 'true',
-            },
-            title: 'HTTP Endpoint',
-            position: [832.8333333333334, 86.91666666666669],
-          },
-        ],
-        edges: [
-          {
-            id: 'de3aa052-5708-4320-aea0-3c72277be1ed',
-            sourceNodeId: 'trigger.http.1',
-            targetNodeId: 'lambda.read.1',
-            sourceHandle: 'request',
-            targetHandle: 'query',
-            transform: '',
-          },
-          {
-            id: 'cde658fc-b288-4df7-9b1e-3ac610348ca9',
-            sourceNodeId: 'lambda.read.1',
-            targetNodeId: 'terminate.http.1',
-            sourceHandle: 'result',
-            targetHandle: 'response',
-            transform: '',
-          },
-        ],
-      },
-      {
         id: 'ced473f0-522c-47db-a88c-f0f981d93f9e',
         moduleId: null,
         name: 'Sign Up',
