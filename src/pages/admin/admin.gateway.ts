@@ -2,7 +2,6 @@ import staticMiddleware from '@fastify/static';
 import { ILogger, Logger, Service } from '@hisorange/kernel';
 import { FastifyInstance } from 'fastify';
 import { readFile } from 'fs/promises';
-import cloneDeep from 'lodash.clonedeep';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { IHttpGateway } from '../../api/types/http-gateway.interface';
@@ -65,11 +64,12 @@ export class AdminGateway implements IHttpGateway {
   protected async registerViteDevServer(upstream: FastifyInstance) {
     try {
       // eslint-disable-next-line
-      const viteConfig = cloneDeep((await import('./vite.config')).default);
-      viteConfig.root = __dirname;
-
       const vite = await import('vite');
-      this.viteServer = await vite.createServer(viteConfig);
+      this.viteServer = await vite.createServer(
+        (
+          await import('./vite.config')
+        ).default,
+      );
       const middlewares = this.viteServer.middlewares;
 
       upstream.use('/admin', middlewares);

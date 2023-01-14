@@ -7,9 +7,10 @@ import {
   Input,
   Layout,
   notification,
-  Tooltip,
+  Row,
 } from 'antd';
 import { Content } from 'antd/es/layout/layout';
+import Col from 'antd/lib/grid/col';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
@@ -57,76 +58,80 @@ export default function SignInComponent() {
     <Layout>
       <Content className="flex h-screen w-full items-center">
         <Card
-          className="w-1/4 mx-auto"
-          title={<>Artgen // Sign In</>}
+          className="w-1/3 mx-auto"
+          title={
+            <span className="block text-center font-header text-2xl">
+              Artgen <span className="text-success-400">// Sign In</span>
+            </span>
+          }
           size="small"
         >
-          <Form
-            name="sign-in"
-            size="large"
-            autoComplete="on"
-            onFinish={doSignIn}
-            layout="vertical"
-            requiredMark={false}
-          >
-            <Form.Item
-              label="Email Address:"
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your email address!',
-                },
-              ]}
-            >
-              <Input
-                className="test--email-address bg-midnight-800"
-                placeholder="example@artgen.io"
-                type="email"
-                autoFocus
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Password:"
-              name="password"
-              rules={[
-                { required: true, message: 'Please input your password!' },
-              ]}
-            >
-              <Input.Password
-                className="test--password bg-midnight-800"
-                placeholder="********"
-              />
-            </Form.Item>
-
-            <Divider />
-
-            <Form.Item>
-              <Button
-                className="test--sign-in-btn info"
-                htmlType="submit"
-                size="middle"
-                block
-                icon={<UnlockOutlined />}
+          <Row gutter={24}>
+            <Col span={12}>
+              <div
+                style={{
+                  backgroundImage: 'url(assets/images/flow.png)',
+                }}
+                className="bg-no-repeat bg-cover bg-center rounded-md h-full"
+              ></div>
+            </Col>
+            <Col span={12}>
+              <Form
+                name="sign-in"
+                size="large"
+                autoComplete="on"
+                onFinish={doSignIn}
+                layout="vertical"
+                requiredMark={false}
               >
-                Sign In!
-              </Button>
-            </Form.Item>
-
-            <div className="mb-5 text-right">
-              Don't have an account?&nbsp;
-              <Tooltip title="Not yet implemented">
-                <a
-                  className="test--switch-sign-up"
-                  onClick={() => navigateTo('/sign-up')}
+                <Form.Item
+                  label="Email Address:"
+                  name="email"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please, input your email address!',
+                    },
+                  ]}
                 >
-                  Sign Up
-                </a>
-              </Tooltip>
-              &nbsp;now!
-            </div>
-          </Form>
+                  <Input
+                    className="test--email-address"
+                    placeholder="example@artgen.io"
+                    type="email"
+                    autoFocus
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  label="Password:"
+                  name="password"
+                  rules={[
+                    { required: true, message: 'Please, input your password!' },
+                  ]}
+                >
+                  <Input.Password
+                    className="test--password"
+                    placeholder="********"
+                  />
+                </Form.Item>
+
+                <Divider />
+
+                <Form.Item>
+                  <Button
+                    className="test--sign-in-btn info"
+                    htmlType="submit"
+                    size="middle"
+                    block
+                    type="primary"
+                    icon={<UnlockOutlined />}
+                  >
+                    Sign In!
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Col>
+          </Row>
         </Card>
       </Content>
     </Layout>
