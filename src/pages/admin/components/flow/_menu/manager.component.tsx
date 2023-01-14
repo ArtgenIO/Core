@@ -42,6 +42,7 @@ export default function ManagerMenuComponent() {
   return (
     <MenuBlock title="Flow Manager">
       <Menu
+        theme="dark"
         className="compact"
         selectedKeys={selected}
         items={elements.map(e => ({

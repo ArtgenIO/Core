@@ -337,6 +337,7 @@ export default function GridComponent({
             <Dropdown.Button
               overlay={
                 <Menu
+                  theme="dark"
                   selectable
                   selectedKeys={[
                     refreshInterval ? refreshInterval.toString() : undefined,

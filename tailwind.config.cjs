@@ -1,7 +1,4 @@
-import scrollbar from 'tailwindcss-scrollbar';
-
-
-export default {
+module.exports = {
   mode: 'jit',
   content: ['./src/**/*.{tsx,html}'],
 
@@ -94,6 +91,5 @@ export default {
       },
     },
   },
-  plugins: [scrollbar],
+  plugins: [],
 };
-

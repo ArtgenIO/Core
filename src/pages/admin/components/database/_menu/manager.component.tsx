@@ -48,6 +48,7 @@ export default function ManagerMenuComponent() {
   return (
     <MenuBlock title="Database Manager" style={{ borderTop: 0 }}>
       <Menu
+        theme="dark"
         className="compact"
         selectedKeys={selected}
         items={elements.map(e => ({

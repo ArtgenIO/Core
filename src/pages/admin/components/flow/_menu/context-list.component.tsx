@@ -23,6 +23,7 @@ export default function ContextListComponent({
     <MenuBlock title="Captured Contexts">
       {(flow && capturedContexts.length && (
         <Menu
+          theme="dark"
           key="contexts"
           className="compact"
           onSelect={info => {

@@ -210,6 +210,7 @@ export default function FlowBoardComponent() {
           </div>
           {flow && (
             <Menu
+              theme="dark"
               className="compact"
               style={{ borderTop: '1px solid #333' }}
               selectable={false}

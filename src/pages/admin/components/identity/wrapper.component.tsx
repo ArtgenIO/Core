@@ -43,7 +43,7 @@ export default function AuthenticationWrapperComponent({
                 icon: <FieldTimeOutlined className="text-yellow-500" />,
                 description:
                   'Your authentication token will expire in 30 seconds, the browser will display the sign in form...',
-                placement: 'bottomRight',
+                placement: 'bottomLeft',
               });
             }, expires - 30_000),
           );
@@ -61,7 +61,7 @@ export default function AuthenticationWrapperComponent({
         icon: <LockOutlined className="text-red-400" />,
         description:
           'Please verify Your identity, to access the requested page.',
-        placement: 'bottomRight',
+        placement: 'bottomLeft',
       });
     }
 

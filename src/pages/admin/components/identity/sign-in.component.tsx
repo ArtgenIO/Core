@@ -1,5 +1,15 @@
 import { MehOutlined, UnlockOutlined } from '@ant-design/icons';
-import { Button, Divider, Form, Input, notification, Tooltip } from 'antd';
+import {
+  Button,
+  Card,
+  Divider,
+  Form,
+  Input,
+  Layout,
+  notification,
+  Tooltip,
+} from 'antd';
+import { Content } from 'antd/es/layout/layout';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
@@ -44,75 +54,81 @@ export default function SignInComponent() {
   };
 
   return (
-    <div>
-      <h1 className="header">
-        Artgen <span className="text-info-400">// Sign In</span>
-      </h1>
-      <h1 className="w-full content-center">
-        <div className="logo"></div>
-      </h1>
-
-      <Form
-        name="sign-in"
-        size="large"
-        autoComplete="on"
-        onFinish={doSignIn}
-        layout="vertical"
-        requiredMark={false}
-      >
-        <Form.Item
-          label="Email Address:"
-          name="email"
-          rules={[
-            { required: true, message: 'Please input your email address!' },
-          ]}
+    <Layout>
+      <Content className="flex h-screen w-full items-center">
+        <Card
+          className="w-1/4 mx-auto"
+          title={<>Artgen // Sign In</>}
+          size="small"
         >
-          <Input
-            className="test--email-address bg-midnight-800"
-            placeholder="example@artgen.io"
-            type="email"
-            autoFocus
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Password:"
-          name="password"
-          rules={[{ required: true, message: 'Please input your password!' }]}
-        >
-          <Input.Password
-            className="test--password bg-midnight-800"
-            placeholder="********"
-          />
-        </Form.Item>
-
-        <Divider />
-
-        <Form.Item>
-          <Button
-            className="test--sign-in-btn info"
-            htmlType="submit"
-            size="middle"
-            block
-            icon={<UnlockOutlined />}
+          <Form
+            name="sign-in"
+            size="large"
+            autoComplete="on"
+            onFinish={doSignIn}
+            layout="vertical"
+            requiredMark={false}
           >
-            Sign In!
-          </Button>
-        </Form.Item>
-
-        <div className="mb-5 text-right">
-          Don't have an account?&nbsp;
-          <Tooltip title="Not yet implemented">
-            <a
-              className="test--switch-sign-up"
-              onClick={() => navigateTo('/sign-up')}
+            <Form.Item
+              label="Email Address:"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your email address!',
+                },
+              ]}
             >
-              Sign Up
-            </a>
-          </Tooltip>
-          &nbsp;now!
-        </div>
-      </Form>
-    </div>
+              <Input
+                className="test--email-address bg-midnight-800"
+                placeholder="example@artgen.io"
+                type="email"
+                autoFocus
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Password:"
+              name="password"
+              rules={[
+                { required: true, message: 'Please input your password!' },
+              ]}
+            >
+              <Input.Password
+                className="test--password bg-midnight-800"
+                placeholder="********"
+              />
+            </Form.Item>
+
+            <Divider />
+
+            <Form.Item>
+              <Button
+                className="test--sign-in-btn info"
+                htmlType="submit"
+                size="middle"
+                block
+                icon={<UnlockOutlined />}
+              >
+                Sign In!
+              </Button>
+            </Form.Item>
+
+            <div className="mb-5 text-right">
+              Don't have an account?&nbsp;
+              <Tooltip title="Not yet implemented">
+                <a
+                  className="test--switch-sign-up"
+                  onClick={() => navigateTo('/sign-up')}
+                >
+                  Sign Up
+                </a>
+              </Tooltip>
+              &nbsp;now!
+            </div>
+          </Form>
+        </Card>
+      </Content>
+    </Layout>
   );
 }

@@ -17,12 +17,11 @@ createRoot(document.getElementById('app')).render(
           algorithm: theme.darkAlgorithm,
           token: {
             colorPrimary: '#46bdc6',
-            colorLink: '#46bdc6',
-            colorInfo: '#46bdc6',
             colorSuccess: '#52af6a',
             colorWarning: '#ff6b6b',
             colorError: '#c44d58',
-            colorText: '#b5b9c2',
+            colorInfo: '#46bdc6',
+            colorBgBase: '#15171b',
           },
         }}
       >
