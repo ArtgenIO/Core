@@ -7,10 +7,8 @@ import LoadingComponent from './loading/loading.component.jsx';
 const { Content } = Layout;
 
 export default function PageContent() {
-  const Flow = lazy(() => import('../components/flow/_router.component'));
-  const Database = lazy(
-    () => import('../components/database/_router.component'),
-  );
+  const Flow = lazy(() => import('../components/flow/flow.routes'));
+  const Database = lazy(() => import('../components/database/database.routes'));
   const Contents = lazy(() => import('../components/cms/cms.routes'));
   const Apps = lazy(() => import('../components/blueprint/_router.component'));
   const Dashboard = lazy(

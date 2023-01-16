@@ -196,7 +196,11 @@ export default function FlowBoardComponent() {
 
   return (
     <Layout hasSider>
-      <Sider width={260} className="h-screen depth-2 overflow-auto gray-scroll">
+      <Sider
+        width={260}
+        className="h-screen depth-2 overflow-auto gray-scroll"
+        theme="light"
+      >
         <MenuBlock title="Flow" style={{ borderTop: 0 }}>
           <div className="text-center py-2">
             <Avatar
@@ -210,7 +214,7 @@ export default function FlowBoardComponent() {
           </div>
           {flow && (
             <Menu
-              theme="dark"
+              theme="light"
               className="compact"
               style={{ borderTop: '1px solid #333' }}
               selectable={false}

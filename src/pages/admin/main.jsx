@@ -14,7 +14,7 @@ createRoot(document.getElementById('app')).render(
     <BrowserRouter basename="/admin">
       <ConfigProvider
         theme={{
-          algorithm: theme.darkAlgorithm,
+          algorithm: [theme.darkAlgorithm, theme.compactAlgorithm],
           token: {
             colorPrimary: '#46bdc6',
             colorSuccess: '#52af6a',

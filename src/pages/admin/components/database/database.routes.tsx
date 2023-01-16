@@ -10,7 +10,11 @@ import ManagerMenuComponent from './_menu/manager.component';
 export default function DatabaseRouterComponent() {
   return (
     <Layout hasSider>
-      <Sider width={220} className="h-screen depth-2 overflow-auto gray-scroll">
+      <Sider
+        width={240}
+        theme="light"
+        className="h-screen depth-2 overflow-auto gray-scroll"
+      >
         <ManagerMenuComponent />
         <DatabaseExplorerComponent />
       </Sider>
