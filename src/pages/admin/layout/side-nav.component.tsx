@@ -102,6 +102,7 @@ const SideNav = () => {
           <Menu
             className="menu !bg-transparent !border-0"
             defaultSelectedKeys={selected}
+            theme="dark"
             mode="inline"
             items={menuItems.map(m => ({
               key: `k-${snakeCase(m.title)}`,

@@ -14,14 +14,10 @@ createRoot(document.getElementById('app')).render(
     <BrowserRouter basename="/admin">
       <ConfigProvider
         theme={{
-          algorithm: [theme.darkAlgorithm, theme.compactAlgorithm],
+          algorithm: [theme.defaultAlgorithm, theme.compactAlgorithm],
           token: {
             colorPrimary: '#46bdc6',
-            colorSuccess: '#52af6a',
-            colorWarning: '#ff6b6b',
-            colorError: '#c44d58',
-            colorInfo: '#46bdc6',
-            colorBgBase: '#15171b',
+            colorText: '#25272b',
           },
         }}
       >

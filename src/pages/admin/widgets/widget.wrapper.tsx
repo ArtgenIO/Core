@@ -111,7 +111,7 @@ export default function WidgetWrapperComponent({
         </div>
       </div>
 
-      <div className="bg-midnight-700" style={{ height: 'calc(100% - 44px)' }}>
+      <div className="bg-midnight-100" style={{ height: 'calc(100% - 44px)' }}>
         <WidgetRef.element
           id={gridElement.i}
           header={gridElement.widget.header}
@@ -121,7 +121,7 @@ export default function WidgetWrapperComponent({
         />
       </div>
 
-      <div className="bg-midnight-900 h-3 rounded-b-md"></div>
+      <div className="bg-midnight-400 h-3 rounded-b-md"></div>
     </div>
   );
 }

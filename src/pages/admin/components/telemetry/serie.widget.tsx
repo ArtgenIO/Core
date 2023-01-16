@@ -22,11 +22,11 @@ const generateLineChart = (line: Line) => {
   return (
     <ResponsiveLine
       theme={{
-        background: '#25272B',
-        textColor: '#cfd2d9',
+        background: '#cfd2d9',
+        textColor: '#37393f',
         grid: {
           line: {
-            stroke: '#474952',
+            stroke: '#37393f',
           },
         },
       }}
