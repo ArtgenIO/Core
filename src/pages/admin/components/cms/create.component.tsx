@@ -1,4 +1,5 @@
 import Form from '@rjsf/antd';
+import validator from '@rjsf/validator-ajv8';
 import { Button, Drawer, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -50,7 +51,12 @@ export default function ContentCreateComponent({ schema, onClose }: Props) {
       title={`Create New ${schema.title}`}
       onClose={() => onClose(false)}
     >
-      <Form schema={formJsonSchema} onSubmit={doCreate} uiSchema={UISchema}>
+      <Form
+        validator={validator}
+        schema={formJsonSchema}
+        onSubmit={doCreate}
+        uiSchema={UISchema}
+      >
         <Button className="success" block htmlType="submit">
           Create
         </Button>

@@ -1,4 +1,5 @@
 import Form from '@rjsf/antd';
+import validator from '@rjsf/validator-ajv8';
 import { Button, Drawer, message } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
 import { useEffect, useState } from 'react';
@@ -98,6 +99,7 @@ export default function ContentUpdateComponent({
     >
       {formData ? (
         <Form
+          validator={validator}
           schema={formSchema}
           formData={formData}
           onSubmit={form => handleSubmit(form)}

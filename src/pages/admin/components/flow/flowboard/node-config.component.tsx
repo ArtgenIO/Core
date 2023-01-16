@@ -6,6 +6,7 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import Form from '@rjsf/antd';
+import validator from '@rjsf/validator-ajv8';
 import {
   Avatar,
   Button,
@@ -214,6 +215,7 @@ export default function FlowBoardNodeConfig({
         <Tabs.TabPane tab="Configuration" key="config">
           {configSchema ? (
             <Form
+              validator={validator}
               schema={configSchema}
               formData={configValue}
               onBlur={() => message.info('Node configuration applied')}
