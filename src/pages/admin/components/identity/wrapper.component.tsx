@@ -4,7 +4,7 @@ import { PropsWithChildren, useEffect, useState } from 'react';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { jwtAtom } from '../../atoms/admin.atoms';
 import { getTokenExpiration } from '../../library/get-token-expiration';
-import AuthenticationRouterComponent from './_router.component';
+import AuthenticationRouterComponent from './identity.routes';
 
 export default function AuthenticationWrapperComponent({
   children,

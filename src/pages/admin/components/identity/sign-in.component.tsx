@@ -57,25 +57,23 @@ export default function SignInComponent() {
   return (
     <Layout>
       <Content className="flex h-screen w-full items-center">
-        <Card
-          className="w-1/3 mx-auto"
-          title={
-            <span className="block text-center font-header text-2xl">
-              Artgen <span className="text-success-400">// Sign In</span>
-            </span>
-          }
-          size="small"
-        >
+        <Card className="w-1/3 mx-auto" size="small">
           <Row gutter={24}>
             <Col span={12}>
               <div
                 style={{
-                  backgroundImage: 'url(assets/images/flow.png)',
+                  backgroundImage: 'url(assets/images/hero/flow.png)',
                 }}
                 className="bg-no-repeat bg-cover bg-center rounded-md h-full"
               ></div>
             </Col>
             <Col span={12}>
+              <span className="block text-center font-header text-3xl mt-4">
+                <img src="assets/images/logo/text.svg" className="w-32" />
+              </span>
+
+              <Divider />
+
               <Form
                 name="sign-in"
                 size="large"
@@ -83,6 +81,7 @@ export default function SignInComponent() {
                 onFinish={doSignIn}
                 layout="vertical"
                 requiredMark={false}
+                className="mb-4"
               >
                 <Form.Item
                   label="Email Address:"
@@ -121,7 +120,7 @@ export default function SignInComponent() {
                   <Button
                     className="test--sign-in-btn info"
                     htmlType="submit"
-                    size="middle"
+                    size="large"
                     block
                     type="primary"
                     icon={<UnlockOutlined />}

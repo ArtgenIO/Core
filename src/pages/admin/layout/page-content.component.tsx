@@ -11,7 +11,7 @@ export default function PageContent() {
   const Database = lazy(
     () => import('../components/database/_router.component'),
   );
-  const Contents = lazy(() => import('../components/cms/_router.component'));
+  const Contents = lazy(() => import('../components/cms/cms.routes'));
   const Apps = lazy(() => import('../components/blueprint/_router.component'));
   const Dashboard = lazy(
     () => import('../components/dashboard/dashboard.component'),

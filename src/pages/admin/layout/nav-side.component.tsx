@@ -91,10 +91,9 @@ const NavSide = () => {
 
       {selected && (
         <Menu
-          className="menu"
+          className="menu !bg-transparent"
           defaultSelectedKeys={selected}
           mode="inline"
-          theme="dark"
           items={menuItems.map((m, idx) => ({
             key: `k-${snakeCase(m.title)}`,
             icon: m.icon,

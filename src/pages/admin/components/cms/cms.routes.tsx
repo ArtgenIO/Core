@@ -27,7 +27,11 @@ export default function ContentRouterComponent() {
 
   return (
     <Layout hasSider>
-      <Sider width={220} className="h-screen depth-2 overflow-auto gray-scroll">
+      <Sider
+        width={220}
+        theme="light"
+        className="h-screen depth-2 overflow-auto gray-scroll "
+      >
         <Suspense fallback={<Spin />}>
           <FavoriteSchemasComponent />
           <SchemaTreeComponent onSelect={onSchemaSelect} />

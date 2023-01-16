@@ -17,7 +17,6 @@ export default function FavoriteSchemasComponent() {
   return (
     <MenuBlock title="Favorite Content" style={{ borderTop: 0 }}>
       <Menu
-        theme="dark"
         className="compact"
         selectable={false}
         items={schemas
