@@ -1,8 +1,8 @@
 import { Button, Divider, message } from 'antd';
-import { saveAs } from 'file-saver';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import { ISchema } from '../../../../../../models/schema.interface';
+import { saveAsFile } from '../../../../library/save-as';
 
 type Props = {
   schema: Partial<ISchema>;
@@ -15,7 +15,7 @@ export default function SchemaExportComponent({ schema }: Props) {
       type: 'application/json',
     });
 
-    saveAs(fileContent, fileName);
+    saveAsFile(fileContent, fileName);
   };
 
   const doCopy = () => {

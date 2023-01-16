@@ -1,5 +1,4 @@
 import { Button, Divider, Drawer, message } from 'antd';
-import { saveAs } from 'file-saver';
 import { useEffect, useState } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
@@ -7,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { IDatabase } from '../../../../../models/database.interface';
 import { ISchema } from '../../../../../models/schema.interface';
 import { schemasAtom } from '../../../atoms/admin.atoms';
+import { saveAsFile } from '../../../library/save-as';
 
 type Props = {
   onClose: () => void;
@@ -42,7 +42,7 @@ export default function DatabaseExportComponent({ onClose, database }: Props) {
       type: 'application/json',
     });
 
-    saveAs(fileContent, fileName);
+    saveAsFile(fileContent, fileName);
   };
 
   const doCopy = () => {

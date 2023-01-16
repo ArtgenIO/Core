@@ -1,8 +1,8 @@
 import { Button, Divider, Drawer, message } from 'antd';
-import { saveAs } from 'file-saver';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { nord } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import { IFlow } from '../../../../../api/types/flow.interface';
+import { saveAsFile } from '../../../library/save-as';
 
 type Props = {
   flow: IFlow;
@@ -19,7 +19,7 @@ export default function FlowBoardSerializer({ flow, onClose }: Props) {
       type: 'application/json',
     });
 
-    saveAs(fileContent, fileName);
+    saveAsFile(fileContent, fileName);
     onClose();
   };
 

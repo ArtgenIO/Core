@@ -10,17 +10,17 @@ export default function PageContent() {
   const Flow = lazy(() => import('../components/flow/flow.routes'));
   const Database = lazy(() => import('../components/database/database.routes'));
   const Contents = lazy(() => import('../components/cms/cms.routes'));
-  const Apps = lazy(() => import('../components/blueprint/_router.component'));
+  const Apps = lazy(() => import('../components/blueprint/blueprint.routes'));
   const Dashboard = lazy(
     () => import('../components/dashboard/dashboard.component'),
   );
-  const Page = lazy(() => import('../components/page/_router.component'));
+  const Page = lazy(() => import('../components/page/page.routes'));
   const Analytics = lazy(
-    () => import('../components/analytics/_index.component'),
+    () => import('../components/analytics/analytics.routes'),
   );
 
-  const Develop = lazy(() => import('../components/develop/_router.component'));
-  const FormRouter = lazy(() => import('../components/form/_router.component'));
+  const Develop = lazy(() => import('../components/develop/develop.routes'));
+  const FormRouter = lazy(() => import('../components/form/form.routes'));
 
   return (
     <Content className="overflow-y-auto overflow-x-hidden h-screen gray-scroll">

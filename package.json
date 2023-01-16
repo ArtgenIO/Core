@@ -163,7 +163,6 @@
     "axios-hooks": "^4.0.0",
     "cypress": "^10.0.0",
     "enquirer": "^2.3.6",
-    "file-saver": "^2.0.5",
     "grapesjs": "^0.20.0",
     "grapesjs-blocks-basic": "^1.0.1",
     "grapesjs-preset-webpage": "^1.0.2",
