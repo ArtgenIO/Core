@@ -23,12 +23,6 @@ createRoot(document.getElementById('app')).render(
             colorInfo: '#46bdc6',
             colorBgBase: '#15171b',
           },
-          components: {
-            Notification: {
-              notificationBg: '#15171b',
-              notificationPaddingVertical: 150,
-            },
-          },
         }}
       >
         <PageComponent />

@@ -113,17 +113,12 @@ export default function DashboardPage() {
               activeKey={active}
               type="editable-card"
               className="test--dashboard-tabs"
-              size="small"
-              style={{
-                borderBottom: '1px solid #37393f',
-              }}
               tabBarGutter={1}
               destroyInactiveTabPane
               tabBarExtraContent={{
                 right: (
                   <Button
                     size="large"
-                    className="ml-1 border-b-0"
                     icon={<AppstoreAddOutlined />}
                     onClick={() => setOpenWidgetCollection(true)}
                   >

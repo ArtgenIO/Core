@@ -5,13 +5,13 @@ import {
   HomeOutlined,
   PartitionOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Spin } from 'antd';
+import { ConfigProvider, Layout, Menu, Spin } from 'antd';
 import snakeCase from 'lodash.snakecase';
 import { ReactNode, Suspense, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import MeButtonComponent from '../components/identity/me-button.component';
 import NewsComponent from '../components/upgrade/news.component';
-import './nav-side.component.less';
+import './side-nav.component.less';
 
 const { Sider } = Layout;
 
@@ -61,7 +61,7 @@ const matcher = menuItems
   .map(m => ({ path: m.path, key: `k-${snakeCase(m.title)}` }))
   .sort((a, b) => (a.path.length < b.path.length ? 1 : -1));
 
-const NavSide = () => {
+const SideNav = () => {
   const location = useLocation();
   const navigateTo = useNavigate();
   const [selected, setSelected] = useState(null);
@@ -82,7 +82,7 @@ const NavSide = () => {
   }, [location]);
 
   return (
-    <Sider collapsed className="nav-side depth-1 relative" collapsedWidth={54}>
+    <Sider collapsed className="nav-side relative" collapsedWidth={54}>
       <div className="brand-block">
         <Link to="/">
           <div className="brand-logo"></div>
@@ -90,18 +90,28 @@ const NavSide = () => {
       </div>
 
       {selected && (
-        <Menu
-          className="menu !bg-transparent"
-          defaultSelectedKeys={selected}
-          mode="inline"
-          items={menuItems.map((m, idx) => ({
-            key: `k-${snakeCase(m.title)}`,
-            icon: m.icon,
-            title: m.title,
-            onClick: () => navigateTo(m.path),
-            className: m.className,
-          }))}
-        />
+        <ConfigProvider
+          theme={{
+            components: {
+              Menu: {
+                colorBorder: 'red',
+              },
+            },
+          }}
+        >
+          <Menu
+            className="menu !bg-transparent !border-0"
+            defaultSelectedKeys={selected}
+            mode="inline"
+            items={menuItems.map(m => ({
+              key: `k-${snakeCase(m.title)}`,
+              icon: m.icon,
+              title: m.title,
+              onClick: () => navigateTo(m.path),
+              className: m.className,
+            }))}
+          />
+        </ConfigProvider>
       )}
 
       <Suspense fallback={<Spin></Spin>}>
@@ -112,4 +122,4 @@ const NavSide = () => {
   );
 };
 
-export default NavSide;
+export default SideNav;

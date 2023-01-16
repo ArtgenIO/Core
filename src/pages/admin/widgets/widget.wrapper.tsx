@@ -38,7 +38,7 @@ export default function WidgetWrapperComponent({
           <div className="grow">
             <Input
               value={header}
-              className="text-center text-lg p-0 text-white"
+              className="text-center text-lg p-0 text-white font-header"
               bordered={false}
               onChange={e => setHeader(e.target.value)}
               onBlur={e => {
@@ -121,7 +121,7 @@ export default function WidgetWrapperComponent({
         />
       </div>
 
-      <div className="bg-midnight-800 h-3 rounded-b-md"></div>
+      <div className="bg-midnight-900 h-3 rounded-b-md"></div>
     </div>
   );
 }
