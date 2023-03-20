@@ -86,13 +86,6 @@ export class DatabaseConnectionService {
           client: 'pg',
           connection: dsn,
         });
-      case 'mysql':
-      case 'mariadb':
-      default:
-        return knex({
-          client: 'mysql2',
-          connection: dsn,
-        });
     }
   }
 
@@ -103,7 +96,7 @@ export class DatabaseConnectionService {
       protocol = 'postgres';
     }
 
-    if (['postgres', 'mysql', 'mariadb', 'sqlite'].includes(protocol)) {
+    if (['postgres', 'sqlite'].includes(protocol)) {
       return protocol as Dialect;
     } else {
       throw new UnsupportedDialect(`Unknown dialect [${protocol}]`);

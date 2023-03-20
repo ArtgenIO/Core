@@ -14,36 +14,6 @@ services:
     logging:
       driver: "none"
 
-  # MariaDB server
-  tdb-mariadb:
-    image: mariadb:latest
-    hostname: tdb-mariadb
-    environment:
-      MARIADB_DATABASE: artgen
-      MARIADB_USER: artgen
-      MARIADB_PASSWORD: artgen
-      MARIADB_ROOT_PASSWORD: artgen
-      TZ: UTC
-    logging:
-      driver: "none"
-    cap_add:
-      - "SYS_NICE"
-
-  # MySQL server
-  tdb-mysql:
-    image: mysql:latest
-    hostname: tdb-mysql
-    environment:
-      MYSQL_DATABASE: artgen
-      MYSQL_USER: artgen
-      MYSQL_PASSWORD: artgen
-      MYSQL_ROOT_PASSWORD: artgen
-      TZ: UTC
-    logging:
-      driver: "none"
-    cap_add:
-      - "SYS_NICE"
-
   # Test for Postgres
   tinst-postgres:
     image: node:16
@@ -55,32 +25,6 @@ services:
     command: yarn test
     depends_on:
       - tdb-postgres
-    restart: "no"
-
-  # Test for MariaDB
-  tinst-mariadb:
-    image: node:16
-    working_dir: /srv
-    volumes:
-      - ./:/srv
-    environment:
-      ARTGEN_DATABASE_DSN: "mariadb://artgen:artgen@tdb-mariadb:3306/artgen"
-    command: yarn test
-    depends_on:
-      - tdb-mariadb
-    restart: "no"
-
-  # Test for MySQL
-  tinst-mysql:
-    image: node:16
-    working_dir: /srv
-    volumes:
-      - ./:/srv
-    environment:
-      ARTGEN_DATABASE_DSN: "mysql://artgen:artgen@tdb-mysql:3306/artgen"
-    command: yarn test
-    depends_on:
-      - tdb-mysql
     restart: "no"
 
   # Test for SQLite memory

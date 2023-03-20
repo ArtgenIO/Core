@@ -38,8 +38,6 @@ On boot the system will check if the system database has the necessary tables in
 
 | Provider                | DSN Pattern                                         | Tested |
 | :---------------------- | --------------------------------------------------- | -----: |
-| **MySQL**               | `mysql://username:password@host.tld:3306/dbname`    |    8.x |
-| **MariaDB**             | `mariadb://username:password@host.tld:3306/dbname`  |   10.x |
 | **PostgreSQL**          | `postgres://username:password@host.tld:5432/dbname` |   14.x |
 | **SQLite (InMemory)**   | `sqlite::memory:`                                   |    3.x |
 | **SQLite (Persistent)** | `sqlite:./path/to/db.sql`                           |    3.x |

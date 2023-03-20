@@ -23,8 +23,6 @@ describe(DatabaseConnectionService.name, () => {
   describe('Create', () => {
     test.each([
       'sqlite::memory:',
-      'mysql://localhost:1234',
-      'mariadb://localhost:1234',
       'postgresql://localhost:1234',
       'postgres://localhost:1234',
     ])('should create the connection with the [%s] dsn', async dsn => {
@@ -55,8 +53,6 @@ describe(DatabaseConnectionService.name, () => {
 
   describe('Dialect parser', () => {
     test.each([
-      ['mysql://localhost:555', 'mysql'],
-      ['mariadb://localhost:5555', 'mariadb'],
       ['postgres://localhost:555', 'postgres'],
       ['postgresql://localhost:555', 'postgres'],
       ['sqlite::memory:', 'sqlite'],

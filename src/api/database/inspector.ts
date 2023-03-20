@@ -1,6 +1,5 @@
 import { Column } from 'knex-schema-inspector/dist/types/column';
 import { ForeignKey } from 'knex-schema-inspector/dist/types/foreign-key';
-import { MySQLAdapter } from '../library/inspectors/mysql.adapter';
 import { PostgresAdapter } from '../library/inspectors/postgres.adapter';
 import { SQLiteAdapter } from '../library/inspectors/sqlite.adapter';
 import { IDatabaseConnection } from '../types/database-connection.interface';
@@ -17,10 +16,6 @@ export class DatabaseInspector {
         break;
       case 'sqlite':
         this.adapter = new SQLiteAdapter(connection.knex);
-        break;
-      case 'mysql':
-      case 'mariadb':
-        this.adapter = new MySQLAdapter(connection.knex);
         break;
     }
   }
@@ -73,12 +68,5 @@ export class DatabaseInspector {
     typeName: string,
   ): Promise<{ tableName: string; columName: string }[]> {
     return this.adapter.associatedTables(typeName);
-  }
-
-  /**
-   * MariaDB special for JSON checks
-   */
-  async isJson(tableName: string, columnName: string): Promise<boolean> {
-    return this.adapter.isJson(tableName, columnName);
   }
 }

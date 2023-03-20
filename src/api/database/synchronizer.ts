@@ -798,21 +798,6 @@ export class DatabaseSynchronizer {
         type = FieldType.TEXT;
         args.length = 'medium';
         break;
-      case 'LONGTEXT': // MariaDB JSON?
-        type = FieldType.TEXT;
-        args.length = 'long';
-
-        // MariaDB uses LONGTEXT with json check to store JSON
-        if (this.connection.dialect === 'mariadb') {
-          const isJson = await this.inspector.isJson(tableName, column.name);
-
-          if (isJson) {
-            type = FieldType.JSON;
-            delete args.length;
-          }
-        }
-
-        break;
       case 'CHARACTER':
         type = FieldType.CHAR;
         break;
