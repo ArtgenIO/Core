@@ -7,7 +7,7 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "./build",
-    "rootDir": "./src",
+    "rootDir": ".",
     "removeComments": true,
     "importHelpers": true,
     "lib": ["esnext", "DOM"],

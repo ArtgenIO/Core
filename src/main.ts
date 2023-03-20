@@ -3,7 +3,8 @@ import { Constructor } from '@loopback/context';
 import 'dotenv-defaults/config';
 import esMain from 'es-main';
 import 'reflect-metadata';
-import { AppModule } from './app/app.module';
+import { APIModule } from './api/api.module';
+import { AdminModule } from './pages/admin/admin.module';
 
 export async function main(modules: Constructor<IModule>[]): Promise<void> {
   const kernel = new Kernel();
@@ -15,5 +16,5 @@ export async function main(modules: Constructor<IModule>[]): Promise<void> {
 
 // Direct invoking, run the application.
 if (esMain(import.meta)) {
-  main([AppModule]);
+  main([AdminModule, APIModule]);
 }
