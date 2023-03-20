@@ -18,7 +18,6 @@ WORKDIR /srv
 
 COPY --from=builder /temp/.env.defaults .env.defaults
 COPY --from=builder /temp/build build
-COPY --from=builder /temp/docs docs
 COPY --from=builder /temp/license license
 COPY --from=builder /temp/package.json package.json
 COPY --from=builder /temp/storage storage
