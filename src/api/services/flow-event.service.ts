@@ -1,6 +1,6 @@
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
+import { randomUUID } from 'crypto';
 import EventEmitter2 from 'eventemitter2';
-import { v4 } from 'uuid';
 import { EventTriggerConfig } from '../lambdas/event/on.trigger';
 import { FlowService } from './flow.service';
 
@@ -34,7 +34,7 @@ export class FlowEventService {
 
         this.eventBus.on(config.eventName, async (eventData: unknown) => {
           const startAt = Date.now();
-          const eventId = v4();
+          const eventId = randomUUID();
           const session = await this.flowService.createSession(
             flow.id,
             eventId,

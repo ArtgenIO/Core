@@ -1,5 +1,6 @@
 import { ILogger, Inject, Logger } from '@hisorange/kernel';
 import { Binding } from '@loopback/context';
+import { randomUUID } from 'crypto';
 import { default as KNEX } from 'knex';
 import cloneDeep from 'lodash.clonedeep';
 import isEqual from 'lodash.isequal';
@@ -11,7 +12,6 @@ import {
   RelationThrough,
   RelationType as ObjectionRelationType,
 } from 'objection';
-import { v4 } from 'uuid';
 import { IDatabase } from '../../models/database.interface';
 import { ISchema } from '../../models/schema.interface';
 import { BaseException } from '../exceptions/base.exception';
@@ -583,7 +583,7 @@ export class DatabaseConnection implements IDatabaseConnection {
 
         if (hasUUIDPK) {
           if (!this[primaryKeys[0].reference]) {
-            this[primaryKeys[0].reference] = v4();
+            this[primaryKeys[0].reference] = randomUUID();
           }
         }
 

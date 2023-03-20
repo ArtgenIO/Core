@@ -35,10 +35,10 @@
   "scripts": {
     "build:docker": "docker build . --target=production -t artgenio/core:dev",
     "build:api": "tsc -p tsconfig.prod.json",
-    "build:ui": "vite build --config src/pages/admin/vite.config.ts",
+    "build:admin": "vite build --config src/pages/admin/vite.config.ts",
     "build:test": "CYPRESS_COVERAGE=1 yarn build",
-    "build": "yarn build:api && yarn build:ui",
-    "dev": "nodemon -I --exec node --experimental-specifier-resolution=node --loader ts-node/esm --no-warnings ./src/main.ts",
+    "build": "yarn build:api && yarn build:admin",
+    "dev": "tsx ./src/main.ts",
     "start": "NODE_ENV=production node --experimental-specifier-resolution=node build/main.js",
     "test": "yarn test:api && yarn build && yarn test:ui",
     "test:type": "tsc -p tsconfig.prod.json --noEmit",
@@ -150,7 +150,7 @@
     "@types/react-dom": "^18.0.0",
     "@types/uuid": "^8.3.1",
     "@types/validator": "^13.6.5",
-    "@vitejs/plugin-react": "^3.0.0",
+    "@vitejs/plugin-react": "^3.1.0",
     "antd": "^4.16.13",
     "autoprefixer": "^10.4.12",
     "axios-hooks": "^4.0.0",
@@ -164,7 +164,6 @@
     "jest": "^29.2.1",
     "less": "^4.1.2",
     "md5": "^2.3.0",
-    "nodemon": "^2.0.20",
     "openapi-types": "^12.0.0",
     "postcss": "^8.3.9",
     "react": "^18.0.0",
@@ -183,8 +182,8 @@
     "tailwindcss": "^3.0.0",
     "tailwindcss-scrollbar": "^0.1.0",
     "ts-jest": "^29.0.3",
-    "ts-node": "^10.9.1",
+    "tsx": "^3.12.5",
     "typescript": "^4.8.4",
-    "vite": "^3.1.8"
+    "vite": "^4.2.0"
   }
 }

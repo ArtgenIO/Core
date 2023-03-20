@@ -1,5 +1,5 @@
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
-import { v4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { IBlueprint } from '../../models/blueprint.interface';
 import { SystemBlueprint } from '../blueprints/system.blueprint';
 import { SchemaRef } from '../types/system-ref.enum';
@@ -23,7 +23,7 @@ export class BlueprintService {
   async seed() {
     // Check for license key
     if (!(await this.kv.get('license'))) {
-      await this.kv.set('license', v4());
+      await this.kv.set('license', randomUUID());
     }
 
     this.logger.info('License key generated');

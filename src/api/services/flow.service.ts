@@ -1,7 +1,7 @@
 import { ILogger, Inject, Logger, Service } from '@hisorange/kernel';
+import { randomUUID } from 'crypto';
 import EventEmitter2 from 'eventemitter2';
 import { Model } from 'objection';
-import { v4 } from 'uuid';
 import { FlowSession } from '../library/flow.session';
 import { BucketKey } from '../types/bucket-key.enum';
 import { IFlow } from '../types/flow.interface';
@@ -44,7 +44,7 @@ export class FlowService {
     }
 
     if (!actionId) {
-      actionId = v4();
+      actionId = randomUUID();
     }
 
     this.telemetry.record(BucketKey.FLOW_EXEC, 1);

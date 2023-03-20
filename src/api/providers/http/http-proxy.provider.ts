@@ -1,8 +1,8 @@
 import CORSPlugin from '@fastify/cors';
 import FormBodyPlugin from '@fastify/formbody';
 import { ILogger, Logger, Provider, Service } from '@hisorange/kernel';
+import { randomUUID } from 'crypto';
 import fastify, { FastifyInstance } from 'fastify';
-import { v4 } from 'uuid';
 
 @Service()
 export class HttpProxyProvider implements Provider<FastifyInstance> {
@@ -17,7 +17,7 @@ export class HttpProxyProvider implements Provider<FastifyInstance> {
         level: 'warn',
       },
       disableRequestLogging: true,
-      genReqId: v4 as () => string,
+      genReqId: () => randomUUID(),
       trustProxy: true,
       ignoreTrailingSlash: true,
       bodyLimit: 100 * 1024 * 1024,

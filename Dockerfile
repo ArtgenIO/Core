@@ -1,4 +1,4 @@
-FROM node:16-alpine AS builder
+FROM node:18-alpine AS builder
 WORKDIR /temp
 
 COPY package.json package.json
@@ -13,7 +13,7 @@ RUN ["yarn", "build"]
 RUN ["yarn", "install", "--frozen-lockfile", "--production", "--ignore-engines"]
 
 # Production stage, thinner image with only what we need
-FROM node:16-alpine AS production
+FROM node:18-alpine AS production
 WORKDIR /srv
 
 COPY --from=builder /temp/.env.defaults .env.defaults

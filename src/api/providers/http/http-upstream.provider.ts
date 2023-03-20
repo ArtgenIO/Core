@@ -3,9 +3,9 @@ import FastifySecureSessionPlugin from '@fastify/secure-session';
 import fastifySwaggerApi from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { ILogger, Inject, Logger, Provider, Service } from '@hisorange/kernel';
+import { randomUUID } from 'crypto';
 import fastify, { FastifyInstance } from 'fastify';
 import FastifyHttpErrorsEnhancedPlugin from 'fastify-http-errors-enhanced';
-import { v4 } from 'uuid';
 import { OpenApiService } from '../../services/openapi.service';
 
 @Service()
@@ -21,7 +21,7 @@ export class HttpUpstreamProvider implements Provider<FastifyInstance> {
     const server = fastify({
       // logger: this.logger.child({ scope: 'http.upstream' }),
       disableRequestLogging: true,
-      genReqId: v4 as () => string,
+      genReqId: () => randomUUID(),
       trustProxy: true,
       ignoreTrailingSlash: true,
       bodyLimit: 100 * 1024 * 1024,
