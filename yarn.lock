@@ -827,9 +827,9 @@
     fastify-plugin "^4.0.0"
 
 "@fastify/passport@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@fastify/passport/-/passport-2.2.0.tgz#3b602098af405dabfe68a170fea06cad77558ff3"
-  integrity sha512-JbrtmJUotEgPf9FPpCpbMcVDghLbjziAkj7EnufEaRpMOZE3wkeVg0CzgnD+nrIGoHo6D31RCJMIZMvvLxb+ew==
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@fastify/passport/-/passport-2.3.0.tgz#e942a914961d8bbe3d989ef39ccb6c33550b1dbc"
+  integrity sha512-OVTUXyAm7Tx194RJiJrzSvM8m5O8TR0CIc9ewKDZWjQcFs+MNiVURdjpIm28l7oY2o19TV9XANutfSH/ngEd+A==
   dependencies:
     "@fastify/flash" "^5.0.0"
     fastify-plugin "^4.0.0"
